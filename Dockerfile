@@ -26,24 +26,20 @@ ENV USER_ID ${LOCAL_USER_ID}
 RUN adduser --uid ${USER_ID} juser
 WORKDIR /home/juser
 
-# Get the 651 emacs setup so we can report code coverage
-# that matches what we will grade with
+# Setup a minimal emacs with dcoverage
 USER juser
-RUN git clone https://gitlab.oit.duke.edu/adh39/ece651-emacs-setup.git
-WORKDIR /home/juser/ece651-emacs-setup
-
-RUN ./setup.sh
-
-
-
 WORKDIR /home/juser
-USER root
+COPY --chown=juser scripts/emacs-bare.sh ./
+RUN mkdir -p /home/juser/.emacs.d/dcoverage
+COPY --chown=juser scripts/dcoverage.el /home/juser/.emacs.d/dcoverage/
+RUN chmod u+x emacs-bare.sh && ./emacs-bare.sh
+
+
 # we are going to do a bit of gradle first, just to speed
 # up future builds
-COPY build.gradle gradlew settings.gradle  ./
-COPY gradle/wrapper gradle/wrapper
-RUN chown -R juser.juser .
-USER juser
+COPY --chown=juser build.gradle gradlew settings.gradle  ./
+COPY --chown=juser gradle/wrapper gradle/wrapper
+
 
 # this will fetch gradle 5.4, and the packages we depend on
 RUN ./gradlew resolveDependencies
@@ -52,10 +48,7 @@ RUN ./gradlew resolveDependencies
 # Now we copy all our source files in.  Note that
 # if we change src, etc, but not our gradle setup,
 # Docker can resume from this point
-USER root
-COPY ./ ./
-RUN chown -R juser.juser .
+COPY --chown=juser ./ ./
 
-USER juser
 # compile the code
 RUN ./gradlew  assemble
