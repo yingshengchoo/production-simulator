@@ -13,7 +13,7 @@ do
         exit 1
     fi
     x=`netcat -N -w 1 localhost 1651 < /dev/null`
-    let count = count+1
+    let count=count+1
 done
 
 
