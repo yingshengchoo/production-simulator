@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 
 MAINTAINER Drew Hilton "adhilton@ee.duke.edu"
 
@@ -15,8 +15,8 @@ RUN apt-get update && apt-get -yq dist-upgrade \
      ca-certificates \
      git \
      unzip \
-     openjdk-11-jdk-headless \
-     emacs25
+     openjdk-17-jdk-headless \
+     emacs-nox
 
 RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
     locale-gen
@@ -41,7 +41,7 @@ COPY --chown=juser build.gradle gradlew settings.gradle  ./
 COPY --chown=juser gradle/wrapper gradle/wrapper
 
 
-# this will fetch gradle 5.4, and the packages we depend on
+# this will fetch gradle 7.3, and the packages we depend on
 RUN ./gradlew resolveDependencies
 
 
