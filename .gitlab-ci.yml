@@ -23,7 +23,7 @@ test:
   stage: test
   script: 
      - scripts/run-tests-in-docker.sh
-  coverage: 'TOTAL COVERAGE: \d+\%'
+  coverage: '/TOTAL COVERAGE: \d+%/'
   artifacts:
     paths:
       - coverage
