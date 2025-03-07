@@ -10,6 +10,9 @@ that code is not itself particularly exciting, the point
 of this project is to walk studenst through the setup of 
 CI/CD on Duke's Gitlab.
 
+## Coverage
+
+[Detailed coverage](https://NETID.pages.oit.duke.edu/PROJECT/dashboard.html)
 
 
 
