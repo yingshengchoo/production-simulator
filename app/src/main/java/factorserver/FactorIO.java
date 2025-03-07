@@ -18,7 +18,7 @@ public class FactorIO {
    * This is the greeting message that is printed at the start
    * of processing a request. Change this to try out the CI pipeline!
    */
-  static String GREETING = "Hello, welcome to Vincen'ts Prime Factor Server!";
+  static String GREETING = "Hello, welcome to Vincent's Prime Factor Server!";
   /**
    * This is the prompt that is printed to ask the user for each number
    * to factor.
