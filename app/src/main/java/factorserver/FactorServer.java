@@ -101,7 +101,7 @@ public class FactorServer {
    * to the port being unavailable(.
    */
   public static void main(String[] args) throws IOException {
-    System.out.println("Hello world!");
+    System.out.println("Hello world! at 17:14");
     FactorServer fs =
         new FactorServer(new PrimeFactors(), new ServerSocket(1651));
     fs.run();
