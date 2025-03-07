@@ -21,7 +21,9 @@ test:
   tags:
      - ece651
   stage: test
-  script: scripts/run-tests-in-docker.sh
+  script: 
+     - scripts/run-tests-in-docker.sh
+  coverage: 'TOTAL COVERAGE: \d+\%'
   artifacts:
     paths:
       - coverage
