@@ -1,0 +1,12 @@
+package productsimulation;
+                                                                                                                                                                                                                                                       2
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
+                                                                                                                                                                                                   5 import org.junit.jupiter.api.Test;                                                                                                                                                                                                                                                    6
+public class AppTest {                                                                                                                                                                                                                                                                8   @Test                                                                                                                                                                                                                                                                               9   public void test_() {                                                                                                                                                                                                                                                              10     assertTrue(true);                                                                                                                                                                                                                                                                11   }                                                                                                                                                                                                                                                                                  12
+  @Test
+  public void test_clover(){
+    assertTrue(true);
+  }
+}
