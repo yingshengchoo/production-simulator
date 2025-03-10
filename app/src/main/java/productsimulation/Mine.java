@@ -1,4 +1,4 @@
-package productionsimulation;
+package productsimulation;
 
 import java.util.List;
 

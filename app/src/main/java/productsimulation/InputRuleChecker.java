@@ -1,4 +1,4 @@
-package productionsimulation;
+package productsimulation;
 
 public abstract class InputRuleChecker {
   private final InputRuleChecker next;

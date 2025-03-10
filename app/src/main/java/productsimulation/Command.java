@@ -1,4 +1,4 @@
-package productionsimulation;
+package productsimulation;
 
 public abstract class Command {
   public Command(){

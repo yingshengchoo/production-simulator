@@ -1,4 +1,4 @@
-package productionsimulation;
+package productsimulation;
 
 import java.io.ByteArrayInputStream;
 import java.io.PrintStream;

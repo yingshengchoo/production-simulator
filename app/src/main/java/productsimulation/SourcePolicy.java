@@ -1,4 +1,4 @@
-package productionsimulation;
+package productsimulation;
 
 public interface SourcePolicy {
 
