@@ -1,6 +1,11 @@
 package productionsimulation;
 
 public class Request {
+
+  enum RequestStatus {
+    WAITING, WORKING, READY;
+  }
+
   public int id;
   private final String ingredient;
   private final Recipe recipe;
