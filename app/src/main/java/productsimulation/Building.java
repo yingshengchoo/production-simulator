@@ -1,5 +1,8 @@
 package productsimulation;
 
+import productsimulation.request.Request;
+import productsimulation.request.ServePolicy;
+
 import java.util.Queue;
 import java.util.Map;
 import java.util.List;

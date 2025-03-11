@@ -1,5 +1,7 @@
 package productsimulation;
 
+import productsimulation.request.ServePolicy;
+
 import java.util.List;
 
 public class Factory extends Building {
