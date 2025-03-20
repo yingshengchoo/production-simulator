@@ -10,6 +10,6 @@ public class StepCommand extends Command {
 
     @Override
     public void execute() {
-        LogicTime.stepNHandler(step);
+        LogicTime.getInstance().stepNHandler(step);
     }
 }

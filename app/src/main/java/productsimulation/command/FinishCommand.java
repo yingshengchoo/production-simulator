@@ -10,6 +10,6 @@ public class FinishCommand extends Command {
 
     @Override
     public void execute() {
-        LogicTime.finishHandler();
+        LogicTime.getInstance().finishHandler();
     }
 }

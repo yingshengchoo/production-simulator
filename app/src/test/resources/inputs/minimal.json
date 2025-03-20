@@ -9,14 +9,14 @@
   ],
   "buildings" : [
     {
-      "name" : "OneWoodenSwordFactory",
+      "name" : "FirstWoodenSwordFactory",
       "type" : "sword_factory",
       "sources" : [
         "OneWoodMine"
       ]
     },
     {
-      "name" : "OneWoodMine",
+      "name" : "FirstWoodMine",
       "mine" : "wood",
       "sources" : []
     }

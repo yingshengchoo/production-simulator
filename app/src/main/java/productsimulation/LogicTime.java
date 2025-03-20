@@ -2,35 +2,72 @@ package productsimulation;
 
 import productsimulation.model.Building;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class LogicTime {
-  private int currentStep;
-  private List<Building> observers;
+    private static final LogicTime instance = new LogicTime();
+    private int currentStep;
+    private List<Building> observers;
 
 
-  /**
-   * Constructs a LogicTime at time step 0.
-   */
-  public LogicTime(){
-    this.currentStep = 0;
-  }
+    /**
+     * private, for singleton
+     */
+    private LogicTime() {
+        this.currentStep = 0;
+        this.observers = new ArrayList<>();
+    }
 
-  public void addObservers(Building b){
-  }
+    /**
+     * singleton
+     */
+    public static LogicTime getInstance() {
+        return instance;
+    }
 
-  public void removeObservers(Building b){
-  }
+    public void addObservers(Building b) {
+        observers.add(b);
+    }
 
-  public void notifyAll(int timeDiff){
-  }
+    public void removeObservers(Building b) {
+        observers.remove(b);
+    }
 
-  public static void stepNHandler(int n) {
+    // only for test
+    public int getObserversSize() {
+        return observers.size();
+    }
 
-  }
+    public int getStep() {
+        return currentStep;
+    }
 
-  public static void finishHandler() {
-    stepNHandler(-1);
-  }
+    public void notifyAll(int timeDiff) {
+        boolean finished = true;
+        for(int i = 0; i < timeDiff; i++) {
+            for(Building b: observers) {
+                finished = finished && b.notified();
+            }
+            if(finished && timeDiff == Integer.MAX_VALUE) {
+                break;
+            }
+            currentStep += 1;
+        }
+        if(finished && timeDiff == Integer.MAX_VALUE) {
+            quitGame();
+        }
+    }
 
+    private void quitGame() {
+        System.exit(0);
+    }
+
+    public void stepNHandler(int n) {
+        notifyAll(n);
+    }
+
+    public void finishHandler() {
+        notifyAll(Integer.MAX_VALUE);
+    }
 }

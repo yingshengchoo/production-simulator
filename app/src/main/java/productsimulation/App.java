@@ -33,16 +33,21 @@ public class App {
     SourcePolicy soleSourcePolicy = new SoleSourcePolicy();
     ServePolicy oneTimeServePolicy = new OneTimeServePolicy();
     // skip parsing the building
-    Mine woodMine = new Mine("OneWoodMine", woodMineType,
+    Mine woodMine = new Mine("FirstWoodMine", woodMineType,
             new ArrayList<Building>(), soleSourcePolicy, oneTimeServePolicy);
     List<Building> sources = new ArrayList<>();
     sources.add(woodMine);
-    Factory woodSwordFactory = new Factory("OneWoodenSwordFactory", woodSwordType,
+    Factory woodSwordFactory = new Factory("FirstWoodenSwordFactory", woodSwordType,
             sources, soleSourcePolicy, oneTimeServePolicy);
 
     // step 2: get user prompt and print results
     // skip parsing the command
     // skip save/load
+    // todo: new a request, deliver the request
+    LogicTime logicTime = LogicTime.getInstance();
+    logicTime.addObservers(woodMine);
+    logicTime.addObservers(woodSwordFactory);
+
     RequestCommand requestCommand = new RequestCommand();
     requestCommand.execute();
     StepCommand stepCommand = new StepCommand(1);
