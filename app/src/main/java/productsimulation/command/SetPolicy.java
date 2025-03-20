@@ -1,4 +1,4 @@
-package productsimulation;
+package productsimulation.command;
 
 public class SetPolicy extends Command {
 

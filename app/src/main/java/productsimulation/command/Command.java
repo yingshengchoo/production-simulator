@@ -1,4 +1,4 @@
-package productsimulation;
+package productsimulation.command;
 
 public abstract class Command {
   public Command(){

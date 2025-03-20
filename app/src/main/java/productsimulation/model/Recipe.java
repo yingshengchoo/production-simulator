@@ -1,4 +1,4 @@
-package productsimulation;
+package productsimulation.model;
 
 import java.util.Collections;
 import java.util.Map;
@@ -8,9 +8,14 @@ public class Recipe {
   private Map<String, Integer> ingredients;
   private final int latency;
 
-  public Recipe(int latency, Map<String, Integer> ingredients){
+  public Recipe(int latency, Map<String, Integer> ingredients) {
+    this(latency, ingredients, "output_placeholder");
+  }
+
+  public Recipe(int latency, Map<String, Integer> ingredients, String output){
     this.latency = latency;
     this.ingredients = ingredients;
+    this.output = output;
   }
 
   /**
@@ -25,4 +30,6 @@ public class Recipe {
   public int getLatency() {
     return latency;
   }
+
+  public String getOutput() { return output; }
 }

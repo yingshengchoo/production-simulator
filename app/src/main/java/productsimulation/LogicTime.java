@@ -1,5 +1,7 @@
 package productsimulation;
 
+import productsimulation.model.Building;
+
 import java.util.List;
 
 public class LogicTime {

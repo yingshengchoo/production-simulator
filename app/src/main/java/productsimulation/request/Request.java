@@ -1,7 +1,7 @@
 package productsimulation.request;
 
-import productsimulation.Building;
-import productsimulation.Recipe;
+import productsimulation.model.Building;
+import productsimulation.model.Recipe;
 
 import java.util.Map;
 

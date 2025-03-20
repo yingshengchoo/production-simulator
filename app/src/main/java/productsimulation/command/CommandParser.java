@@ -1,4 +1,4 @@
-package productsimulation;
+package productsimulation.command;
 
 import java.io.BufferedReader;
 

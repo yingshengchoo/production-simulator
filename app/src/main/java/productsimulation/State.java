@@ -1,5 +1,7 @@
 package productsimulation;
 
+import productsimulation.model.Building;
+
 import java.io.ByteArrayInputStream;
 import java.io.PrintStream;
 
