@@ -25,4 +25,12 @@ public class LogicTime {
   public void notifyAll(int timeDiff){
   }
 
+  public static void stepNHandler(int n) {
+
+  }
+
+  public static void finishHandler() {
+    stepNHandler(-1);
+  }
+
 }

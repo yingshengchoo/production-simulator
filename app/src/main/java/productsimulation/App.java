@@ -45,7 +45,7 @@ public class App {
     // skip save/load
     RequestCommand requestCommand = new RequestCommand();
     requestCommand.execute();
-    StepCommand stepCommand = new StepCommand();
+    StepCommand stepCommand = new StepCommand(1);
     stepCommand.execute();
     FinishCommand finishCommand = new FinishCommand();
     finishCommand.execute();
