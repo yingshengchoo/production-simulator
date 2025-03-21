@@ -51,5 +51,5 @@ public abstract class Building{
   public void accept(){
   }
 
-  public abstract void getName();
+  public abstract String getName();
 }
