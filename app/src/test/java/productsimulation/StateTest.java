@@ -12,7 +12,7 @@ public class StateTest {
     ArrayList<Building> buildings = new ArrayList<>();
     Building mine = new Mine("G", "Gold", new ArrayList<>(), null, null);
     buildings.add(mine);
-    ArrayList<Buildings> sources = new ArrayList<>();
+    ArrayList<Building> sources = new ArrayList<>();
     sources.add(mine);
     buildings.add(new Factory("GC", "GoldChain", sources, null, null));
 
