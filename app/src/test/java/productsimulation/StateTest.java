@@ -14,7 +14,7 @@ public class StateTest {
     buildings.add(mine);
     ArrayList<Building> sources = new ArrayList<>();
     sources.add(mine);
-    buildings.add(new Factory("GC", "GoldChain", sources, null, null));
+    buildings.add(new Factory("GC", new FactoryType("GoldChain", new ArrayList<>()), sources, null, null));
 
     ArrayList<Recipe> recipes = new ArrayList<>();
     Map<String, Integer> ingredients = new HashMap<>();
