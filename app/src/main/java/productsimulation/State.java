@@ -78,6 +78,8 @@ public class State implements Serializable{
     try (ObjectInputStream in = new ObjectInputStream(new FileInputStream("SavedStates/" + filename + ".ser"))) {
       State loadedState = (State) in.readObject();
       this.buildings = loadedState.buildings;
+      this.recipes = loadedState.recipes;
+      this.types = loadedState.types;
       System.out.println("State loaded from SavedStates/" + filename + ".ser");
     } catch (FileNotFoundException e) {
         System.out.println("Error: The file data " + filename + " does not exist.");
@@ -87,7 +89,7 @@ public class State implements Serializable{
   }
 
   public void visitBuilding(Building b){
-
+    
   }
 
   public void showState(PrintStream o){
