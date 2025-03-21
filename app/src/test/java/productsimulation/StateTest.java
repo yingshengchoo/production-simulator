@@ -30,7 +30,14 @@ public class StateTest {
     state.save(filename);
     State loadState = new State(new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
     loadState.load(filename);
-    assertEquals(state.toString(), loadState.toString());
+
+    ByteArrayOutputStream originalOutput = new ByteArrayOutputStream();
+    ByteArrayOutputStream loadedOutput = new ByteArrayOutputStream();
+
+    state.showState(new PrintStream(originalOutput));
+    loadState.showState(new PrintStream(loadedOutput));
+
+    assertEquals(originalOutput.toString(), loadedOutput.toString());
   }
 
 }

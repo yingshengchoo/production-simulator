@@ -10,7 +10,7 @@ public class MineTest {
   @Test
   public void test_toString(){
     Mine mine = new Mine("GoldMine", "Gold", Collections.emptyList(), null, null);
-    String expected = "Mine\n{name='GoldMine',\n type='Gold',\n sources=[]\n}";
+    String expected = "Mine\n{name='GoldMine',\n mine='Gold',\n sources=[]\n}";
     assertEquals(expected, mine.toString());
   }
 

@@ -16,7 +16,7 @@ public class FactoryTypeTest {
   @Test
   public void test_toString(){
     FactoryType t = new FactoryType("type1", new ArrayList<>());
-    String expected = "Factory Type\n{name='type1',\n sources=[]\n}";
+    String expected = "Factory Type\n{name='type1',\n recipes=[]\n}";
     assertEquals(expected, t.toString());
   }
 }
