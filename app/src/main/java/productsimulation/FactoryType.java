@@ -1,7 +1,7 @@
 package productsimulation;
 
 import java.util.List;
-import Serializable;
+import java.io.Serializable;
 
 public class FactoryType implements Serializable {
   private final String name;
