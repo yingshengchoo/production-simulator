@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.ArrayList;
 import java.io.*;
 import org.junit.jupiter.api.Test;
+import static org.mockito.Mockito.*;
 
 public class StateTest {
   @Test
