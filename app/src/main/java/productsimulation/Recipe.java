@@ -30,14 +30,14 @@ public class Recipe implements Serializable{
 
   @Override
   public String toString(){
-        return "Recipe\n{name='" + name + 
+        return "Recipe\n{output='" + output + 
            "',\n ingredients=" + ingredients.toString() + 
            ",\n latency=" + latency + 
            "\n}";
   }
 
   public String getName(){
-    return name;
+    return output;
   }
   
 }
