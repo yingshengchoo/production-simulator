@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 public class StateTest {
   @Test
   public void test_save_and_load() {
-    ArrayList<Buildings> buildings = new ArrayList<>();
+    ArrayList<Building> buildings = new ArrayList<>();
     Building mine = new Mine("G", "Gold", new ArrayList<>(), null, null);
     buildings.add(mine);
     ArrayList<Buildings> sources = new ArrayList<>();
@@ -23,14 +23,12 @@ public class StateTest {
     recipes.add(eggroll);
     
     ArrayList<FactoryType> types = new ArrayList<>();
-    ArrayList<Recipe> recipes = new ArrayList<>();
-    recipes.add(eggroll);
     types.add(new FactoryType("EggRoll", recipes));
    
     State state = new State(buildings, types, recipes);
     String filename = "testSave";
     state.save(filename);
-    State loadState = new State(new ArrayList<>());
+    State loadState = new State(new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
     loadState.load(filename);
     assertEquals(state.toString(), loadState.toString());
   }

@@ -7,8 +7,9 @@ public class FactoryType implements Serializable {
   private final String name;
   private List<Recipe> recipes;
 
-  public FactoryType(String name){
+  public FactoryType(String name, List<Recipe> recipes){
     this.name = name;
+    this.recipes = recipes;
   }
 
   @Override
