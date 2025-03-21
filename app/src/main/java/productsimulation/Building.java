@@ -50,4 +50,6 @@ public abstract class Building{
 
   public void accept(){
   }
+
+  public abstract void getName();
 }

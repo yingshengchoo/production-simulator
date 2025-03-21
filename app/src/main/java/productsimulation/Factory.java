@@ -17,7 +17,7 @@ public class Factory extends Building implements Serializable {
    * @param servePolicy  is the policy that the building uses to select between requests.
    */
   public Factory(String name, FactoryType type, List<Building> sources, SourcePolicy sourcePolicy, ServePolicy servePolicy){
-    super(name, type, sources, sourcePolicy, servePolicy);
+    super(name, sources, sourcePolicy, servePolicy);
     this.type = type;
   }
 
@@ -47,7 +47,7 @@ public class Factory extends Building implements Serializable {
   @Override
   public String toString() {
     return "Factory\n{name='" + super.name + 
-           "',\n type='" + super.type.getName() + 
+           "',\n type='" + type.getName() + 
            "',\n sources=" + printSources() + 
            // ",\n sourcePolicy=" + super.sourcePolicy.toString() + 
            // "',\n servePolicy=" + super.servePolicy.toString() + "'" + 

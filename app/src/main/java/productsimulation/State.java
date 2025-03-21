@@ -6,10 +6,9 @@ import java.util.List;
 public class State implements Serializable{
   //private ByteArrayInputStream serializationData;
 
-  private List<Buildings> buildings;
-  private List<Recipes> recipes;
-  private List<FactoryType> types;
+  private List<Building> buildings;
   private List<Recipe> recipes;
+  private List<FactoryType> types;
   
   /**
    * Checks to see if the filename is valid(doesn't contain any special characters).
@@ -18,7 +17,7 @@ public class State implements Serializable{
    * @param types         is the list types of Factory in the simulation.
    * @param recipes       is the list of recipes in the simulation.
    */
-  public State(List<Buildings> buildings, List<FactoryType> types, List<Recipe> recipes){
+  public State(List<Building> buildings, List<FactoryType> types, List<Recipe> recipes){
     this.buildings = buildings;
     this.types = types;
     this.recipes = recipes;
@@ -110,7 +109,7 @@ public class State implements Serializable{
 
   public void printRecipes(PrintStream o){
     o.println("Recipes:");
-    for(Recipes r : recipes){
+    for(Recipe r : recipes){
       o.println(r.toString());
     }
   }
