@@ -6,8 +6,9 @@ import productsimulation.request.ServePolicy;
 import java.util.Queue;
 import java.util.Map;
 import java.util.List;
+import java.io.Serializable;
 
-public abstract class Building{
+public abstract class Building implements Serializable{
   protected final String name;
   protected Queue<Request> requestQueue;
   protected Map<String, Integer> storage;
