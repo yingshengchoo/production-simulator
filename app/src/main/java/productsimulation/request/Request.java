@@ -1,5 +1,7 @@
 package productsimulation.request;
 
+import productsimulation.Log;
+import productsimulation.LogicTime;
 import productsimulation.model.Building;
 import productsimulation.model.Recipe;
 
@@ -18,6 +20,7 @@ public class Request {
   private final String ingredient;
   private final Recipe recipe;
   private final Building requester;
+  private int remainTime;
   private RequestStatus status;
 
   public Request(String ingredient, Recipe recipe, Building requester) {
@@ -25,8 +28,8 @@ public class Request {
     this.ingredient = ingredient;
     this.recipe = recipe;
     this.requester = requester;
+    this.remainTime = recipe.getLatency();
     this.status = RequestStatus.WAITING;
-
   }
 
   public int getId() {
@@ -57,6 +60,12 @@ public class Request {
       status = RequestStatus.READY;
   }
 
+  public void readyToWorking() {
+    if (status == RequestStatus.READY) {
+      status = RequestStatus.WORKING;
+    }
+  }
+
   public RequestStatus getStatus() {
     return status;
   }
@@ -64,4 +73,15 @@ public class Request {
   public int getLatency() {
     return recipe.getLatency();
   }
+  public int getRemainTime() { return remainTime; }
+  public void remainTimeMinusOne() { remainTime -= 1; }
+  public void doneReportAndTransport() {
+    if(requester != null) {
+      requester.updateStorage(ingredient);
+    } else {
+      Log.debugLog("user request is done: " + ingredient + " at " + LogicTime.getInstance().getStep());
+    }
+  }
+
+  public String getIngredient() { return ingredient; }
 }

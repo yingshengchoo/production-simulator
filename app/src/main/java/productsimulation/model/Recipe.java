@@ -5,6 +5,7 @@ import java.util.Map;
 
 public class Recipe {
   private String output;
+  // ingredients应当为LinkedHashMap，或者其它能保留顺序的map。ingredients顺序会影响request传播顺序。
   private Map<String, Integer> ingredients;
   private final int latency;
 

@@ -1,20 +1,22 @@
 package productsimulation.model;
 
+import productsimulation.Log;
+import productsimulation.LogicTime;
+import productsimulation.RequestBroadcaster;
 import productsimulation.request.Request;
+import productsimulation.request.RequestStatus;
 import productsimulation.request.ServePolicy;
 import productsimulation.sourcePolicy.SourcePolicy;
 
-import java.util.Queue;
-import java.util.Map;
-import java.util.List;
+import java.util.*;
 
 public abstract class Building {
     protected final String name;
     protected FactoryType type;
-    protected Queue<Request> requestQueue;
+    protected Request currentRequest;
+    protected List<Request> requestQueue;
     protected Map<String, Integer> storage;
     protected List<Building> sources;
-    //protected Logger logger;
     protected SourcePolicy sourcePolicy;
     protected ServePolicy servePolicy;
 
@@ -33,19 +35,67 @@ public abstract class Building {
         this.sources = sources;
         this.sourcePolicy = sourcePolicy;
         this.servePolicy = servePolicy;
+
+        requestQueue = new ArrayList<>();
+        storage = new HashMap<>();
     }
 
-    public void addRequest() {
-
+    // 按recipe顺序dfs传播request
+    public void addRequest(Request request) {
+        Log.debugLog("adding request: " + request.getIngredient() + " to " + name);
+        requestQueue.add(request);
+        Recipe recipe = type.getRecipeByProductName(request.getIngredient());
+        Map<String, Integer> ingredients = recipe.getIngredients();
+        for(String ingredient: ingredients.keySet()) {
+            int num = ingredients.get(ingredient);
+            for(int i = 0; i < num; i++) {
+                // todo sourcePolicy.getSource() 除了备选列表，还要有品名
+                Building chosenSource = sourcePolicy.getSource(sources);
+                Request req = new Request(ingredient, recipe,this);
+                chosenSource.addRequest(req);
+            }
+        }
     }
 
-    // return true: it's finished, no updates, idle.
-    // return false: still have something to do.
+    // return: still have/no request for this building now.
     private boolean goOneStep() {
-        return true;
+        if(currentRequest == null) {
+            if(!requestQueue.isEmpty()) {
+                Request request = servePolicy.getRequest(requestQueue);
+                // 如果request原料齐备，可以开工
+                // 如果goOneStep导致一个request正好完成，那需要相应更新request队列
+                request.updateStatus(storage);
+                if(request.getStatus() == RequestStatus.READY) {
+                    request.readyToWorking();
+                }
+                currentRequest = request;
+            } else {
+                Log.debugLog("no request here: " + name);
+                return true;
+            }
+        }
+
+        // 实际工作用remainTimeMinusOne模拟
+        Log.debugLog("processing request: " +
+                currentRequest.getIngredient() + ", " + currentRequest.getRemainTime());
+        currentRequest.remainTimeMinusOne();
+        return false;
     }
 
-    public void updateBroadcast() {
+    private void update() {
+        if(currentRequest != null && currentRequest.getRemainTime() == 0) {
+            Log.debugLog("request done: " +
+                    currentRequest.getIngredient() +
+                    " at time " + LogicTime.getInstance().getStep() +
+                    " at place " + name);
+            currentRequest.doneReportAndTransport();
+            requestQueue.remove(currentRequest);
+            currentRequest = null;
+        }
+    }
+
+    public void updateStorage(String itemName) {
+        storage.put(itemName, storage.getOrDefault(itemName, 0) + 1);
     }
 
     public void changePolicy() {
@@ -55,6 +105,14 @@ public abstract class Building {
         return goOneStep();
     }
 
+    public void updateNotified() {
+        update();
+    }
+
     public void accept() {
+    }
+
+    public String getName() {
+        return name;
     }
 }
