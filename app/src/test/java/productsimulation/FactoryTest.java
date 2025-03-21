@@ -17,7 +17,7 @@ public class FactoryTest {
     String expected = "Factory\n{name='PaperInc',\n type='PaperFactory',\n sources=[DoorInc, DiamondMine]\n}";
     assertEquals(expected, f.toString());
 
-    asssertEquals("PaperInc", f.getName());
+    assertEquals("PaperInc", f.getName());
   }
 
 }

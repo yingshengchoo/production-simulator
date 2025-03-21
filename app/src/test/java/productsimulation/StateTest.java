@@ -4,8 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ArrayList;
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
+import java.io.*;
 import org.junit.jupiter.api.Test;
 
 public class StateTest {
@@ -47,31 +46,34 @@ public class StateTest {
     State state = new State(new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
     assertTrue(state.checkFilename("normalfilename"));
     assertFalse(state.checkFilename("illegal:name"));
-    assertFalse(fileHandler.checkFilename(null));
-    assertFalse(fileHandler.checkFilename(""));
+    assertFalse(state.checkFilename(null));
+    assertFalse(state.checkFilename(""));
   }
 
   @Test
   public void testSave_InvalidFilename() {
     State state = new State(new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
-    assertThrows(IllegalArgumentException.class, () -> fileHandler.save("invalid/file"));
+    assertThrows(IllegalArgumentException.class, () -> state.save("invalid/file"));
   }
 
   @Test
   public void test_IOException_for_load_and_save(){
+    State state = new State(new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
     FileOutputStream fileOutputStreamMock = mock(FileOutputStream.class);
     when(fileOutputStreamMock.write(any(byte[].class))).thenThrow(new IOException("Simulated IO Exception"));
   }
 
   @Test
   public void test_load_exceptions(){
+     State state = new State(new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
+  
      ObjectInputStream inputStreamMock = mock(ObjectInputStream.class);
      when(inputStreamMock.readObject()).thenThrow(new IOException("Simulated IO Exception"));
         
      ByteArrayOutputStream errContent = new ByteArrayOutputStream();
      System.setErr(new PrintStream(errContent));
         
-     fileHandler.load("invalid_file");
+     state.load("invalid_file");
        
      System.setErr(System.err);
      assertTrue(errContent.toString().contains("java.io.IOException"));
