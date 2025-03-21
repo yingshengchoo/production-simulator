@@ -82,7 +82,7 @@ public class State implements Serializable{
     }
   }
 
-  public void visitBuilding(Building b){
+  public void visitBuilding(){
     BuildingUpdateVisitor visitor = new BuildingUpdateVisitor();
     for (Building b : buildings) {
       b.accept(visitor); 
