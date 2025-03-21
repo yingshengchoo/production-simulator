@@ -2,6 +2,8 @@ package productsimulation;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.Collections;
+import java.util.ArrayList;
 import org.junit.jupiter.api.Test;
 
 public class MineTest {

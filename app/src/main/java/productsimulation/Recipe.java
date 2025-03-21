@@ -5,12 +5,12 @@ import java.io.Serializable;
 import java.util.Map;
 
 public class Recipe implements Serializable{
-  private String name;
+  private String output;
   private Map<String, Integer> ingredients;
   private final int latency;
 
-  public Recipe(String name, int latency, Map<String, Integer> ingredients){
-    this.name = name;
+  public Recipe(String output, int latency, Map<String, Integer> ingredients){
+    this.output = output;
     this.latency = latency;
     this.ingredients = ingredients;
   }
