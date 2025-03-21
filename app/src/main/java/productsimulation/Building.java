@@ -53,4 +53,6 @@ public abstract class Building implements Serializable{
   }
 
   public abstract String getName();
+  
+  public abstract void accept(BuildingVisitor visitor);
 }

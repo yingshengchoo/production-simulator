@@ -9,9 +9,15 @@ import org.junit.jupiter.api.Test;
 public class FactoryTest {
   @Test
   public void test_toString(){
-    Factory f = new Factory("PaperInc", new FactoryType("PaperFactory", new ArrayList<>()), Collections.emptyList(), null, null);
-    String expected = "Factory\n{name='PaperInc',\n type='PaperFactory',\n sources=[]\n}";
+    ArrayList<Building> sources = new ArrayList<>();
+    sources.add(new Factory("DoorInc", new FactoryType("Door", new ArrayList<>()), Collections.emptyList(), null, null));
+    sources.add(new Mine("DiamondMine", "Diamond", Collections.emptyList(), null, null));
+
+    Factory f = new Factory("PaperInc", new FactoryType("PaperFactory", new ArrayList<>()), sources, null, null);
+    String expected = "Factory\n{name='PaperInc',\n type='PaperFactory',\n sources=[DoorInc, DiamondMine]\n}";
     assertEquals(expected, f.toString());
+
+    asssertEquals("PaperInc", f.getName());
   }
 
 }

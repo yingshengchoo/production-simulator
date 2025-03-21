@@ -52,17 +52,11 @@ public class State implements Serializable{
   public void save(String filename){
 
     if(!checkFilename(filename)){
-      System.out.println("Invalid File Name");
-      return;
-    }
-
-    File directory = new File("SavedStates");
-    if (!directory.exists()) {
-      directory.mkdir();  // Create directory if it doesn't exist
+      throw new IllegalArgumentException("Invalid Filename. Filename must not contain any special characters");
     }
     
     try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("SavedStates/" + filename + ".ser"))) {
-      out.writeObject(this); // Serialize the entire state
+      out.writeObject(this);
       System.out.println("State saved to SavedStates/" + filename + ".ser");
     } catch (IOException e) {
       e.printStackTrace();
@@ -89,9 +83,17 @@ public class State implements Serializable{
   }
 
   public void visitBuilding(Building b){
-    
+    BuildingUpdateVisitor visitor = new BuildingUpdateVisitor();
+    for (Building b : buildings) {
+      b.accept(visitor); 
+    }
   }
 
+  /**
+   * Displays the current state of the simulation
+   *
+   * @param o is the PrintStream to print the current state.
+   */
   public void showState(PrintStream o){
     o.println("Current State Information:\n");
     printRecipes(o);
@@ -99,14 +101,24 @@ public class State implements Serializable{
     printBuildings(o);
     
   }
-
+  
+  /**
+   * Displays the current buildings in the current state of the simulation
+   *
+   * @param o is the PrintStream to print the current state.
+   */
   public void printBuildings(PrintStream o){
     o.println("Buildings:");
     for(Building b: buildings){
       o.println(b.toString());
     }
   }
-
+  
+  /**
+   * Displays the current Factory Types in the current state of the simulation
+   *
+   * @param o     is the PrintStream to print the current state.
+   */
   public void printTypes(PrintStream o){
     o.println("Factory Types:");
     for(FactoryType t : types){
@@ -114,6 +126,11 @@ public class State implements Serializable{
     }
   }
 
+  /**
+   * Displays the current Recipes in the current state of the simulation
+   *
+   * @param o is the PrintStream to print the current state.
+   */
   public void printRecipes(PrintStream o){
     o.println("Recipes:");
     for(Recipe r : recipes){

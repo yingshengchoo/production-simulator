@@ -42,4 +42,39 @@ public class StateTest {
     assertEquals(originalOutput.toString(), loadedOutput.toString());
   }
 
+  @Test
+  public void test_checkFilename(){
+    State state = new State(new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
+    assertTrue(state.checkFilename("normalfilename"));
+    assertFalse(state.checkFilename("illegal:name"));
+    assertFalse(fileHandler.checkFilename(null));
+    assertFalse(fileHandler.checkFilename(""));
+  }
+
+  @Test
+  public void testSave_InvalidFilename() {
+    State state = new State(new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
+    assertThrows(IllegalArgumentException.class, () -> fileHandler.save("invalid/file"));
+  }
+
+  @Test
+  public void test_IOException_for_load_and_save(){
+    FileOutputStream fileOutputStreamMock = mock(FileOutputStream.class);
+    when(fileOutputStreamMock.write(any(byte[].class))).thenThrow(new IOException("Simulated IO Exception"));
+  }
+
+  @Test
+  public void test_load_exceptions(){
+     ObjectInputStream inputStreamMock = mock(ObjectInputStream.class);
+     when(inputStreamMock.readObject()).thenThrow(new IOException("Simulated IO Exception"));
+        
+     ByteArrayOutputStream errContent = new ByteArrayOutputStream();
+     System.setErr(new PrintStream(errContent));
+        
+     fileHandler.load("invalid_file");
+       
+     System.setErr(System.err);
+     assertTrue(errContent.toString().contains("java.io.IOException"));
+  }
+    
 }
