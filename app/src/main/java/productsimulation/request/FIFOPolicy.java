@@ -1,11 +1,11 @@
 package productsimulation.request;
 
 import java.util.List;
-
+import java.io.Serializable;
 /**
  *
  */
-public class FIFOPolicy implements ServePolicy {
+public class FIFOPolicy implements ServePolicy, Serializable {
     /**
      * Selects and returns the request with the smallest ID from the given list of requests.
      * If the list is empty, returns null.

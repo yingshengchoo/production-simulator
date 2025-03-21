@@ -1,14 +1,16 @@
 package productsimulation;
 
 import java.util.Collections;
+import java.io.Serializable;
 import java.util.Map;
 
-public class Recipe {
-  private String output;
+public class Recipe implements Serializable{
+  private String name;
   private Map<String, Integer> ingredients;
   private final int latency;
 
-  public Recipe(int latency, Map<String, Integer> ingredients){
+  public Recipe(String name, int latency, Map<String, Integer> ingredients){
+    this.name = name;
     this.latency = latency;
     this.ingredients = ingredients;
   }
@@ -25,4 +27,17 @@ public class Recipe {
   public int getLatency() {
     return latency;
   }
+
+  @Override
+  public String toString(){
+        return "Recipe\n{name='" + name + 
+           "',\n ingredients=" + ingredients.toString() + 
+           ",\n latency=" + latency + 
+           "\n}";
+  }
+
+  public String getName(){
+    return name;
+  }
+  
 }

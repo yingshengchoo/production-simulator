@@ -1,6 +1,8 @@
 package productsimulation.request;
 
-public class RequestStatus {
+import java.io.Serializable;
+
+public class RequestStatus implements Serializable {
     public static final RequestStatus WAITING = new RequestStatus("WAITING");
     public static final RequestStatus READY = new RequestStatus("READY");
     public static final RequestStatus WORKING = new RequestStatus("WORKING");

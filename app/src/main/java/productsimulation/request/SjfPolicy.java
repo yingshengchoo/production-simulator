@@ -1,8 +1,10 @@
 package productsimulation.request;
 
 import java.util.List;
+import java.io.Serializable;
 
-public class SjfPolicy implements ServePolicy {
+
+public class SjfPolicy implements ServePolicy, Serializable {
 
     /**
      * Selects and returns the request with the smallest latency from the given list of requests.

@@ -7,9 +7,8 @@ import java.util.Queue;
 import java.util.Map;
 import java.util.List;
 
-public abstract class Building {
+public abstract class Building{
   protected final String name;
-  protected FactoryType type;
   protected Queue<Request> requestQueue;
   protected Map<String, Integer> storage;
   protected List<Building> sources;
@@ -26,9 +25,8 @@ public abstract class Building {
    * @param sourcePolicy is the policy that the building uses to select between sources.
    * @param servePolicy  is the policy that the building uses to select between requests.
    */
-  public Building(String name, FactoryType type, List<Building> sources, SourcePolicy sourcePolicy, ServePolicy servePolicy){
+  public Building(String name, List<Building> sources, SourcePolicy sourcePolicy, ServePolicy servePolicy){
     this.name = name;
-    this.type = type;
     this.sources = sources;
     this.sourcePolicy = sourcePolicy;
     this.servePolicy = servePolicy;
