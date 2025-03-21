@@ -9,6 +9,7 @@
 plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     id 'application'
+    id 'com.bmuschko.clover' version '3.0.7'
 }
 
 repositories {
@@ -27,7 +28,7 @@ dependencies {
 
 application {
     // Define the main class for the application.
-    mainClass = 'productionsimulation.App'
+    mainClass = 'productsimulation.App'
 }
 
 tasks.named('test') {
