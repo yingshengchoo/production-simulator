@@ -16,7 +16,7 @@ public class RecipeTest {
   @Test
   public void test_toString(){
     Recipe r = new Recipe("hotpot", 1, Collections.emptyMap()); 
-    String expected = "Recipe\n{name='output',\n ingredients={},\n latency=1\n}";
+    String expected = "Recipe\n{output='hotpot',\n ingredients={},\n latency=1\n}";
     assertEquals(expected, r.toString());
   }
 }

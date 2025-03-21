@@ -55,6 +55,11 @@ public class State implements Serializable{
       System.out.println("Invalid File Name");
       return;
     }
+
+    File directory = new File("SavedStates");
+    if (!directory.exists()) {
+      directory.mkdir();  // Create directory if it doesn't exist
+    }
     
     try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("SavedStates/" + filename + ".ser"))) {
       out.writeObject(this); // Serialize the entire state
