@@ -3,12 +3,14 @@ package productsimulation;
 import productsimulation.model.Building;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class LogicTime {
     private static final LogicTime instance = new LogicTime();
     private int currentStep;
-    private List<Building> observers;
+    private final Set<Building> observers;
 
 
     /**
@@ -16,7 +18,7 @@ public class LogicTime {
      */
     private LogicTime() {
         this.currentStep = 0;
-        this.observers = new ArrayList<>();
+        this.observers = new HashSet<>();
     }
 
     /**
@@ -46,6 +48,7 @@ public class LogicTime {
     public void notifyAll(int timeDiff) {
         boolean finished = true;
         for(int i = 0; i < timeDiff; i++) {
+            // 新一步
             for(Building b: observers) {
                 finished = finished && b.notified();
             }
@@ -53,6 +56,9 @@ public class LogicTime {
                 break;
             }
             currentStep += 1;
+            for(Building b: observers) {
+                b.updateNotified();
+            }
         }
         if(finished && timeDiff == Integer.MAX_VALUE) {
             quitGame();

@@ -10,9 +10,7 @@ import productsimulation.request.servePolicy.ServePolicy;
 import productsimulation.request.sourcePolicy.SoleSourcePolicy;
 import productsimulation.request.sourcePolicy.SourcePolicy;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -32,8 +30,8 @@ class LogicTimeTest {
         LogicTime t = LogicTime.getInstance();
 
         Recipe woodMineRecipe = new Recipe(1, new HashMap<String, Integer>(),"wood");
-        List<Recipe> woodMineRecipes = new ArrayList<>();
-        woodMineRecipes.add(woodMineRecipe);
+        Map<String, Recipe> woodMineRecipes = new HashMap<>();
+        woodMineRecipes.put("wood", woodMineRecipe);
         FactoryType woodMineType = new FactoryType("wood_mine", woodMineRecipes);
         SourcePolicy soleSourcePolicy = new SoleSourcePolicy();
         ServePolicy oneTimeServePolicy = new OneTimeServePolicy();
