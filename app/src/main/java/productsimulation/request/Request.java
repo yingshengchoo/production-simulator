@@ -6,8 +6,10 @@ import productsimulation.model.Building;
 import productsimulation.model.Recipe;
 import productsimulation.request.sourcePolicy.SourcePolicy;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Request {
 
@@ -46,7 +48,7 @@ public class Request {
    */
   public static Request BuildRequest(String item, SourcePolicy sourcePolicy,
                                      Map<String, Building> buildingMap, Map<String, Recipe> recipeMap ) {
-    Building building = sourcePolicy.getSource(buildingMap.values().stream().toList());
+    Building building = sourcePolicy.getSource(new ArrayList<>(buildingMap.values()));
     if (building == null) {
       throw new IllegalArgumentException("ERROR: 0 Building in list!");
     }
