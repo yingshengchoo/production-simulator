@@ -9,7 +9,7 @@ import java.util.HashMap;
 import productsimulation.model.*;
 import org.junit.jupiter.api.Test;
 
-public class FactoryTypeTest {
+public FactoryTypeTest {
   @Test
   public void test_getName() {
     FactoryType t = new FactoryType("type1", Collections.emptyMap());

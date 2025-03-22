@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.*;
 import org.junit.jupiter.api.Test;
 
-public class RecipeTest {
+public RecipeTest {
   @Test
   public void test_getters() {
     Recipe r = new Recipe(1, Collections.emptyMap(), "hotpot"); 

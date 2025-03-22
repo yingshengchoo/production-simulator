@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.ArrayList;
 import org.junit.jupiter.api.Test;
 
-public class FactoryTest {
+public FactoryTest {
   @Test
   public void test_toString(){
     ArrayList<Building> sources = new ArrayList<>();
