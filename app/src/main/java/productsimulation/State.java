@@ -58,7 +58,7 @@ public class State implements Serializable{
     try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("SavedStates/" + filename + ".ser"))) {
       out.writeObject(this);
       System.out.println("State saved to SavedStates/" + filename + ".ser");
-    } catch (IOException e) {
+    } catch (Exception e) {
       e.printStackTrace();
     }
   }
@@ -75,8 +75,9 @@ public class State implements Serializable{
       this.recipes = loadedState.recipes;
       this.types = loadedState.types;
       System.out.println("State loaded from SavedStates/" + filename + ".ser");
-    } catch (FileNotFoundException e) {
-      throw new IllegalArgumentException("Invalid Filename. File does not exist.");
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Invalid Filename. File does not exist or is Invalid.");
+
     } catch (Exception e) {
       throw new IllegalArgumentException("An error has occured when loading file.");
     }
