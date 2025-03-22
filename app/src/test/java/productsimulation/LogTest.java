@@ -19,11 +19,8 @@ public class LogTest {
     public void logTestHelper(String expected) {
         Path filePath = Paths.get("src/test/resources/test.log");
         try {
-            // 清空文件内容
             if (!Files.exists(filePath)) {
-                // 创建父目录（如果不存在）
                 Files.createDirectories(filePath.getParent());
-                // 创建文件
                 Files.createFile(filePath);
             }
             Files.write(filePath, "".getBytes(StandardCharsets.UTF_8));

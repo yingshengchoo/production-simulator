@@ -4,14 +4,13 @@ import productsimulation.command.RequestCommand;
 import productsimulation.command.StepCommand;
 import productsimulation.model.*;
 import productsimulation.request.OneTimeServePolicy;
-import productsimulation.request.ServePolicy;
-import productsimulation.sourcePolicy.SoleSourcePolicy;
-import productsimulation.sourcePolicy.SourcePolicy;
+import productsimulation.request.servePolicy.*;
+import productsimulation.request.sourcePolicy.SoleSourcePolicy;
+import productsimulation.request.sourcePolicy.SourcePolicy;
 
 import java.util.*;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 
 class AppTest {
     @Test
