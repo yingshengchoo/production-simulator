@@ -1,7 +1,7 @@
 package productsimulation.model;
 
 import static org.junit.jupiter.api.Assertions.*;
-import productsimulation.model.*;
+import productsimulation.model.Building;
 import java.util.Collections;
 import java.util.ArrayList;
 import org.junit.jupiter.api.Test;
