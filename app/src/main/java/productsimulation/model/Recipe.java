@@ -1,12 +1,22 @@
 package productsimulation.model;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 public class Recipe {
   private String output;
   private Map<String, Integer> ingredients;
   private final int latency;
+
+  public static Recipe getRecipe(String item, List<Recipe> recipeList) {
+    for (Recipe recipe : recipeList) {
+      if (recipe.output.equals(item)) {
+        return recipe;
+      }
+    }
+    return null;
+  }
 
   public Recipe(int latency, Map<String, Integer> ingredients) {
     this(latency, ingredients, "output_placeholder");

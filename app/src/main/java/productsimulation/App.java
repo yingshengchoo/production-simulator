@@ -3,9 +3,9 @@ package productsimulation;
 import productsimulation.command.*;
 import productsimulation.model.*;
 import productsimulation.request.OneTimeServePolicy;
-import productsimulation.request.ServePolicy;
-import productsimulation.sourcePolicy.SoleSourcePolicy;
-import productsimulation.sourcePolicy.SourcePolicy;
+import productsimulation.request.servePolicy.ServePolicy;
+import productsimulation.request.sourcePolicy.SoleSourcePolicy;
+import productsimulation.request.sourcePolicy.SourcePolicy;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,6 +44,7 @@ public class App {
     // skip parsing the command
     // skip save/load
     // todo: new a request, deliver the request
+    // todo: use RequestBuilder to build request
     LogicTime logicTime = LogicTime.getInstance();
     logicTime.addObservers(woodMine);
     logicTime.addObservers(woodSwordFactory);

@@ -1,6 +1,8 @@
 package productsimulation.request;
 
 import org.junit.jupiter.api.Test;
+import productsimulation.request.servePolicy.SjfPolicy;
+
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;

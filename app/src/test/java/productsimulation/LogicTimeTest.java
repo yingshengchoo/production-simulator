@@ -6,9 +6,9 @@ import productsimulation.model.FactoryType;
 import productsimulation.model.Mine;
 import productsimulation.model.Recipe;
 import productsimulation.request.OneTimeServePolicy;
-import productsimulation.request.ServePolicy;
-import productsimulation.sourcePolicy.SoleSourcePolicy;
-import productsimulation.sourcePolicy.SourcePolicy;
+import productsimulation.request.servePolicy.ServePolicy;
+import productsimulation.request.sourcePolicy.SoleSourcePolicy;
+import productsimulation.request.sourcePolicy.SourcePolicy;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -1,8 +1,8 @@
 package productsimulation.model;
 
 import productsimulation.request.Request;
-import productsimulation.request.ServePolicy;
-import productsimulation.sourcePolicy.SourcePolicy;
+import productsimulation.request.servePolicy.ServePolicy;
+import productsimulation.request.sourcePolicy.SourcePolicy;
 
 import java.util.Queue;
 import java.util.Map;
@@ -35,8 +35,12 @@ public abstract class Building {
         this.servePolicy = servePolicy;
     }
 
-    public void addRequest() {
+    public void addRequest(Request request) {
 
+    }
+
+    public int getRequestCount() {
+        return requestQueue.size();
     }
 
     // return true: it's finished, no updates, idle.

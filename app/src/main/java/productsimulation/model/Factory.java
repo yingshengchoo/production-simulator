@@ -1,7 +1,7 @@
 package productsimulation.model;
 
-import productsimulation.request.ServePolicy;
-import productsimulation.sourcePolicy.SourcePolicy;
+import productsimulation.request.servePolicy.ServePolicy;
+import productsimulation.request.sourcePolicy.SourcePolicy;
 
 import java.util.List;
 

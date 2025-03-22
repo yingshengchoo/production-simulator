@@ -1,4 +1,7 @@
-package productsimulation.request;
+package productsimulation.request.servePolicy;
+
+import productsimulation.request.Request;
+import productsimulation.request.RequestStatus;
 
 import java.util.List;
 
