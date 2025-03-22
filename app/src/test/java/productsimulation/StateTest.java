@@ -1,4 +1,4 @@
-package productsimulation;
+package productsimulation.Building;
 
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.HashMap;

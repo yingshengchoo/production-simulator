@@ -1,0 +1,38 @@
+{
+  "types" : [
+    {
+      "name" : "sword_factory",
+      "recipes" : [
+        "wooden_sword"
+      ]
+    }
+  ],
+  "buildings" : [
+    {
+      "name" : "FirstWoodenSwordFactory",
+      "type" : "sword_factory",
+      "sources" : [
+        "OneWoodMine"
+      ]
+    },
+    {
+      "name" : "FirstWoodMine",
+      "mine" : "wood",
+      "sources" : []
+    }
+  ],
+  "recipes" : [
+    {
+      "output" : "wooden_sword",
+      "ingredients" : {
+        "wood" : 2
+      },
+      "latency" : 1
+    },
+    {
+      "output" : "wood",
+      "ingredients" : {},
+      "latency" : 1
+    }
+  ]
+}
