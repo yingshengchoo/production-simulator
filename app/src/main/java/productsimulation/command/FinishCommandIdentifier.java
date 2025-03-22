@@ -1,13 +1,13 @@
 package productsimulation.command;
 
-public class FinishCommandChecker extends CommandRuleChecker {
+public class FinishCommandIdentifier extends CommandIdentifier {
 
-    public FinishCommandChecker(CommandRuleChecker next) {
+    public FinishCommandIdentifier(CommandIdentifier next) {
         super(next);
     }
 
     @Override
-    protected Command checkMyRule(String line) {
+    protected Command checkFits(String line) {
         if ("finish".equals(line.trim())) {
             return new FinishCommand();
         }

@@ -13,4 +13,8 @@ public class VerboseCommand extends Command {
     public void execute() {
         Log.setLogLevel(verboseLevel);
     }
+
+    public int getLevel() {
+        return verboseLevel;
+    }
 }
