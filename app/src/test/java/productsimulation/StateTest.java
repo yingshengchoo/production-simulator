@@ -68,6 +68,22 @@ public class StateTest {
   }
 
   @Test
+  public void test_saveException(){
+    State state = new State(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+    FileOutputStream mockFileOutputStream = mock(FileOutputStream.class);
+    doThrow(new IOException("Forced Exception")).when(mockFileOutputStream).write(any());
+    ByteArrayOutputStream errContent = new ByteArrayOutputStream();
+    System.setErr(new PrintStream(errContent));
+    try {
+      state.save("testSave");
+    } catch (Exception ignored) {
+    }
+
+    System.setErr(System.err);
+    assertTrue(errContent.toString().contains("java.io.IOException: Forced Exception"));
+  }
+  
+  @Test
     void testSavePrintsStackTraceOnIOException() throws IOException {
         State state = new State(new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
 

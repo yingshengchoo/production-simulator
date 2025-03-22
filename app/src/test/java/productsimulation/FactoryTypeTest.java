@@ -21,5 +21,9 @@ public class FactoryTypeTest {
     FactoryType t = new FactoryType("type1", recipes);
     String expected = "Factory Type\n{name='type1',\n recipes=[out1, out2]\n}";
     assertEquals(expected, t.toString());
+
+    FactoryType t2 = new FactoryType("type2", Collections.emptyList());
+    String expected2 = "Factory Type\n{name='type2',\n recipes=[]\n}";
+    assertEquals(expected2, t2.toString());
   }
 }
