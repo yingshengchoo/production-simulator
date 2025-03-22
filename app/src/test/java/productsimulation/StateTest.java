@@ -8,6 +8,8 @@ import java.io.*;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedConstruction;
 import static org.mockito.Mockito.mockConstruction;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.any;
 
 public class StateTest {
   @Test
