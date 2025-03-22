@@ -6,7 +6,6 @@ import java.io.Serializable;
 import java.util.List;
 
 public class Mine extends Building implements Serializable {
-  String mine;
   /**
    * Constructs a Mine with the specified name, type, sources, and policies.
    *
@@ -16,9 +15,8 @@ public class Mine extends Building implements Serializable {
    * @param sourcePolicy is the policy that the building uses to select between sources.
    * @param servePolicy  is the policy that the building uses to select between requests.
    */
-  public Mine(String name, String mine, List<Building> sources, SourcePolicy sourcePolicy, ServePolicy servePolicy){
-    super(name, sources, sourcePolicy, servePolicy);
-    this.mine = mine;
+  public Mine(String name, FactoryType type, List<Building> sources, SourcePolicy sourcePolicy, ServePolicy servePolicy){
+    super(name, type, sources, sourcePolicy, servePolicy);
   }
 
   //A helper function that returns a string representation of the sources.
@@ -43,7 +41,7 @@ public class Mine extends Building implements Serializable {
   @Override
   public String toString() {
     return "Mine\n{name='" + super.name + 
-           "',\n mine='" + mine + 
+      "',\n mine='" + super.type.getName() + 
            "',\n sources=" + printSources() + 
            // ",\n sourcePolicy=" + super.sourcePolicy.toString() + 
            // ",\n servePolicy=" + super.servePolicy.toString() + "'" + 

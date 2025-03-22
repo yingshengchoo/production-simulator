@@ -7,7 +7,6 @@ import java.util.List;
 
 public class Factory extends Building implements Serializable {
   
-  protected FactoryType type;
   /**
    * Constructs a Factory with the specified name, type, sources, and policies.
    *
@@ -18,8 +17,7 @@ public class Factory extends Building implements Serializable {
    * @param servePolicy  is the policy that the building uses to select between requests.
    */
   public Factory(String name, FactoryType type, List<Building> sources, SourcePolicy sourcePolicy, ServePolicy servePolicy){
-    super(name, sources, sourcePolicy, servePolicy);
-    this.type = type;
+    super(name, type, sources, sourcePolicy, servePolicy);
   }
 
   public String getName(){
@@ -48,7 +46,7 @@ public class Factory extends Building implements Serializable {
   @Override
   public String toString() {
     return "Factory\n{name='" + super.name + 
-           "',\n type='" + type.getName() + 
+           "',\n type='" + super.type.getName() + 
            "',\n sources=" + printSources() + 
            // ",\n sourcePolicy=" + super.sourcePolicy.toString() + 
            // "',\n servePolicy=" + super.servePolicy.toString() + "'" + 

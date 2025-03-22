@@ -11,6 +11,7 @@ import java.util.*;
 
 public abstract class Building {
     protected final String name;
+    protected FactoryType type;
     protected Request currentRequest;
     protected List<Request> requestQueue;
     protected Map<String, Integer> storage;
@@ -27,8 +28,9 @@ public abstract class Building {
      * @param sourcePolicy is the policy that the building uses to select between sources.
      * @param servePolicy  is the policy that the building uses to select between requests.
      */
-    public Building(String name, List<Building> sources, SourcePolicy sourcePolicy, ServePolicy servePolicy) {
+    public Building(String name, FactoryType type, List<Building> sources, SourcePolicy sourcePolicy, ServePolicy servePolicy) {
         this.name = name;
+        this.type = type;
         this.sources = sources;
         this.sourcePolicy = sourcePolicy;
         this.servePolicy = servePolicy;
@@ -112,7 +114,7 @@ public abstract class Building {
         update();
     }
 
-    public void accept(BuildingVisitor visitor) {
+    public void accept() {
     }
 
     public String getName() {
