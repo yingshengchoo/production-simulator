@@ -72,7 +72,7 @@ public class StateTest {
   }
 
   @Test
-  public void test_load_exceptions(){
+  public void test_load_exceptions() throws IOException{
      State state = new State(new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
   
      assertThrows(IllegalArgumentException.class, () ->state.load("non_existent_file"));
