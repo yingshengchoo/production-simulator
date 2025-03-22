@@ -17,15 +17,15 @@ public class Request {
 
 
   public int id;
-  private final String item;
+  private final String ingredient;
   private final Recipe recipe;
   private final Building requester;
   private int remainTime;
   private RequestStatus status;
 
-  public Request(String item, Recipe recipe, Building requester) {
+  public Request(String ingredient, Recipe recipe, Building requester) {
     this.id = idGenerator.nextId();
-    this.item = item;
+    this.ingredient = ingredient;
     this.recipe = recipe;
     this.requester = requester;
     this.remainTime = recipe.getLatency();

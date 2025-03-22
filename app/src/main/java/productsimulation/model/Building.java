@@ -2,7 +2,6 @@ package productsimulation.model;
 
 import productsimulation.Log;
 import productsimulation.LogicTime;
-import productsimulation.RequestBroadcaster;
 import productsimulation.request.Request;
 import productsimulation.request.RequestStatus;
 import productsimulation.request.servePolicy.ServePolicy;
@@ -56,6 +55,8 @@ public abstract class Building {
             }
         }
     }
+
+
 
     public int getRequestCount() {
         return requestQueue.size();
