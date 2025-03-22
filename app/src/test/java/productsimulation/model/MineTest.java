@@ -11,8 +11,8 @@ public class MineTest {
   public void test_toString(){
     ArrayList<Building> sources = new ArrayList<>();
     sources.add(new Factory("DoorInc", new FactoryType("Door", new ArrayList<>()), Collections.emptyList(), null, null));
-    sources.add(new Mine("DiamondMine", "Diamond", Collections.emptyList(), null, null));
-    Mine mine = new Mine("GoldMine", "Gold", sources, null, null);
+    sources.add(new Mine("DiamondMine", new FactoryType("Diamond", new ArrayList<>()), Collections.emptyList(), null, null));
+    Mine mine = new Mine("GoldMine", new FactoryType("Gold", new ArrayList<>()), sources, null, null);
     
     String expected = "Mine\n{name='GoldMine',\n mine='Gold',\n sources=[DoorInc, DiamondMine]\n}";
     assertEquals(expected, mine.toString());
@@ -20,7 +20,7 @@ public class MineTest {
 
   @Test
   public void test_getname(){
-    Mine mine = new Mine("GoldMine", "Gold", Collections.emptyList(), null, null);
+    Mine mine = new Mine("GoldMine", new FactoryType("Gold", new ArrayList<>()), Collections.emptyList(), null, null);
     assertEquals("GoldMine", mine.getName());
   }
 }
