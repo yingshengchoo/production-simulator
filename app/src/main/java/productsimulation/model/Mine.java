@@ -19,6 +19,10 @@ public class Mine extends Building implements Serializable {
     super(name, type, sources, sourcePolicy, servePolicy);
   }
 
+    public Mine(String name, FactoryType type,  SourcePolicy sourcePolicy, ServePolicy servePolicy){
+        super(name, type, sourcePolicy, servePolicy);
+    }
+
   //A helper function that returns a string representation of the sources.
   private String printSources() {
     StringBuilder result = new StringBuilder("[");

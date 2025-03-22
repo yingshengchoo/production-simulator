@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class IllegalCharacterCheckerTest {
+ class IllegalCharacterCheckerTest {
 
     /**
      * Helper method to parse a JSON string into a JsonNode.

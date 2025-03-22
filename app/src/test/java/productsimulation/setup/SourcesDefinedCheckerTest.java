@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class SourcesDefinedCheckerTest {
+ class SourcesDefinedCheckerTest {
 
     /**
      * Helper method to convert a JSON string into a JsonNode.
