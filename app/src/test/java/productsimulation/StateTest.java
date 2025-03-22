@@ -14,6 +14,13 @@ import static org.mockito.Mockito.any;
 public class StateTest {
   @Test
   public void test_save_and_load() {
+
+    
+     File dir = new File("SavedStates");
+     if (!dir.exists()) {
+        dir.mkdirs();
+     }
+    
     ArrayList<Building> buildings = new ArrayList<>();
     Building mine = new Mine("G", "Gold", new ArrayList<>(), null, null);
     buildings.add(mine);
