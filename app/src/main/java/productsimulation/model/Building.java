@@ -2,11 +2,10 @@ package productsimulation.model;
 
 import productsimulation.Log;
 import productsimulation.LogicTime;
-import productsimulation.RequestBroadcaster;
 import productsimulation.request.Request;
 import productsimulation.request.RequestStatus;
-import productsimulation.request.ServePolicy;
-import productsimulation.sourcePolicy.SourcePolicy;
+import productsimulation.request.servePolicy.ServePolicy;
+import productsimulation.request.sourcePolicy.SourcePolicy;
 
 import java.util.*;
 
@@ -55,6 +54,12 @@ public abstract class Building {
                 chosenSource.addRequest(req);
             }
         }
+    }
+
+
+
+    public int getRequestCount() {
+        return requestQueue.size();
     }
 
     // return: still have/no request for this building now.

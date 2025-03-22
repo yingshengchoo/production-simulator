@@ -1,6 +1,5 @@
 package productsimulation;
 
-
 public class App {
     private static void initialize() {
         Log.debugLog("initializing");

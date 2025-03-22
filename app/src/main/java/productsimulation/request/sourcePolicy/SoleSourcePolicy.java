@@ -1,4 +1,4 @@
-package productsimulation.sourcePolicy;
+package productsimulation.request.sourcePolicy;
 
 import productsimulation.model.Building;
 
