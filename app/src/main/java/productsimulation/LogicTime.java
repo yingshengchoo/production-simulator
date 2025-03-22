@@ -66,7 +66,7 @@ public class LogicTime {
     }
 
     private void quitGame() {
-        System.exit(0);
+        Log.debugLog("The simulation is ended.");
     }
 
     public void stepNHandler(int n) {
