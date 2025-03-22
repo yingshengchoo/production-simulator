@@ -2,11 +2,14 @@
 
 .idea
 .project
+.settings
 # Ignore Gradle project-specific cache directory
 .gradle
 
 logs
+*.log
 **/test.log
+SavedStates
 
 # Ignore Gradle build output directory
 build
