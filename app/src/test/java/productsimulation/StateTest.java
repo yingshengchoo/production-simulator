@@ -6,7 +6,8 @@ import java.util.Map;
 import java.util.ArrayList;
 import java.io.*;
 import org.junit.jupiter.api.Test;
-import static org.mockito.Mockito.*;
+import org.mockito.MockedConstruction;
+import static org.mockito.Mockito.mockConstruction;
 
 public class StateTest {
   @Test
@@ -59,7 +60,7 @@ public class StateTest {
 
   @Test
     void testSavePrintsStackTraceOnIOException() throws IOException {
-        State state = new State();
+        State state = new State(new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
 
         ByteArrayOutputStream errContent = new ByteArrayOutputStream();
         System.setErr(new PrintStream(errContent));
