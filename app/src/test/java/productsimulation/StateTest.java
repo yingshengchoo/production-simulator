@@ -83,8 +83,14 @@ public class StateTest {
   public void test_load_exceptions() throws IOException{
      State state = new State(new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
   
+     File dir = new File("SavedStates");
+     if (!dir.exists()) {
+        dir.mkdirs();
+     }
+
      assertThrows(IllegalArgumentException.class, () ->state.load("non_existent_file"));
 
+     
      String filename = "invalidObject";
      try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("SavedStates/" + filename + ".ser"))) {
        out.writeObject("This is a string, not a State object"); // Writing incorrect type
