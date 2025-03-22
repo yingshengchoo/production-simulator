@@ -114,7 +114,7 @@ public abstract class Building {
         update();
     }
 
-    public void accept() {
+    public void accept(BuildingVisitor visitor) {
     }
 
     public String getName() {
