@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedConstruction;
 import static org.mockito.Mockito.*;
 
-public StateTest {
+public class StateTest {
   @Test
   public void test_save_and_load() {
 
