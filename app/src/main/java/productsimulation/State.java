@@ -1,4 +1,4 @@
-package producsimulation;
+package productsimulation;
 
 import productsimulation.model.*;
 import java.io.*;

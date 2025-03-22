@@ -16,7 +16,7 @@ public class RequestGenerator {
         for (int i = 0; i < quantities.length; i++) {
             map.put("ingredient" + i, quantities[i]);
         }
-        Recipe recipe = new Recipe("recipe", latency, map);
+        Recipe recipe = new Recipe(latency, map, "recipe");
         return new Request("test", recipe, mock(Building.class));
     }
 

@@ -10,6 +10,7 @@ import productsimulation.model.*;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedConstruction;
 import static org.mockito.Mockito.*;
+
 public class StateTest {
   @Test
   public void test_save_and_load() {
@@ -25,7 +26,7 @@ public class StateTest {
     buildings.add(mine);
     ArrayList<Building> sources = new ArrayList<>();
     sources.add(mine);
-    buildings.add(new Factory("GC", new FactoryType("GoldChain", new ArrayList<>()), sources, null, null));
+    buildings.add(new Factory("GC", new FactoryType("GoldChain", Collections.emptyMap()), sources, null, null));
 
     Map<String, Recipe> recipes = new HashMap<>();
     Map<String, Integer> ingredients = new HashMap<>();
