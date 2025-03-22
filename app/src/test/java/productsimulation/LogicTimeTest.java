@@ -13,8 +13,13 @@ import productsimulation.request.sourcePolicy.SourcePolicy;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
 
 class LogicTimeTest {
+    @BeforeEach
+    void setUp() {
+        LogicTime.getInstance().reset();
+    }
 
     @Test
     void test_singleton() {
