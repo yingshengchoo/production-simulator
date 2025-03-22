@@ -77,9 +77,6 @@ public class State implements Serializable{
       System.out.println("State loaded from SavedStates/" + filename + ".ser");
     } catch (Exception e) {
       throw new IllegalArgumentException("Invalid Filename. File does not exist or is Invalid.");
-
-    } catch (Exception e) {
-      throw new IllegalArgumentException("An error has occured when loading file.");
     }
   } 
 
