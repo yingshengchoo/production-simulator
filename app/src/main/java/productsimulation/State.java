@@ -1,5 +1,4 @@
-import productsimulation.model.Building;
-
+import productsimulation.model.*;
 import java.io.*;
 import java.util.List; 
 

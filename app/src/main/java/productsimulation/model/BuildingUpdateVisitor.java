@@ -1,4 +1,4 @@
-package productsimulation;
+package productsimulation.model;
 
 public class BuildingUpdateVisitor implements BuildingVisitor {
     @Override

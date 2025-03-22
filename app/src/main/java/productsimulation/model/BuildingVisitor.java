@@ -1,4 +1,4 @@
-package productsimulation;
+package productsimulation.model;
 
 public interface BuildingVisitor {
   void visit(Mine mine);
