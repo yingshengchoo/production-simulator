@@ -80,7 +80,7 @@ public class State implements Serializable{
     } catch (Exception e) {
       throw new IllegalArgumentException("An error has occured when loading file.");
     }
-  }
+  } 
 
   public void visitBuilding(){
     BuildingUpdateVisitor visitor = new BuildingUpdateVisitor();

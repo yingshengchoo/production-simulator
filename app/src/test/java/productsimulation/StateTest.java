@@ -58,18 +58,23 @@ public class StateTest {
   }
 
   @Test
-  public void test_save_exceptions(){
-    State state = new State(new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
-    String validFilename = "testState";
-    File directory = new File("SavedStates");
-    directory.setReadOnly();
+    void testSavePrintsStackTraceOnIOException() throws IOException {
+        State state = new State();
 
-    try {
-       assertDoesNotThrow(() -> state.save(validFilename)); 
-    } finally {
-       directory.setWritable(true); 
+        ByteArrayOutputStream errContent = new ByteArrayOutputStream();
+        System.setErr(new PrintStream(errContent));
+
+        try (MockedConstruction<FileOutputStream> mockFileOut = mockConstruction(FileOutputStream.class,
+                (mock, context) -> {
+                    doThrow(new IOException("Mocked IO error")).when(mock).write(any());
+                })) {
+
+            state.save("testfile");
+            assertTrue(errContent.toString().contains("Mocked IO error"));
+        } finally {
+            System.setErr(System.err);
+        }
     }
-  }
 
   @Test
   public void test_load_exceptions() throws IOException{
