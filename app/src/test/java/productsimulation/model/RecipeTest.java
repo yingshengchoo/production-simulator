@@ -28,15 +28,5 @@ public class FactoryTypeTest {
     assertEquals(expected2, t2.toString());
   }
 }
-package productsimulation.model;
-
-import static org.junit.jupiter.api.Assertions.*;
-
-import org.junit.jupiter.api.Test;
-
-public class FactoryTypeTest {
-  
-
-}
 
 
