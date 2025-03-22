@@ -75,16 +75,15 @@ public class StateTest {
   public void test_load_exceptions(){
      State state = new State(new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
   
-     ObjectInputStream inputStreamMock = mock(ObjectInputStream.class);
-     when(inputStreamMock.readObject()).thenThrow(new IOException("Simulated IO Exception"));
-        
-     ByteArrayOutputStream errContent = new ByteArrayOutputStream();
-     System.setErr(new PrintStream(errContent));
-        
-     state.load("invalid_file");
-       
-     System.setErr(System.err);
-     assertTrue(errContent.toString().contains("java.io.IOException"));
+     assertThrows(IllegalArgumentException.class, () ->state.load("non_existent_file"));
+
+     String filename = "invalidObject";
+     try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("SavedStates/" + filename + ".ser"))) {
+       out.writeObject("This is a string, not a State object"); // Writing incorrect type
+     }
+     assertThrows(IllegalArgumentException.class, ()->{
+            new YourClass().load(filename);
+        });
   }
     
 }

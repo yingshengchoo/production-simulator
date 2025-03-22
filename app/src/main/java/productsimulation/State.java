@@ -76,9 +76,9 @@ public class State implements Serializable{
       this.types = loadedState.types;
       System.out.println("State loaded from SavedStates/" + filename + ".ser");
     } catch (FileNotFoundException e) {
-       System.out.println("Error: The file data " + filename + " does not exist.");
-    } catch (IOException | ClassNotFoundException e) {
-      e.printStackTrace();
+      throw new IllegalArgumentException("Invalid Filename. File does not exist.");
+    } catch (Exception e) {
+      throw new IllegalArgumentException("An error has occured when loading file.");
     }
   }
 
