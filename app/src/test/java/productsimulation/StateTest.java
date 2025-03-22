@@ -72,7 +72,7 @@ public class StateTest {
                     doThrow(new IOException("Mocked IO error")).when(mock).write(any());
                 })) {
 
-          assertDoesNotThrow(state.save("testfile"));
+          assertDoesNotThrow(() ->state.save("testfile"));
         } finally {
             System.setErr(System.err);
         }
