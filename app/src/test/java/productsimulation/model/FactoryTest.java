@@ -1,4 +1,4 @@
-package productsimulation.model.*;
+package productsimulation.model;
 
 import static org.junit.jupiter.api.Assertions.*;
 
