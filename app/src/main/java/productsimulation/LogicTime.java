@@ -76,4 +76,10 @@ public class LogicTime {
     public void finishHandler() {
         notifyAll(Integer.MAX_VALUE);
     }
+
+    // only for test
+    public void reset() {
+        observers.clear();
+        currentStep = 0;
+    }
 }
