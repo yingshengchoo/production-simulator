@@ -58,10 +58,17 @@ public class StateTest {
   }
 
   @Test
-  public void test_IOException_for_load_and_save(){
+  public void test_save_exceptions(){
     State state = new State(new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
-    FileOutputStream fileOutputStreamMock = mock(FileOutputStream.class);
-    when(fileOutputStreamMock.write(any(byte[].class))).thenThrow(new IOException("Simulated IO Exception"));
+    String validFilename = "testState";
+    File directory = new File("SavedStates");
+    directory.setReadOnly();
+
+    try {
+       assertDoesNotThrow(() -> state.save(validFilename)); 
+    } finally {
+       directory.setWritable(true); 
+    }
   }
 
   @Test
