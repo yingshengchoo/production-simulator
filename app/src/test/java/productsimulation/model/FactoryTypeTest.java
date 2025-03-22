@@ -3,6 +3,7 @@ package productsimulation.model;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Collections;
 import java.util.HashMap;
 import productsimulation.model.*;

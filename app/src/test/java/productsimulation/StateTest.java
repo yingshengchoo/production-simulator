@@ -40,7 +40,7 @@ public class StateTest {
     ArrayList<FactoryType> types = new ArrayList<>();
     types.add(new FactoryType("EggRoll", recipes));
    
-    State state = new State(buildings, types, recipes);
+    State state = new State(buildings, types, stateRecipes);
     String filename = "testSave";
     state.save(filename);
     State loadState = new State(new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
