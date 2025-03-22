@@ -1,3 +1,5 @@
+package producsimulation;
+
 import productsimulation.model.*;
 import java.io.*;
 import java.util.List; 

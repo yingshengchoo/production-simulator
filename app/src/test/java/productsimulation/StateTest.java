@@ -1,10 +1,11 @@
-package productsimulation.Building;
+package productsimulation;
 
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ArrayList;
 import java.io.*;
+import productsimulation.model.*;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedConstruction;
 import static org.mockito.Mockito.*;

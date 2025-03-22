@@ -8,7 +8,7 @@ public class RecipeTest {
   @Test
   public void test_getters() {
     Recipe r = new Recipe(1, Collections.emptyMap(), "hotpot"); 
-    assertEquals("hotpot", r.getName());
+    assertEquals("hotpot", r.getOutput());
     assertEquals(1, r.getLatency());
     assertEquals(Collections.emptyMap(),r.getIngredients());
   }

@@ -2,6 +2,7 @@ package productsimulation.model;
 
 import productsimulation.request.servePolicy.ServePolicy;
 import productsimulation.request.sourcePolicy.SourcePolicy;
+import productsimulation.model.*;
 import java.io.Serializable;
 import java.util.List;
 
