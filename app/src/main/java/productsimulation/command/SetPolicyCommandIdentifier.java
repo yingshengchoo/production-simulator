@@ -1,13 +1,13 @@
 package productsimulation.command;
 
-public class SetPolicyCommandChecker extends CommandRuleChecker {
+public class SetPolicyCommandIdentifier extends CommandIdentifier {
 
-    public SetPolicyCommandChecker(CommandRuleChecker next) {
+    public SetPolicyCommandIdentifier(CommandIdentifier next) {
         super(next);
     }
 
     @Override
-    protected Command checkMyRule(String line) {
+    protected Command checkFits(String line) {
         // Must begin with "set policy "
         if (!line.startsWith("set policy ")) {
             return null;

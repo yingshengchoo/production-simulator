@@ -1,13 +1,13 @@
 package productsimulation.command;
 
-public class LoadCommandChecker extends CommandRuleChecker {
+public class LoadCommandIdentifier extends CommandIdentifier {
 
-    public LoadCommandChecker(CommandRuleChecker next) {
+    public LoadCommandIdentifier(CommandIdentifier next) {
         super(next);
     }
 
     @Override
-    protected Command checkMyRule(String line) {
+    protected Command checkFits(String line) {
         if (!line.startsWith("load ")) {
             return null;
         }

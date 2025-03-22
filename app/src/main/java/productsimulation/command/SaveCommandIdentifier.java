@@ -1,13 +1,13 @@
 package productsimulation.command;
 
-public class SaveCommandChecker extends CommandRuleChecker {
+public class SaveCommandIdentifier extends CommandIdentifier {
 
-    public SaveCommandChecker(CommandRuleChecker next) {
+    public SaveCommandIdentifier(CommandIdentifier next) {
         super(next);
     }
 
     @Override
-    protected Command checkMyRule(String line) {
+    protected Command checkFits(String line) {
 //        if (!line.startsWith("save ")) {
 //            return null;
 //        }

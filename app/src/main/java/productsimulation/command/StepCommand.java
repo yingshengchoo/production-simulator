@@ -12,4 +12,8 @@ public class StepCommand extends Command {
     public void execute() {
         LogicTime.getInstance().stepNHandler(step);
     }
+
+    public int getSteps() {
+        return step;
+    }
 }

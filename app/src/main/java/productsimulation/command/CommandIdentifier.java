@@ -1,17 +1,14 @@
 package productsimulation.command;
 
-/**
- * CommandRuleChecker is an abstract chain-of-responsibility checker for commands.
- */
-public abstract class CommandRuleChecker {
-    private final CommandRuleChecker next;
+public abstract class CommandIdentifier {
+    private final CommandIdentifier next;
 
     /**
      * Chains the different command checkers.
      *
      * @param next the next checker in the chain.
      */
-    public CommandRuleChecker(CommandRuleChecker next) {
+    public CommandIdentifier(CommandIdentifier next) {
         this.next = next;
     }
 
@@ -21,7 +18,7 @@ public abstract class CommandRuleChecker {
      * @param line the input line (already trimmed).
      * @return a Command if recognized, or null otherwise.
      */
-    protected abstract Command checkMyRule(String line);
+    protected abstract Command checkFits(String line);
 
     /**
      * Checks the input by calling the current rule, then the rest of the chain if not recognized.
@@ -30,13 +27,17 @@ public abstract class CommandRuleChecker {
      * @return a Command if recognized, or null if none of the chain recognized it.
      */
     public Command checkInput(String line) {
-        Command cmd = checkMyRule(line);
+
+        Command cmd = checkFits(line);
         if (cmd != null) {
             return cmd;
         }
+
         if (next != null) {
             return next.checkInput(line);
         }
+
+
         return null;
     }
 }

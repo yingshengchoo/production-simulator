@@ -17,4 +17,12 @@ public class RequestCommand extends Command{
     public void execute() {
         RequestBroadcaster.getInstance().userRequestHandler(itemName, buildingName);
     }
+
+    public String getItem() {
+        return itemName;
+    }
+
+    public String getBuilding() {
+        return buildingName;
+    }
 }

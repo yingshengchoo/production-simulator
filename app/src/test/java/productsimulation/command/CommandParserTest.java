@@ -14,8 +14,8 @@ public class CommandParserTest {
         assertNotNull(cmd);
         assertTrue(cmd instanceof RequestCommand);
         RequestCommand rc = (RequestCommand) cmd;
-//        assertEquals("widget", rc.getItem());
-//        assertEquals("WidgetFactory", rc.getBuilding());
+        assertEquals("widget", rc.getItem());
+        assertEquals("WidgetFactory", rc.getBuilding());
     }
 
     @Test
@@ -32,7 +32,7 @@ public class CommandParserTest {
         Command cmd = parser.parseLine("step 10");
         assertNotNull(cmd);
         assertTrue(cmd instanceof StepCommand);
-//        assertEquals(10, ((StepCommand) cmd).getSteps());
+        assertEquals(10, ((StepCommand) cmd).getSteps());
     }
 
     @Test
@@ -57,7 +57,7 @@ public class CommandParserTest {
         assertNotNull(cmd);
         assertTrue(cmd instanceof VerboseCommand);
         VerboseCommand vc = (VerboseCommand) cmd;
-//        assertEquals(2, vc.getLevel());
+        assertEquals(2, vc.getLevel());
     }
 
     @Test
