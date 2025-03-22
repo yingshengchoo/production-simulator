@@ -73,6 +73,9 @@ public class StateTest {
                 })) {
 
             state.save("testfile");
+
+            System.out.println("Captured error output: " + errContent.toString());
+            
             assertTrue(errContent.toString().contains("Mocked IO error"));
         } finally {
             System.setErr(System.err);
@@ -89,7 +92,6 @@ public class StateTest {
      }
 
      assertThrows(IllegalArgumentException.class, () ->state.load("non_existent_file"));
-
      
      String filename = "invalidObject";
      try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("SavedStates/" + filename + ".ser"))) {
