@@ -39,6 +39,15 @@ public abstract class Building {
         storage = new HashMap<>();
     }
 
+    public Building(String name, FactoryType type, SourcePolicy sourcePolicy, ServePolicy servePolicy) {
+        this.name = name;
+        this.type = type;
+        this.sourcePolicy = sourcePolicy;
+        this.servePolicy = servePolicy;
+        requestQueue = new ArrayList<>();
+        storage = new HashMap<>();
+    }
+
     // 按recipe顺序dfs传播request
     public void addRequest(Request request) {
         Log.debugLog("adding request: " + request.getIngredient() + " to " + name);
@@ -56,6 +65,9 @@ public abstract class Building {
         }
     }
 
+    public void setSources(List<Building> sources) {
+        this.sources = sources;
+    }
 
 
     public int getRequestCount() {

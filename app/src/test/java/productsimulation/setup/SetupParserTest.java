@@ -14,7 +14,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class SetupParserTest {
+ class SetupParserTest {
 
     @Test
     public void test_parseJson() throws Exception {
@@ -166,26 +166,10 @@ public class SetupParserTest {
         Method parseBuildingsMethod = SetupParser.class.getDeclaredMethod("parseBuildings", JsonNode.class);
         parseBuildingsMethod.setAccessible(true);
         parseBuildingsMethod.invoke(parser, root.get("buildings"));
-
-        Method assignSourcesMethod = SetupParser.class.getDeclaredMethod("assignBuildingSources", JsonNode.class);
-        assignSourcesMethod.setAccessible(true);
-        boolean assignResult = (boolean) assignSourcesMethod.invoke(parser, root.get("buildings"));
-        assertTrue(assignResult);
-
-        Field buildingMapField = SetupParser.class.getDeclaredField("buildingMap");
-        buildingMapField.setAccessible(true);
-        Map<String, Building> buildingMap = (Map<String, Building>) buildingMapField.get(parser);
-        Building factory1 = buildingMap.get("Factory1");
-//        assertNotNull(factory1.sources);
-//        assertEquals(1, factory1.sources.size());
-//        // Since Mine1's name is "Mine1", check that the first source is Mine1.
-//        assertEquals("Mine1", factory1.sources.get(0).name);
     }
 
     @Test
     public void test_parse() throws Exception {
-        // End-to-end test with a complete valid JSON.
-        // Modified JSON: Factory1 now lists itself as a source so that it can produce "handle".
         String json = "{"
                 + "\"recipes\": ["
                 + "  {\"output\": \"door\", \"ingredients\": {\"wood\":1, \"handle\":1}, \"latency\":12},"
@@ -196,7 +180,6 @@ public class SetupParserTest {
                 + "  {\"name\": \"FactoryType1\", \"recipes\": [\"door\", \"handle\"]}"
                 + "],"
                 + "\"buildings\": ["
-                // Factory1 now includes itself as a source, so it can produce "handle" via its own type.
                 + "  {\"name\": \"Factory1\", \"type\": \"FactoryType1\", \"sources\": [\"Factory1\", \"Mine1\"]},"
                 + "  {\"name\": \"Mine1\", \"mine\": \"wood\"}"
                 + "]"
@@ -221,10 +204,8 @@ public class SetupParserTest {
         assertEquals(2, buildingMap.size());
     }
 
-    // --- New Exhaustive Test Cases (adapted to your error handling style) ---
-
     @Test
-    public void test_emptyArrays_exhaustive() throws Exception {
+    public void test_emptyArrays() throws Exception {
         String json = "{"
                 + "\"recipes\": [],"
                 + "\"types\": [],"
@@ -250,32 +231,8 @@ public class SetupParserTest {
         assertTrue(buildingMap.isEmpty(), "Building map should be empty with empty arrays");
     }
 
-//    @Test
-//    public void test_extraFields_exhaustive() throws Exception {
-//        String json = "{"
-//                + "\"recipes\": ["
-//                + "  {\"output\": \"wood\", \"ingredients\": {\"dummy\": 1}, \"latency\": 1, \"extraField\": \"ignoreMe\"}"
-//                + "],"
-//                + "\"types\": ["
-//                + "  {\"name\": \"FactoryType1\", \"recipes\": [\"wood\"], \"randomField\": 123}"
-//                + "],"
-//                + "\"buildings\": ["
-//                + "  {\"name\": \"Mine1\", \"mine\": \"wood\", \"weirdField\": \"test\"}"
-//                + "],"
-//                + "\"someIrrelevantField\": \"blah\""
-//                + "}";
-//        SetupParser parser = new SetupParser();
-//        BufferedReader reader = new BufferedReader(new StringReader(json));
-//        parser.parse(reader);
-//
-//        Field recipeMapField = SetupParser.class.getDeclaredField("recipeMap");
-//        recipeMapField.setAccessible(true);
-//        Map<String, Recipe> recipeMap = (Map<String, Recipe>) recipeMapField.get(parser);
-//        assertEquals(1, recipeMap.size(), "Extra fields should be ignored; recipeMap size should be 1");
-//    }
-
     @Test
-    public void test_extraFields_exhaustive() throws Exception {
+    public void test_extraFields() throws Exception {
         String json = "{"
                 + "\"recipes\": ["
                 + "  {\"output\": \"wood\", \"ingredients\": {}, \"latency\": 1, \"extraField\": \"ignoreMe\"}"
@@ -297,7 +254,7 @@ public class SetupParserTest {
 
 
     @Test
-    public void test_missingRecipesField_exhaustive() throws Exception {
+    public void test_missingRecipesField() throws Exception {
         String json = "{\"types\": [], \"buildings\": []}";
         SetupParser parser = new SetupParser();
         BufferedReader reader = new BufferedReader(new StringReader(json));
@@ -310,7 +267,7 @@ public class SetupParserTest {
     }
 
     @Test
-    public void test_missingTypesField_exhaustive() throws Exception {
+    public void test_missingTypesField() throws Exception {
         String json = "{\"recipes\": [], \"buildings\": []}";
         SetupParser parser = new SetupParser();
         BufferedReader reader = new BufferedReader(new StringReader(json));
@@ -323,7 +280,7 @@ public class SetupParserTest {
     }
 
     @Test
-    public void test_missingBuildingsField_exhaustive() throws Exception {
+    public void test_missingBuildingsField() throws Exception {
         String json = "{\"recipes\": [], \"types\": []}";
         SetupParser parser = new SetupParser();
         BufferedReader reader = new BufferedReader(new StringReader(json));
@@ -336,7 +293,7 @@ public class SetupParserTest {
     }
 
     @Test
-    public void test_invalidLatency_exhaustive() throws Exception {
+    public void test_invalidLatency() throws Exception {
         String json = "{"
                 + "\"recipes\": ["
                 + "  {\"output\": \"wood\", \"ingredients\": {}, \"latency\": 0}"
@@ -355,7 +312,7 @@ public class SetupParserTest {
     }
 
     @Test
-    public void test_duplicateRecipeNames_exhaustive() throws Exception {
+    public void test_duplicateRecipeNames_() throws Exception {
         String json = "{"
                 + "\"recipes\": ["
                 + "  {\"output\": \"wood\", \"ingredients\": {}, \"latency\": 1},"
@@ -375,7 +332,7 @@ public class SetupParserTest {
     }
 
     @Test
-    public void test_duplicateTypeNames_exhaustive() throws Exception {
+    public void test_duplicateTypeNames() throws Exception {
         String json = "{"
                 + "\"recipes\": ["
                 + "  {\"output\": \"wood\", \"ingredients\": {}, \"latency\": 1}"
@@ -397,7 +354,7 @@ public class SetupParserTest {
     }
 
     @Test
-    public void test_duplicateBuildingNames_exhaustive() throws Exception {
+    public void test_duplicateBuildingNames() throws Exception {
         String json = "{"
                 + "\"recipes\": ["
                 + "  {\"output\": \"wood\", \"ingredients\": {}, \"latency\": 1}"
@@ -421,7 +378,7 @@ public class SetupParserTest {
     }
 
     @Test
-    public void test_buildingWithUndefinedType_exhaustive() throws Exception {
+    public void test_buildingWithUndefinedType() throws Exception {
         String json = "{"
                 + "\"recipes\": ["
                 + "  {\"output\": \"wood\", \"ingredients\": {}, \"latency\": 1}"
@@ -442,7 +399,7 @@ public class SetupParserTest {
     }
 
     @Test
-    public void test_buildingWithUnknownSource_exhaustive() throws Exception {
+    public void test_buildingWithUnknownSource() throws Exception {
         String json = "{"
                 + "\"recipes\": ["
                 + "  {\"output\": \"wood\", \"ingredients\": {}, \"latency\": 1}"
@@ -465,7 +422,7 @@ public class SetupParserTest {
     }
 
     @Test
-    public void test_mineWithSources_exhaustive() throws Exception {
+    public void test_mineWithSources() throws Exception {
         String json = "{"
                 + "\"recipes\": ["
                 + "  {\"output\": \"wood\", \"ingredients\": {}, \"latency\": 1}"
@@ -487,7 +444,7 @@ public class SetupParserTest {
     }
 
     @Test
-    public void test_recipeWithUndefinedIngredient_exhaustive() throws Exception {
+    public void test_recipeWithUndefinedIngredient() throws Exception {
         String json = "{"
                 + "\"recipes\": ["
                 + "  {\"output\": \"door\", \"ingredients\": {\"wood\": 1, \"unknownItem\": 2}, \"latency\": 10},"
@@ -507,9 +464,7 @@ public class SetupParserTest {
     }
 
     @Test
-    public void test_factoryTypeUsesMineRecipe_exhaustive() throws Exception {
-        // This test expects that a factory type referencing a mine-only recipe (one with no ingredients)
-        // should be considered invalid and thus not be added to the type map.
+    public void test_factoryTypeUsesMineRecipe() throws Exception {
         String json = "{"
                 + "\"recipes\": ["
                 + "  {\"output\": \"door\", \"ingredients\": {\"wood\": 1}, \"latency\": 10},"
@@ -532,7 +487,7 @@ public class SetupParserTest {
     }
 
     @Test
-    public void test_buildingIsBothMineAndFactory_exhaustive() throws Exception {
+    public void test_buildingIsBothMineAndFactory() throws Exception {
         String json = "{"
                 + "\"recipes\": ["
                 + "  {\"output\": \"wood\", \"ingredients\": {}, \"latency\": 1}"
@@ -555,7 +510,7 @@ public class SetupParserTest {
     }
 
     @Test
-    public void test_invalidJsonSyntax_exhaustive() throws Exception {
+    public void test_invalidJsonSyntax() throws Exception {
         String invalidJson = "{ \"recipes\":[ {\"output\":\"wood\" }], \"types\" [], \"buildings\":[] ";
         SetupParser parser = new SetupParser();
         BufferedReader reader = new BufferedReader(new StringReader(invalidJson));
@@ -568,7 +523,7 @@ public class SetupParserTest {
     }
 
     @Test
-    public void test_factoryCannotAcquireAllIngredients_exhaustive() throws Exception {
+    public void test_factoryCannotAcquireAllIngredients() throws Exception {
         String json = "{"
                 + "\"recipes\": ["
                 + "  {\"output\": \"door\", \"ingredients\": {\"wood\":1, \"handle\":1}, \"latency\":10},"

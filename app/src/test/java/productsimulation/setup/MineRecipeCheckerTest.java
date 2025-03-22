@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 // Check rule 8
-public class MineRecipeCheckerTest {
+ class MineRecipeCheckerTest {
 
     /**
      * Helper method to parse a JSON string into a JsonNode.

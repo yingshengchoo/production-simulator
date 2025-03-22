@@ -21,6 +21,10 @@ public class Factory extends Building implements Serializable {
     super(name, type, sources, sourcePolicy, servePolicy);
   }
 
+    public Factory(String name, FactoryType type, SourcePolicy sourcePolicy, ServePolicy servePolicy){
+        super(name, type, sourcePolicy, servePolicy);
+    }
+
   public String getName(){
     return name;
   }

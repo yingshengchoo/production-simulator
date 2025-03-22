@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 // Rule 5
-public class TypeRecipeCheckerTest {
+ class TypeRecipeCheckerTest {
 
     /**
      * Helper method to convert a JSON string into a JsonNode.

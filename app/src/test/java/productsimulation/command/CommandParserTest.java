@@ -1,11 +1,9 @@
 package productsimulation.command;
 
 import org.junit.jupiter.api.Test;
-import productsimulation.command.*;
-
 import static org.junit.jupiter.api.Assertions.*;
 
-public class CommandParserTest {
+public  class CommandParserTest {
 
     @Test
     public void test_request_valid() {
