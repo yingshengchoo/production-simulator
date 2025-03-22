@@ -41,18 +41,16 @@ public class Request {
    *
    * @param item the name of the item for which the request is being created
    * @param sourcePolicy the policy used to determine the optimal {@code Building} from the list
-   * @param buildingList the list of available buildings to evaluate for sourcing
-   * @param recipeList the list of available recipes to find the matching recipe for the item
    * @return the newly constructed {@code Request} containing the specified item, recipe, and building
    * @throws IllegalArgumentException if no suitable {@code Building} is found in the {@code buildingList}
    */
   public static Request BuildRequest(String item, SourcePolicy sourcePolicy,
-                                     List<Building> buildingList, List<Recipe> recipeList ) {
-    Building building = sourcePolicy.getSource(buildingList);
+                                     Map<String, Building> buildingMap, Map<String, Recipe> recipeMap ) {
+    Building building = sourcePolicy.getSource(buildingMap.values().stream().toList());
     if (building == null) {
       throw new IllegalArgumentException("ERROR: 0 Building in list!");
     }
-    Recipe recipe = Recipe.getRecipe(item, recipeList);
+    Recipe recipe = recipeMap.get(item);
     Request request = new Request(item, recipe, building);
     building.addRequest(request);
     return request;
