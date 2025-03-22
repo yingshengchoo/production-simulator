@@ -10,7 +10,7 @@ import org.mockito.MockedConstruction;
 import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.any;
-
+import static org.mockito.Mockito.mockFileOutputStream
 public class StateTest {
   @Test
   public void test_save_and_load() {
