@@ -50,6 +50,7 @@ test{
     testLogging{
         showStandardStreams=true
         exceptionFormat='full'
+//        events = ["passed", "failed", "skipped"]
     }
 }
 clover{

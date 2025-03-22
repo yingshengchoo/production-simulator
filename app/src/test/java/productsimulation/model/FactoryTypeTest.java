@@ -2,10 +2,8 @@ package productsimulation.model;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.*;
+
 import productsimulation.model.*;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +16,7 @@ public class FactoryTypeTest {
 
   @Test
   public void test_toString(){
-    Map<String, Recipe> recipes = new HashMap<>();
+    Map<String, Recipe> recipes = new LinkedHashMap<>();
     recipes.put("out1", new Recipe(3, Collections.emptyMap(), "out1"));
     recipes.put("out2", new Recipe(2, Collections.emptyMap(), "out2"));
     FactoryType t = new FactoryType("type1", recipes);
