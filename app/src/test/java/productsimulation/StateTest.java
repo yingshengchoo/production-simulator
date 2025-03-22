@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.io.*;
 import productsimulation.model.*;
 import org.junit.jupiter.api.Test;
@@ -20,17 +21,20 @@ public class StateTest {
      }
     
     ArrayList<Building> buildings = new ArrayList<>();
-    Building mine = new Mine("G", "Gold", new ArrayList<>(), null, null);
+    Building mine = new Mine("G", new FactoryType("Gold", Collections.emptyMap()), new ArrayList<>(), null, null);
     buildings.add(mine);
     ArrayList<Building> sources = new ArrayList<>();
     sources.add(mine);
     buildings.add(new Factory("GC", new FactoryType("GoldChain", new ArrayList<>()), sources, null, null));
 
-    ArrayList<Recipe> recipes = new ArrayList<>();
+    Map<String, Recipe> recipes = new HashMap<>();
     Map<String, Integer> ingredients = new HashMap<>();
     ingredients.put("Egg", 2);
-    Recipe eggroll = new Recipe("EggRoll", 3, ingredients);
-    recipes.add(eggroll);
+    Recipe eggroll = new Recipe(3, ingredients, "EggRoll");
+    recipes.put("EggRoll", eggroll);
+
+    ArrayList<Recipe> stateRecipes = new ArrayList<>();
+    stateRecipes.add(eggroll);
     
     ArrayList<FactoryType> types = new ArrayList<>();
     types.add(new FactoryType("EggRoll", recipes));

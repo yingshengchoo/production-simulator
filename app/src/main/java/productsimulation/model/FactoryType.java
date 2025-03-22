@@ -30,21 +30,23 @@ public class FactoryType {
   //A helper function that returns a string representation of the recipes
   private String printRecipes() {
     StringBuilder result = new StringBuilder("[");
+    
     if (recipes != null && !recipes.isEmpty()) {
-        for (int i = 0; i < recipes.size(); i++) {
-            Recipe r = recipes.get(i);
+        Iterator<Map.Entry<String, Recipe>> iterator = recipes.entrySet().iterator();
+        
+        while (iterator.hasNext()) {
+            Recipe r = iterator.next().getValue();
             result.append(r.getOutput());
-           
-            if (i < recipes.size() - 1) {
+
+            if (iterator.hasNext()) {
                 result.append(", ");
             }
         }
     }
-    
-    result.append("]");  
+
+    result.append("]");
     return result.toString();
   }
-
   public String getName(){
     return name;
   }
