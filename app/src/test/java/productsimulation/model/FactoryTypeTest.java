@@ -1,4 +1,4 @@
-package productsimulation.model;
+package productsimulation.model.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -16,8 +16,8 @@ public class FactoryTypeTest {
   @Test
   public void test_toString(){
     ArrayList<Recipe> recipes = new ArrayList<>();
-    recipes.add(new Recipe("out1", 3, Collections.emptyMap()));
-    recipes.add(new Recipe("out2", 2, Collections.emptyMap()));
+    recipes.add(new Recipe(3, Collections.emptyMap(), "out1"));
+    recipes.add(new Recipe(2, Collections.emptyMap(), "out2"));
     FactoryType t = new FactoryType("type1", recipes);
     String expected = "Factory Type\n{name='type1',\n recipes=[out1, out2]\n}";
     assertEquals(expected, t.toString());

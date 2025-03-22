@@ -1,4 +1,4 @@
-gpackage productsimulation.model;
+g package productsimulation.model;
 
 import java.util.Collections;
 import java.util.List;
