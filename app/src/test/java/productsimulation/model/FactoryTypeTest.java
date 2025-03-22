@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import productsimulation.model.*;
 import org.junit.jupiter.api.Test;
 
 public class FactoryTypeTest {
