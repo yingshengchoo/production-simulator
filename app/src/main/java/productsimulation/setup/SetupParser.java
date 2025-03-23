@@ -48,7 +48,6 @@ public class SetupParser {
         try {
             return mapper.readTree(reader);
         } catch (IOException e) {
-            e.printStackTrace();
             return null;
         }
     }
@@ -69,25 +68,14 @@ public class SetupParser {
         if (errorMessage != null) {
             return "Input validation error: " + errorMessage;
         }
+        parseRecipes(root.get("recipes"));
+        parseTypes(root.get("types"));
+        parseBuildings(root.get("buildings"));
 
-        errorMessage = parseRecipes(root.get("recipes"));
-        if (errorMessage != null) {
-            return errorMessage;
-        }
-
-        errorMessage = parseTypes(root.get("types"));
-        if (errorMessage != null) {
-            return errorMessage;
-        }
-
-        errorMessage = parseBuildings(root.get("buildings"));
-        if (errorMessage != null) {
-            return errorMessage;
-        }
         return null;
     }
 
-    private String parseRecipes(JsonNode recipesNode) {
+    private void parseRecipes(JsonNode recipesNode) {
         for (JsonNode recipeNode : recipesNode) {
             String output = recipeNode.get("output").asText();
             int latency = recipeNode.get("latency").asInt();
@@ -100,10 +88,9 @@ public class SetupParser {
             Recipe recipe = new Recipe(latency, ingredients, output);
             recipeMap.put(output, recipe);
         }
-        return null;
     }
 
-    private String parseTypes(JsonNode typesNode) {
+    private void parseTypes(JsonNode typesNode) {
         for (JsonNode typeNode : typesNode) {
             String typeName = typeNode.get("name").asText();
             Map<String, Recipe> recipesForType = new HashMap<>();
@@ -116,10 +103,9 @@ public class SetupParser {
             FactoryType factoryType = new FactoryType(typeName, recipesForType);
             typeMap.put(typeName, factoryType);
         }
-        return null;
     }
 
-    private String parseBuildings(JsonNode buildingsNode) {
+    private void parseBuildings(JsonNode buildingsNode) {
         for (JsonNode buildingNode : buildingsNode) {
             String buildingName = buildingNode.get("name").asText();
             Building building = null;
@@ -152,7 +138,6 @@ public class SetupParser {
 
             buildingMap.get(buildingName).setSources(sources);
         }
-        return null;
     }
 
     public Map<String, Recipe> getRecipeMap() {
