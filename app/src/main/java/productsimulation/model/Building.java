@@ -15,6 +15,7 @@ public abstract class Building implements Serializable {
     protected final String name;
     protected FactoryType type;
     protected Request currentRequest;
+    protected int currentRemainTime;
     protected List<Request> requestQueue;
     protected Map<String, Integer> storage;
     protected List<Building> sources;
@@ -54,17 +55,21 @@ public abstract class Building implements Serializable {
     public void addRequest(Request request) {
         Log.debugLog("adding request: " + request.getIngredient() + " to " + name);
         requestQueue.add(request);
-        Recipe recipe = type.getRecipeByProductName(request.getIngredient());
-        Map<String, Integer> ingredients = recipe.getIngredients();
+        Recipe parentRecipe = type.getRecipeByProductName(request.getIngredient());
+        Map<String, Integer> ingredients = parentRecipe.getIngredients();
         for(String ingredient: ingredients.keySet()) {
             int num = ingredients.get(ingredient);
             for(int i = 0; i < num; i++) {
-                // todo sourcePolicy.getSource() 除了备选列表，还要有品名
-                Building chosenSource = sourcePolicy.getSource(sources);
-                Request req = new Request(ingredient, recipe,this);
+                Building chosenSource = sourcePolicy.getSource(sources, ingredient);
+                Recipe childRecipe = chosenSource.type.getRecipeByProductName(ingredient);
+                Request req = new Request(ingredient, childRecipe, this);
                 chosenSource.addRequest(req);
             }
         }
+    }
+
+    public boolean canProduce(String itemName) {
+        return type.getRecipeByProductName(itemName) != null;
     }
 
     public void setSources(List<Building> sources) {
@@ -77,32 +82,10 @@ public abstract class Building implements Serializable {
     }
 
     // return: still have/no request for this building now.
-    private boolean goOneStep() {
-        if(currentRequest == null) {
-            if(!requestQueue.isEmpty()) {
-                Request request = servePolicy.getRequest(requestQueue);
-                // 如果request原料齐备，可以开工
-                // 如果goOneStep导致一个request正好完成，那需要相应更新request队列
-                request.updateStatus(storage);
-                if(request.getStatus() == RequestStatus.READY) {
-                    request.readyToWorking();
-                }
-                currentRequest = request;
-            } else {
-                Log.debugLog("no request here: " + name);
-                return true;
-            }
-        }
-
-        // 实际工作用remainTimeMinusOne模拟
-        Log.debugLog("processing request: " +
-                currentRequest.getIngredient() + ", " + currentRequest.getRemainTime());
-        currentRequest.remainTimeMinusOne();
-        return false;
-    }
+    protected abstract boolean goOneStep();
 
     private void update() {
-        if(currentRequest != null && currentRequest.getRemainTime() == 0) {
+        if(currentRequest != null && currentRemainTime == 0) {
             Log.debugLog("request done: " +
                     currentRequest.getIngredient() +
                     " at time " + LogicTime.getInstance().getStep() +
@@ -117,7 +100,12 @@ public abstract class Building implements Serializable {
         storage.put(itemName, storage.getOrDefault(itemName, 0) + 1);
     }
 
-    public void changePolicy() {
+    public void changeServePolicy(ServePolicy servePolicy) {
+        this.servePolicy = servePolicy;
+    }
+
+    public void changeSourcePolicy(SourcePolicy sourcePolicy) {
+        this.sourcePolicy = sourcePolicy;
     }
 
     public boolean notified() {
@@ -133,5 +121,9 @@ public abstract class Building implements Serializable {
 
     public String getName() {
         return name;
+    }
+
+    public List<Building> getSources() {
+        return sources;
     }
 }

@@ -1,14 +1,13 @@
 package productsimulation.setup;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import productsimulation.InputRuleChecker;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class SourcesDefinedChecker extends InputRuleChecker {
+public class SourceBuildingAreWellDefined extends InputRuleChecker {
 
-    public SourcesDefinedChecker(InputRuleChecker next) {
+    public SourceBuildingAreWellDefined(InputRuleChecker next) {
         super(next);
     }
 

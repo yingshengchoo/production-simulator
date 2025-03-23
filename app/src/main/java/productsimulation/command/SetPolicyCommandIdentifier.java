@@ -8,15 +8,12 @@ public class SetPolicyCommandIdentifier extends CommandIdentifier {
 
     @Override
     protected Command checkFits(String line) {
-        // Must begin with "set policy "
         if (!line.startsWith("set policy ")) {
             return null;
         }
         // remove prefix
-        String rest = line.substring(10).trim(); // everything after "set policy"
+        String rest = line.substring(10).trim();
 
-        // We expect something like: "request 'sjf' on default" or "source default on *" etc.
-        // Minimal check for " on ":
         if (!rest.contains(" on ")) {
             return null;
         }
@@ -24,22 +21,17 @@ public class SetPolicyCommandIdentifier extends CommandIdentifier {
         if (parts.length != 2) {
             return null;
         }
-        // left is e.g. "request 'sjf'"
-        // right is e.g. "default"
-        String left = parts[0].trim();
-        String right = parts[1].trim();
 
-        // The left part should have a TYPE and a POLICY
+        String target = parts[1].trim();
+
+        //  TYPE and a POLICY
         // e.g. "request 'sjf'"
-        String[] leftParts = left.split("\\s+", 2);
-        if (leftParts.length < 2) {
+        String[] typeAndPolicy = parts[0].trim().split("\\s+", 2);
+        if (typeAndPolicy.length < 2) {
             return null;
         }
-        String type = leftParts[0];    // "request" or "source"
-        String policy = leftParts[1];  // e.g. "'sjf'", "default", etc.
-
-        // The target is right
-        String target = right; // e.g. "'door factory'", "*", "default"
+        String type = typeAndPolicy[0];    // "request" or "source"
+        String policy = typeAndPolicy[1];  // e.g. "'sjf'", "default".
 
         return new SetPolicyCommand(type, policy, target);
     }

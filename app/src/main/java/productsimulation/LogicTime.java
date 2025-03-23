@@ -51,7 +51,8 @@ public class LogicTime implements Serializable{
         for(int i = 0; i < timeDiff; i++) {
             // 新一步
             for(Building b: observers) {
-                finished = finished && b.notified();
+                boolean idle = b.notified();
+                finished = idle && finished;
             }
             if(finished && timeDiff == Integer.MAX_VALUE) {
                 break;
@@ -60,6 +61,7 @@ public class LogicTime implements Serializable{
             for(Building b: observers) {
                 b.updateNotified();
             }
+            Log.debugLog("currentStep:" + (currentStep-1) + " to " + currentStep + "\n");
         }
         if(finished && timeDiff == Integer.MAX_VALUE) {
             quitGame();

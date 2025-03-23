@@ -6,15 +6,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
- class FactorySourceAvailabilityCheckerTest {
+ class FactoryCanGetAllIngredientsItNeedsTest {
 
-    /**
-     * Helper method to convert a JSON string into a JsonNode.
-     *
-     * @param json the JSON string.
-     * @return the parsed JsonNode.
-     * @throws Exception if parsing fails.
-     */
     private JsonNode parseJson(String json) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readTree(json);
@@ -45,7 +38,6 @@ import static org.junit.jupiter.api.Assertions.*;
                 "  {\"name\": \"T2\", \"recipes\": [\"handle\"]}" +
                 "]," +
                 "\"buildings\": [" +
-                // Updated: Factory1 now includes Mine2 (which produces metal) in its sources.
                 "  {\"name\": \"Factory1\", \"type\": \"T1\", \"sources\": [\"Factory1\", \"Factory2\", \"Mine1\", \"Mine2\"]}," +
                 "  {\"name\": \"Factory2\", \"type\": \"T2\", \"sources\": [\"Mine2\"]}," +
                 "  {\"name\": \"Mine1\", \"mine\": \"wood\"}," +
@@ -53,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.*;
                 "]" +
                 "}";
         JsonNode root = parseJson(json);
-        FactorySourceAvailabilityChecker checker = new FactorySourceAvailabilityChecker(null);
+        FactoryCanGetAllIngredientsItNeeds checker = new FactoryCanGetAllIngredientsItNeeds(null);
         String result = checker.checkInput(root);
         assertNull(result, "Expected no error when required ingredients can be sourced.");
     }
@@ -79,7 +71,7 @@ import static org.junit.jupiter.api.Assertions.*;
                 "]" +
                 "}";
         JsonNode root = parseJson(json);
-        FactorySourceAvailabilityChecker checker = new FactorySourceAvailabilityChecker(null);
+        FactoryCanGetAllIngredientsItNeeds checker = new FactoryCanGetAllIngredientsItNeeds(null);
         String result = checker.checkInput(root);
         assertNotNull(result, "Expected an error when a required ingredient cannot be sourced.");
         assertEquals("Factory building 'Factory1' cannot source ingredient 'handle' required by recipe 'door'.", result);
@@ -103,7 +95,7 @@ import static org.junit.jupiter.api.Assertions.*;
                 "]" +
                 "}";
         JsonNode root = parseJson(json);
-        FactorySourceAvailabilityChecker checker = new FactorySourceAvailabilityChecker(null);
+        FactoryCanGetAllIngredientsItNeeds checker = new FactoryCanGetAllIngredientsItNeeds(null);
         String result = checker.checkInput(root);
         assertNotNull(result, "Expected an error when a factory has no sources field.");
         assertEquals("Factory building 'Factory1' does not have sources but requires ingredient: wood", result);
@@ -125,7 +117,7 @@ import static org.junit.jupiter.api.Assertions.*;
                 "]" +
                 "}";
         JsonNode root = parseJson(json);
-        FactorySourceAvailabilityChecker checker = new FactorySourceAvailabilityChecker(null);
+        FactoryCanGetAllIngredientsItNeeds checker = new FactoryCanGetAllIngredientsItNeeds(null);
         String result = checker.checkInput(root);
         assertNull(result, "Expected no error for non-factory building even if sources is non-empty.");
     }
@@ -150,7 +142,7 @@ import static org.junit.jupiter.api.Assertions.*;
                 + "]"
                 + "}";
         JsonNode root = parseJson(json);
-        FactorySourceAvailabilityChecker checker = new FactorySourceAvailabilityChecker(null);
+        FactoryCanGetAllIngredientsItNeeds checker = new FactoryCanGetAllIngredientsItNeeds(null);
         String result = checker.checkInput(root);
         assertNull(result, "Expected no error when building's type is undefined (typeNode==null).");
     }
@@ -176,7 +168,7 @@ import static org.junit.jupiter.api.Assertions.*;
                 + "]"
                 + "}";
         JsonNode root = parseJson(json);
-        FactorySourceAvailabilityChecker checker = new FactorySourceAvailabilityChecker(null);
+        FactoryCanGetAllIngredientsItNeeds checker = new FactoryCanGetAllIngredientsItNeeds(null);
         String result = checker.checkInput(root);
         assertNull(result, "Expected no error when a type references a recipe that is undefined (recipeNode==null).");
     }
@@ -203,10 +195,9 @@ import static org.junit.jupiter.api.Assertions.*;
                 + "]"
                 + "}";
         JsonNode root = parseJson(json);
-        FactorySourceAvailabilityChecker checker = new FactorySourceAvailabilityChecker(null);
+        FactoryCanGetAllIngredientsItNeeds checker = new FactoryCanGetAllIngredientsItNeeds(null);
         String result = checker.checkInput(root);
         assertNotNull(result, "Expected an error when a factory's source is undefined (srcBuilding==null).");
         assertEquals("Factory building 'Factory1' cannot source ingredient 'wood' required by recipe 'door'.", result);
     }
-
 }

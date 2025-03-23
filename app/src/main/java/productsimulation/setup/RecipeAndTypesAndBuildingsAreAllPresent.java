@@ -1,11 +1,10 @@
 package productsimulation.setup;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import productsimulation.InputRuleChecker;
 
-public class RequiredFieldsChecker extends InputRuleChecker {
+public class RecipeAndTypesAndBuildingsAreAllPresent extends InputRuleChecker {
 
-    public RequiredFieldsChecker(InputRuleChecker next) {
+    public RecipeAndTypesAndBuildingsAreAllPresent(InputRuleChecker next) {
         super(next);
     }
 

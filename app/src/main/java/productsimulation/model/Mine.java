@@ -1,5 +1,8 @@
 package productsimulation.model;
 
+import productsimulation.Log;
+import productsimulation.request.Request;
+import productsimulation.request.RequestStatus;
 import productsimulation.request.servePolicy.ServePolicy;
 import productsimulation.request.sourcePolicy.SourcePolicy;
 import java.io.Serializable;
@@ -21,6 +24,27 @@ public class Mine extends Building implements Serializable {
 
     public Mine(String name, FactoryType type,  SourcePolicy sourcePolicy, ServePolicy servePolicy){
         super(name, type, sourcePolicy, servePolicy);
+    }
+
+    protected boolean goOneStep() {
+        if(currentRequest == null) {
+            if(!requestQueue.isEmpty()) {
+                Request request = servePolicy.getRequest(requestQueue);
+                // 相比factory，mine不需要等待原材料/检查库存
+                currentRequest = request;
+                Recipe currentRecipe = type.getRecipeByProductName(currentRequest.getIngredient());
+                currentRemainTime = currentRecipe.getLatency();
+            } else {
+//                Log.debugLog("no request here: " + name);
+                return true;
+            }
+        }
+
+        // 实际工作用remainTime - 1模拟
+        Log.debugLog(name + " is processing request: " +
+                currentRequest.getIngredient() + ", " + currentRemainTime);
+        currentRemainTime -= 1;
+        return false;
     }
 
   //A helper function that returns a string representation of the sources.

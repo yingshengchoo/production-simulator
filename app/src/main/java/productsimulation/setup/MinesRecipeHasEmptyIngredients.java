@@ -1,17 +1,15 @@
 package productsimulation.setup;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import productsimulation.InputRuleChecker;
 
-public class MineRecipeChecker extends InputRuleChecker {
+public class MinesRecipeHasEmptyIngredients extends InputRuleChecker {
 
-    public MineRecipeChecker(InputRuleChecker next) {
+    public MinesRecipeHasEmptyIngredients(InputRuleChecker next) {
         super(next);
     }
 
     @Override
     protected String checkMyRule(JsonNode root) {
-        // For each mine building, check that its referenced recipe has no ingredients.
         for (JsonNode building : root.get("buildings")) {
             if (building.has("mine")) {
                 String mineRecipeName = building.get("mine").asText();

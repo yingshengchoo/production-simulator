@@ -6,15 +6,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
- class RecipeLatencyCheckerTest {
-
-    /**
-     * Helper method to convert a JSON string into a JsonNode.
-     *
-     * @param json the JSON string.
-     * @return the root JsonNode.
-     * @throws Exception if parsing fails.
-     */
+ class RecipeHasValidLatencyNumberTest {
+     
     private JsonNode parseJson(String json) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readTree(json);
@@ -34,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
                 + "\"buildings\": []"
                 + "}";
         JsonNode root = parseJson(json);
-        RecipeLatencyChecker checker = new RecipeLatencyChecker(null);
+        RecipeHasValidLatencyNumber checker = new RecipeHasValidLatencyNumber(null);
         String result = checker.checkInput(root);
         assertNull(result, "Expected no error when all recipe latencies are valid (>= 1).");
     }
@@ -53,9 +46,28 @@ import static org.junit.jupiter.api.Assertions.*;
                 + "\"buildings\": []"
                 + "}";
         JsonNode root = parseJson(json);
-        RecipeLatencyChecker checker = new RecipeLatencyChecker(null);
+        RecipeHasValidLatencyNumber checker = new RecipeHasValidLatencyNumber(null);
         String result = checker.checkInput(root);
         assertNotNull(result, "Expected an error when a recipe has latency less than 1.");
         assertEquals("Recipe 'door' has invalid latency: 0", result);
     }
-}
+
+     // 2147483648 is one more than Integer.MAX_VALUE, so it cannot be converted to int.
+     @Test
+     public void test_checkMyRule_invalid_nonConvertible() throws Exception {
+         String json = "{"
+                 + "\"recipes\": ["
+                 + "  {\"output\": \"door\", \"ingredients\": {\"wood\":1}, \"latency\":2147483648},"
+                 + "  {\"output\": \"wood\", \"ingredients\": {}, \"latency\":1}"
+                 + "],"
+                 + "\"types\": [],"
+                 + "\"buildings\": []"
+                 + "}";
+         JsonNode root = parseJson(json);
+         RecipeHasValidLatencyNumber checker = new RecipeHasValidLatencyNumber(null);
+         String result = checker.checkInput(root);
+         assertNotNull(result, "Expected an error when a recipe's latency value is out of int range.");
+         assertEquals("Recipe 'door' has invalid latency (out of int range): 2147483648", result);
+     }
+
+ }

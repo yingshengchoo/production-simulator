@@ -6,15 +6,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
- class RecipeIngredientsCheckerTest {
+ class RecipesIngredientsMustBeWellDefinedTest {
 
-    /**
-     * Helper method to convert a JSON string into a JsonNode.
-     *
-     * @param json the JSON string.
-     * @return the parsed root JsonNode.
-     * @throws Exception if parsing fails.
-     */
     private JsonNode parseJson(String json) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readTree(json);
@@ -34,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
                 + "\"buildings\": []"
                 + "}";
         JsonNode root = parseJson(json);
-        RecipeIngredientsChecker checker = new RecipeIngredientsChecker(null);
+        RecipesIngredientsMustBeWellDefined checker = new RecipesIngredientsMustBeWellDefined(null);
         String result = checker.checkInput(root);
         assertNull(result, "Expected no error when all ingredients are defined.");
     }
@@ -54,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.*;
                 + "\"buildings\": []"
                 + "}";
         JsonNode root = parseJson(json);
-        RecipeIngredientsChecker checker = new RecipeIngredientsChecker(null);
+        RecipesIngredientsMustBeWellDefined checker = new RecipesIngredientsMustBeWellDefined(null);
         String result = checker.checkInput(root);
         assertNotNull(result, "Expected an error when a recipe references an undefined ingredient.");
         assertEquals("Recipe 'door' requires ingredient 'handle', which is not defined.", result);

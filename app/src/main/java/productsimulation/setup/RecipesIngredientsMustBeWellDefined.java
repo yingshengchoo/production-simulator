@@ -1,15 +1,14 @@
 package productsimulation.setup;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import productsimulation.InputRuleChecker;
 
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-public class RecipeIngredientsChecker extends InputRuleChecker {
+public class RecipesIngredientsMustBeWellDefined extends InputRuleChecker {
 
-    public RecipeIngredientsChecker(InputRuleChecker next) {
+    public RecipesIngredientsMustBeWellDefined(InputRuleChecker next) {
         super(next);
     }
 

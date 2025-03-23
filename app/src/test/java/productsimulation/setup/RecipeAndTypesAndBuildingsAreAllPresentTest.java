@@ -6,15 +6,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
- class RequiredFieldsCheckerTest {
+ class RecipeAndTypesAndBuildingsAreAllPresentTest {
 
-    /**
-     * Helper method to parse a JSON string into a JsonNode.
-     *
-     * @param json the JSON string.
-     * @return the parsed root JsonNode.
-     * @throws Exception if parsing fails.
-     */
     private JsonNode parseJson(String json) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readTree(json);
@@ -27,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
     public void test_checkMyRule_valid() throws Exception {
         String json = "{\"recipes\": [], \"types\": [], \"buildings\": []}";
         JsonNode root = parseJson(json);
-        RequiredFieldsChecker checker = new RequiredFieldsChecker(null);
+        RecipeAndTypesAndBuildingsAreAllPresent checker = new RecipeAndTypesAndBuildingsAreAllPresent(null);
         String result = checker.checkInput(root);
         assertNull(result, "Expected no error when 'recipes', 'types', and 'buildings' are present.");
     }
@@ -39,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
     public void test_checkMyRule_missingRecipes() throws Exception {
         String json = "{\"types\": [], \"buildings\": []}";
         JsonNode root = parseJson(json);
-        RequiredFieldsChecker checker = new RequiredFieldsChecker(null);
+        RecipeAndTypesAndBuildingsAreAllPresent checker = new RecipeAndTypesAndBuildingsAreAllPresent(null);
         String result = checker.checkInput(root);
         assertNotNull(result, "Expected an error when 'recipes' is missing.");
         assertEquals("JSON file must contain 'recipes', 'types', and 'buildings' fields.", result);
@@ -52,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.*;
     public void test_checkMyRule_missingTypes() throws Exception {
         String json = "{\"recipes\": [], \"buildings\": []}";
         JsonNode root = parseJson(json);
-        RequiredFieldsChecker checker = new RequiredFieldsChecker(null);
+        RecipeAndTypesAndBuildingsAreAllPresent checker = new RecipeAndTypesAndBuildingsAreAllPresent(null);
         String result = checker.checkInput(root);
         assertNotNull(result, "Expected an error when 'types' is missing.");
         assertEquals("JSON file must contain 'recipes', 'types', and 'buildings' fields.", result);
@@ -65,7 +58,7 @@ import static org.junit.jupiter.api.Assertions.*;
     public void test_checkMyRule_missingBuildings() throws Exception {
         String json = "{\"recipes\": [], \"types\": []}";
         JsonNode root = parseJson(json);
-        RequiredFieldsChecker checker = new RequiredFieldsChecker(null);
+        RecipeAndTypesAndBuildingsAreAllPresent checker = new RecipeAndTypesAndBuildingsAreAllPresent(null);
         String result = checker.checkInput(root);
         assertNotNull(result, "Expected an error when 'buildings' is missing.");
         assertEquals("JSON file must contain 'recipes', 'types', and 'buildings' fields.", result);

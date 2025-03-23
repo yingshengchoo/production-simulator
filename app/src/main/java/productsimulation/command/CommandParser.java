@@ -1,13 +1,10 @@
 package productsimulation.command;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-
 public class CommandParser {
-  private final CommandIdentifier ruleIdentifier;
+  private final CommandIdentifier commandIdentifier;
 
   public CommandParser() {
-    ruleIdentifier =
+    commandIdentifier =
             new RequestCommandIdentifier(
                     new StepCommandIdentifier(
                             new FinishCommandIdentifier(
@@ -22,22 +19,6 @@ public class CommandParser {
     if (line == null) {
       return null;
     }
-    return ruleIdentifier.checkInput(line.trim());
-  }
-
-  public void parse(BufferedReader reader) throws IOException {
-    String line;
-    while ((line = reader.readLine()) != null) {
-      line = line.trim();
-      if (line.isEmpty()) {
-        continue;
-      }
-      Command cmd = parseLine(line);
-      if (cmd == null) {
-        System.err.println("Unrecognized command: " + line);
-      } else {
-        cmd.execute();
-      }
-    }
+    return commandIdentifier.checkInput(line.trim());
   }
 }

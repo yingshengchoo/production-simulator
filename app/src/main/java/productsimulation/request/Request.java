@@ -23,9 +23,10 @@ public class Request implements Serializable{
 
   public int id;
   private final String ingredient;
+//  根据上缴后的用途不同，区分request，参考
+//  private final Recipe parentRecipe;
   private final Recipe recipe;
   private final Building requester;
-  private int remainTime;
   private RequestStatus status;
 
   public Request(String ingredient, Recipe recipe, Building requester) {
@@ -33,9 +34,18 @@ public class Request implements Serializable{
     this.ingredient = ingredient;
     this.recipe = recipe;
     this.requester = requester;
-    this.remainTime = recipe.getLatency();
     this.status = RequestStatus.WAITING;
   }
+
+//  public Request(String ingredient, Recipe parentRecipe, Recipe recipe, Building requester) {
+//    this.id = idGenerator.nextId();
+//    this.ingredient = ingredient;
+//    this.parentRecipe = parentRecipe;
+//    this.recipe = recipe;
+//    this.requester = requester;
+//    this.remainTime = recipe.getLatency();
+//    this.status = RequestStatus.WAITING;
+//  }
 
   /**
    * Constructs and returns a new {@code Request} object. The method uses the given parameters
@@ -50,7 +60,7 @@ public class Request implements Serializable{
    */
   public static Request BuildRequest(String item, SourcePolicy sourcePolicy,
                                      Map<String, Building> buildingMap, Map<String, Recipe> recipeMap ) {
-    Building building = sourcePolicy.getSource(new ArrayList<>(buildingMap.values()));
+    Building building = sourcePolicy.getSource(new ArrayList<>(buildingMap.values()), item);
     if (building == null) {
       throw new IllegalArgumentException("ERROR: 0 Building in list!");
     }
@@ -101,10 +111,10 @@ public class Request implements Serializable{
   public int getLatency() {
     return recipe.getLatency();
   }
-  public int getRemainTime() { return remainTime; }
-  public void remainTimeMinusOne() { remainTime -= 1; }
+
   public void doneReportAndTransport() {
     if(requester != null) {
+      Log.debugLog("sending " + ingredient + " to " + requester.getName());
       requester.updateStorage(ingredient);
     } else {
       Log.debugLog("user request is done: " + ingredient + " at " + LogicTime.getInstance().getStep());
