@@ -1,8 +1,12 @@
 *~
 
+# for idea
 .idea
+# for eclipse
 .project
 .settings
+# for emacs
+*\#*
 # Ignore Gradle project-specific cache directory
 .gradle
 

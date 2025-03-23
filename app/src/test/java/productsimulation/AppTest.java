@@ -1,5 +1,6 @@
 package productsimulation;
 
+import org.junit.jupiter.api.Disabled;
 import productsimulation.command.RequestCommand;
 import productsimulation.command.StepCommand;
 import productsimulation.model.*;
@@ -8,9 +9,15 @@ import productsimulation.request.servePolicy.*;
 import productsimulation.request.sourcePolicy.SoleSourcePolicy;
 import productsimulation.request.sourcePolicy.SourcePolicy;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.*;
 
 import org.junit.jupiter.api.Test;
+import productsimulation.setup.SetupParser;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class AppTest {
     @Test
@@ -58,6 +65,39 @@ class AppTest {
         stepCommand.execute();
         stepCommand.execute();
         stepCommand.execute();
+        stepCommand.execute();
+    }
+
+    @Test
+    public void doorDemo() {
+        SetupParser parser = new SetupParser();
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("doors1.json");
+        assertNotNull(inputStream);
+        parser.parse(new BufferedReader(new InputStreamReader(inputStream)));
+        Map<String, Recipe> recipes = parser.getRecipeMap();
+        Map<String, FactoryType> types = parser.getTypeMap();
+        Map<String, Building> buildings = parser.getBuildingMap();
+
+        LogicTime logicTime = LogicTime.getInstance();
+        RequestBroadcaster requestBroadcaster = RequestBroadcaster.getInstance();
+        SourcePolicy soleSourcePolicy = new SoleSourcePolicy();
+        ServePolicy oneTimeServePolicy = new OneTimeServePolicy();
+
+        for(Building b: buildings.values()) {
+            b.changeSourcePolicy(soleSourcePolicy);
+            b.changeServePolicy(oneTimeServePolicy);
+
+            logicTime.addObservers(b);
+            requestBroadcaster.addBuildings(b);
+        }
+
+        for(Recipe r: recipes.values()) {
+            requestBroadcaster.addRecipes(r);
+        }
+
+        RequestCommand requestCommand = new RequestCommand("door", "D");
+        requestCommand.execute();
+        StepCommand stepCommand = new StepCommand(50);
         stepCommand.execute();
     }
 }
