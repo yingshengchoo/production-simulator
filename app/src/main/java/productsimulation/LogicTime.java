@@ -6,8 +6,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.io.Serializable;
 
-public class LogicTime {
+public class LogicTime implements Serializable{
     private static final LogicTime instance = new LogicTime();
     private int currentStep;
     private final Set<Building> observers;

@@ -4,8 +4,9 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.io.Serializable;
 
-public class Log {
+public class Log implements Serializable {
     private static final Logger logger = LoggerFactory.getLogger(App.class);
 
     public static void setLogLevel(int level) {

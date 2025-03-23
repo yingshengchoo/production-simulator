@@ -6,11 +6,12 @@ import java.io.*;
 import java.util.List; 
 
 public class State implements Serializable{
-  //private ByteArrayInputStream serializationData;
-
+  
   private List<Building> buildings;
   private List<Recipe> recipes;
   private List<FactoryType> types;
+  private RequestBroadcaster requestbroadcaster;
+  private LogicTime logictime;
   
   /**
    * Checks to see if the filename is valid(doesn't contain any special characters).
@@ -19,11 +20,12 @@ public class State implements Serializable{
    * @param types         is the list types of Factory in the simulation.
    * @param recipes       is the list of recipes in the simulation.
    */
-  public State(List<Building> buildings, List<FactoryType> types, List<Recipe> recipes){
+  public State(List<Building> buildings, List<FactoryType> types, List<Recipe> recipes, RequestBroadcaster requestbroadcaster, LogicTime logictime){
     this.buildings = buildings;
     this.types = types;
     this.recipes = recipes;
-    
+    this.requestbroadcaster = requestbroadcaster;
+    this.logictime = logictime;
   }
 
   /**

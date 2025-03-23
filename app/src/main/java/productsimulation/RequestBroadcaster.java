@@ -3,10 +3,10 @@ package productsimulation;
 import productsimulation.model.Building;
 import productsimulation.model.Recipe;
 import productsimulation.request.Request;
-
+import java.io.Serializable;
 import java.util.*;
 
-public class RequestBroadcaster {
+public class RequestBroadcaster implements Serializable {
     private static final RequestBroadcaster instance = new RequestBroadcaster();
     public static RequestBroadcaster getInstance() {
         return instance;
