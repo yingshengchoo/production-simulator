@@ -108,7 +108,8 @@ class StateTest {
     "{name='GC',\n" +
     " type='GoldChain',\n" +
     " sources=[G]\n" +
-      "}";
+    "}\n";
+    
     assertEquals(expected, originalOutput.toString());
     
     state.reset();

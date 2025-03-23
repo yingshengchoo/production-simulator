@@ -131,7 +131,7 @@ public class State implements Serializable{
    * @param o is the PrintStream to print the current state.
    */
   public void showState(PrintStream o){
-    o.println("Current State Information:\n");
+    o.println("Current State Information:");
     printLogicTime(o);
     printRecipes(o);
     printTypes(o);
