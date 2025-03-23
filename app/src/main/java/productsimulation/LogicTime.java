@@ -11,6 +11,7 @@ public class LogicTime {
     private static final LogicTime instance = new LogicTime();
     private int currentStep;
     private final Set<Building> observers;
+    private boolean exitFlag;
 
 
     /**
@@ -19,6 +20,7 @@ public class LogicTime {
     private LogicTime() {
         this.currentStep = 0;
         this.observers = new HashSet<>();
+        this.exitFlag = false;
     }
 
     /**
@@ -48,6 +50,7 @@ public class LogicTime {
     public void notifyAll(int timeDiff) {
         boolean finished = true;
         for(int i = 0; i < timeDiff; i++) {
+            finished = true;
             // 新一步
             for(Building b: observers) {
                 boolean idle = b.notified();
@@ -60,7 +63,7 @@ public class LogicTime {
             for(Building b: observers) {
                 b.updateNotified();
             }
-            Log.debugLog("currentStep:" + (currentStep-1) + " to " + currentStep + "\n");
+//            Log.debugLog("currentStep:" + (currentStep-1) + " to " + currentStep + "\n");
         }
         if(finished && timeDiff == Integer.MAX_VALUE) {
             quitGame();
@@ -69,6 +72,7 @@ public class LogicTime {
 
     private void quitGame() {
         Log.debugLog("The simulation is ended.");
+        exitFlag = true;
     }
 
     public void stepNHandler(int n) {
@@ -77,6 +81,10 @@ public class LogicTime {
 
     public void finishHandler() {
         notifyAll(Integer.MAX_VALUE);
+    }
+
+    public boolean getExitFlag() {
+        return exitFlag;
     }
 
     // only for test

@@ -1,6 +1,7 @@
 package productsimulation;
 
 import org.junit.jupiter.api.Disabled;
+import productsimulation.command.FinishCommand;
 import productsimulation.command.RequestCommand;
 import productsimulation.command.StepCommand;
 import productsimulation.model.*;
@@ -97,7 +98,9 @@ class AppTest {
 
         RequestCommand requestCommand = new RequestCommand("door", "D");
         requestCommand.execute();
-        StepCommand stepCommand = new StepCommand(50);
-        stepCommand.execute();
+//        StepCommand stepCommand = new StepCommand(50);
+//        stepCommand.execute();
+        FinishCommand finishCommand = new FinishCommand();
+        finishCommand.execute();
     }
 }
