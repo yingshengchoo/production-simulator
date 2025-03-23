@@ -6,15 +6,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
- class UniqueNamesCheckerTest {
+ class RecipeAndTypesAndBuildingsHaveUniqueNamesTest {
 
-    /**
-     * Helper method to parse a JSON string into a JsonNode.
-     *
-     * @param json the JSON string.
-     * @return the root JsonNode.
-     * @throws Exception if parsing fails.
-     */
     private JsonNode parseJson(String json) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readTree(json);
@@ -40,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
                 + "]"
                 + "}";
         JsonNode root = parseJson(json);
-        UniqueNamesChecker checker = new UniqueNamesChecker(null);
+        RecipeAndTypesAndBuildingsHaveUniqueNames checker = new RecipeAndTypesAndBuildingsHaveUniqueNames(null);
         String result = checker.checkInput(root);
         assertNull(result, "Expected no error when all names are unique.");
     }
@@ -59,7 +52,7 @@ import static org.junit.jupiter.api.Assertions.*;
                 + "\"buildings\": []"
                 + "}";
         JsonNode root = parseJson(json);
-        UniqueNamesChecker checker = new UniqueNamesChecker(null);
+        RecipeAndTypesAndBuildingsHaveUniqueNames checker = new RecipeAndTypesAndBuildingsHaveUniqueNames(null);
         String result = checker.checkInput(root);
         assertNotNull(result, "Expected an error when duplicate recipe names exist.");
         assertEquals("Duplicate recipe name: door", result);
@@ -81,7 +74,7 @@ import static org.junit.jupiter.api.Assertions.*;
                 + "\"buildings\": []"
                 + "}";
         JsonNode root = parseJson(json);
-        UniqueNamesChecker checker = new UniqueNamesChecker(null);
+        RecipeAndTypesAndBuildingsHaveUniqueNames checker = new RecipeAndTypesAndBuildingsHaveUniqueNames(null);
         String result = checker.checkInput(root);
         assertNotNull(result, "Expected an error when duplicate type names exist.");
         assertEquals("Duplicate type name: Type1", result);
@@ -101,7 +94,7 @@ import static org.junit.jupiter.api.Assertions.*;
                 + "]"
                 + "}";
         JsonNode root = parseJson(json);
-        UniqueNamesChecker checker = new UniqueNamesChecker(null);
+        RecipeAndTypesAndBuildingsHaveUniqueNames checker = new RecipeAndTypesAndBuildingsHaveUniqueNames(null);
         String result = checker.checkInput(root);
         assertNotNull(result, "Expected an error when duplicate building names exist.");
         assertEquals("Duplicate building name: B1", result);

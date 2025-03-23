@@ -7,15 +7,8 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 // Rule 5
- class TypeRecipeCheckerTest {
+ class TypesRecipeExistTest {
 
-    /**
-     * Helper method to convert a JSON string into a JsonNode.
-     *
-     * @param json the JSON string.
-     * @return the root JsonNode.
-     * @throws Exception if parsing fails.
-     */
     private JsonNode parseJson(String json) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readTree(json);
@@ -38,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
                 + "\"buildings\": []"
                 + "}";
         JsonNode root = parseJson(json);
-        TypeRecipeChecker checker = new TypeRecipeChecker(null);
+        TypesRecipeExist checker = new TypesRecipeExist(null);
         String result = checker.checkInput(root);
         assertNull(result, "Expected no error when all type recipe references are valid.");
     }
@@ -59,7 +52,7 @@ import static org.junit.jupiter.api.Assertions.*;
                 + "\"buildings\": []"
                 + "}";
         JsonNode root = parseJson(json);
-        TypeRecipeChecker checker = new TypeRecipeChecker(null);
+        TypesRecipeExist checker = new TypesRecipeExist(null);
         String result = checker.checkInput(root);
         assertNotNull(result, "Expected an error when a type references an unknown recipe.");
         assertEquals("Type 'FactoryType1' references unknown recipe: door", result);

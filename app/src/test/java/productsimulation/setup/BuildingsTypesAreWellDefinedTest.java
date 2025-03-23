@@ -6,15 +6,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class BuildingTypeCheckerTest {
+class BuildingsTypesAreWellDefinedTest {
 
-    /**
-     * Helper method to convert a JSON string into a JsonNode.
-     *
-     * @param json the JSON string
-     * @return the root JsonNode
-     * @throws Exception if parsing fails
-     */
     private JsonNode getJsonNode(String json) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readTree(json);
@@ -35,7 +28,7 @@ class BuildingTypeCheckerTest {
                 + "}";
         JsonNode root = getJsonNode(json);
         // Instantiate BuildingTypeChecker with no next rule.
-        BuildingTypeChecker checker = new BuildingTypeChecker(null);
+        BuildingsTypesAreWellDefined checker = new BuildingsTypesAreWellDefined(null);
         String result = checker.checkInput(root);
         // A valid input should return null.
         assertNull(result, "Expected no error for valid building types.");
@@ -54,7 +47,7 @@ class BuildingTypeCheckerTest {
                 + "]"
                 + "}";
         JsonNode root = getJsonNode(json);
-        BuildingTypeChecker checker = new BuildingTypeChecker(null);
+        BuildingsTypesAreWellDefined checker = new BuildingsTypesAreWellDefined(null);
         String result = checker.checkInput(root);
         assertNotNull(result, "Expected error message for unknown building type.");
         assertEquals("Building 'B1' has unknown type: T2", result);

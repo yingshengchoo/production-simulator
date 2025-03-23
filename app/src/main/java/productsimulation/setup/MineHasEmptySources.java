@@ -3,15 +3,14 @@ package productsimulation.setup;
 import com.fasterxml.jackson.databind.JsonNode;
 import productsimulation.InputRuleChecker;
 
-public class MineSourceChecker extends InputRuleChecker {
+public class MineHasEmptySources extends InputRuleChecker {
 
-    public MineSourceChecker(InputRuleChecker next) {
+    public MineHasEmptySources(InputRuleChecker next) {
         super(next);
     }
 
     @Override
     protected String checkMyRule(JsonNode root) {
-        // For each mine building, ensure that sources is not present or empty.
         for (JsonNode building : root.get("buildings")) {
             if (building.has("mine")) {
                 if (building.has("sources")) {

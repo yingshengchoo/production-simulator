@@ -6,9 +6,9 @@ import productsimulation.InputRuleChecker;
 import java.util.HashSet;
 import java.util.Set;
 
-public class TypeRecipeChecker extends InputRuleChecker {
+public class TypesRecipeExist extends InputRuleChecker {
 
-    public TypeRecipeChecker(InputRuleChecker next) {
+    public TypesRecipeExist(InputRuleChecker next) {
         super(next);
     }
 

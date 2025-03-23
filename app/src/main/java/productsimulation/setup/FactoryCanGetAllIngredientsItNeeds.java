@@ -7,15 +7,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public class FactorySourceAvailabilityChecker extends InputRuleChecker {
+public class FactoryCanGetAllIngredientsItNeeds extends InputRuleChecker {
 
-    public FactorySourceAvailabilityChecker(InputRuleChecker next) {
+    public FactoryCanGetAllIngredientsItNeeds(InputRuleChecker next) {
         super(next);
     }
 
     @Override
     protected String checkMyRule(JsonNode root) {
-        // Build lookup maps.
         Map<String, JsonNode> recipeMap = new HashMap<>();
         for (JsonNode recipe : root.get("recipes")) {
             recipeMap.put(recipe.get("output").asText(), recipe);

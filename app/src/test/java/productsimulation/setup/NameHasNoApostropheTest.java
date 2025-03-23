@@ -6,15 +6,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
- class IllegalCharacterCheckerTest {
+ class NameHasNoApostropheTest {
 
-    /**
-     * Helper method to parse a JSON string into a JsonNode.
-     *
-     * @param json the JSON string.
-     * @return the root JsonNode.
-     * @throws Exception if parsing fails.
-     */
     private JsonNode getJsonNode(String json) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readTree(json);
@@ -31,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
                 + "\"buildings\": [ { \"name\": \"Factory1\", \"type\": \"FactoryType1\", \"sources\": [] } ]"
                 + "}";
         JsonNode root = getJsonNode(json);
-        IllegalCharacterChecker checker = new IllegalCharacterChecker(null);
+        NameHasNoApostrophe checker = new NameHasNoApostrophe(null);
         String result = checker.checkInput(root);
         assertNull(result, "Expected no error when no names contain apostrophes.");
     }
@@ -47,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
                 + "\"buildings\": [ { \"name\": \"Factory1\", \"type\": \"FactoryType1\", \"sources\": [] } ]"
                 + "}";
         JsonNode root = getJsonNode(json);
-        IllegalCharacterChecker checker = new IllegalCharacterChecker(null);
+        NameHasNoApostrophe checker = new NameHasNoApostrophe(null);
         String result = checker.checkInput(root);
         assertNotNull(result, "Expected an error when a recipe output contains an apostrophe.");
         assertEquals("Recipe output name contains illegal character: do'or", result);
@@ -64,7 +57,7 @@ import static org.junit.jupiter.api.Assertions.*;
                 + "\"buildings\": [ { \"name\": \"Factory1\", \"type\": \"Fac'toryType1\", \"sources\": [] } ]"
                 + "}";
         JsonNode root = getJsonNode(json);
-        IllegalCharacterChecker checker = new IllegalCharacterChecker(null);
+        NameHasNoApostrophe checker = new NameHasNoApostrophe(null);
         String result = checker.checkInput(root);
         assertNotNull(result, "Expected an error when a type name contains an apostrophe.");
         assertEquals("Type name contains illegal character: Fac'toryType1", result);
@@ -81,7 +74,7 @@ import static org.junit.jupiter.api.Assertions.*;
                 + "\"buildings\": [ { \"name\": \"Fac'tory1\", \"type\": \"FactoryType1\", \"sources\": [] } ]"
                 + "}";
         JsonNode root = getJsonNode(json);
-        IllegalCharacterChecker checker = new IllegalCharacterChecker(null);
+        NameHasNoApostrophe checker = new NameHasNoApostrophe(null);
         String result = checker.checkInput(root);
         assertNotNull(result, "Expected an error when a building name contains an apostrophe.");
         assertEquals("Building name contains illegal character: Fac'tory1", result);

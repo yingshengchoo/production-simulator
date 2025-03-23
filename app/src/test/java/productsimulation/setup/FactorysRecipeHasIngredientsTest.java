@@ -6,15 +6,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
- class FactoryRecipeCheckerTest {
+ class FactorysRecipeHasIngredientsTest {
 
-    /**
-     * Helper method to parse a JSON string into a JsonNode.
-     *
-     * @param json the JSON string.
-     * @return the root JsonNode.
-     * @throws Exception if parsing fails.
-     */
     private JsonNode parseJson(String json) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readTree(json);
@@ -39,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
                 + "]"
                 + "}";
         JsonNode root = parseJson(json);
-        FactoryRecipeChecker checker = new FactoryRecipeChecker(null);
+        FactorysRecipeHasIngredients checker = new FactorysRecipeHasIngredients(null);
         String result = checker.checkInput(root);
         // Expect no error message.
         assertNull(result, "Expected no error for valid factory recipe references.");
@@ -62,7 +55,7 @@ import static org.junit.jupiter.api.Assertions.*;
                 + "]"
                 + "}";
         JsonNode root = parseJson(json);
-        FactoryRecipeChecker checker = new FactoryRecipeChecker(null);
+        FactorysRecipeHasIngredients checker = new FactorysRecipeHasIngredients(null);
         String result = checker.checkInput(root);
         assertNotNull(result, "Expected an error for factory referencing a recipe with no ingredients.");
         assertEquals("Factory type 'FactoryType1' references recipe 'door' which has no ingredients.", result);
