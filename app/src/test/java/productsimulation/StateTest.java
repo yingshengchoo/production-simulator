@@ -46,8 +46,8 @@ class StateTest {
 
     RequestBroadcaster requestBroadcaster = RequestBroadcaster.getInstance();
     requestBroadcaster.addRecipes(eggroll);
-    requestBroadcaster.addBuilding(mine);
-    requestBroadcaster.addBuilding(factory);
+    requestBroadcaster.addBuildings(mine);
+    requestBroadcaster.addBuildings(factory);
 
     LogicTime logicTime = LogicTime.getInstance();
     logicTime.addObservers(mine);
