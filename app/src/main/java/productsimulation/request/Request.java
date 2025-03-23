@@ -11,7 +11,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class Request {
+import java.io.Serializable;
+
+public class Request implements Serializable{
 
   private static IdGenerator idGenerator = new IdGenerator();
 

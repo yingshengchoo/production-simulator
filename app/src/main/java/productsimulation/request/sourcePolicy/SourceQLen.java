@@ -4,7 +4,9 @@ import productsimulation.model.Building;
 
 import java.util.List;
 
-public class SourceQLen implements SourcePolicy {
+import java.io.Serializable;
+
+public class SourceQLen implements SourcePolicy, Serializable {
 
     @Override
     public Building getSource(List<Building> buildings) {

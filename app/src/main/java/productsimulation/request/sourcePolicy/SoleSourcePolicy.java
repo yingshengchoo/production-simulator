@@ -4,7 +4,9 @@ import productsimulation.model.Building;
 
 import java.util.List;
 
-public class SoleSourcePolicy implements SourcePolicy {
+import java.io.Serializable;
+
+public class SoleSourcePolicy implements SourcePolicy, Serializable {
     public Building getSource(List<Building> buildings) {
         return buildings.get(0);
     }
