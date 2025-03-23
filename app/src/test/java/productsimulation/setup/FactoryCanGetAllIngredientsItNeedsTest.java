@@ -38,7 +38,6 @@ import static org.junit.jupiter.api.Assertions.*;
                 "  {\"name\": \"T2\", \"recipes\": [\"handle\"]}" +
                 "]," +
                 "\"buildings\": [" +
-                // Updated: Factory1 now includes Mine2 (which produces metal) in its sources.
                 "  {\"name\": \"Factory1\", \"type\": \"T1\", \"sources\": [\"Factory1\", \"Factory2\", \"Mine1\", \"Mine2\"]}," +
                 "  {\"name\": \"Factory2\", \"type\": \"T2\", \"sources\": [\"Mine2\"]}," +
                 "  {\"name\": \"Mine1\", \"mine\": \"wood\"}," +
@@ -201,5 +200,4 @@ import static org.junit.jupiter.api.Assertions.*;
         assertNotNull(result, "Expected an error when a factory's source is undefined (srcBuilding==null).");
         assertEquals("Factory building 'Factory1' cannot source ingredient 'wood' required by recipe 'door'.", result);
     }
-
 }

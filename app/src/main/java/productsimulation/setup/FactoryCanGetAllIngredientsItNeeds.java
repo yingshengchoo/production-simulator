@@ -15,56 +15,35 @@ public class FactoryCanGetAllIngredientsItNeeds extends InputRuleChecker {
 
     @Override
     protected String checkMyRule(JsonNode root) {
-        Map<String, JsonNode> recipeMap = new HashMap<>();
-        for (JsonNode recipe : root.get("recipes")) {
-            recipeMap.put(recipe.get("output").asText(), recipe);
-        }
-        Map<String, JsonNode> typeMap = new HashMap<>();
-        for (JsonNode type : root.get("types")) {
-            typeMap.put(type.get("name").asText(), type);
-        }
-        Map<String, JsonNode> buildingMap = new HashMap<>();
-        for (JsonNode building : root.get("buildings")) {
-            buildingMap.put(building.get("name").asText(), building);
-        }
+        // Build lookup maps for recipes, types, and buildings.
+        Map<String, JsonNode> recipes = createLookupMap(root.get("recipes"), "output");
+        Map<String, JsonNode> types = createLookupMap(root.get("types"), "name");
+        Map<String, JsonNode> buildings = createLookupMap(root.get("buildings"), "name");
 
-        // For each factory (building with a "type" field), verify that every ingredient (from every recipe in its type)
-        // can be produced by at least one source.
+        // For each factory building, check if all required ingredients can be sourced.
         for (JsonNode building : root.get("buildings")) {
-            if (building.has("type")) {
-                String buildingName = building.get("name").asText();
-                String typeName = building.get("type").asText();
-                JsonNode typeNode = typeMap.get(typeName);
-                // If typeNode is null or does not have "recipes", skip checking this building.
-                // BuildingTypeChecker will determine this is illegal then.
-                if (typeNode == null || !typeNode.has("recipes")) {
-                    continue;
-                }
-                for (JsonNode recNameNode : typeNode.get("recipes")) {
-                    String recipeName = recNameNode.asText();
-                    JsonNode recipeNode = recipeMap.get(recipeName);
-                    if (recipeNode == null) continue;
-                    Iterator<String> ingredientKeys = recipeNode.get("ingredients").fieldNames();
-                    while (ingredientKeys.hasNext()) {
-                        String ingredient = ingredientKeys.next();
-                        boolean found = false;
-                        if (!building.has("sources")) {
-                            return "Factory building '" + buildingName + "' does not have sources but requires ingredient: " + ingredient;
-                        }
-                        for (JsonNode srcNameNode : building.get("sources")) {
-                            String srcName = srcNameNode.asText();
-                            JsonNode srcBuilding = buildingMap.get(srcName);
-                            if (srcBuilding == null) continue;
-                            // Use the modified canProduce() method.
-                            if (canProduce(srcBuilding, ingredient, typeMap)) {
-                                found = true;
-                                break;
-                            }
-                        }
-                        if (!found) {
-                            return "Factory building '" + buildingName + "' cannot source ingredient '" + ingredient +
-                                    "' required by recipe '" + recipeName + "'.";
-                        }
+            if (!building.has("type")) continue;
+
+            String factoryName = building.get("name").asText();
+            String typeName = building.get("type").asText();
+            JsonNode typeNode = types.get(typeName);
+
+            if (typeNode == null || !typeNode.has("recipes")) continue;
+
+            for (JsonNode recipeNameNode : typeNode.get("recipes")) {
+                String recipeName = recipeNameNode.asText();
+                JsonNode recipe = recipes.get(recipeName);
+                if (recipe == null) continue;
+
+                Iterator<String> ingredients = recipe.get("ingredients").fieldNames();
+                while (ingredients.hasNext()) {
+                    String ingredient = ingredients.next();
+                    if (!building.has("sources")) {
+                        return "Factory building '" + factoryName + "' does not have sources but requires ingredient: " + ingredient;
+                    }
+                    if (!hasSourceForIngredient(building, ingredient, buildings, types)) {
+                        return "Factory building '" + factoryName + "' cannot source ingredient '" + ingredient +
+                                "' required by recipe '" + recipeName + "'.";
                     }
                 }
             }
@@ -72,33 +51,38 @@ public class FactoryCanGetAllIngredientsItNeeds extends InputRuleChecker {
         return null;
     }
 
-    /**
-     * Determines whether a source building can produce the given ingredient.
-     * For mines, the "mine" field indicates the output.
-     * For factories, if the building's type (obtained from typeMap) has a recipe that produces the ingredient,
-     * then it can produce it.
-     *
-     * @param building the source building JsonNode.
-     * @param ingredient the ingredient name.
-     * @param typeMap a map from type names to their corresponding JsonNode.
-     * @return true if the building can produce the ingredient; false otherwise.
-     */
-    private boolean canProduce(JsonNode building, String ingredient, Map<String, JsonNode> typeMap) {
-        if (building.has("mine")) {
-            String mineOutput = building.get("mine").asText();
-            return ingredient.equals(mineOutput);
+    private Map<String, JsonNode> createLookupMap(JsonNode arrayNode, String keyField) {
+        Map<String, JsonNode> map = new HashMap<>();
+        for (JsonNode node : arrayNode) {
+            map.put(node.get(keyField).asText(), node);
         }
-        if (building.has("type")) {
-            String typeName = building.get("type").asText();
-            JsonNode typeNode = typeMap.get(typeName);
-            if (typeNode != null && typeNode.has("recipes")) {
-                for (JsonNode recName : typeNode.get("recipes")) {
-                    if (ingredient.equals(recName.asText())) {
-                        return true;
-                    }
-                }
+        return map;
+    }
+
+    private boolean hasSourceForIngredient(JsonNode building, String ingredient, Map<String, JsonNode> buildings, Map<String, JsonNode> types) {
+        for (JsonNode srcNode : building.get("sources")) {
+            String srcName = srcNode.asText();
+            JsonNode srcBuilding = buildings.get(srcName);
+            if (srcBuilding != null && canProduce(srcBuilding, ingredient, types)) {
+                return true;
             }
         }
+        return false;
+    }
+
+    private boolean canProduce(JsonNode building, String ingredient, Map<String, JsonNode> types) {
+        // If building is a mine, it produces the ingredient in its "mine" field.
+        if (building.has("mine")) {
+            return ingredient.equals(building.get("mine").asText());
+        }
+        // Otherwise, check if the building's type recipes include the ingredient.
+        String typeName = building.get("type").asText();
+        JsonNode typeNode = types.get(typeName);
+            for (JsonNode rec : typeNode.get("recipes")) {
+                if (ingredient.equals(rec.asText())) {
+                    return true;
+                }
+            }
         return false;
     }
 }

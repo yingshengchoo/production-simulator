@@ -547,4 +547,4 @@ import static org.junit.jupiter.api.Assertions.*;
         Map<?,?> buildingMap = (Map<?,?>) buildingMapField.get(parser);
         assertTrue(buildingMap.isEmpty(), "Building map should remain empty if a factory cannot acquire all required ingredients");
     }
-}
+ }
