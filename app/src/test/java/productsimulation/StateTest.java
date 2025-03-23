@@ -16,7 +16,6 @@ import static org.mockito.Mockito.*;
 class StateTest {
   @Test
   public void test_save_and_load() {
-
     
      File dir = new File("SavedStates");
      if (!dir.exists()) {

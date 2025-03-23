@@ -49,9 +49,12 @@ public class State implements Serializable{
   /**
    * Saves the Current State in "filename".ser. Filename must not contain special characters
    *
-   * @param filename is the name of the filename to save simluation data to. 
+   * @param filename                   the name of the file (without extension) to save in the "SavedStates/" directory.
+   * @throws IllegalArgumentException  if the filename contains illegal characters.
+   * @throws IOException               if an I/O error occurs while writing the file.
+   * @throws NotSerializableException  if the object or any of its fields are not serializable.
    */  
-  public void save(String filename){
+  public void save(String filename) {
 
     if(!checkFilename(filename)){
       throw new IllegalArgumentException("Invalid Filename. Filename must not contain any special characters");
@@ -60,16 +63,17 @@ public class State implements Serializable{
     try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("SavedStates/" + filename + ".ser"))) {
       out.writeObject(this);
       System.out.println("State saved to SavedStates/" + filename + ".ser");
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+    } 
   }
 
   /**
    * Loads a previously saved state from a file with the given filename.
    *
-   * @param filename is the name of the file to load the state from.
-   */    
+   * @param filename                the name of the file (without extension) to load from the "SavedStates/" directory.
+   * @throws IOException            if an I/O error occurs while reading the file.
+   * @throws ClassNotFoundException if the serialized object class cannot be found.
+   * @throws FileNotFoundException  if file does not exist within the SaveStates directory
+   */      
   public void load(String filename){
     try (ObjectInputStream in = new ObjectInputStream(new FileInputStream("SavedStates/" + filename + ".ser"))) {
       State loadedState = (State) in.readObject();
@@ -77,9 +81,7 @@ public class State implements Serializable{
       this.recipes = loadedState.recipes;
       this.types = loadedState.types;
       System.out.println("State loaded from SavedStates/" + filename + ".ser");
-    } catch (Exception e) {
-      throw new IllegalArgumentException("Invalid Filename. File does not exist or is Invalid.");
-    }
+    } 
   } 
 
   public void visitBuilding(){
@@ -138,3 +140,5 @@ public class State implements Serializable{
     }
   }
 }
+
+
