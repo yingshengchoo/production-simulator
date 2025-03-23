@@ -99,6 +99,7 @@ public class State implements Serializable{
   /**
    * Loads a previously saved state from a file with the given filename.
    *
+
    * @param filename                the name of the file (without extension) to load from the "SavedStates/" directory.
    * @throws IOException            if an I/O error occurs while reading the file.
    * @throws FileNotFoundException  if file does not exist within the SaveStates directory
@@ -185,6 +186,10 @@ public class State implements Serializable{
     this.recipes = null;
     this.requestbroadcaster = null;
     this.logictime = null;
+  }
+
+  public void setInstanceToNull(){
+    this.instance = null;
   }
 }
 

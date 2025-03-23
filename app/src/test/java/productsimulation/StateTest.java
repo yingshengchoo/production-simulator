@@ -15,6 +15,20 @@ import static org.mockito.Mockito.*;
 
 class StateTest {
 
+  @BeforeEach
+  public void resetState() {
+    State.getInstance().reset();
+    State.getInstance().resetInstance(); 
+  }
+
+  @Test
+  public void test_state_singleton(){
+    State.initialize(new ArrayList<>(),new ArrayList<>(),new ArrayList<>(), null, null);
+    State s1 = State.getInstance();
+    s1.reset();
+    State s2 = State.getInstnace();
+    assertEquals(s1, s2);
+  }
   
   @Test
   public void test_save_and_load() {
