@@ -47,8 +47,8 @@ class StateTest {
     String filename = "testSave";
     assertDoesNotThrow(() -> state.save(filename));
 
-    File savedFile = new File(filename + ".ser");
-    assertTrue(savedFile.exists(), "Saved file does not exist!");
+    File file = new File("SavedStates/" + filename + ".ser");
+    assertTrue(file.exists(), "File should exist after saving state.");
 
     State loadState = new State(new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
     assertDoesNotThrow(() -> loadState.load(filename));
