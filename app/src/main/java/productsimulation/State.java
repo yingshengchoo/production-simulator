@@ -1,3 +1,4 @@
+
 package productsimulation;
 
 import productsimulation.model.*;
@@ -60,6 +61,7 @@ public class State implements Serializable{
       out.writeObject(this);
       System.out.println("State saved to SavedStates/" + filename + ".ser");
     } catch (Exception e) {
+      e.printStackTrace();
     }
   }
 
