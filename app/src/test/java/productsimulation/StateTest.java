@@ -14,13 +14,15 @@ import org.mockito.MockedConstruction;
 import static org.mockito.Mockito.*;
 
 class StateTest {
+
+  @TempDir
+  File tempDir;
+  
   @Test
   public void test_save_and_load() {
     
-     File dir = new File("SavedStates");
-     if (!dir.exists()) {
-        dir.mkdirs();
-     }
+    File saveDir = new File(tempDir, "SavedStates");
+    assertTrue(saveDir.mkdir() || saveDir.exists());
     
     ArrayList<Building> buildings = new ArrayList<>();
     Building mine = new Mine("G", new FactoryType("Gold", Collections.emptyMap()), new ArrayList<>(), null, null);
@@ -43,10 +45,15 @@ class StateTest {
    
     State state = new State(buildings, types, stateRecipes);
     String filename = "testSave";
-    state.save(filename);
-    State loadState = new State(new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
-    loadState.load(filename);
+    assertDoesNotThrow(() -> state.save(filename));
 
+    File savedFile = new File(filename + ".ser");
+    assertTrue(savedFile.exists(), "Saved file does not exist!");
+
+    State loadState = new State(new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
+    assertDoesNotThrow(() -> loadedState.load(filename));
+    
+    
     ByteArrayOutputStream originalOutput = new ByteArrayOutputStream();
     ByteArrayOutputStream loadedOutput = new ByteArrayOutputStream();
 
