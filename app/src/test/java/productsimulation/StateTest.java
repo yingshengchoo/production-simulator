@@ -81,6 +81,8 @@ class StateTest {
     ByteArrayOutputStream originalOutput = new ByteArrayOutputStream();
     state.showState(new PrintStream(originalOutput));
     
+    String expected = "";
+    assertEquals(expected, loadedOutput.toString());
     
     state.reset();
 
