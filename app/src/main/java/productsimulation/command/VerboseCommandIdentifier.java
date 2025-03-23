@@ -15,7 +15,6 @@ public class VerboseCommandIdentifier extends CommandIdentifier {
         Matcher m = PATTERN.matcher(line);
         if (m.matches()) {
             int level = Integer.parseInt(m.group(1));
-            // Optionally restrict to 0..2
             return new VerboseCommand(level);
         }
         return null;
