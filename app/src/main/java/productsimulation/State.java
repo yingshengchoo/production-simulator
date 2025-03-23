@@ -52,9 +52,8 @@ public class State implements Serializable{
    * @param filename                   the name of the file (without extension) to save in the "SavedStates/" directory.
    * @throws IllegalArgumentException  if the filename contains illegal characters.
    * @throws IOException               if an I/O error occurs while writing the file.
-   * @throws NotSerializableException  if the object or any of its fields are not serializable.
    */  
-  public void save(String filename) {
+  public void save(String filename) throws FileNotFoundException, IOException {
 
     if(!checkFilename(filename)){
       throw new IllegalArgumentException("Invalid Filename. Filename must not contain any special characters");
@@ -71,10 +70,9 @@ public class State implements Serializable{
    *
    * @param filename                the name of the file (without extension) to load from the "SavedStates/" directory.
    * @throws IOException            if an I/O error occurs while reading the file.
-   * @throws ClassNotFoundException if the serialized object class cannot be found.
    * @throws FileNotFoundException  if file does not exist within the SaveStates directory
    */      
-  public void load(String filename){
+  public void load(String filename) throws IOEXception, FileNotFoundException {
     try (ObjectInputStream in = new ObjectInputStream(new FileInputStream("SavedStates/" + filename + ".ser"))) {
       State loadedState = (State) in.readObject();
       this.buildings = loadedState.buildings;
