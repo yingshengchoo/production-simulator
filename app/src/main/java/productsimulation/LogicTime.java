@@ -83,4 +83,9 @@ public class LogicTime implements Serializable{
         observers.clear();
         currentStep = 0;
     }
+
+    @Override
+    public String toString(){
+      return "Current Step: " + currentStep;
+    }
 }

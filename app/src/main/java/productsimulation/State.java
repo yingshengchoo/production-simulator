@@ -81,6 +81,9 @@ public class State implements Serializable{
       this.buildings = loadedState.buildings;
       this.recipes = loadedState.recipes;
       this.types = loadedState.types;
+      this.requestbroadcaster = loadedState.requestbroadcaster;
+      this.logictime = loadedState.logictime;
+      
       System.out.println("State loaded from SavedStates/" + filename + ".ser");
     } 
   } 
@@ -99,10 +102,15 @@ public class State implements Serializable{
    */
   public void showState(PrintStream o){
     o.println("Current State Information:\n");
+    printLogicTime(o);
     printRecipes(o);
     printTypes(o);
     printBuildings(o);
     
+  }
+
+  public void printLogicTime(PrintStream o){
+    o.println(logictime.toString());
   }
   
   /**
