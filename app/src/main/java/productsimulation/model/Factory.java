@@ -1,5 +1,8 @@
 package productsimulation.model;
 
+import productsimulation.Log;
+import productsimulation.request.Request;
+import productsimulation.request.RequestStatus;
 import productsimulation.request.servePolicy.ServePolicy;
 import productsimulation.request.sourcePolicy.SourcePolicy;
 import productsimulation.model.*;
@@ -23,6 +26,34 @@ public class Factory extends Building implements Serializable {
 
     public Factory(String name, FactoryType type, SourcePolicy sourcePolicy, ServePolicy servePolicy){
         super(name, type, sourcePolicy, servePolicy);
+    }
+
+    protected boolean goOneStep() {
+        if(currentRequest == null) {
+            if(!requestQueue.isEmpty()) {
+                Request request = servePolicy.getRequest(requestQueue);
+                // 库存中request原料齐备才可以开工
+                request.updateStatus(storage);
+                if(request.getStatus() == RequestStatus.READY) {
+                    request.readyToWorking();
+                } else {
+                    Log.debugLog(name + " is waiting for ingredients");
+                    return false;
+                }
+                currentRequest = request;
+                Recipe currentRecipe = type.getRecipeByProductName(currentRequest.getIngredient());
+                currentRemainTime = currentRecipe.getLatency();
+            } else {
+//                Log.debugLog("no request here: " + name);
+                return true;
+            }
+        }
+
+        // 实际工作用remainTime - 1模拟
+        Log.debugLog(name + " is processing request: " +
+                currentRequest.getIngredient() + ", " + currentRemainTime);
+        currentRemainTime -= 1;
+        return false;
     }
 
   public String getName(){

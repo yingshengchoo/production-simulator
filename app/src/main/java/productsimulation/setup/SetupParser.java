@@ -17,9 +17,9 @@ public class SetupParser {
     private final Map<String, Building> buildingMap;
 
     public SetupParser() {
-        recipeMap = new HashMap<>();
-        typeMap = new HashMap<>();
-        buildingMap = new HashMap<>();
+        recipeMap = new LinkedHashMap<>();
+        typeMap = new LinkedHashMap<>();
+        buildingMap = new LinkedHashMap<>();
 
         inputRuleChecker =
                 new RecipeAndTypesAndBuildingsAreAllPresent(
@@ -89,13 +89,13 @@ public class SetupParser {
             }
             String output = recipeNode.get("output").asText();
             int latency = recipeNode.get("latency").asInt();
-            Map<String, Integer> ingredients = new HashMap<>();
+            Map<String, Integer> ingredients = new LinkedHashMap<>();
             Iterator<String> fields = recipeNode.get("ingredients").fieldNames();
             while (fields.hasNext()) {
                 String key = fields.next();
                 ingredients.put(key, recipeNode.get("ingredients").get(key).asInt());
             }
-            Recipe recipe = new Recipe(latency, ingredients);
+            Recipe recipe = new Recipe(latency, ingredients, output);
             recipeMap.put(output, recipe);
         }
         return true;
@@ -146,8 +146,14 @@ public class SetupParser {
                 building = new Factory(buildingName, ft, null, null);
             }
             else if (buildingNode.has("mine")) {
+                // 我记得mine可以有多种output
                 String mineOutput = buildingNode.get("mine").asText();
-                FactoryType dummyType = new FactoryType(mineOutput, new HashMap<>());
+//                FactoryType dummyType = new FactoryType(mineOutput, new HashMap<>());
+//                mine还是有个recipes会比较符合直觉
+//                这里我写得比较粗糙，没有考虑异常。
+                Map<String, Recipe> recipes = new HashMap<>();
+                recipes.put(mineOutput, recipeMap.get(mineOutput));
+                FactoryType dummyType = new FactoryType(mineOutput, recipes);
                 building = new Mine(buildingName, dummyType, null, null);
             } else {
                 System.err.println("Building '" + buildingName + "' must have either 'type' or 'mine' field.");
@@ -168,5 +174,20 @@ public class SetupParser {
             buildingMap.get(buildingName).setSources(sources);
         }
         return true;
+    }
+
+    // 返回只读的 recipeMap
+    public Map<String, Recipe> getRecipeMap() {
+        return Collections.unmodifiableMap(recipeMap);
+    }
+
+    // 返回只读的 typeMap
+    public Map<String, FactoryType> getTypeMap() {
+        return Collections.unmodifiableMap(typeMap);
+    }
+
+    // 返回只读的 buildingMap
+    public Map<String, Building> getBuildingMap() {
+        return Collections.unmodifiableMap(buildingMap);
     }
 }
