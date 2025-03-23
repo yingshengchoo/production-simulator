@@ -1,7 +1,6 @@
 package productsimulation.setup;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import productsimulation.InputRuleChecker;
 
 public class RecipeHasValidLatencyNumber extends InputRuleChecker {
 

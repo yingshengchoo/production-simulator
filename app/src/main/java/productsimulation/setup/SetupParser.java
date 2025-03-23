@@ -2,7 +2,6 @@ package productsimulation.setup;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import productsimulation.*;
 import productsimulation.model.*;
 
 import java.io.BufferedReader;
@@ -21,7 +20,7 @@ public class SetupParser {
         typeMap = new LinkedHashMap<>();
         buildingMap = new LinkedHashMap<>();
 
-        inputRuleChecker =
+        inputRuleChecker = new AllRequiredFieldsArePresentAndLegal(
                 new RecipeAndTypesAndBuildingsAreAllPresent(
                         new RecipeAndTypesAndBuildingsHaveUniqueNames(
                                 new NameHasNoApostrophe(
@@ -34,15 +33,11 @@ public class SetupParser {
                                                                                         new MinesRecipeHasEmptyIngredients(
                                                                                                 new RecipeHasValidLatencyNumber(
                                                                                                         new FactoryCanGetAllIngredientsItNeeds(null)
-                                                                                                )))))))))));
+                                                                                                )))))))))))
+        )
+                ;
     }
 
-    /**
-     * Reads the JSON from the provided BufferedReader and returns the root JsonNode.
-     *
-     * @param reader the BufferedReader for the JSON file.
-     * @return the root JsonNode or null if parsing fails.
-     */
     private JsonNode parseJson(BufferedReader reader) {
         ObjectMapper mapper = new ObjectMapper();
         try {
@@ -52,12 +47,6 @@ public class SetupParser {
         }
     }
 
-    /**
-     * First, the JSON is read and the input is validated by the chain of rule checkers.
-     * If validation passes, the JSON is parsed into recipes, types, and buildings.
-     *
-     * @param r the BufferedReader for the JSON file.
-     */
     public String parse(BufferedReader r) {
         JsonNode root = parseJson(r);
         if (root == null) {
