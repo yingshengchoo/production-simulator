@@ -19,7 +19,7 @@ class StateTest {
   @BeforeEach
   public void resetState() {
     State.getInstance().reset();
-    State.getInstance().setInstanceToNULL(); 
+    State.getInstance().setInstanceToNull(); 
   }
 
   @Test
