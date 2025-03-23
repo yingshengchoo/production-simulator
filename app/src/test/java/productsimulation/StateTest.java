@@ -126,7 +126,7 @@ class StateTest {
   }
 
   @Test
-  public void test_getStasnce_thorw(){
+  public void test_getInstance_throw(){
     assertThrows(IllegalStateException.class, () -> State.getInstance());
   }
     
