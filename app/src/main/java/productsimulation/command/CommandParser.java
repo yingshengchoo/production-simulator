@@ -24,20 +24,4 @@ public class CommandParser {
     }
     return ruleIdentifier.checkInput(line.trim());
   }
-
-  public void parse(BufferedReader reader) throws IOException {
-    String line;
-    while ((line = reader.readLine()) != null) {
-      line = line.trim();
-      if (line.isEmpty()) {
-        continue;
-      }
-      Command cmd = parseLine(line);
-      if (cmd == null) {
-        System.err.println("Unrecognized command: " + line);
-      } else {
-        cmd.execute();
-      }
-    }
-  }
 }
