@@ -29,7 +29,8 @@ class StateTest {
     buildings.add(mine);
     ArrayList<Building> sources = new ArrayList<>();
     sources.add(mine);
-    buildings.add(new Factory("GC", new FactoryType("GoldChain", Collections.emptyMap()), sources, null, null));
+    Building factory = new Factory("GC", new FactoryType("GoldChain", Collections.emptyMap()), sources, null, null);
+    buildings.add(factory);
 
     Map<String, Recipe> recipes = new HashMap<>();
     Map<String, Integer> ingredients = new HashMap<>();
@@ -42,15 +43,24 @@ class StateTest {
     
     ArrayList<FactoryType> types = new ArrayList<>();
     types.add(new FactoryType("EggRoll", recipes));
-   
-    State state = new State(buildings, types, stateRecipes);
+
+    RequestBroadcaster requestBroadcaster = RequestBroadcaster.getInstance();
+    requestBroadcaster.addRecipes(eggroll);
+    requestBroadcaster.addBuilding(mine);
+    requestBroadcaster.addBuilding(factory);
+
+    LogicTime logicTime = LogicTime.getInstance();
+    logicTime.addObservers(mine);
+    logicTime.addObservers(factory);
+    
+    State state = new State(buildings, types, stateRecipes, requestBroadcaster, logicTime);
     String filename = "testSave";
     assertDoesNotThrow(() -> state.save(filename));
 
     File file = new File("SavedStates/" + filename + ".ser");
     assertTrue(file.exists(), "File should exist after saving state.");
 
-    State loadState = new State(new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
+    State loadState = new State(new ArrayList<>(),new ArrayList<>(),new ArrayList<>(), null, null);
     assertDoesNotThrow(() -> loadState.load(filename));
     
     
@@ -65,7 +75,7 @@ class StateTest {
 
   @Test
   public void test_checkFilename(){
-    State state = new State(new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
+    State state = new State(new ArrayList<>(),new ArrayList<>(),new ArrayList<>(), null, null);
     assertTrue(state.checkFilename("normalfilename"));
     assertFalse(state.checkFilename("illegal:name"));
     assertFalse(state.checkFilename(null));
@@ -74,14 +84,14 @@ class StateTest {
 
   @Test
   public void testSave_InvalidFilename() {
-    State state = new State(new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
+    State state = new State(new ArrayList<>(),new ArrayList<>(),new ArrayList<>(), null, null);
     assertThrows(IllegalArgumentException.class, () -> state.save("invalid/file"));
   }
 
   
   @Test
     void testSavePrintsStackTraceOnIOException() throws IOException {
-        State state = new State(new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
+    State state = new State(new ArrayList<>(),new ArrayList<>(),new ArrayList<>(), null, null);
 
         ByteArrayOutputStream errContent = new ByteArrayOutputStream();
         System.setErr(new PrintStream(errContent));
@@ -99,7 +109,7 @@ class StateTest {
 
   @Test
   public void test_load_non_existent_file() throws IOException{
-     State state = new State(new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
+    State state = new State(new ArrayList<>(),new ArrayList<>(),new ArrayList<>(), null, null);
   
      File dir = new File("SavedStates");
      if (!dir.exists()) {
