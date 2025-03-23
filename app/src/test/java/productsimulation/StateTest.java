@@ -106,13 +106,13 @@ class StateTest {
         dir.mkdirs();
      }
 
-     assertThrows(IllegalArgumentException.class, () ->state.load("non_existent_file"));
+     assertThrows(FileNotFoundException.class, () ->state.load("non_existent_file"));
      
      String filename = "invalidObject";
      try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("SavedStates/" + filename + ".ser"))) {
        out.writeObject("This is a string, not a State object"); // Writing incorrect type
      }
-     assertThrows(IllegalArgumentException.class, ()-> state.load(filename));
+     assertThrows(ClassNotFoundException.class, ()-> state.load(filename));
   }
     
 }
