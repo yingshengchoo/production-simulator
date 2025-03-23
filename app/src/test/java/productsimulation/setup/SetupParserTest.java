@@ -547,4 +547,59 @@ import static org.junit.jupiter.api.Assertions.*;
         Map<?,?> buildingMap = (Map<?,?>) buildingMapField.get(parser);
         assertTrue(buildingMap.isEmpty(), "Building map should remain empty if a factory cannot acquire all required ingredients");
     }
+
+    @Test
+     public void test_parseRecipes_recipesArentArray() throws Exception {
+        String json = "{"
+                + "\"recipes\": "
+                + "  {\"output\": \"wood\", \"ingredients\": {}, \"latency\": 1}"
+                + ","
+                + "\"types\": ["
+                + "  {\"name\": \"FactoryType1\", \"recipes\": [\"wood\"]}"
+                + "],"
+                + "\"buildings\": ["
+                + "  {\"name\": \"BadBuilding\", \"type\": \"FactoryType1\", \"mine\": \"wood\", \"sources\": []}"
+                + "]"
+                + "}";
+        SetupParser parser = new SetupParser();
+        Method parseJsonMethod = SetupParser.class.getDeclaredMethod("parseJson", BufferedReader.class);
+        parseJsonMethod.setAccessible(true);
+        BufferedReader reader = new BufferedReader(new StringReader(json));
+        JsonNode root = (JsonNode) parseJsonMethod.invoke(parser, reader);
+        JsonNode recipesNode = root.get("recipes");
+
+        Method parseRecipesMethod = SetupParser.class.getDeclaredMethod("parseRecipes", JsonNode.class);
+        parseRecipesMethod.setAccessible(true);
+        boolean result = (boolean) parseRecipesMethod.invoke(parser, recipesNode);
+        assertFalse(result);
+    }
+
+     @Test
+     public void test_parseRecipes_recipeHasNoRequiredFields() throws Exception {
+         String json = "{"
+                 + "\"recipes\": ["
+                 + "  {\"ingredients\": {\"wood\":1, \"handle\":1}, \"latency\":10},"
+                 + "  {\"output\": \"wood\", \"ingredients\": {}, \"latency\":1},"
+                 + "  {\"output\": \"handle\", \"ingredients\": {\"wood\":1}, \"latency\":5}"
+                 + "],"
+                 + "\"types\": ["
+                 + "  {\"name\": \"FactoryType1\", \"recipes\": [\"door\"]}"
+                 + "],"
+                 + "\"buildings\": ["
+                 + "  {\"name\": \"Factory1\", \"type\": \"FactoryType1\", \"sources\": [\"Mine1\"]},"
+                 + "  {\"name\": \"Mine1\", \"mine\": \"wood\"}"
+                 + "]"
+                 + "}";
+         SetupParser parser = new SetupParser();
+         Method parseJsonMethod = SetupParser.class.getDeclaredMethod("parseJson", BufferedReader.class);
+         parseJsonMethod.setAccessible(true);
+         BufferedReader reader = new BufferedReader(new StringReader(json));
+         JsonNode root = (JsonNode) parseJsonMethod.invoke(parser, reader);
+         JsonNode recipesNode = root.get("recipes");
+
+         Method parseRecipesMethod = SetupParser.class.getDeclaredMethod("parseRecipes", JsonNode.class);
+         parseRecipesMethod.setAccessible(true);
+         boolean result = (boolean) parseRecipesMethod.invoke(parser, recipesNode);
+         assertFalse(result);
+     }
  }
