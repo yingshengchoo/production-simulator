@@ -12,13 +12,14 @@ import productsimulation.model.*;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedConstruction;
 import static org.mockito.Mockito.*;
+import org.junit.jupiter.api.BeforeEach;
 
 class StateTest {
 
   @BeforeEach
   public void resetState() {
     State.getInstance().reset();
-    State.getInstance().resetInstance(); 
+    State.getInstance().resetInstanceToNULL(); 
   }
 
   @Test
@@ -26,7 +27,7 @@ class StateTest {
     State.initialize(new ArrayList<>(),new ArrayList<>(),new ArrayList<>(), null, null);
     State s1 = State.getInstance();
     s1.reset();
-    State s2 = State.getInstnace();
+    State s2 = State.getInstance();
     assertEquals(s1, s2);
   }
   
