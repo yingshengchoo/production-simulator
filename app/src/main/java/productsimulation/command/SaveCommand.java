@@ -1,7 +1,11 @@
 package productsimulation.command;
 
 public class SaveCommand extends Command {
-    public SaveCommand() {}
+    String filename;
+
+    public SaveCommand(String fileName) {
+        this.filename = fileName;
+    }
 
     @Override
     public void execute() {}

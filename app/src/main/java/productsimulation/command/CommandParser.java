@@ -1,13 +1,10 @@
 package productsimulation.command;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-
 public class CommandParser {
-  private final CommandIdentifier ruleIdentifier;
+  private final CommandIdentifier commandIdentifier;
 
   public CommandParser() {
-    ruleIdentifier =
+    commandIdentifier =
             new RequestCommandIdentifier(
                     new StepCommandIdentifier(
                             new FinishCommandIdentifier(
@@ -22,6 +19,6 @@ public class CommandParser {
     if (line == null) {
       return null;
     }
-    return ruleIdentifier.checkInput(line.trim());
+    return commandIdentifier.checkInput(line.trim());
   }
 }

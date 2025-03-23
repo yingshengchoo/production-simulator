@@ -13,7 +13,6 @@ public class SetPolicyCommand extends Command {
 
     @Override
     public void execute() {
-        // Implementation: set the policy in your simulation or data structure
         System.out.println("Executing SetPolicyCommand: type=" + typeField +
                 ", policy=" + policy + ", target=" + target);
     }
