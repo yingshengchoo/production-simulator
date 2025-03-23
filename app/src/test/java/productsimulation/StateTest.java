@@ -18,8 +18,12 @@ class StateTest {
 
   @BeforeEach
   public void resetState() {
-    State.getInstance().reset();
-    State.getInstance().setInstanceToNull(); 
+    try{
+      State.getInstance().reset();
+      State.getInstance().setInstanceToNull();
+    } catch(IllegalStateException e){
+      //do nothing, only reset if needed.
+    }
   }
 
   @Test
