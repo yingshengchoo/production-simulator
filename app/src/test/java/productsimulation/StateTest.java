@@ -19,7 +19,7 @@ class StateTest {
   @BeforeEach
   public void resetState() {
     State.getInstance().reset();
-    State.getInstance().resetInstanceToNULL(); 
+    State.getInstance().setInstanceToNULL(); 
   }
 
   @Test
@@ -82,7 +82,7 @@ class StateTest {
     state.showState(new PrintStream(originalOutput));
     
     String expected = "";
-    assertEquals(expected, loadedOutput.toString());
+    assertEquals(expected, originalOutput.toString());
     
     state.reset();
 
