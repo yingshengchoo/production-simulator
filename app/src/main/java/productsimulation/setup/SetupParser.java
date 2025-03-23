@@ -22,18 +22,18 @@ public class SetupParser {
         buildingMap = new HashMap<>();
 
         inputRuleChecker =
-                new RequiredFieldsChecker(
-                        new UniqueNamesChecker(
-                                new IllegalCharacterChecker(
-                                        new BuildingTypeChecker(
-                                                new SourcesDefinedChecker(
-                                                        new MineSourceChecker(
-                                                                new TypeRecipeChecker(
-                                                                        new RecipeIngredientsChecker(
-                                                                                new FactoryRecipeChecker(
-                                                                                        new MineRecipeChecker(
-                                                                                                new RecipeLatencyChecker(
-                                                                                                        new FactorySourceAvailabilityChecker(null)
+                new RecipeAndTypesAndBuildingsAreAllPresent(
+                        new RecipeAndTypesAndBuildingsHaveUniqueNames(
+                                new NameHasNoApostrophe(
+                                        new BuildingsTypesAreWellDefined(
+                                                new SourceBuildingAreWellDefined(
+                                                        new MineHasEmptySources(
+                                                                new TypesRecipeExist(
+                                                                        new RecipesIngredientsMustBeWellDefined(
+                                                                                new FactorysRecipeHasIngredients(
+                                                                                        new MinesRecipeHasEmptyIngredients(
+                                                                                                new RecipeHasValidLatencyNumber(
+                                                                                                        new FactoryCanGetAllIngredientsItNeeds(null)
                                                                                                 )))))))))));
     }
 

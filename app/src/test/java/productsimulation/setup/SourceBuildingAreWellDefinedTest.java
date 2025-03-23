@@ -6,15 +6,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
- class SourcesDefinedCheckerTest {
+ class SourceBuildingAreWellDefinedTest {
 
-    /**
-     * Helper method to convert a JSON string into a JsonNode.
-     *
-     * @param json the JSON string.
-     * @return the root JsonNode.
-     * @throws Exception if parsing fails.
-     */
     private JsonNode parseJson(String json) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readTree(json);
@@ -35,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
                 + "]"
                 + "}";
         JsonNode root = parseJson(json);
-        SourcesDefinedChecker checker = new SourcesDefinedChecker(null);
+        SourceBuildingAreWellDefined checker = new SourceBuildingAreWellDefined(null);
         String result = checker.checkInput(root);
         assertNull(result, "Expected no error when all source references are defined.");
     }
@@ -54,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.*;
                 + "]"
                 + "}";
         JsonNode root = parseJson(json);
-        SourcesDefinedChecker checker = new SourcesDefinedChecker(null);
+        SourceBuildingAreWellDefined checker = new SourceBuildingAreWellDefined(null);
         String result = checker.checkInput(root);
         assertNotNull(result, "Expected an error when a building references an undefined source.");
         assertEquals("Building 'B1' references unknown source: B2", result);

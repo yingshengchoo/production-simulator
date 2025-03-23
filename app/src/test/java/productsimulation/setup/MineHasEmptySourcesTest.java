@@ -6,15 +6,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
- class MineSourceCheckerTest {
+ class MineHasEmptySourcesTest {
 
-    /**
-     * Helper method to convert a JSON string into a JsonNode.
-     *
-     * @param json the JSON string.
-     * @return the root JsonNode.
-     * @throws Exception if parsing fails.
-     */
     private JsonNode parseJson(String json) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readTree(json);
@@ -33,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
                 + "]"
                 + "}";
         JsonNode root = parseJson(json);
-        MineSourceChecker checker = new MineSourceChecker(null);
+        MineHasEmptySources checker = new MineHasEmptySources(null);
         String result = checker.checkInput(root);
         assertNull(result, "Expected no error when mine building has no sources field.");
     }
@@ -51,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.*;
                 + "]"
                 + "}";
         JsonNode root = parseJson(json);
-        MineSourceChecker checker = new MineSourceChecker(null);
+        MineHasEmptySources checker = new MineHasEmptySources(null);
         String result = checker.checkInput(root);
         assertNull(result, "Expected no error when mine building has empty sources array.");
     }
@@ -69,7 +62,7 @@ import static org.junit.jupiter.api.Assertions.*;
                 + "]"
                 + "}";
         JsonNode root = parseJson(json);
-        MineSourceChecker checker = new MineSourceChecker(null);
+        MineHasEmptySources checker = new MineHasEmptySources(null);
         String result = checker.checkInput(root);
         assertNotNull(result, "Expected an error when mine building has non-empty sources.");
         assertEquals("Mine building 'Mine1' must not have non-empty 'sources'.", result);
@@ -89,7 +82,7 @@ import static org.junit.jupiter.api.Assertions.*;
                 + "]"
                 + "}";
         JsonNode root = parseJson(json);
-        MineSourceChecker checker = new MineSourceChecker(null);
+        MineHasEmptySources checker = new MineHasEmptySources(null);
         String result = checker.checkInput(root);
         // Since the building is not a mine, no error should be reported.
         assertNull(result, "Expected no error for non-mine building even if sources is non-empty.");

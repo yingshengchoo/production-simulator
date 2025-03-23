@@ -6,22 +6,15 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
- class RecipeIngredientsCheckerTest {
-
-    /**
-     * Helper method to convert a JSON string into a JsonNode.
-     *
-     * @param json the JSON string.
-     * @return the parsed root JsonNode.
-     * @throws Exception if parsing fails.
-     */
+ class RecipeHasValidLatencyNumberTest {
+     
     private JsonNode parseJson(String json) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readTree(json);
     }
 
     /**
-     * Test that a valid JSON input (where each recipe's ingredients are defined) passes validation.
+     * Test that a valid JSON input (with all recipes having latency >= 1) passes validation.
      */
     @Test
     public void test_checkMyRule_valid() throws Exception {
@@ -34,29 +27,28 @@ import static org.junit.jupiter.api.Assertions.*;
                 + "\"buildings\": []"
                 + "}";
         JsonNode root = parseJson(json);
-        RecipeIngredientsChecker checker = new RecipeIngredientsChecker(null);
+        RecipeHasValidLatencyNumber checker = new RecipeHasValidLatencyNumber(null);
         String result = checker.checkInput(root);
-        assertNull(result, "Expected no error when all ingredients are defined.");
+        assertNull(result, "Expected no error when all recipe latencies are valid (>= 1).");
     }
 
     /**
-     * Test that an invalid JSON input (where a recipe references an undefined ingredient) fails validation.
-     * For example, the "door" recipe requires "handle" which is not defined as any recipe output.
+     * Test that an invalid JSON input (with a recipe having latency less than 1) fails validation.
      */
     @Test
     public void test_checkMyRule_invalid() throws Exception {
         String json = "{"
                 + "\"recipes\": ["
-                + "  {\"output\": \"door\", \"ingredients\": {\"wood\":1, \"handle\":1}, \"latency\":12},"
+                + "  {\"output\": \"door\", \"ingredients\": {\"wood\":1}, \"latency\":0},"
                 + "  {\"output\": \"wood\", \"ingredients\": {}, \"latency\":1}"
                 + "],"
                 + "\"types\": [],"
                 + "\"buildings\": []"
                 + "}";
         JsonNode root = parseJson(json);
-        RecipeIngredientsChecker checker = new RecipeIngredientsChecker(null);
+        RecipeHasValidLatencyNumber checker = new RecipeHasValidLatencyNumber(null);
         String result = checker.checkInput(root);
-        assertNotNull(result, "Expected an error when a recipe references an undefined ingredient.");
-        assertEquals("Recipe 'door' requires ingredient 'handle', which is not defined.", result);
+        assertNotNull(result, "Expected an error when a recipe has latency less than 1.");
+        assertEquals("Recipe 'door' has invalid latency: 0", result);
     }
 }
