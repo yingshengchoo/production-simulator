@@ -7,9 +7,11 @@ import productsimulation.request.RequestStatus;
 import productsimulation.request.servePolicy.ServePolicy;
 import productsimulation.request.sourcePolicy.SourcePolicy;
 
+import java.io.Serializable;
+
 import java.util.*;
 
-public abstract class Building {
+public abstract class Building implements Serializable {
     protected final String name;
     protected FactoryType type;
     protected Request currentRequest;

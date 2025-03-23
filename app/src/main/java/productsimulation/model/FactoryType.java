@@ -7,7 +7,7 @@ import java.util.Set;
 import java.io.Serializable;
 
 
-public class FactoryType {
+public class FactoryType implements Serializable {
   private final String name;
   private Map<String, Recipe> recipes;
 

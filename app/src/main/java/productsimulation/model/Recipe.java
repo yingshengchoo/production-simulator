@@ -3,8 +3,8 @@ package productsimulation.model;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
-public class Recipe {
+import java.io.Serializable;
+public class Recipe implements Serializable{
   private String output;
   // ingredients应当为LinkedHashMap，或者其它能保留顺序的map。ingredients顺序会影响request传播顺序。
   private Map<String, Integer> ingredients;
