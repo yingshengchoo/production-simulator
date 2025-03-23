@@ -53,6 +53,7 @@ public class Factory extends Building implements Serializable {
         Log.debugLog(name + " is processing request: " +
                 currentRequest.getIngredient() + ", " + currentRemainTime);
         currentRemainTime -= 1;
+        totalRemainTime -= 1;
         return false;
     }
 

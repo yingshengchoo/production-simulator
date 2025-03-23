@@ -16,6 +16,7 @@ public abstract class Building implements Serializable {
     protected FactoryType type;
     protected Request currentRequest;
     protected int currentRemainTime;
+    protected int totalRemainTime = 0;
     protected List<Request> requestQueue;
     protected Map<String, Integer> storage;
     protected List<Building> sources;
@@ -55,6 +56,10 @@ public abstract class Building implements Serializable {
     public void addRequest(Request request) {
         Log.debugLog("adding request: " + request.getIngredient() + " to " + name);
         requestQueue.add(request);
+
+        // 更新total time
+        totalRemainTime += request.getLatency();
+
         Recipe parentRecipe = type.getRecipeByProductName(request.getIngredient());
         Map<String, Integer> ingredients = parentRecipe.getIngredients();
         for(String ingredient: ingredients.keySet()) {
@@ -117,6 +122,10 @@ public abstract class Building implements Serializable {
     }
 
     public void accept(BuildingVisitor visitor) {
+    }
+
+    public int getTotalRemainTime() {
+        return totalRemainTime;
     }
 
     public String getName() {

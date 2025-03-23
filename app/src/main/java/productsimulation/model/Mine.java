@@ -2,7 +2,6 @@ package productsimulation.model;
 
 import productsimulation.Log;
 import productsimulation.request.Request;
-import productsimulation.request.RequestStatus;
 import productsimulation.request.servePolicy.ServePolicy;
 import productsimulation.request.sourcePolicy.SourcePolicy;
 import java.io.Serializable;
@@ -44,6 +43,7 @@ public class Mine extends Building implements Serializable {
         Log.debugLog(name + " is processing request: " +
                 currentRequest.getIngredient() + ", " + currentRemainTime);
         currentRemainTime -= 1;
+        totalRemainTime -= 1;
         return false;
     }
 
