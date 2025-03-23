@@ -54,4 +54,25 @@ class SetupParserTest {
         assertEquals(2, typeMap.size());
         assertEquals(6, buildingMap.size());
     }
-}
+
+    @Test
+    void testParseDoors3Json() throws IOException {
+        try (InputStream is = getClass().getResourceAsStream("/doors3.json")) {
+            assertNotNull(is, "Resource doors3.json not found on classpath");
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+                String error = parser.parse(reader);
+                assertEquals("Input validation error: Building 'D' has unknown type: door", error);
+            }
+        }
+    }
+
+    @Test
+    void testParseDoors4Json() throws IOException {
+        try (InputStream is = getClass().getResourceAsStream("/notJSON.json")) {
+            assertNotNull(is, "Resource illegal not found on classpath");
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+                assertEquals("Failed to parse JSON file.", parser.parse(reader));
+            }
+        }
+    }
+ }
