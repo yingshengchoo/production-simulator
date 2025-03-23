@@ -85,7 +85,30 @@ class StateTest {
     ByteArrayOutputStream originalOutput = new ByteArrayOutputStream();
     state.showState(new PrintStream(originalOutput));
     
-    String expected = "";
+    String expected = "Current State Information:\n" +
+    "Current Step: 0\n" + 
+    "Recipes:\n" + 
+    "Recipe\n" +
+    "{output='EggRoll',\n" +
+    " ingredients={Egg=2},\n" +
+    " latency=3\n" + 
+    "}\n" +
+    "Factory Types:\n" + 
+    "Factory Type\n" +  
+    "{name='EggRoll',\n" + 
+    " recipes=[EggRoll]\n" +
+    "}\n" + 
+    "Buildings:\n" +
+    "Mine\n" + 
+    "{name='G',\n" +
+    " mine='Gold',\n" +
+    " sources=[]\n" + 
+    "}\n" +
+    "Factory\n" +
+    "{name='GC',\n" +
+    " type='GoldChain',\n" +
+    " sources=[G]\n" +
+      "}";
     assertEquals(expected, originalOutput.toString());
     
     state.reset();
