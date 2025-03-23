@@ -72,7 +72,7 @@ public class State implements Serializable{
    * @throws IOException            if an I/O error occurs while reading the file.
    * @throws FileNotFoundException  if file does not exist within the SaveStates directory
    */      
-  public void load(String filename) throws IOEXception, FileNotFoundException {
+  public void load(String filename) throws IOException, FileNotFoundException {
     try (ObjectInputStream in = new ObjectInputStream(new FileInputStream("SavedStates/" + filename + ".ser"))) {
       State loadedState = (State) in.readObject();
       this.buildings = loadedState.buildings;
