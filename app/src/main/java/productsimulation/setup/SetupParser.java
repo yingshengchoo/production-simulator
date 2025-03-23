@@ -59,33 +59,38 @@ public class SetupParser {
      *
      * @param r the BufferedReader for the JSON file.
      */
-    public void parse(BufferedReader r) {
+    public String parse(BufferedReader r) {
         JsonNode root = parseJson(r);
         if (root == null) {
-            System.err.println("Failed to parse JSON file.");
-            return;
+            return "Failed to parse JSON file.";
         }
 
-        String error = inputRuleChecker.checkInput(root);
-        if (error != null) {
-            System.err.println("Input validation error: " + error);
-            return;
+        String errorMessage = inputRuleChecker.checkInput(root);
+        if (errorMessage != null) {
+            return "Input validation error: " + errorMessage;
         }
 
-        if (!parseRecipes(root.get("recipes"))) return;
-        if (!parseTypes(root.get("types"))) return;
-        if (!parseBuildings(root.get("buildings"))) return;
+        errorMessage = parseRecipes(root.get("recipes"));
+        if (errorMessage != null) {
+            return errorMessage;
+        }
+
+        errorMessage = parseTypes(root.get("types"));
+        if (errorMessage != null) {
+            return errorMessage;
+        }
+
+        errorMessage = parseBuildings(root.get("buildings"));
+        if (errorMessage != null) {
+            return errorMessage;
+        }
+        return null;
     }
 
-    private boolean parseRecipes(JsonNode recipesNode) {
-        if (!recipesNode.isArray()) {
-            System.err.println("'recipes' field must be an array.");
-            return false;
-        }
+    private String parseRecipes(JsonNode recipesNode) {
         for (JsonNode recipeNode : recipesNode) {
             if (!recipeNode.has("output") || !recipeNode.has("ingredients") || !recipeNode.has("latency")) {
-                System.err.println("A recipe is missing required fields (output, ingredients, latency).");
-                return false;
+                return "A recipe is missing required fields (output, ingredients, latency).";
             }
             String output = recipeNode.get("output").asText();
             int latency = recipeNode.get("latency").asInt();
@@ -98,45 +103,34 @@ public class SetupParser {
             Recipe recipe = new Recipe(latency, ingredients, output);
             recipeMap.put(output, recipe);
         }
-        return true;
+        return null;
     }
 
-    private boolean parseTypes(JsonNode typesNode) {
+    private String parseTypes(JsonNode typesNode) {
         if (!typesNode.isArray()) {
-            System.err.println("'types' field must be an array.");
-            return false;
+            return "'types' field must be an array.";
         }
 
         for (JsonNode typeNode : typesNode) {
             if (!typeNode.has("name") || !typeNode.has("recipes")) {
-                System.err.println("A type is missing required fields (name, recipes).");
-                return false;
+                return "A type is missing required fields (name, recipes).";
             }
             String typeName = typeNode.get("name").asText();
             Map<String, Recipe> recipesForType = new HashMap<>();
             for (JsonNode recName : typeNode.get("recipes")) {
                 String recipeName = recName.asText();
                 Recipe rcp = recipeMap.get(recipeName);
-                if (rcp != null) {
-                    recipesForType.put(recipeName, rcp);
-                }
+                recipesForType.put(recipeName, rcp);
+
             }
             FactoryType factoryType = new FactoryType(typeName, recipesForType);
             typeMap.put(typeName, factoryType);
         }
-        return true;
+        return null;
     }
 
-    private boolean parseBuildings(JsonNode buildingsNode) {
-        if (!buildingsNode.isArray()) {
-            System.err.println("'buildings' field must be an array.");
-            return false;
-        }
+    private String parseBuildings(JsonNode buildingsNode) {
         for (JsonNode buildingNode : buildingsNode) {
-            if (!buildingNode.has("name")) {
-                System.err.println("A building is missing the 'name' field.");
-                return false;
-            }
             String buildingName = buildingNode.get("name").asText();
             Building building = null;
 
@@ -156,8 +150,7 @@ public class SetupParser {
                 FactoryType dummyType = new FactoryType(mineOutput, recipes);
                 building = new Mine(buildingName, dummyType, null, null);
             } else {
-                System.err.println("Building '" + buildingName + "' must have either 'type' or 'mine' field.");
-                return false;
+                return "Building '" + buildingName + "' must have either 'type' or 'mine' field.";
             }
             buildingMap.put(buildingName, building);
         }
@@ -173,7 +166,7 @@ public class SetupParser {
             }
             buildingMap.get(buildingName).setSources(sources);
         }
-        return true;
+        return null;
     }
 
     // 返回只读的 recipeMap
