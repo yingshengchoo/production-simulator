@@ -12,19 +12,17 @@ import productsimulation.model.*;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedConstruction;
 import static org.mockito.Mockito.*;
-import org.junit.jupiter.api.io.TempDir;
-
 
 class StateTest {
 
-  @TempDir
-  File tempDir;
   
   @Test
   public void test_save_and_load() {
     
-    File saveDir = new File(tempDir, "SavedStates");
-    assertTrue(saveDir.mkdir() || saveDir.exists());
+    File dir = new File("SavedStates");
+    if (!dir.exists()) {
+       dir.mkdirs();
+    }
     
     ArrayList<Building> buildings = new ArrayList<>();
     Building mine = new Mine("G", new FactoryType("Gold", Collections.emptyMap()), new ArrayList<>(), null, null);
@@ -52,15 +50,15 @@ class StateTest {
     File savedFile = new File(filename + ".ser");
     assertTrue(savedFile.exists(), "Saved file does not exist!");
 
-    State loadedState = new State(new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
-    assertDoesNotThrow(() -> loadedState.load(filename));
+    State loadState = new State(new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
+    assertDoesNotThrow(() -> loadState.load(filename));
     
     
     ByteArrayOutputStream originalOutput = new ByteArrayOutputStream();
     ByteArrayOutputStream loadedOutput = new ByteArrayOutputStream();
 
     state.showState(new PrintStream(originalOutput));
-    loadedState.showState(new PrintStream(loadedOutput));
+    loadState.showState(new PrintStream(loadedOutput));
 
     assertEquals(originalOutput.toString(), loadedOutput.toString());
   }
