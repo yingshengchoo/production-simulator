@@ -89,9 +89,6 @@ public class SetupParser {
 
     private String parseRecipes(JsonNode recipesNode) {
         for (JsonNode recipeNode : recipesNode) {
-            if (!recipeNode.has("output") || !recipeNode.has("ingredients") || !recipeNode.has("latency")) {
-                return "A recipe is missing required fields (output, ingredients, latency).";
-            }
             String output = recipeNode.get("output").asText();
             int latency = recipeNode.get("latency").asInt();
             Map<String, Integer> ingredients = new LinkedHashMap<>();
@@ -107,14 +104,7 @@ public class SetupParser {
     }
 
     private String parseTypes(JsonNode typesNode) {
-        if (!typesNode.isArray()) {
-            return "'types' field must be an array.";
-        }
-
         for (JsonNode typeNode : typesNode) {
-            if (!typeNode.has("name") || !typeNode.has("recipes")) {
-                return "A type is missing required fields (name, recipes).";
-            }
             String typeName = typeNode.get("name").asText();
             Map<String, Recipe> recipesForType = new HashMap<>();
             for (JsonNode recName : typeNode.get("recipes")) {
@@ -138,8 +128,7 @@ public class SetupParser {
                 String typeName = buildingNode.get("type").asText();
                 FactoryType ft = typeMap.get(typeName);
                 building = new Factory(buildingName, ft, null, null);
-            }
-            else if (buildingNode.has("mine")) {
+            } else  {
                 // 我记得mine可以有多种output
                 String mineOutput = buildingNode.get("mine").asText();
 //                FactoryType dummyType = new FactoryType(mineOutput, new HashMap<>());
@@ -149,8 +138,6 @@ public class SetupParser {
                 recipes.put(mineOutput, recipeMap.get(mineOutput));
                 FactoryType dummyType = new FactoryType(mineOutput, recipes);
                 building = new Mine(buildingName, dummyType, null, null);
-            } else {
-                return "Building '" + buildingName + "' must have either 'type' or 'mine' field.";
             }
             buildingMap.put(buildingName, building);
         }
@@ -158,28 +145,24 @@ public class SetupParser {
         for (JsonNode buildingNode : buildingsNode) {
             String buildingName = buildingNode.get("name").asText();
             List<Building> sources = new ArrayList<>();
-            if (buildingNode.has("sources")) {
-                for (JsonNode src : buildingNode.get("sources")) {
-                    String srcName = src.asText();
-                    sources.add(buildingMap.get(srcName));
-                }
+            for (JsonNode src : buildingNode.get("sources")) {
+                String srcName = src.asText();
+                sources.add(buildingMap.get(srcName));
             }
+
             buildingMap.get(buildingName).setSources(sources);
         }
         return null;
     }
 
-    // 返回只读的 recipeMap
     public Map<String, Recipe> getRecipeMap() {
         return Collections.unmodifiableMap(recipeMap);
     }
 
-    // 返回只读的 typeMap
     public Map<String, FactoryType> getTypeMap() {
         return Collections.unmodifiableMap(typeMap);
     }
 
-    // 返回只读的 buildingMap
     public Map<String, Building> getBuildingMap() {
         return Collections.unmodifiableMap(buildingMap);
     }

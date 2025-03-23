@@ -120,4 +120,8 @@ public abstract class Building {
     public String getName() {
         return name;
     }
+
+    public List<Building> getSources() {
+        return sources;
+    }
 }
