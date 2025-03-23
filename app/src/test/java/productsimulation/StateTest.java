@@ -12,6 +12,8 @@ import productsimulation.model.*;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedConstruction;
 import static org.mockito.Mockito.*;
+import org.junit.jupiter.api.io.TempDir;
+
 
 class StateTest {
 
@@ -58,7 +60,7 @@ class StateTest {
     ByteArrayOutputStream loadedOutput = new ByteArrayOutputStream();
 
     state.showState(new PrintStream(originalOutput));
-    loadState.showState(new PrintStream(loadedOutput));
+    loadedState.showState(new PrintStream(loadedOutput));
 
     assertEquals(originalOutput.toString(), loadedOutput.toString());
   }
