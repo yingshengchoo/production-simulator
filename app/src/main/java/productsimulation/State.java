@@ -6,6 +6,8 @@ import java.io.*;
 import java.util.List; 
 
 public class State implements Serializable{
+
+  private static State instance;
   
   private List<Building> buildings;
   private List<Recipe> recipes;
@@ -14,13 +16,15 @@ public class State implements Serializable{
   private LogicTime logictime;
   
   /**
-   * Checks to see if the filename is valid(doesn't contain any special characters).
+   * Constructs a State object class which represents the current state of the simulation.
    *
-   * @param buildings     is the list of buildings in the simulation. 
-   * @param types         is the list types of Factory in the simulation.
-   * @param recipes       is the list of recipes in the simulation.
+   * @param buildings          is the list of buildings in the simulation. 
+   * @param types              is the list types of Factory in the simulation.
+   * @param recipes            is the list of recipes in the simulation.
+   * @param requestbroadcaster is the requestbroadcaster used in the simulation
+   * @param logictime          is the logictime used in the simulation. 
    */
-  public State(List<Building> buildings, List<FactoryType> types, List<Recipe> recipes, RequestBroadcaster requestbroadcaster, LogicTime logictime){
+  private State(List<Building> buildings, List<FactoryType> types, List<Recipe> recipes, RequestBroadcaster requestbroadcaster, LogicTime logictime){
     this.buildings = buildings;
     this.types = types;
     this.recipes = recipes;
@@ -28,6 +32,19 @@ public class State implements Serializable{
     this.logictime = logictime;
   }
 
+  /**
+   * Initializes the State instance.
+   *
+   * @param buildings     is the list of buildings in the simulation. 
+   * @param types         is the list types of Factory in the simulation.
+   * @param recipes       is the list of recipes in the simulation.
+   */
+  public static void initialize(List<Building> buildings, List<FactoryType> types, List<Recipe> recipes, RequestBroadcaster requestbroadcaster, LogicTime logictime) {
+    if (instance == null) {
+      instance = new State(buildings, types, recipes, requestbroadcaster, logictime);
+    }
+  }
+  
   /**
    * Checks to see if the filename is valid(doesn't contain any special characters).
    *
@@ -46,6 +63,18 @@ public class State implements Serializable{
       }
     }
     return true;
+  }
+
+  /**
+   * Returns the state of the current program.
+   *
+   * @throws IllegalStateException  if State has not been initialized.
+   */
+  public static State getInstance() {
+    if (instance == null) {
+      throw new IllegalStateException("State has not been initialized.");
+    }
+      return instance;
   }
 
   /**
@@ -147,6 +176,15 @@ public class State implements Serializable{
     for(Recipe r : recipes){
       o.println(r.toString());
     }
+  }
+  
+  //Resets State. Used for Testing purposes only
+  public void reset(){
+    this.buildings = null;
+    this.types = null;
+    this.recipes = null;
+    this.requestbroadcaster = null;
+    this.logictime = null;
   }
 }
 

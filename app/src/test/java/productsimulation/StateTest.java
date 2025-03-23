@@ -53,29 +53,34 @@ class StateTest {
     logicTime.addObservers(mine);
     logicTime.addObservers(factory);
     
-    State state = new State(buildings, types, stateRecipes, requestBroadcaster, logicTime);
+    State.initialize(buildings, types, stateRecipes, requestBroadcaster, logicTime);
+
+    State state = State.getInstance();
+    
     String filename = "testSave";
     assertDoesNotThrow(() -> state.save(filename));
 
     File file = new File("SavedStates/" + filename + ".ser");
     assertTrue(file.exists(), "File should exist after saving state.");
 
-    State loadState = new State(new ArrayList<>(),new ArrayList<>(),new ArrayList<>(), null, null);
-    assertDoesNotThrow(() -> loadState.load(filename));
-    
-    
     ByteArrayOutputStream originalOutput = new ByteArrayOutputStream();
-    ByteArrayOutputStream loadedOutput = new ByteArrayOutputStream();
-
     state.showState(new PrintStream(originalOutput));
-    loadState.showState(new PrintStream(loadedOutput));
+    
+    
+    state.reset();
+
+    assertDoesNotThrow(() -> state.load(filename));
+    
+    ByteArrayOutputStream loadedOutput = new ByteArrayOutputStream();
+    state.showState(new PrintStream(loadedOutput));
 
     assertEquals(originalOutput.toString(), loadedOutput.toString());
   }
 
   @Test
   public void test_checkFilename(){
-    State state = new State(new ArrayList<>(),new ArrayList<>(),new ArrayList<>(), null, null);
+    State.initialize(new ArrayList<>(),new ArrayList<>(),new ArrayList<>(), null, null);
+    State state = State.getInstance();
     assertTrue(state.checkFilename("normalfilename"));
     assertFalse(state.checkFilename("illegal:name"));
     assertFalse(state.checkFilename(null));
@@ -84,39 +89,45 @@ class StateTest {
 
   @Test
   public void testSave_InvalidFilename() {
-    State state = new State(new ArrayList<>(),new ArrayList<>(),new ArrayList<>(), null, null);
-    assertThrows(IllegalArgumentException.class, () -> state.save("invalid/file"));
+    State.initialize(new ArrayList<>(),new ArrayList<>(),new ArrayList<>(), null, null);
+    assertThrows(IllegalArgumentException.class, () -> State.getInstance().save("invalid/file"));
   }
 
   
   @Test
-    void testSavePrintsStackTraceOnIOException() throws IOException {
-    State state = new State(new ArrayList<>(),new ArrayList<>(),new ArrayList<>(), null, null);
+  public void testSavePrintsStackTraceOnIOException() throws IOException {
+    State.initialize(new ArrayList<>(),new ArrayList<>(),new ArrayList<>(), null, null);
+    State state = State.getInstance();
+    ByteArrayOutputStream errContent = new ByteArrayOutputStream();
+    System.setErr(new PrintStream(errContent));
 
-        ByteArrayOutputStream errContent = new ByteArrayOutputStream();
-        System.setErr(new PrintStream(errContent));
+    try (MockedConstruction<FileOutputStream> mockFileOut = mockConstruction(FileOutputStream.class,
+         (mock, context) -> {
+           doThrow(new IOException("Mocked IO error")).when(mock).write(any());
+         })) {
 
-        try (MockedConstruction<FileOutputStream> mockFileOut = mockConstruction(FileOutputStream.class,
-                (mock, context) -> {
-                    doThrow(new IOException("Mocked IO error")).when(mock).write(any());
-                })) {
-
-          assertDoesNotThrow(() ->state.save("testfile"));
-        } finally {
-            System.setErr(System.err);
-        }
+      assertDoesNotThrow(() ->state.save("testfile"));
+    } finally {
+      System.setErr(System.err);
     }
+  }
 
   @Test
   public void test_load_non_existent_file() throws IOException{
-    State state = new State(new ArrayList<>(),new ArrayList<>(),new ArrayList<>(), null, null);
-  
-     File dir = new File("SavedStates");
-     if (!dir.exists()) {
-        dir.mkdirs();
-     }
+    State.initialize(new ArrayList<>(),new ArrayList<>(),new ArrayList<>(), null, null);
 
-     assertThrows(FileNotFoundException.class, () ->state.load("non_existent_file"));
+    State state = State.getInstance();
+    File dir = new File("SavedStates");
+    if (!dir.exists()) {
+      dir.mkdirs();
+    }
+
+    assertThrows(FileNotFoundException.class, () ->state.load("non_existent_file"));
+  }
+
+  @Test
+  public void test_getStasnce_thorw(){
+    assertThrows(IllegalStateException.class, () -> State.getInstance());
   }
     
 }
