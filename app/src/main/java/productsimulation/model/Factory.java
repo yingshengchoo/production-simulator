@@ -5,7 +5,6 @@ import productsimulation.request.Request;
 import productsimulation.request.RequestStatus;
 import productsimulation.request.servePolicy.ServePolicy;
 import productsimulation.request.sourcePolicy.SourcePolicy;
-import productsimulation.model.*;
 import java.io.Serializable;
 import java.util.List;
 
@@ -53,13 +52,11 @@ public class Factory extends Building implements Serializable {
         Log.debugLog(name + " is processing request: " +
                 currentRequest.getIngredient() + ", " + currentRemainTime);
         currentRemainTime -= 1;
+        totalRemainTime -= 1;
         return false;
     }
 
-  public String getName(){
-    return name;
-  }
-  
+
   //A helper function that returns a string representation of the sources.
   private String printSources() {
     StringBuilder result = new StringBuilder("[");
@@ -89,7 +86,9 @@ public class Factory extends Building implements Serializable {
            "\n}";
   }
 
-  @Override
+    
+
+    @Override
   public void accept(BuildingVisitor visitor) {
     visitor.visit(this);
   }

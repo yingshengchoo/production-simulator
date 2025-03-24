@@ -3,14 +3,16 @@ package productsimulation.model;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.io.Serializable;
+public class Recipe implements Serializable{
 
-public class Recipe {
+  private static List<Recipe> recipeList;
   private String output;
   // ingredients应当为LinkedHashMap，或者其它能保留顺序的map。ingredients顺序会影响request传播顺序。
   private Map<String, Integer> ingredients;
   private final int latency;
 
-  public static Recipe getRecipe(String item, List<Recipe> recipeList) {
+  public static Recipe getRecipe(String item) {
     for (Recipe recipe : recipeList) {
       if (recipe.output.equals(item)) {
         return recipe;

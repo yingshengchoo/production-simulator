@@ -3,17 +3,26 @@ package productsimulation.model;
 import productsimulation.Log;
 import productsimulation.LogicTime;
 import productsimulation.request.Request;
-import productsimulation.request.RequestStatus;
 import productsimulation.request.servePolicy.ServePolicy;
 import productsimulation.request.sourcePolicy.SourcePolicy;
 
+import java.io.Serializable;
+
 import java.util.*;
 
-public abstract class Building {
+public abstract class Building implements Serializable {
+
+    private static List<Building> buildings = new ArrayList<>();
+
+    public static List<Building> getBuildings() {
+        return buildings;
+    }
+
     protected final String name;
     protected FactoryType type;
     protected Request currentRequest;
     protected int currentRemainTime;
+    protected int totalRemainTime = 0;
     protected List<Request> requestQueue;
     protected Map<String, Integer> storage;
     protected List<Building> sources;
@@ -53,6 +62,10 @@ public abstract class Building {
     public void addRequest(Request request) {
         Log.debugLog("adding request: " + request.getIngredient() + " to " + name);
         requestQueue.add(request);
+
+        // 更新total time
+        totalRemainTime += request.getLatency();
+
         Recipe parentRecipe = type.getRecipeByProductName(request.getIngredient());
         Map<String, Integer> ingredients = parentRecipe.getIngredients();
         for(String ingredient: ingredients.keySet()) {
@@ -117,7 +130,48 @@ public abstract class Building {
     public void accept(BuildingVisitor visitor) {
     }
 
+    public int getTotalRemainTime() {
+        return totalRemainTime;
+    }
+
     public String getName() {
         return name;
     }
+
+    public List<Building> getSources() {
+        return sources;
+    }
+
+    public int getCurrentRemainTime(){
+        return currentRemainTime;
+    }
+
+    public Request getCurrentRequest(){
+        return currentRequest;
+    }
+
+    public Map<String, Integer> getStorage(){
+        return storage;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Building building = (Building) o;
+        return Objects.equals(name, building.name) && Objects.equals(type, building.type);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hashCode(name);
+        result = 31 * result + Objects.hashCode(type);
+        return result;
+    }
+
+    public List<Request> getRequestQueue() {
+        return requestQueue;
+    }
+
+
 }

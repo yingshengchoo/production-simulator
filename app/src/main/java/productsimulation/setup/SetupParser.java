@@ -2,7 +2,6 @@ package productsimulation.setup;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import productsimulation.*;
 import productsimulation.model.*;
 
 import java.io.BufferedReader;
@@ -21,7 +20,7 @@ public class SetupParser {
         typeMap = new LinkedHashMap<>();
         buildingMap = new LinkedHashMap<>();
 
-        inputRuleChecker =
+        inputRuleChecker = new AllRequiredFieldsArePresentAndLegal(
                 new RecipeAndTypesAndBuildingsAreAllPresent(
                         new RecipeAndTypesAndBuildingsHaveUniqueNames(
                                 new NameHasNoApostrophe(
@@ -34,59 +33,39 @@ public class SetupParser {
                                                                                         new MinesRecipeHasEmptyIngredients(
                                                                                                 new RecipeHasValidLatencyNumber(
                                                                                                         new FactoryCanGetAllIngredientsItNeeds(null)
-                                                                                                )))))))))));
+                                                                                                )))))))))))
+        )
+                ;
     }
 
-    /**
-     * Reads the JSON from the provided BufferedReader and returns the root JsonNode.
-     *
-     * @param reader the BufferedReader for the JSON file.
-     * @return the root JsonNode or null if parsing fails.
-     */
     private JsonNode parseJson(BufferedReader reader) {
         ObjectMapper mapper = new ObjectMapper();
         try {
             return mapper.readTree(reader);
         } catch (IOException e) {
-            e.printStackTrace();
             return null;
         }
     }
 
-    /**
-     * First, the JSON is read and the input is validated by the chain of rule checkers.
-     * If validation passes, the JSON is parsed into recipes, types, and buildings.
-     *
-     * @param r the BufferedReader for the JSON file.
-     */
-    public void parse(BufferedReader r) {
+    public String parse(BufferedReader r) {
         JsonNode root = parseJson(r);
         if (root == null) {
-            System.err.println("Failed to parse JSON file.");
-            return;
+            return "Failed to parse JSON file.";
         }
 
-        String error = inputRuleChecker.checkInput(root);
-        if (error != null) {
-            System.err.println("Input validation error: " + error);
-            return;
+        String errorMessage = inputRuleChecker.checkInput(root);
+        if (errorMessage != null) {
+            return "Input validation error: " + errorMessage;
         }
+        parseRecipes(root.get("recipes"));
+        parseTypes(root.get("types"));
+        parseBuildings(root.get("buildings"));
 
-        if (!parseRecipes(root.get("recipes"))) return;
-        if (!parseTypes(root.get("types"))) return;
-        if (!parseBuildings(root.get("buildings"))) return;
+        return null;
     }
 
-    private boolean parseRecipes(JsonNode recipesNode) {
-        if (!recipesNode.isArray()) {
-            System.err.println("'recipes' field must be an array.");
-            return false;
-        }
+    private void parseRecipes(JsonNode recipesNode) {
         for (JsonNode recipeNode : recipesNode) {
-            if (!recipeNode.has("output") || !recipeNode.has("ingredients") || !recipeNode.has("latency")) {
-                System.err.println("A recipe is missing required fields (output, ingredients, latency).");
-                return false;
-            }
             String output = recipeNode.get("output").asText();
             int latency = recipeNode.get("latency").asInt();
             Map<String, Integer> ingredients = new LinkedHashMap<>();
@@ -98,45 +77,25 @@ public class SetupParser {
             Recipe recipe = new Recipe(latency, ingredients, output);
             recipeMap.put(output, recipe);
         }
-        return true;
     }
 
-    private boolean parseTypes(JsonNode typesNode) {
-        if (!typesNode.isArray()) {
-            System.err.println("'types' field must be an array.");
-            return false;
-        }
-
+    private void parseTypes(JsonNode typesNode) {
         for (JsonNode typeNode : typesNode) {
-            if (!typeNode.has("name") || !typeNode.has("recipes")) {
-                System.err.println("A type is missing required fields (name, recipes).");
-                return false;
-            }
             String typeName = typeNode.get("name").asText();
             Map<String, Recipe> recipesForType = new HashMap<>();
             for (JsonNode recName : typeNode.get("recipes")) {
                 String recipeName = recName.asText();
                 Recipe rcp = recipeMap.get(recipeName);
-                if (rcp != null) {
-                    recipesForType.put(recipeName, rcp);
-                }
+                recipesForType.put(recipeName, rcp);
+
             }
             FactoryType factoryType = new FactoryType(typeName, recipesForType);
             typeMap.put(typeName, factoryType);
         }
-        return true;
     }
 
-    private boolean parseBuildings(JsonNode buildingsNode) {
-        if (!buildingsNode.isArray()) {
-            System.err.println("'buildings' field must be an array.");
-            return false;
-        }
+    private void parseBuildings(JsonNode buildingsNode) {
         for (JsonNode buildingNode : buildingsNode) {
-            if (!buildingNode.has("name")) {
-                System.err.println("A building is missing the 'name' field.");
-                return false;
-            }
             String buildingName = buildingNode.get("name").asText();
             Building building = null;
 
@@ -144,8 +103,7 @@ public class SetupParser {
                 String typeName = buildingNode.get("type").asText();
                 FactoryType ft = typeMap.get(typeName);
                 building = new Factory(buildingName, ft, null, null);
-            }
-            else if (buildingNode.has("mine")) {
+            } else  {
                 // 我记得mine可以有多种output
                 String mineOutput = buildingNode.get("mine").asText();
 //                FactoryType dummyType = new FactoryType(mineOutput, new HashMap<>());
@@ -155,9 +113,6 @@ public class SetupParser {
                 recipes.put(mineOutput, recipeMap.get(mineOutput));
                 FactoryType dummyType = new FactoryType(mineOutput, recipes);
                 building = new Mine(buildingName, dummyType, null, null);
-            } else {
-                System.err.println("Building '" + buildingName + "' must have either 'type' or 'mine' field.");
-                return false;
             }
             buildingMap.put(buildingName, building);
         }
@@ -165,28 +120,23 @@ public class SetupParser {
         for (JsonNode buildingNode : buildingsNode) {
             String buildingName = buildingNode.get("name").asText();
             List<Building> sources = new ArrayList<>();
-            if (buildingNode.has("sources")) {
-                for (JsonNode src : buildingNode.get("sources")) {
-                    String srcName = src.asText();
-                    sources.add(buildingMap.get(srcName));
-                }
+            for (JsonNode src : buildingNode.get("sources")) {
+                String srcName = src.asText();
+                sources.add(buildingMap.get(srcName));
             }
+
             buildingMap.get(buildingName).setSources(sources);
         }
-        return true;
     }
 
-    // 返回只读的 recipeMap
     public Map<String, Recipe> getRecipeMap() {
         return Collections.unmodifiableMap(recipeMap);
     }
 
-    // 返回只读的 typeMap
     public Map<String, FactoryType> getTypeMap() {
         return Collections.unmodifiableMap(typeMap);
     }
 
-    // 返回只读的 buildingMap
     public Map<String, Building> getBuildingMap() {
         return Collections.unmodifiableMap(buildingMap);
     }

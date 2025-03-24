@@ -7,11 +7,11 @@ import productsimulation.model.Recipe;
 import productsimulation.request.sourcePolicy.SourcePolicy;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
-public class Request {
+import java.io.Serializable;
+
+public class Request implements Serializable{
 
   private static IdGenerator idGenerator = new IdGenerator();
 
@@ -120,4 +120,6 @@ public class Request {
   }
 
   public String getIngredient() { return ingredient; }
+
+  public Recipe getRecipe() { return recipe; }
 }

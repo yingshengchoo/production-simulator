@@ -6,26 +6,45 @@ import java.io.*;
 import java.util.List; 
 
 public class State implements Serializable{
-  //private ByteArrayInputStream serializationData;
 
+  private static State instance;
+  
   private List<Building> buildings;
   private List<Recipe> recipes;
   private List<FactoryType> types;
+  private RequestBroadcaster requestbroadcaster;
+  private LogicTime logictime;
   
   /**
-   * Checks to see if the filename is valid(doesn't contain any special characters).
+   * Constructs a State object class which represents the current state of the simulation.
+   *
+   * @param buildings          is the list of buildings in the simulation. 
+   * @param types              is the list types of Factory in the simulation.
+   * @param recipes            is the list of recipes in the simulation.
+   * @param requestbroadcaster is the requestbroadcaster used in the simulation
+   * @param logictime          is the logictime used in the simulation. 
+   */
+  private State(List<Building> buildings, List<FactoryType> types, List<Recipe> recipes, RequestBroadcaster requestbroadcaster, LogicTime logictime){
+    this.buildings = buildings;
+    this.types = types;
+    this.recipes = recipes;
+    this.requestbroadcaster = requestbroadcaster;
+    this.logictime = logictime;
+  }
+
+  /**
+   * Initializes the State instance.
    *
    * @param buildings     is the list of buildings in the simulation. 
    * @param types         is the list types of Factory in the simulation.
    * @param recipes       is the list of recipes in the simulation.
    */
-  public State(List<Building> buildings, List<FactoryType> types, List<Recipe> recipes){
-    this.buildings = buildings;
-    this.types = types;
-    this.recipes = recipes;
-    
+  public static void initialize(List<Building> buildings, List<FactoryType> types, List<Recipe> recipes, RequestBroadcaster requestbroadcaster, LogicTime logictime) {
+    if (instance == null) {
+      instance = new State(buildings, types, recipes, requestbroadcaster, logictime);
+    }
   }
-
+  
   /**
    * Checks to see if the filename is valid(doesn't contain any special characters).
    *
@@ -47,11 +66,25 @@ public class State implements Serializable{
   }
 
   /**
+   * Returns the state of the current program.
+   *
+   * @throws IllegalStateException  if State has not been initialized.
+   */
+  public static State getInstance() {
+    if (instance == null) {
+      throw new IllegalStateException("State has not been initialized.");
+    }
+      return instance;
+  }
+
+  /**
    * Saves the Current State in "filename".ser. Filename must not contain special characters
    *
-   * @param filename is the name of the filename to save simluation data to. 
+   * @param filename                   the name of the file (without extension) to save in the "SavedStates/" directory.
+   * @throws IllegalArgumentException  if the filename contains illegal characters.
+   * @throws IOException               if an I/O error occurs while writing the file.
    */  
-  public void save(String filename){
+  public void save(String filename) throws FileNotFoundException, IOException {
 
     if(!checkFilename(filename)){
       throw new IllegalArgumentException("Invalid Filename. Filename must not contain any special characters");
@@ -60,26 +93,29 @@ public class State implements Serializable{
     try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("SavedStates/" + filename + ".ser"))) {
       out.writeObject(this);
       System.out.println("State saved to SavedStates/" + filename + ".ser");
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+    } 
   }
 
   /**
    * Loads a previously saved state from a file with the given filename.
    *
-   * @param filename is the name of the file to load the state from.
-   */    
-  public void load(String filename){
+
+   * @param filename                the name of the file (without extension) to load from the "SavedStates/" directory.
+   * @throws IOException            if an I/O error occurs while reading the file.
+   * @throws FileNotFoundException  if file does not exist within the SaveStates directory
+   * @throws ClassNotFoundException if serialized object class cannot be found.
+   */      
+  public void load(String filename) throws IOException, FileNotFoundException, ClassNotFoundException {
     try (ObjectInputStream in = new ObjectInputStream(new FileInputStream("SavedStates/" + filename + ".ser"))) {
       State loadedState = (State) in.readObject();
       this.buildings = loadedState.buildings;
       this.recipes = loadedState.recipes;
       this.types = loadedState.types;
+      this.requestbroadcaster = loadedState.requestbroadcaster;
+      this.logictime = loadedState.logictime;
+      
       System.out.println("State loaded from SavedStates/" + filename + ".ser");
-    } catch (Exception e) {
-      throw new IllegalArgumentException("Invalid Filename. File does not exist or is Invalid.");
-    }
+    } 
   } 
 
   public void visitBuilding(){
@@ -95,11 +131,16 @@ public class State implements Serializable{
    * @param o is the PrintStream to print the current state.
    */
   public void showState(PrintStream o){
-    o.println("Current State Information:\n");
+    o.println("Current State Information:");
+    printLogicTime(o);
     printRecipes(o);
     printTypes(o);
     printBuildings(o);
     
+  }
+
+  public void printLogicTime(PrintStream o){
+    o.println(logictime.toString());
   }
   
   /**
@@ -137,4 +178,19 @@ public class State implements Serializable{
       o.println(r.toString());
     }
   }
+  
+  //Resets State. Used for Testing purposes only
+  public void reset(){
+    this.buildings = null;
+    this.types = null;
+    this.recipes = null;
+    this.requestbroadcaster = null;
+    this.logictime = null;
+  }
+
+  public void setInstanceToNull(){
+    this.instance = null;
+  }
 }
+
+

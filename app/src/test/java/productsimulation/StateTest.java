@@ -12,24 +12,44 @@ import productsimulation.model.*;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedConstruction;
 import static org.mockito.Mockito.*;
+import org.junit.jupiter.api.BeforeEach;
 
 class StateTest {
-  @Test
-  @Disabled("wait for some debug")
-  public void test_save_and_load() {
 
+  @BeforeEach
+  public void resetState() {
+    try{
+      State.getInstance().reset();
+      State.getInstance().setInstanceToNull();
+    } catch(IllegalStateException e){
+      //do nothing, only reset if needed.
+    }
+  }
+
+  @Test
+  public void test_state_singleton(){
+    State.initialize(new ArrayList<>(),new ArrayList<>(),new ArrayList<>(), null, null);
+    State s1 = State.getInstance();
+    s1.reset();
+    State s2 = State.getInstance();
+    assertEquals(s1, s2);
+  }
+  
+  @Test
+  public void test_save_and_load() {
     
-     File dir = new File("SavedStates");
-     if (!dir.exists()) {
-        dir.mkdirs();
-     }
+    File dir = new File("SavedStates");
+    if (!dir.exists()) {
+       dir.mkdirs();
+    }
     
     ArrayList<Building> buildings = new ArrayList<>();
     Building mine = new Mine("G", new FactoryType("Gold", Collections.emptyMap()), new ArrayList<>(), null, null);
     buildings.add(mine);
     ArrayList<Building> sources = new ArrayList<>();
     sources.add(mine);
-    buildings.add(new Factory("GC", new FactoryType("GoldChain", Collections.emptyMap()), sources, null, null));
+    Building factory = new Factory("GC", new FactoryType("GoldChain", Collections.emptyMap()), sources, null, null);
+    buildings.add(factory);
 
     Map<String, Recipe> recipes = new HashMap<>();
     Map<String, Integer> ingredients = new HashMap<>();
@@ -42,25 +62,70 @@ class StateTest {
     
     ArrayList<FactoryType> types = new ArrayList<>();
     types.add(new FactoryType("EggRoll", recipes));
-   
-    State state = new State(buildings, types, stateRecipes);
+
+    RequestBroadcaster requestBroadcaster = RequestBroadcaster.getInstance();
+    requestBroadcaster.addRecipes(eggroll);
+    requestBroadcaster.addBuildings(mine);
+    requestBroadcaster.addBuildings(factory);
+
+    LogicTime logicTime = LogicTime.getInstance();
+    logicTime.addObservers(mine);
+    logicTime.addObservers(factory);
+    
+    State.initialize(buildings, types, stateRecipes, requestBroadcaster, logicTime);
+
+    State state = State.getInstance();
+    
     String filename = "testSave";
-    state.save(filename);
-    State loadState = new State(new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
-    loadState.load(filename);
+    assertDoesNotThrow(() -> state.save(filename));
+
+    File file = new File("SavedStates/" + filename + ".ser");
+    assertTrue(file.exists(), "File should exist after saving state.");
 
     ByteArrayOutputStream originalOutput = new ByteArrayOutputStream();
-    ByteArrayOutputStream loadedOutput = new ByteArrayOutputStream();
-
     state.showState(new PrintStream(originalOutput));
-    loadState.showState(new PrintStream(loadedOutput));
+    
+    String expected = "Current State Information:\n" +
+    "Current Step: 0\n" + 
+    "Recipes:\n" + 
+    "Recipe\n" +
+    "{output='EggRoll',\n" +
+    " ingredients={Egg=2},\n" +
+    " latency=3\n" + 
+    "}\n" +
+    "Factory Types:\n" + 
+    "Factory Type\n" +  
+    "{name='EggRoll',\n" + 
+    " recipes=[EggRoll]\n" +
+    "}\n" + 
+    "Buildings:\n" +
+    "Mine\n" + 
+    "{name='G',\n" +
+    " mine='Gold',\n" +
+    " sources=[]\n" + 
+    "}\n" +
+    "Factory\n" +
+    "{name='GC',\n" +
+    " type='GoldChain',\n" +
+    " sources=[G]\n" +
+    "}\n";
+    
+    assertEquals(expected, originalOutput.toString());
+    
+    state.reset();
+
+    assertDoesNotThrow(() -> state.load(filename));
+    
+    ByteArrayOutputStream loadedOutput = new ByteArrayOutputStream();
+    state.showState(new PrintStream(loadedOutput));
 
     assertEquals(originalOutput.toString(), loadedOutput.toString());
   }
 
   @Test
   public void test_checkFilename(){
-    State state = new State(new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
+    State.initialize(new ArrayList<>(),new ArrayList<>(),new ArrayList<>(), null, null);
+    State state = State.getInstance();
     assertTrue(state.checkFilename("normalfilename"));
     assertFalse(state.checkFilename("illegal:name"));
     assertFalse(state.checkFilename(null));
@@ -69,45 +134,45 @@ class StateTest {
 
   @Test
   public void testSave_InvalidFilename() {
-    State state = new State(new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
-    assertThrows(IllegalArgumentException.class, () -> state.save("invalid/file"));
+    State.initialize(new ArrayList<>(),new ArrayList<>(),new ArrayList<>(), null, null);
+    assertThrows(IllegalArgumentException.class, () -> State.getInstance().save("invalid/file"));
   }
 
   
   @Test
-    void testSavePrintsStackTraceOnIOException() throws IOException {
-        State state = new State(new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
+  public void testSavePrintsStackTraceOnIOException() throws IOException {
+    State.initialize(new ArrayList<>(),new ArrayList<>(),new ArrayList<>(), null, null);
+    State state = State.getInstance();
+    ByteArrayOutputStream errContent = new ByteArrayOutputStream();
+    System.setErr(new PrintStream(errContent));
 
-        ByteArrayOutputStream errContent = new ByteArrayOutputStream();
-        System.setErr(new PrintStream(errContent));
+    try (MockedConstruction<FileOutputStream> mockFileOut = mockConstruction(FileOutputStream.class,
+         (mock, context) -> {
+           doThrow(new IOException("Mocked IO error")).when(mock).write(any());
+         })) {
 
-        try (MockedConstruction<FileOutputStream> mockFileOut = mockConstruction(FileOutputStream.class,
-                (mock, context) -> {
-                    doThrow(new IOException("Mocked IO error")).when(mock).write(any());
-                })) {
-
-          assertDoesNotThrow(() ->state.save("testfile"));
-        } finally {
-            System.setErr(System.err);
-        }
+      assertDoesNotThrow(() ->state.save("testfile"));
+    } finally {
+      System.setErr(System.err);
     }
+  }
 
   @Test
-  public void test_load_exceptions() throws IOException{
-     State state = new State(new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
-  
-     File dir = new File("SavedStates");
-     if (!dir.exists()) {
-        dir.mkdirs();
-     }
+  public void test_load_non_existent_file() throws IOException{
+    State.initialize(new ArrayList<>(),new ArrayList<>(),new ArrayList<>(), null, null);
 
-     assertThrows(IllegalArgumentException.class, () ->state.load("non_existent_file"));
-     
-     String filename = "invalidObject";
-     try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("SavedStates/" + filename + ".ser"))) {
-       out.writeObject("This is a string, not a State object"); // Writing incorrect type
-     }
-     assertThrows(IllegalArgumentException.class, ()-> state.load(filename));
+    State state = State.getInstance();
+    File dir = new File("SavedStates");
+    if (!dir.exists()) {
+      dir.mkdirs();
+    }
+
+    assertThrows(FileNotFoundException.class, () ->state.load("non_existent_file"));
+  }
+
+  @Test
+  public void test_getInstance_throw(){
+    assertThrows(IllegalStateException.class, () -> State.getInstance());
   }
     
 }

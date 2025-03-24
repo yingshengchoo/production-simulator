@@ -5,7 +5,9 @@ import productsimulation.request.RequestStatus;
 
 import java.util.List;
 
-public class ReadyPolicy implements ServePolicy {
+import java.io.Serializable;
+
+public class ReadyPolicy implements ServePolicy, Serializable {
     /**
      * Selects and returns the request with the smallest ID from the given list of requests
      * that is marked as ready. If no ready requests are found, returns null.
