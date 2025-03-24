@@ -96,8 +96,16 @@ public class Request implements Serializable{
       status = RequestStatus.READY;
   }
 
-  public void readyToWorking() {
+  public void readyToWorking(Map<String, Integer> stock) {
+    // initial state is ready, so no need to check stock in this function
     if (status == RequestStatus.READY) {
+      // deduct the inventory
+      for (Map.Entry<String, Integer> ingredient : recipe.getIngredients().entrySet()) {
+        String ingredientName = ingredient.getKey();
+        int ingredientOnNeed = ingredient.getValue();
+        stock.put(ingredientName, stock.get(ingredientName) - ingredientOnNeed);
+      }
+      // status transition
       status = RequestStatus.WORKING;
     }
   }

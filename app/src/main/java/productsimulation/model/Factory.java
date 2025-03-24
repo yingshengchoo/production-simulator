@@ -34,7 +34,7 @@ public class Factory extends Building implements Serializable {
                 // 库存中request原料齐备才可以开工
                 request.updateStatus(storage);
                 if(request.getStatus() == RequestStatus.READY) {
-                    request.readyToWorking();
+                    request.readyToWorking(storage);
                 } else {
                     Log.debugLog(name + " is waiting for ingredients");
                     return false;
