@@ -1,5 +1,9 @@
 package productsimulation.command;
 
+import productsimulation.State;
+
+import java.io.IOException;
+
 public class SaveCommand extends Command {
     String filename;
 
@@ -8,5 +12,7 @@ public class SaveCommand extends Command {
     }
 
     @Override
-    public void execute() {}
+    public void execute() throws IOException {
+        State.getInstance().save(filename);
+    }
 }
