@@ -131,8 +131,7 @@ public abstract class Building implements Serializable {
   }
 
   public String printStorageAndRequest(){
-    printStorage();
-    printRequestQueue();
+    return printStorage() + "\n" + printRequestQueue();
   }
     public int getRequestCount() {
         return requestQueue.size();
