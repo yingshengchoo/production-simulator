@@ -82,7 +82,8 @@ public class Factory extends Building implements Serializable {
            "',\n type='" + super.type.getName() + 
            "',\n sources=" + printSources() + 
            // ",\n sourcePolicy=" + super.sourcePolicy.toString() + 
-           // "',\n servePolicy=" + super.servePolicy.toString() + "'" + 
+           // "',\n servePolicy=" + super.servePolicy.toString() + "'" +
+           printStorageAndRequest() +
            "\n}";
   }
 }
