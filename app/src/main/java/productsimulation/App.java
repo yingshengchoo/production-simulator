@@ -6,9 +6,11 @@ import productsimulation.model.Building;
 import productsimulation.model.FactoryType;
 import productsimulation.model.Recipe;
 import productsimulation.request.OneTimeServePolicy;
+import productsimulation.request.servePolicy.FIFOPolicy;
 import productsimulation.request.servePolicy.ServePolicy;
 import productsimulation.request.sourcePolicy.SoleSourcePolicy;
 import productsimulation.request.sourcePolicy.SourcePolicy;
+import productsimulation.request.sourcePolicy.SourceQLen;
 import productsimulation.setup.SetupParser;
 
 import java.io.BufferedReader;
@@ -39,19 +41,18 @@ public class App {
         InputStream inputStream = App.class.getClassLoader().getResourceAsStream(setupFilePath);
         parser.parse(new BufferedReader(new InputStreamReader(inputStream)));
         Map<String, Recipe> recipes = parser.getRecipeMap();
-        Map<String, FactoryType> types = parser.getTypeMap();
         Map<String, Building> buildings = parser.getBuildingMap();
 
         // step 2: create LogicTime and RequestBroadcaster
         LogicTime logicTime = LogicTime.getInstance();
         RequestBroadcaster requestBroadcaster = RequestBroadcaster.getInstance();
-        SourcePolicy soleSourcePolicy = new SoleSourcePolicy();
-        ServePolicy oneTimeServePolicy = new OneTimeServePolicy();
+        SourcePolicy sourcePolicy = new SourceQLen();
+        ServePolicy servePolicy = new FIFOPolicy();
 
         // step 3: fill out the data model
         for(Building b: buildings.values()) {
-            b.changeSourcePolicy(soleSourcePolicy);
-            b.changeServePolicy(oneTimeServePolicy);
+            b.changeSourcePolicy(sourcePolicy);
+            b.changeServePolicy(servePolicy);
 
             logicTime.addObservers(b);
             requestBroadcaster.addBuildings(b);

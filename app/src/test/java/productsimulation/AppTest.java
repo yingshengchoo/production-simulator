@@ -16,6 +16,7 @@ import java.io.InputStreamReader;
 import java.util.*;
 
 import org.junit.jupiter.api.Test;
+import productsimulation.request.sourcePolicy.SourceQLen;
 import productsimulation.setup.SetupParser;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -69,24 +70,22 @@ class AppTest {
         stepCommand.execute();
     }
 
-    @Test
-    public void doorDemo() {
+    private void demoHelper(String demoName) {
         SetupParser parser = new SetupParser();
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("doors1.json");
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(demoName);
         assertNotNull(inputStream);
         parser.parse(new BufferedReader(new InputStreamReader(inputStream)));
         Map<String, Recipe> recipes = parser.getRecipeMap();
-        Map<String, FactoryType> types = parser.getTypeMap();
         Map<String, Building> buildings = parser.getBuildingMap();
 
         LogicTime logicTime = LogicTime.getInstance();
         RequestBroadcaster requestBroadcaster = RequestBroadcaster.getInstance();
-        SourcePolicy soleSourcePolicy = new SoleSourcePolicy();
-        ServePolicy oneTimeServePolicy = new OneTimeServePolicy();
+        SourcePolicy sourcePolicy = new SourceQLen();
+        ServePolicy servePolicy = new FIFOPolicy();
 
         for(Building b: buildings.values()) {
-            b.changeSourcePolicy(soleSourcePolicy);
-            b.changeServePolicy(oneTimeServePolicy);
+            b.changeSourcePolicy(sourcePolicy);
+            b.changeServePolicy(servePolicy);
 
             logicTime.addObservers(b);
             requestBroadcaster.addBuildings(b);
@@ -98,9 +97,17 @@ class AppTest {
 
         RequestCommand requestCommand = new RequestCommand("door", "D");
         requestCommand.execute();
-//        StepCommand stepCommand = new StepCommand(50);
-//        stepCommand.execute();
         FinishCommand finishCommand = new FinishCommand();
         finishCommand.execute();
+    }
+
+    @Test
+    public void door1Demo() {
+        demoHelper("doors1.json");
+    }
+
+    @Test
+    public void door2Demo() {
+        demoHelper("doors2.json");
     }
 }
