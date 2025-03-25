@@ -120,6 +120,7 @@ public class State implements Serializable{
       this.logictime = loadedState.logictime;
       
       System.out.println("State loaded from SavedStates/" + filename + ".ser");
+      showState();
     } 
   } 
 
