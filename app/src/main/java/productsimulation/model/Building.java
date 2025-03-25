@@ -94,11 +94,13 @@ public abstract class Building implements Serializable {
         Iterator<Map.Entry<String, Integer>> iterator = storage.entrySet().iterator();
         
         while (iterator.hasNext()) {
-            Recipe r = iterator.next().getValue();
-            result.append(r.getOutput());
+          Map.Entry<String, Integer> entry = iterator.next();
+          String item = entry.getKey();
+            int count = entry.getValue();
+            result.append(item + ": " + count);
 
             if (iterator.hasNext()) {
-                result.append(", ");
+                result.append(",\n ");
             }
         }
     }
