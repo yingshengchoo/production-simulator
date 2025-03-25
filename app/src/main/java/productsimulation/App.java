@@ -29,7 +29,12 @@ public class App {
                 break;
             }
             Command cmd = cmdParser.parseLine(line);
-            cmd.execute();
+            try {
+                cmd.execute();
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println(e.getMessage());
+            }
         }
         scanner.close();
     }

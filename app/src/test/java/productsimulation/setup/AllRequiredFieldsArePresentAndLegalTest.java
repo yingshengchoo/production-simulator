@@ -3,7 +3,6 @@ package productsimulation.setup;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
-import productsimulation.setup.FactorysRecipeHasIngredients;
 
 import java.util.ArrayList;
 import java.util.List;

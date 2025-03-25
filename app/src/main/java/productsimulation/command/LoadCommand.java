@@ -1,5 +1,9 @@
 package productsimulation.command;
 
+import productsimulation.State;
+
+import java.io.IOException;
+
 public class LoadCommand extends Command {
     private final String filename;
 
@@ -8,9 +12,8 @@ public class LoadCommand extends Command {
     }
 
     @Override
-    public void execute() {
-        // Implementation: ask the simulation to restore from 'filename'
-        System.out.println("Executing LoadCommand, loading from: " + filename);
+    public void execute() throws IOException, ClassNotFoundException {
+        State.getInstance().load(filename);
     }
 
     public String getFilename() {

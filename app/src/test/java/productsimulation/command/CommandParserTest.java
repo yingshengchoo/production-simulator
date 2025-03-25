@@ -1,6 +1,9 @@
 package productsimulation.command;
 
 import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public  class CommandParserTest {
@@ -49,6 +52,16 @@ public  class CommandParserTest {
     }
 
     @Test
+    public void test_save() throws IOException, ClassNotFoundException {
+        CommandParser parser = new CommandParser();
+        Command cmd = parser.parseLine("save test.txt");
+        assertNotNull(cmd);
+        assertTrue(cmd instanceof SaveCommand);
+
+        cmd.execute();
+    }
+
+    @Test
     public void test_verbose_valid() {
         CommandParser parser = new CommandParser();
         Command cmd = parser.parseLine("verbose 2");
@@ -75,10 +88,8 @@ public  class CommandParserTest {
     public void test_save_valid() {
         CommandParser parser = new CommandParser();
         Command cmd = parser.parseLine("save myState.json");
-//        assertNotNull(cmd);
-//        assertTrue(cmd instanceof SaveCommand);
-        SaveCommand sc = (SaveCommand) cmd;
-//        assertEquals("myState.json", sc.getFilename());
+        assertNotNull(cmd);
+        assertTrue(cmd instanceof SaveCommand);
     }
 
     @Test

@@ -33,16 +33,15 @@ class StateTest {
     s1.reset();
     State s2 = State.getInstance();
     assertEquals(s1, s2);
+    ArrayList<Building> buildings = new ArrayList<>();
+    State.initialize(buildings, new ArrayList<>(), ArrayList<>(), null, null);
+    State s3 = State.getInstance();
+    assertEquals(s1,s3);
+
   }
   
   @Test
   public void test_save_and_load() {
-    
-    File dir = new File("SavedStates");
-    if (!dir.exists()) {
-       dir.mkdirs();
-    }
-    
     ArrayList<Building> buildings = new ArrayList<>();
     Building mine = new Mine("G", new FactoryType("Gold", Collections.emptyMap()), new ArrayList<>(), null, null);
     buildings.add(mine);
@@ -162,10 +161,6 @@ class StateTest {
     State.initialize(new ArrayList<>(),new ArrayList<>(),new ArrayList<>(), null, null);
 
     State state = State.getInstance();
-    File dir = new File("SavedStates");
-    if (!dir.exists()) {
-      dir.mkdirs();
-    }
 
     assertThrows(FileNotFoundException.class, () ->state.load("non_existent_file"));
   }

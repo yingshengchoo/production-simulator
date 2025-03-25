@@ -85,12 +85,5 @@ public class Factory extends Building implements Serializable {
            // "',\n servePolicy=" + super.servePolicy.toString() + "'" + 
            "\n}";
   }
-
-    
-
-    @Override
-  public void accept(BuildingVisitor visitor) {
-    visitor.visit(this);
-  }
 }
 
