@@ -33,6 +33,11 @@ class StateTest {
     s1.reset();
     State s2 = State.getInstance();
     assertEquals(s1, s2);
+    ArrayList<Building> buildings = new ArrayList<>();
+    State.initialize(buildings, new ArrayList<>(), ArrayList<>(), null, null);
+    State s3 = State.getInstance();
+    assertEquals(s1,s3);
+
   }
   
   @Test

@@ -16,6 +16,16 @@ public class MineTest {
     
     String expected = "Mine\n{name='GoldMine',\n mine='Gold',\n sources=[DoorInc, DiamondMine]\n}";
     assertEquals(expected, mine.toString());
+
+    Mine mine2 = new Mine("GoldMine", new FactoryType("Gold", Collections.emptyMap()), null, null, null);
+    
+    String expected2 = "Mine\n{name='GoldMine',\n mine='Gold',\n sources=[]\n}";
+    assertEquals(expected2, mine2.toString());
+
+    Mine mine3 = new Mine("GoldMine", new FactoryType("Gold", Collections.emptyMap()), new ArrayList<>(), null, null);
+    
+    String expected3 = "Mine\n{name='GoldMine',\n mine='Gold',\n sources=[]\n}";
+    assertEquals(expected3, mine3.toString());
   }
 
   @Test

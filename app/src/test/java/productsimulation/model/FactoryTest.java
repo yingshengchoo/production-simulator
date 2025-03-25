@@ -17,6 +17,14 @@ public class FactoryTest {
     String expected = "Factory\n{name='PaperInc',\n type='PaperFactory',\n sources=[DoorInc, DiamondMine]\n}";
     assertEquals(expected, f.toString());
 
+    Factory f2 = new Factory("PaperInc", new FactoryType("PaperFactory", Collections.emptyMap()), null, null, null);
+    String expected2 = "Factory\n{name='PaperInc',\n type='PaperFactory',\n sources=[]\n}";
+    assertEquals(expected2, f2.toString());
+
+    Factory f3 = new Factory("PaperInc", new FactoryType("PaperFactory", Collections.emptyMap()), sources, null, null);
+    String expected3 = "Factory\n{name='PaperInc',\n type='PaperFactory',\n sources=[]\n}";
+    assertEquals(expected3, f3.toString());
+
     assertEquals("PaperInc", f.getName());
   }
 
