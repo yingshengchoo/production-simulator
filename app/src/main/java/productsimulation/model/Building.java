@@ -111,7 +111,7 @@ public abstract class Building implements Serializable {
 
     private String printRequestQueue() {
 
-    StringBuilder result = new StringBuilder("");
+    StringBuilder result = new StringBuilder("Request Queue Size: ");
     result.append(requestQueue.size()+"\n");
     
     //StringBuilder result = new StringBuilder("[");
