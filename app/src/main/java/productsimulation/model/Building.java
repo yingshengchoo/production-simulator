@@ -91,7 +91,7 @@ public abstract class Building implements Serializable {
     StringBuilder result = new StringBuilder("[");
     
     if (storage != null && !storage.isEmpty()) {
-        Iterator<Map.Entry<String, Recipe>> iterator = storage.entrySet().iterator();
+        Iterator<Map.Entry<String, Integer>> iterator = storage.entrySet().iterator();
         
         while (iterator.hasNext()) {
             Recipe r = iterator.next().getValue();
@@ -108,19 +108,23 @@ public abstract class Building implements Serializable {
    }
 
     private String printRequestQueue() {
-    StringBuilder result = new StringBuilder("[");
-    if (requestQueue != null && !requestQueue.isEmpty()) {
-        for (int i = 0; i < requestQueue.size(); i++) {
-            Building b = requestQueue.get(i);
-            result.append(b.getName());
-           
-            if (i < super.sources.size() - 1) {
-                result.append(", ");
-            }
-        }
-    }
+
+    StringBuilder result = new StringBuilder("");
+    result.append(requestQueue.size()+"\n");
     
-    result.append("]");  
+    //StringBuilder result = new StringBuilder("[");
+    // if (requestQueue != null && !requestQueue.isEmpty()) {
+    //     for (int i = 0; i < requestQueue.size(); i++) {
+    //         Request r = requestQueue.get(i);
+    //         result.append(r.getName());
+           
+    //         if (i < requestQueue.size() - 1) {
+    //             result.append(", ");
+    //         }
+    //     }
+    // }
+    
+    //result.append("]");  
     return result.toString();
   }
 
