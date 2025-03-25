@@ -89,6 +89,11 @@ public class State implements Serializable{
     if(!checkFilename(filename)){
       throw new IllegalArgumentException("Invalid Filename. Filename must not contain any special characters");
     }
+
+    File dir = new File("SavedStates");
+    if (!dir.exists()) {
+       dir.mkdirs();
+    }
     
     try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("SavedStates/" + filename + ".ser"))) {
       out.writeObject(this);
@@ -117,13 +122,6 @@ public class State implements Serializable{
       System.out.println("State loaded from SavedStates/" + filename + ".ser");
     } 
   } 
-
-  public void visitBuilding(){
-    BuildingUpdateVisitor visitor = new BuildingUpdateVisitor();
-    for (Building b : buildings) {
-      b.accept(visitor); 
-    }
-  }
 
   /**
    * Displays the current state of the simulation

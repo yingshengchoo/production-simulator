@@ -85,8 +85,5 @@ public class Mine extends Building implements Serializable {
     return name;
   }
 
-  @Override
-  public void accept(BuildingVisitor visitor) {
-    visitor.visit(this);
-  }
+
 }

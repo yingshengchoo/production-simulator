@@ -127,9 +127,6 @@ public abstract class Building implements Serializable {
         update();
     }
 
-    public void accept(BuildingVisitor visitor) {
-    }
-
     public int getTotalRemainTime() {
         return totalRemainTime;
     }
