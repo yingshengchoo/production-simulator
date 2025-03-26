@@ -118,6 +118,11 @@ public class State implements Serializable{
       this.types = loadedState.types;
       this.requestbroadcaster = loadedState.requestbroadcaster;
       this.logictime = loadedState.logictime;
+
+      StateLoadVisitor visitor = new StateLoadVisitor();
+      loadedState.logictime.accept(visitor);
+      loadedState.requestbroadcaster.accept(visitor);
+
       
       System.out.println("State loaded from SavedStates/" + filename + ".ser");
       showState(System.out);
@@ -132,51 +137,31 @@ public class State implements Serializable{
   public void showState(PrintStream o){
     o.println("Current State Information:");
     printLogicTime(o);
-    printRecipes(o);
-    printTypes(o);
-    printBuildings(o);
-    
+    printList("Recipes:", recipes, o);
+    printList("Factory Types:", types, o);
+    printList("Buildings:", buildings, o);
   }
 
+  /**
+   * Displays the current Time Step of the simulation
+   *
+   * @param o is the PrintStream to print the current state.
+   */
   public void printLogicTime(PrintStream o){
     o.println(logictime.toString());
   }
-  
   /**
-   * Displays the current buildings in the current state of the simulation
+   * Displays the current object in the current state of the simulation
    *
    * @param o is the PrintStream to print the current state.
    */
-  public void printBuildings(PrintStream o){
-    o.println("Buildings:");
-    for(Building b: buildings){
-      o.println(b.toString());
-    }
-  }
-  
-  /**
-   * Displays the current Factory Types in the current state of the simulation
-   *
-   * @param o     is the PrintStream to print the current state.
-   */
-  public void printTypes(PrintStream o){
-    o.println("Factory Types:");
-    for(FactoryType t : types){
-      o.println(t.toString());
+  public void printList(String title, List<?> list, PrintStream o) {
+    o.println(title);
+    for (Object item : list) {
+        o.println(item.toString());
     }
   }
 
-  /**
-   * Displays the current Recipes in the current state of the simulation
-   *
-   * @param o is the PrintStream to print the current state.
-   */
-  public void printRecipes(PrintStream o){
-    o.println("Recipes:");
-    for(Recipe r : recipes){
-      o.println(r.toString());
-    }
-  }
   
   //Resets State. Used for Testing purposes only
   public void reset(){
@@ -188,7 +173,7 @@ public class State implements Serializable{
   }
 
   public void setInstanceToNull(){
-    this.instance = null;
+    instance = null;
   }
 
   public Building getBuilding(String name) {

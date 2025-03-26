@@ -39,9 +39,8 @@ class StateTest {
     assertEquals(s1,s3);
 
   }
-  
+
   @Test
-  @Disabled("waiting for debug")
   public void test_save_and_load() {
     ArrayList<Building> buildings = new ArrayList<>();
     Building mine = new Mine("G", new FactoryType("Gold", Collections.emptyMap()), new ArrayList<>(), null, null);
@@ -102,12 +101,16 @@ class StateTest {
     "Mine\n" + 
     "{name='G',\n" +
     " mine='Gold',\n" +
-    " sources=[]\n" + 
+    " sources=[],\n" + 
+    " storage=[],\n" +
+    " request queue size=0\n" +
     "}\n" +
     "Factory\n" +
     "{name='GC',\n" +
     " type='GoldChain',\n" +
-    " sources=[G]\n" +
+    " sources=[G],\n" +
+    " storage=[],\n" +
+    " request queue size=0\n" +
     "}\n";
     
     assertEquals(expected, originalOutput.toString());
@@ -121,6 +124,7 @@ class StateTest {
 
     assertEquals(originalOutput.toString(), loadedOutput.toString());
   }
+
 
   @Test
   public void test_checkFilename(){

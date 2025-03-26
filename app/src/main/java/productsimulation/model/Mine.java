@@ -73,7 +73,7 @@ public class Mine extends Building implements Serializable {
            "',\n sources=" + printSources() + 
            // ",\n sourcePolicy=" + super.sourcePolicy.toString() + 
            // ",\n servePolicy=" + super.servePolicy.toString() + "'" + 
-      printStorageAndRequest()+
+      ",\n" + printStorageAndRequest() +
       "\n}";
   }
 

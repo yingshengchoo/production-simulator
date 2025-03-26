@@ -90,8 +90,8 @@ public class Factory extends Building implements Serializable {
            "',\n sources=" + printSources() + 
            // ",\n sourcePolicy=" + super.sourcePolicy.toString() + 
            // "',\n servePolicy=" + super.servePolicy.toString() + "'" +
-           printStorageAndRequest() +
-           "\n}";
+      ",\n" + printStorageAndRequest()+
+      "\n}";
   }
 }
 
