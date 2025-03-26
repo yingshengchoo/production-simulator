@@ -9,7 +9,7 @@ import java.util.Set;
 import java.io.Serializable;
 
 public class LogicTime implements Serializable{
-    private static final LogicTime instance = new LogicTime();
+    private static LogicTime instance = new LogicTime();
     private int currentStep;
     private final Set<Building> observers;
     private boolean exitFlag;
@@ -94,6 +94,15 @@ public class LogicTime implements Serializable{
         currentStep = 0;
     }
 
+    public void loadLogicTime(LogicTime logicTime){
+      instance = logicTime;
+    }
+  
+    public void accept(StateVisitor v){
+      v.visit(this);
+    }
+
+  
     @Override
     public String toString(){
       return "Current Step: " + currentStep;

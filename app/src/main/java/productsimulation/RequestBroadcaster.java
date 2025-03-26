@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.util.*;
 
 public class RequestBroadcaster implements Serializable {
-    private static final RequestBroadcaster instance = new RequestBroadcaster();
+    private static RequestBroadcaster instance = new RequestBroadcaster();
     public static RequestBroadcaster getInstance() {
         return instance;
     }
@@ -45,6 +45,14 @@ public class RequestBroadcaster implements Serializable {
 
     public void removeRecipes(Recipe r) {
         recipes.remove(r.getOutput());
+    }
+
+    public void accept(StateVisitor v){
+      v.visit(this);
+    }
+
+    public void loadRequestBroadcaster(RequestBroadcaster rb){
+      instance = rb;
     }
 
     public void userRequestHandler(String itemName, String buildingName) {
