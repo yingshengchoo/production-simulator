@@ -19,9 +19,19 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class App {
+    private static String beginPrompt = "Welcome to product simulation, you can:\n" +
+            "request 'itemName' from 'buildingName'\n" +
+            "step 1\n" +
+            "verbose 1\n" +
+            "finish\n" +
+            "set policy request on target\n" +
+            "save saveFileName\n" +
+            "load loadFileName\n";
+
     public static void readInputCommand(CommandParser cmdParser, Readable inputSource, boolean isInteractive) {
         Scanner scanner = new Scanner(inputSource);
         if (isInteractive) {
+            System.out.print(beginPrompt);
             System.out.print("> ");
         }
 
@@ -49,7 +59,7 @@ public class App {
     }
 
     private static void initialize(String setupFilePath) {
-        Log.debugLog("initializing");
+        Log.debugLog("initializing with " + setupFilePath);
         // step 1: read the json, apply check rules
         SetupParser parser = new SetupParser();
         InputStream inputStream = App.class.getClassLoader().getResourceAsStream(setupFilePath);
@@ -75,9 +85,12 @@ public class App {
             requestBroadcaster.addBuildings(b);
         }
 
+        ArrayList<Recipe> recipeList = new ArrayList<>();
         for(Recipe r: recipes.values()) {
             requestBroadcaster.addRecipes(r);
+            recipeList.add(r);
         }
+        Recipe.setRecipeList(recipeList);
     }
 
     private static void play(String setupFilePath) {

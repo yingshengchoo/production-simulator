@@ -1,0 +1,43 @@
+{
+  "types" : [
+    {
+      "name" : "AlchemyWorkshop",
+      "recipes" : [
+        "l1",
+        "l2",
+        "l3"
+      ]
+    }
+  ],
+  "buildings" : [
+    {
+      "name" : "A",
+      "type" : "AlchemyWorkshop",
+      "sources" : ["river"]
+    },
+    {
+      "name" : "river",
+      "mine" : "water",
+      "sources" : []
+    }
+  ],
+  "recipes" : [
+    {
+      "output" : "l1",
+      "ingredients" : {},
+      "latency" : 1
+    },
+    {
+      "output" : "l2",
+      "ingredients" : {},
+      "latency" : 2
+    },
+    {
+      "output": "l3",
+      "ingredients": {
+        "water": 1
+      },
+      "latency": 3
+    }
+  ]
+}

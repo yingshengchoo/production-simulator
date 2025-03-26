@@ -31,6 +31,10 @@ public class Recipe implements Serializable{
     this.output = output;
   }
 
+  public static void setRecipeList(List<Recipe> recipeList) {
+    Recipe.recipeList = recipeList;
+  }
+
   /**
    * Retrieves an unmodifiable view of the ingredients required for the recipe.
    *
