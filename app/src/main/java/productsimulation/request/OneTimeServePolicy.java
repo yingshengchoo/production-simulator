@@ -9,4 +9,9 @@ public class OneTimeServePolicy implements ServePolicy, Serializable {
     public Request getRequest(List<Request> requests) {
         return requests.get(0);
     }
+
+    @Override
+    public String getName() {
+        return "OneTimeServePolicy";
+    }
 }

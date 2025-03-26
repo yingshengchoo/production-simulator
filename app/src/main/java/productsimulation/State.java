@@ -190,6 +190,19 @@ public class State implements Serializable{
   public void setInstanceToNull(){
     this.instance = null;
   }
+
+  public Building getBuilding(String name) {
+    for (Building b : buildings) {
+      if (b.getName().equals(name)) {
+        return b;
+      }
+    }
+    return null;
+  }
+
+  public List<Building> getBuilding() {
+    return buildings;
+  }
 }
 
 

@@ -157,7 +157,10 @@ public class SourceEstimate implements SourcePolicy {
         for (Building b : toRemove) {
             ts.remove(b);
         }
+    }
 
+    public String getName() {
+        return "source estimate";
     }
 
 }

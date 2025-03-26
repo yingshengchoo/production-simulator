@@ -1,6 +1,26 @@
 package productsimulation.command;
 
+import productsimulation.request.Policy;
+import productsimulation.request.servePolicy.FIFOPolicy;
+import productsimulation.request.servePolicy.ReadyPolicy;
+import productsimulation.request.servePolicy.ServePolicy;
+import productsimulation.request.servePolicy.SjfPolicy;
+import productsimulation.request.sourcePolicy.SoleSourcePolicy;
+import productsimulation.request.sourcePolicy.SourcePolicy;
+import productsimulation.request.sourcePolicy.SourceQLen;
+import productsimulation.request.sourcePolicy.SourceSimplelat;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
 public class SetPolicyCommandIdentifier extends CommandIdentifier {
+    Set<Policy> policies = new HashSet<>(Arrays.asList(
+            new FIFOPolicy(), new ReadyPolicy(), new SjfPolicy(),
+            new SoleSourcePolicy(), new SourceQLen(), new SourceSimplelat()
+    ));
+
 
     public SetPolicyCommandIdentifier(CommandIdentifier next) {
         super(next);
@@ -31,8 +51,12 @@ public class SetPolicyCommandIdentifier extends CommandIdentifier {
             return null;
         }
         String type = typeAndPolicy[0];    // "request" or "source"
-        String policy = typeAndPolicy[1];  // e.g. "'sjf'", "default".
-
-        return new SetPolicyCommand(type, policy, target);
+        String policy = typeAndPolicy[1].substring(1, typeAndPolicy[1].length() - 1);  // e.g. "'sjf'", "default".
+        for (Policy p : policies) {
+            if (p.getName().equals(policy)) {
+                return new SetPolicyCommand(type, target, p);
+            }
+        }
+        return null;
     }
 }

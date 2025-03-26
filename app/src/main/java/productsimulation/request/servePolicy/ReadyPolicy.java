@@ -28,4 +28,9 @@ public class ReadyPolicy implements ServePolicy, Serializable {
 
         return result;
     }
+
+    @Override
+    public String getName() {
+        return "ready";
+    }
 }

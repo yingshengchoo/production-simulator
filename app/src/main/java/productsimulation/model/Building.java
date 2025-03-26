@@ -2,6 +2,7 @@ package productsimulation.model;
 
 import productsimulation.Log;
 import productsimulation.LogicTime;
+import productsimulation.request.Policy;
 import productsimulation.request.Request;
 import productsimulation.request.servePolicy.ServePolicy;
 import productsimulation.request.sourcePolicy.SourcePolicy;
@@ -162,6 +163,14 @@ public abstract class Building implements Serializable {
 
     public void changeSourcePolicy(SourcePolicy sourcePolicy) {
         this.sourcePolicy = sourcePolicy;
+    }
+
+    public void changePolicy(Policy policy) {
+        if (policy instanceof ServePolicy) {
+            changeServePolicy((ServePolicy) policy);
+        } else {
+            changeSourcePolicy((SourcePolicy) policy);
+        }
     }
 
     public boolean notified() {

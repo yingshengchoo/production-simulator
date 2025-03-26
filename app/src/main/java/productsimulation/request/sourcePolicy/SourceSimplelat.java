@@ -21,4 +21,9 @@ public class SourceSimplelat implements SourcePolicy {
 
         return source;
     }
+
+    @Override
+    public String getName() {
+        return "simplelat";
+    }
 }
