@@ -30,12 +30,15 @@ public class App {
                 break;
             }
             Command cmd = cmdParser.parseLine(line);
+            if (cmd == null) {
+                System.out.println("You enter an invalid command");
+            }
             try {
                 cmd.execute();
             } catch (Exception e) {
 //                输出等级
-//                e.printStackTrace();
-//                System.out.println(e.getMessage());
+                e.printStackTrace();
+                System.out.println(e.getMessage());
             }
         }
         scanner.close();
