@@ -28,4 +28,9 @@ public class FIFOPolicy implements ServePolicy, Serializable {
 
         return result;
     }
+
+    @Override
+    public String getName() {
+        return "fifo";
+    }
 }

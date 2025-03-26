@@ -23,4 +23,9 @@ public class SourceQLen implements SourcePolicy, Serializable {
 
         return source;
     }
+
+    @Override
+    public String getName() {
+        return "qlen";
+    }
 }

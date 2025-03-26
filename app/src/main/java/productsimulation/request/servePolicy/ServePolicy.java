@@ -1,10 +1,11 @@
 package productsimulation.request.servePolicy;
 
+import productsimulation.request.Policy;
 import productsimulation.request.Request;
 
 import java.util.List;
 
-public interface ServePolicy {
+public interface ServePolicy extends Policy {
     /**
      * Retrieves a specific request from the provided list of requests according to a particular selection policy.
      *
