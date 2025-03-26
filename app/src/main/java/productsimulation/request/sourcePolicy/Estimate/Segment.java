@@ -29,4 +29,8 @@ public class Segment {
         result = 31 * result + Objects.hashCode(building);
         return result;
     }
+
+    public Building getBuilding() {
+        return building;
+    }
 }

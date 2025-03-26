@@ -15,4 +15,8 @@ public class IdGenerator implements Serializable{
     public int nextId() {
         return id++;
     }
+
+    public void reset() {
+        id = 0;
+    }
 }

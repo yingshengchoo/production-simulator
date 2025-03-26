@@ -14,6 +14,16 @@ class SjfPolicyTest {
         SjfPolicy policy = new SjfPolicy();
         List<Request> requests = RequestGenerator.generateRequests();
         Request request = policy.getRequest(requests);
-        assertEquals(2, request.getId());
+        assertEquals(1, request.getId());
+
+        requests.add(0, RequestGenerator.generateRequest(6, new int[]{1,2}));
+        requests.add(RequestGenerator.generateRequest(6, new int[]{1,2}));
+        assertEquals(1, request.getId());
+    }
+
+    @Test
+    void testGetName() {
+        SjfPolicy policy = new SjfPolicy();
+        assertEquals("sjf", policy.getName());
     }
 }

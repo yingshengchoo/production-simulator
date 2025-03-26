@@ -33,4 +33,10 @@ class ReadyPolicyTest {
         request = policy.getRequest(requests);
         assertEquals(4, request.getId());
     }
+
+    @Test
+    void testGetName() {
+        ReadyPolicy policy = new ReadyPolicy();
+        assertEquals("ready", policy.getName());
+    }
 }

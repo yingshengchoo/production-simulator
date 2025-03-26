@@ -4,9 +4,6 @@ import productsimulation.Log;
 import productsimulation.LogicTime;
 import productsimulation.model.Building;
 import productsimulation.model.Recipe;
-import productsimulation.request.sourcePolicy.SourcePolicy;
-
-import java.util.ArrayList;
 import java.util.Map;
 
 import java.io.Serializable;
@@ -25,6 +22,10 @@ public class Request implements Serializable{
   private final Building requester;
   private RequestStatus status;
 
+  public Request(String ingredient, Building requester) {
+    this(ingredient, requester, false);
+  }
+
   public Request(String ingredient, Recipe recipe, Building requester) {
     this.id = idGenerator.nextId();
     this.ingredient = ingredient;
@@ -33,27 +34,16 @@ public class Request implements Serializable{
     this.status = RequestStatus.WAITING;
   }
 
-  /**
-   * Constructs and returns a new {@code Request} object. The method uses the given parameters
-   * to identify a suitable {@code Building} from the provided list using the {@code SourcePolicy},
-   * and retrieves the corresponding {@code Recipe} for the specified item from the recipe list.
-   * The created Request is then added to the identified Building's request queue.
-   *
-   * @param item the name of the item for which the request is being created
-   * @param sourcePolicy the policy used to determine the optimal {@code Building} from the list
-   * @return the newly constructed {@code Request} containing the specified item, recipe, and building
-   * @throws IllegalArgumentException if no suitable {@code Building} is found in the {@code buildingList}
-   */
-  public static Request BuildRequest(String item, SourcePolicy sourcePolicy,
-                                     Map<String, Building> buildingMap, Map<String, Recipe> recipeMap ) {
-    Building building = sourcePolicy.getSource(new ArrayList<>(buildingMap.values()), item);
-    if (building == null) {
-      throw new IllegalArgumentException("ERROR: 0 Building in list!");
-    }
-    Recipe recipe = recipeMap.get(item);
-    Request request = new Request(item, recipe, building);
-    building.addRequest(request);
-    return request;
+  private Request(String ingredient, Building requester, boolean dummy) {
+    this.id = dummy ?  -1 : idGenerator.nextId();
+    this.ingredient = ingredient;
+    this.recipe = Recipe.getRecipe(ingredient);
+    this.requester = requester;
+    this.status = RequestStatus.WAITING;
+  }
+
+  public static Request getDummyRequest(String ingredient, Building requester) {
+    return new Request(ingredient, requester, true);
   }
 
   public int getId() {
@@ -140,4 +130,8 @@ public class Request implements Serializable{
   }
 
   public Recipe getRecipe() { return recipe; }
+
+  public boolean isSameItemRequester(Request request) {
+    return ingredient.equals(request.ingredient) && requester.equals(request.requester);
+  }
 }

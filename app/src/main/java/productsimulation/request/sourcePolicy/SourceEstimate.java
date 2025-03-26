@@ -14,14 +14,20 @@ public class SourceEstimate implements SourcePolicy {
 
     @Override
     public Building getSource(List<Building> buildings, String ingredient) {
+        // 取目前总estimate time最短的building
+        // find the building with minimum estimate time
         int min = Integer.MAX_VALUE;
         Building source = null;
         for (Building b : buildings) {
             int cur = 0;
             List<Request> requests = b.getRequestQueue();
+
+            // 取building中所有request的总estimate time
+            // calculate the total estimate time cost
             for (Request r : requests) {
-                cur += estimate(r.getRecipe().getOutput(), b, new UsageSet(), new Path());
+                cur += estimate(r, b, new UsageSet(), new Path());
             }
+
             if (cur < min) {
                 min = cur;
                 source = b;
@@ -30,52 +36,53 @@ public class SourceEstimate implements SourcePolicy {
         return source;
     }
 
-    public int estimate(String item, Building building, UsageSet usageSet, Path path) {
-        // 1. 若在 usageSet 未记录但 building 正在生产 item
-        if (isWorkingAndNotRegistered(building, item, usageSet)) {
-            usageSet.addRecord(building, path, item);
+    public int estimate(Request request, Building building, UsageSet usageSet, Path path) {
+        // 1. 若在 usageSet 未记录但 building 正在处理Request
+        // if the request is not recorded in the usage set and is current processing
+        if (isWorkingAndNotRegistered(building, request, usageSet)) {
+            usageSet.addRecord(building, path, request);
             return building.getCurrentRemainTime();
         }
 
-        // 2. 拿到 item 的配方和基础延迟
-        Recipe recipe = Recipe.getRecipe(item);
+        // 2. 拿到 Request 的配方和基础延迟
+        // calculate the Recipe and latency
+        Recipe recipe = request.getRecipe();
         int totalTime = recipe.getLatency();
 
-        // 3. 针对每个原料，调用 acquireIngredient(...)
+        // 3. 针对每个原料，计算准备原料需要的时间
+        // for each ingredient calculate the time for preparation
         for (Map.Entry<String, Integer> ing : recipe.getIngredients().entrySet()) {
-            int shortage = getIngredientShortage(item, ing, building, usageSet, path);
+
+            int required = ing.getValue();
+            // 先检查库存
+            // check storage
+            int shortage = getIngredientShortage(required, ing, building, usageSet);
+
+            // record usage
+            usageSet.add(new Entry(path, request, building, ing.getKey(), required - shortage));
+
+            // if there is shortage, estimate time for produce shortage(in parallel)
             if (shortage > 0) {
-                totalTime += produceShortage(ing.getKey(), shortage, usageSet, path);
+                totalTime += produceShortage(request, shortage, usageSet, path);
             }
         }
 
         return totalTime;
     }
 
-    private int getIngredientShortage(String parentItem,
+    private int getIngredientShortage(int required,
                                   Map.Entry<String, Integer> ing,
                                   Building building,
-                                  UsageSet usageSet,
-                                  Path path) {
+                                  UsageSet usageSet) {
         String ingredient = ing.getKey();
-        int required = ing.getValue();
 
-        // 先看看可用量
+        // first check the remaining storage, and get shortage
         int remain = usageSet.getIngredientRemain(building, ingredient);
-        int shortage = Math.max(0, required - remain);
 
-        // 在 usageSet 中记录占用 (哪怕只用了一部分，也记下)
-        int usedNow = required - shortage; // 实际从本地拿到的量
-        usageSet.add(new Entry(path, parentItem, building, ingredient, usedNow));
-
-        return shortage;
+        return Math.max(0, required - remain);
     }
 
-    /**
-     * 使用并行策略在能生产 ingredient 的子工厂中试探，
-     * 并行选出 k 个最快的分支，回滚其他分支占用。
-     */
-    private int produceShortage(String ingredient,
+    private int produceShortage(Request request,
                                 int shortage,
                                 UsageSet usageSet,
                                 Path path) {
@@ -85,53 +92,68 @@ public class SourceEstimate implements SourcePolicy {
             int id = IdGenerator.nextId();
 
             // 获取所有来源工厂的估算时间
-            Map<Building, Integer> ts = getEstimatedTime(ingredient, usageSet, path, id);
+            // get estimate time from all buildings
+            Map<Building, Integer> ts = getEstimatedTimeSet(request, usageSet, path, id);
 
             // 选择 k个最快的
+            // choose top k
             int k = Math.min(shortage, ts.size());
             Map<Building, Integer> topK = getTopK(k, ts);
 
             // 取这 k 个分支的最大时间 => 并行完成时间
+            // parallel time = max time in the batch
             int batchTime = topK.values().stream().mapToInt(Integer::intValue).max().orElse(0);
             timeCost += batchTime;
 
             // 回滚不使用的分支
+            // discard unused path
             discard(ts, topK, usageSet, path, id);
 
-            // 已经生产了k个
             shortage -= k;
         }
 
         return timeCost;
     }
 
-    private Map<Building, Integer> getEstimatedTime(String item, UsageSet usageSet, Path path, int id) {
+    // get estimate time map <Building, Integer> for each valid building
+    private Map<Building, Integer> getEstimatedTimeSet (Request request, UsageSet usageSet, Path path, int id) {
         Map<Building, Integer> ts = new HashMap<>();
+        String item = request.getRecipe().getOutput();
 
         for (Building source : Building.getBuildings()) {
+            // skip building cannot produce the item
             if (!source.canProduce(item)) {
                 continue;
             }
+
+            // send 'fake request' to upstream buildings
             Segment segment = new Segment(id, source);
             Path newPath = path.append(segment);
-            int estimation = estimate(item, source, usageSet, newPath);
+            Request newRequest = Request.getDummyRequest(item, path.getLastBuilding());
+
+            // recursive function call, get estimate time for 'fake request'
+            int estimation = estimate(newRequest, source, usageSet, newPath);
             ts.put(source, estimation);
         }
 
         return ts;
     }
 
-    private boolean isWorkingAndNotRegistered(Building building, String item, UsageSet usageSet) {
-        Request request = building.getCurrentRequest();
+    private boolean isWorkingAndNotRegistered(Building building, Request request, UsageSet usageSet) {
+        // find building's current request
+        Request buildingCurrentRequest = building.getCurrentRequest();
 
         if (request == null) {
             return false;
         }
 
+        // return true if request is working & request is 'same' & not recorded
         else return request.getStatus() == RequestStatus.WORKING &&
-                request.getRecipe().getOutput().equals(item) &&
-                !usageSet.isRecorded(building, item);
+                request.isSameItemRequester(buildingCurrentRequest) &&
+                !usageSet.isRecorded(request);
     }
+
+
 
     private Map<Building, Integer> getTopK(int k, Map<Building, Integer> map) {
 
@@ -145,11 +167,13 @@ public class SourceEstimate implements SourcePolicy {
                         LinkedHashMap::new));
     }
 
-    private void discard(Map<Building, Integer> ts, Map<Building, Integer> topK, UsageSet usageSet, Path path, int id) {
+    private void discard(Map<Building, Integer> ts, Map<Building, Integer> topK, UsageSet usageSet, Path parentPath, int id) {
         List<Building> toRemove = new ArrayList<>();
         for (Building b : ts.keySet()) {
             if (!topK.containsKey(b)) {
-                Path p = path.append(new Segment(id, b));
+                Path p = parentPath.append(new Segment(id, b));
+
+                // discard records with path with prefix p
                 usageSet.removeByPath(p);
                 toRemove.add(b);
             }

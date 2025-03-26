@@ -16,4 +16,10 @@ class FIFOPolicyTest {
         Request request = fifoPolicy.getRequest(requests);
         assertEquals(0, request.getId());
     }
+
+    @Test
+    void testGetName() {
+        FIFOPolicy fifoPolicy = new FIFOPolicy();
+        assertEquals("fifo", fifoPolicy.getName());
+    }
 }
