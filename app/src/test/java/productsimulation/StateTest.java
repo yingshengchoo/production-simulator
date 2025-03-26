@@ -41,7 +41,6 @@ class StateTest {
   }
   
   @Test
-  @Disabled("waiting for debug")
   public void test_save_and_load() {
     ArrayList<Building> buildings = new ArrayList<>();
     Building mine = new Mine("G", new FactoryType("Gold", Collections.emptyMap()), new ArrayList<>(), null, null);

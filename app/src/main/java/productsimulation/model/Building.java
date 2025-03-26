@@ -99,8 +99,8 @@ public abstract class Building implements Serializable {
         this.sources = sources;
     }
 
-    private String printStorage() {
-    StringBuilder result = new StringBuilder("[");
+  private String printStorage() {
+    StringBuilder result = new StringBuilder(" storage=[");
     
     if (storage != null && !storage.isEmpty()) {
         Iterator<Map.Entry<String, Integer>> iterator = storage.entrySet().iterator();
@@ -123,8 +123,8 @@ public abstract class Building implements Serializable {
 
     private String printRequestQueue() {
 
-    StringBuilder result = new StringBuilder("Request Queue Size: ");
-    result.append(requestQueue.size()+"\n");
+    StringBuilder result = new StringBuilder(" request queue size=");
+    result.append(requestQueue.size());
     
     //StringBuilder result = new StringBuilder("[");
     // if (requestQueue != null && !requestQueue.isEmpty()) {
@@ -143,7 +143,7 @@ public abstract class Building implements Serializable {
   }
 
   public String printStorageAndRequest(){
-    return printStorage() + "\n" + printRequestQueue();
+    return printStorage() + ",\n" + printRequestQueue();
   }
     public int getRequestCount() {
         return requestQueue.size();
@@ -217,7 +217,9 @@ public abstract class Building implements Serializable {
         return storage;
     }
 
-    @Override
+    
+  
+  @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
 
