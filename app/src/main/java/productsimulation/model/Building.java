@@ -85,7 +85,7 @@ public abstract class Building implements Serializable {
                 Building chosenSource = sourcePolicy.getSource(sources, ingredient);
                 Log.level2Log("    selecting " + chosenSource.getName());
                 Recipe childRecipe = chosenSource.type.getRecipeByProductName(ingredient);
-                Request req = new Request(ingredient, childRecipe, this);
+                Request req = new Request(ingredient, childRecipe,this);
                 chosenSource.addRequest(req);
             }
         }

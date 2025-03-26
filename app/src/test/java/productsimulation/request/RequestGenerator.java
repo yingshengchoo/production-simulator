@@ -24,7 +24,7 @@ public class RequestGenerator {
         List<Request> requests = new ArrayList<>();
         int[] quantities = {1, 2, 3, 4};
         requests.add(generateRequest(10, quantities));
-        requests.add(generateRequest(9, quantities));
+        requests.add(generateRequest(6, quantities));
         requests.add(generateRequest(8, quantities));
         requests.add(generateRequest(8, quantities));
         return requests;

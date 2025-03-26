@@ -1,5 +1,7 @@
 package productsimulation.request.sourcePolicy.Estimate;
 
+import productsimulation.model.Building;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +33,13 @@ public class Path {
             }
         }
         return true;
+    }
+
+    public Building getLastBuilding() {
+        if (segments.isEmpty()) {
+            return null;
+        }
+        return segments.get(segments.size() - 1).getBuilding();
     }
 }
 

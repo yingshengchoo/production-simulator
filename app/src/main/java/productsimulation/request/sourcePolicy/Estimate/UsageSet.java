@@ -1,6 +1,7 @@
 package productsimulation.request.sourcePolicy.Estimate;
 
 import productsimulation.model.Building;
+import productsimulation.request.Request;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -27,9 +28,9 @@ public class UsageSet {
         return Math.max(res, 0);
     }
 
-    public boolean isRecorded(Building building, String item) {
+    public boolean isRecorded(Request request) {
         for (Entry entry : set) {
-            if (entry.getBuilding().equals(building) && entry.getItem().equals(item)) {
+            if (request.equals(entry.getRequest())) {
                 return true;
             }
         }
@@ -40,8 +41,8 @@ public class UsageSet {
         set.removeIf(e -> pathToRemove.isPrefixOf(e.getPath()));
     }
 
-    public void addRecord(Building building, Path path, String item) {
-        Entry entry = new Entry(path, item, building, "", 0);
+    public void addRecord(Building building, Path path, Request request) {
+        Entry entry = new Entry(path, request, building, "", 0);
         set.add(entry);
     }
 }

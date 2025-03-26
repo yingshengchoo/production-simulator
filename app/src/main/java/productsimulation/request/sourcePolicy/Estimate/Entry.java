@@ -1,24 +1,25 @@
 package productsimulation.request.sourcePolicy.Estimate;
 
 import productsimulation.model.Building;
+import productsimulation.request.Request;
 
 public class Entry {
     private final Path path;
-    private final String item;
+    private final Request request;
     private final Building building;
     private final String ingredient;
     private final int amount;
 
-    public Entry(Path path, String item, Building building, String ingredient, int amount) {
+    public Entry(Path path, Request request, Building building, String ingredient, int amount) {
         this.path = path;
-        this.item = item;
+        this.request = request;
         this.building = building;
         this.ingredient = ingredient;
         this.amount = amount;
     }
 
-    public String getItem() {
-        return item;
+    public Request getRequest() {
+        return request;
     }
 
     public Building getBuilding() {
