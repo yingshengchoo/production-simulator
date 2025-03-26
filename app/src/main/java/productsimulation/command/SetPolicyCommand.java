@@ -3,30 +3,43 @@ package productsimulation.command;
 import productsimulation.State;
 import productsimulation.model.Building;
 import productsimulation.request.Policy;
-import productsimulation.request.servePolicy.ServePolicy;
-import productsimulation.request.sourcePolicy.SourcePolicy;
+import productsimulation.request.servePolicy.FIFOPolicy;
+import productsimulation.request.servePolicy.ReadyPolicy;
+import productsimulation.request.servePolicy.SjfPolicy;
+import productsimulation.request.sourcePolicy.SoleSourcePolicy;
+import productsimulation.request.sourcePolicy.SourceQLen;
+import productsimulation.request.sourcePolicy.SourceSimplelat;
+
+import java.util.*;
 
 public class SetPolicyCommand extends Command {
     private final String typeField;   // "request" or "source"
-    private final String target;      // "default", "*", or "'building name'"
+    private final String policyTarget;      // "default", "*", or "'building name'"
     private final Policy policy;
+    private final List<Building> buildings;
 
-    public SetPolicyCommand(String typeField, String target, Policy policy) {
+    public SetPolicyCommand(String typeField, String policyTarget, Policy policy) {
+
         this.typeField = typeField;
-        this.target = target;
+        this.policyTarget = policyTarget;
         this.policy = policy;
+        this.buildings = new ArrayList<>();
     }
 
     @Override
     public void execute() {
-//        System.out.println("Executing SetPolicyCommand: type=" + typeField +
-//                ", policy=" + policy + ", target=" + target);
-        if (!target.equals("*")) {
-            State.getInstance().getBuilding(target).changePolicy(policy);
+        if (policyTarget.equals("*")) {
+            buildings.addAll(State.getInstance().getBuilding());
+        } else if (typeField.equals("default")) {
+            buildings.add(State.getInstance().getBuilding(policyTarget));
+        } else if  (policyTarget.startsWith("'") && policyTarget.endsWith("'")) {
+            buildings.add(State.getInstance().getBuilding(policyTarget.substring(1, policyTarget.length() - 1)));
         } else {
-            for (Building building : State.getInstance().getBuilding()) {
-                building.changePolicy(policy);
-            }
+
+        }
+
+        for (Building building : buildings) {
+            building.changePolicy(policy);
         }
     }
 
@@ -34,11 +47,15 @@ public class SetPolicyCommand extends Command {
         return typeField;
     }
 
-    public String getTarget() {
-        return target;
+    public List<Building> getTargetBuildings() {
+        return buildings;
     }
 
-    public String getPolicy() {
+    public String getPolicyName() {
         return policy.getName();
+    }
+
+    public Policy getPolicy() {
+        return policy;
     }
 }
