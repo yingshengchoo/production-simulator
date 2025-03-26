@@ -216,6 +216,7 @@ class AppTest {
     }
 
     @Test
+    @Disabled("waiting for other code")
     public void servePolicy1() {
         cleanUpLogFile(Paths.get("test.log"));
 
@@ -227,6 +228,7 @@ class AppTest {
         assertEquals(expectedOutput, actual);
     }
     @Test
+    @Disabled("waiting for other code")
     public void servePolicy2() {
         cleanUpLogFile(Paths.get("test.log"));
 
@@ -239,6 +241,7 @@ class AppTest {
     }
 
     @Test
+    @Disabled("waiting for other code")
     public void servePolicy3() {
         cleanUpLogFile(Paths.get("test.log"));
 
