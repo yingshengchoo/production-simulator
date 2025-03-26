@@ -118,6 +118,11 @@ public class State implements Serializable{
       this.types = loadedState.types;
       this.requestbroadcaster = loadedState.requestbroadcaster;
       this.logictime = loadedState.logictime;
+
+      StateLoadVisitor visitor = new StateLoadVisitor();
+      loadedState.logictime.accept(visitor);
+      loadedState.requestbroadcaster.accept(visitor);
+
       
       System.out.println("State loaded from SavedStates/" + filename + ".ser");
       showState(System.out);
@@ -168,7 +173,7 @@ public class State implements Serializable{
   }
 
   public void setInstanceToNull(){
-    this.instance = null;
+    instance = null;
   }
 
   public Building getBuilding(String name) {
