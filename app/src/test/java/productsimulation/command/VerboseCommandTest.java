@@ -10,8 +10,8 @@ class VerboseCommandTest {
         LogTest logTest = new LogTest();
         VerboseCommand verboseCommand = new VerboseCommand(1);
         verboseCommand.execute();
-        String expected = "level0 log\n" +
-                "level1 log\n";;
+        String expected = "[Log] - level0 log\n" +
+                "[Log] - level1 log\n";;
         logTest.logTestHelper(expected);
     }
 

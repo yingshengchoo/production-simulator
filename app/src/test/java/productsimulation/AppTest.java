@@ -1,27 +1,36 @@
 package productsimulation;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import productsimulation.command.FinishCommand;
 import productsimulation.command.RequestCommand;
 import productsimulation.command.StepCommand;
 import productsimulation.model.*;
 import productsimulation.request.OneTimeServePolicy;
+import productsimulation.request.Request;
 import productsimulation.request.servePolicy.*;
 import productsimulation.request.sourcePolicy.SoleSourcePolicy;
 import productsimulation.request.sourcePolicy.SourcePolicy;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.*;
 
 import org.junit.jupiter.api.Test;
 import productsimulation.request.sourcePolicy.SourceQLen;
 import productsimulation.setup.SetupParser;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class AppTest {
+    private LogTest logTest = new LogTest();
+
+    @BeforeEach
+    void setUp() {
+        LogicTime.getInstance().reset();
+        Request.clearIds();
+    }
+
     @Test
     public void minimalE2E() {
         // step 1: setup
@@ -97,17 +106,49 @@ class AppTest {
 
         RequestCommand requestCommand = new RequestCommand("door", "D");
         requestCommand.execute();
+        StepCommand stepCommand = new StepCommand(50);
+        stepCommand.execute();
         FinishCommand finishCommand = new FinishCommand();
         finishCommand.execute();
     }
 
     @Test
     public void door1Demo() {
+        Log.setLogLevel(3);
         demoHelper("doors1.json");
     }
 
     @Test
     public void door2Demo() {
+        Log.setLogLevel(3);
         demoHelper("doors2.json");
+    }
+
+    @Test
+    public void door1LogLevel0() {
+        Log.setLogLevel(0);
+
+        logTest.cleanUpLogFile();
+        demoHelper("doors1.json");
+        String actual = logTest.getActualLogFromFile();
+
+        String expectedOutput =
+                "[Log] - [order complete] Order 0 completed (door) at time 18\n" +
+                        "[Log] - Simulation completed at time-step 50\n";
+        assertEquals(expectedOutput, actual);
+    }
+
+    @Test
+    public void door1LogLevel1() {
+        Log.setLogLevel(1);
+
+        logTest.cleanUpLogFile();
+        demoHelper("doors1.json");
+        String actual = logTest.getActualLogFromFile();
+
+        String expectedOutput =
+                "[Log] - [order complete] Order 0 completed (door) at time 18\n" +
+                        "[Log] - Simulation completed at time-step 50\n";
+        assertEquals(expectedOutput, actual);
     }
 }

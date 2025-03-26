@@ -16,6 +16,7 @@ import productsimulation.setup.SetupParser;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -46,13 +47,16 @@ public class App {
         InputStream inputStream = App.class.getClassLoader().getResourceAsStream(setupFilePath);
         parser.parse(new BufferedReader(new InputStreamReader(inputStream)));
         Map<String, Recipe> recipes = parser.getRecipeMap();
+        Map<String, FactoryType> types = parser.getTypeMap();
         Map<String, Building> buildings = parser.getBuildingMap();
 
-        // step 2: create LogicTime and RequestBroadcaster
+        // step 2: create LogicTime, RequestBroadcaster, State
         LogicTime logicTime = LogicTime.getInstance();
         RequestBroadcaster requestBroadcaster = RequestBroadcaster.getInstance();
         SourcePolicy sourcePolicy = new SourceQLen();
         ServePolicy servePolicy = new FIFOPolicy();
+        State.initialize(new ArrayList<>(buildings.values()), new ArrayList<>(types.values()),
+                new ArrayList<>(recipes.values()), requestBroadcaster, logicTime);
 
         // step 3: fill out the data model
         for(Building b: buildings.values()) {

@@ -72,7 +72,7 @@ public class LogicTime implements Serializable{
     }
 
     private void quitGame() {
-        Log.debugLog("The simulation is ended.");
+        Log.level0Log("Simulation completed at time-step " + currentStep);
         exitFlag = true;
     }
 

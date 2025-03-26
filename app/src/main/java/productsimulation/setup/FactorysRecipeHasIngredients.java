@@ -1,6 +1,7 @@
 package productsimulation.setup;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import productsimulation.Log;
 
 public class FactorysRecipeHasIngredients extends InputRuleChecker {
 
@@ -37,7 +38,7 @@ public class FactorysRecipeHasIngredients extends InputRuleChecker {
                 }
 
                 // Debug print the ingredients.
-                System.out.println("Checking recipe '" + recipeName + "': " + recipe.get("ingredients"));
+                Log.debugLog("Checking recipe '" + recipeName + "': " + recipe.get("ingredients"));
 
                 if (recipe.get("ingredients").size() == 0) {
                     return "Factory type '" + typeName + "' references recipe '" + recipeName + "' which has no ingredients.";
