@@ -33,8 +33,9 @@ public class App {
             try {
                 cmd.execute();
             } catch (Exception e) {
-                e.printStackTrace();
-                System.out.println(e.getMessage());
+//                输出等级
+//                e.printStackTrace();
+//                System.out.println(e.getMessage());
             }
         }
         scanner.close();

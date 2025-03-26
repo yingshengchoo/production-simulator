@@ -34,4 +34,9 @@ public class SjfPolicy implements ServePolicy, Serializable {
 
         return result;
     }
+
+    @Override
+    public String getName() {
+        return "sjf";
+    }
 }

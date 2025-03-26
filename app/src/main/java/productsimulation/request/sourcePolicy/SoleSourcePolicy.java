@@ -10,4 +10,9 @@ public class SoleSourcePolicy implements SourcePolicy, Serializable {
         buildings = SourcePolicy.sourceFilter(buildings, ingredient);
         return buildings.get(0);
     }
+
+    @Override
+    public String getName() {
+        return "sole";
+    }
 }

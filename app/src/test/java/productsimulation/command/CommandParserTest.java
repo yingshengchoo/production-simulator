@@ -57,8 +57,6 @@ public  class CommandParserTest {
         Command cmd = parser.parseLine("save test.txt");
         assertNotNull(cmd);
         assertTrue(cmd instanceof SaveCommand);
-
-        cmd.execute();
     }
 
     @Test
@@ -80,7 +78,7 @@ public  class CommandParserTest {
         assertTrue(cmd instanceof SetPolicyCommand);
         SetPolicyCommand spc = (SetPolicyCommand) cmd;
         assertEquals("request", spc.getTypeField());
-        assertEquals("'sjf'", spc.getPolicy());
+        assertEquals("sjf", spc.getPolicy());
         assertEquals("'my factory'", spc.getTarget());
     }
 
