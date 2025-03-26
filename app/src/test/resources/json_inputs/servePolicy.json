@@ -24,20 +24,29 @@
   "recipes" : [
     {
       "output" : "l1",
-      "ingredients" : {},
+      "ingredients" : {
+        "water": 1
+      },
       "latency" : 1
     },
     {
       "output" : "l2",
-      "ingredients" : {},
+      "ingredients" : {
+        "water": 2
+      },
       "latency" : 2
     },
     {
       "output": "l3",
       "ingredients": {
-        "water": 1
+        "water": 3
       },
       "latency": 3
+    },
+    {
+      "output": "water",
+      "ingredients": {},
+      "latency": 1
     }
   ]
 }

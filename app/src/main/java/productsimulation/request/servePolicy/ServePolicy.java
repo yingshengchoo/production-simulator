@@ -13,8 +13,4 @@ public interface ServePolicy extends Policy {
      * @return the selected request based on the implemented serve policy, or null if no suitable request is found
      */
     Request getRequest(List<Request> requests);
-
-    default String getPolicyName() {
-        return "ServePolicyName";
-    }
 }

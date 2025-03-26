@@ -32,7 +32,7 @@ public class Factory extends Building implements Serializable {
         if(currentRequest == null) {
             if(!requestQueue.isEmpty()) {
 //                [recipe selection]: Hw2 has fifo on cycle 8
-                Log.level2Log("[request selection]: " + name + " has " + servePolicy.getPolicyName()
+                Log.level2Log("[request selection]: " + name + " has " + servePolicy.getName()
                 + " on cycle " + LogicTime.getInstance().getStep());
                 Request request = servePolicy.getRequest(requestQueue);
                 Log.level2Log("    request:[" + name + ":" + request.getIngredient() + ":"

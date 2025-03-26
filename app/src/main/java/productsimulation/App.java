@@ -11,9 +11,7 @@ import productsimulation.request.sourcePolicy.SourcePolicy;
 import productsimulation.request.sourcePolicy.SourceQLen;
 import productsimulation.setup.SetupParser;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Scanner;
@@ -42,13 +40,15 @@ public class App {
             }
             Command cmd = cmdParser.parseLine(line);
             if (cmd == null) {
-                System.out.println("You enter an invalid command");
+                Log.level0Log("You enter an invalid command");
             }
             try {
                 cmd.execute();
             } catch (Exception e) {
-//                e.printStackTrace();
-                Log.level0Log(e.getMessage());
+                StringWriter sw = new StringWriter();
+                PrintWriter pw = new PrintWriter(sw);
+                e.printStackTrace(pw);
+                Log.debugLog(sw.toString());
             }
 
             if (isInteractive) {
@@ -63,7 +63,13 @@ public class App {
         // step 1: read the json, apply check rules
         SetupParser parser = new SetupParser();
         InputStream inputStream = App.class.getClassLoader().getResourceAsStream(setupFilePath);
-        parser.parse(new BufferedReader(new InputStreamReader(inputStream)));
+        String error = parser.parse(new BufferedReader(new InputStreamReader(inputStream)));
+        if(error == null) {
+            Log.debugLog("The setup json is valid!");
+        } else {
+            Log.level0Log(error);
+            System.exit(1);
+        }
         Map<String, Recipe> recipes = parser.getRecipeMap();
         Map<String, FactoryType> types = parser.getTypeMap();
         Map<String, Building> buildings = parser.getBuildingMap();

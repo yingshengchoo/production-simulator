@@ -125,12 +125,15 @@ class AppTest {
         assertNotNull(inputStream);
         parser.parse(new BufferedReader(new InputStreamReader(inputStream)));
         Map<String, Recipe> recipes = parser.getRecipeMap();
+        Map<String, FactoryType> types = parser.getTypeMap();
         Map<String, Building> buildings = parser.getBuildingMap();
 
         LogicTime logicTime = LogicTime.getInstance();
         RequestBroadcaster requestBroadcaster = RequestBroadcaster.getInstance();
         SourcePolicy sourcePolicy = new SourceQLen();
         ServePolicy servePolicy = new FIFOPolicy();
+        State.initialize(new ArrayList<>(buildings.values()), new ArrayList<>(types.values()),
+                new ArrayList<>(recipes.values()), requestBroadcaster, logicTime);
 
         for(Building b: buildings.values()) {
             b.changeSourcePolicy(sourcePolicy);
@@ -209,6 +212,41 @@ class AppTest {
         String actual = getActualLogFromFile(Paths.get("test.log"));
 
         String expectedOutput = readResourceFile("log_outputs/output3.txt");
+        assertEquals(expectedOutput, actual);
+    }
+
+    @Test
+    public void servePolicy1() {
+        cleanUpLogFile(Paths.get("test.log"));
+
+        Log.setLogLevel(3);
+        demoHelper("json_inputs/servePolicy.json", "/user_inputs/input_servePolicy1.txt");
+        String actual = getActualLogFromFile(Paths.get("test.log"));
+
+        String expectedOutput = readResourceFile("log_outputs/output_servePolicy1.txt");;
+        assertEquals(expectedOutput, actual);
+    }
+    @Test
+    public void servePolicy2() {
+        cleanUpLogFile(Paths.get("test.log"));
+
+        Log.setLogLevel(3);
+        demoHelper("json_inputs/servePolicy.json", "/user_inputs/input_servePolicy2.txt");
+        String actual = getActualLogFromFile(Paths.get("test.log"));
+
+        String expectedOutput = readResourceFile("log_outputs/output_servePolicy2.txt");;
+        assertEquals(expectedOutput, actual);
+    }
+
+    @Test
+    public void servePolicy3() {
+        cleanUpLogFile(Paths.get("test.log"));
+
+        Log.setLogLevel(3);
+        demoHelper("json_inputs/servePolicy.json", "/user_inputs/input_servePolicy3.txt");
+        String actual = getActualLogFromFile(Paths.get("test.log"));
+
+        String expectedOutput = readResourceFile("log_outputs/output_servePolicy3.txt");;
         assertEquals(expectedOutput, actual);
     }
 }

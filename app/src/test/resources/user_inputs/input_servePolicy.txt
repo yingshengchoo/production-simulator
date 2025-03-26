@@ -1,4 +1,0 @@
-set policy request sjf on 'A'
-request 'l3' from 'A'
-request 'l2' from 'A'
-request 'l1' from 'A'

@@ -1,5 +1,6 @@
 *~
-
+# for macOS
+.DS_Store
 # for idea
 .idea
 # for eclipse

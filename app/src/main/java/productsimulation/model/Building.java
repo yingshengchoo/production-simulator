@@ -67,7 +67,7 @@ public abstract class Building implements Serializable {
         Log.level1Log("[ingredient assignment]: " + request.getIngredient() + " assigned to " + name +
                 " to deliver to " + request.getRequesterName());
 //        [source selection]: D (qlen) has request for door on 0
-        Log.level2Log("[source selection]: " + name + " (" + sourcePolicy.getPolicyName() + ") has request for "
+        Log.level2Log("[source selection]: " + name + " (" + sourcePolicy.getName() + ") has request for "
                 + request.getIngredient() + " on " + LogicTime.getInstance().getStep());
         requestQueue.add(request);
 

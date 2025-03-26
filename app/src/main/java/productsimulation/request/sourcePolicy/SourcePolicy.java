@@ -18,8 +18,4 @@ public interface SourcePolicy extends Policy {
         }
         return sourcesAfterFilter;
     }
-
-    default String getPolicyName() {
-        return "SourcePolicyName";
-    }
 }
