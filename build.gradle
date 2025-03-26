@@ -4,7 +4,7 @@ buildscript {
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'com.bmuschko:gradle-clover-plugin:3.0.3'
+        classpath 'com.bmuschko:gradle-clover-plugin:3.0.7'
     }
 
     
@@ -16,7 +16,7 @@ allprojects{
     }
     apply plugin: 'com.bmuschko.clover'
     dependencies {
-        clover 'org.openclover:clover:4.4.1'
+        clover 'org.openclover:clover:4.5.2'
         
     }
 }

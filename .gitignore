@@ -18,3 +18,7 @@ SavedStates
 # Ignore Gradle build output directory
 build
 app/bin
+
+# Ignore build.gradle file
+build.gradle
+app/build.gradle
