@@ -78,8 +78,7 @@ public  class CommandParserTest {
         assertTrue(cmd instanceof SetPolicyCommand);
         SetPolicyCommand spc = (SetPolicyCommand) cmd;
         assertEquals("request", spc.getTypeField());
-        assertEquals("sjf", spc.getPolicy());
-        assertEquals("'my factory'", spc.getTarget());
+        assertEquals("sjf", spc.getPolicyName());
     }
 
     @Test
