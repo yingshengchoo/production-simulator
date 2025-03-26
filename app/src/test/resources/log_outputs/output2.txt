@@ -1,0 +1,12 @@
+[Log] - [ingredient assignment]: door assigned to D to deliver to user
+[Log] - [ingredient assignment]: wood assigned to W to deliver to D
+[Log] - [ingredient assignment]: handle assigned to Ha to deliver to D
+[Log] - [ingredient assignment]: metal assigned to M to deliver to Ha
+[Log] - [ingredient assignment]: hinge assigned to Hi to deliver to D
+[Log] - [ingredient assignment]: metal assigned to M to deliver to Hi
+[Log] - [ingredient assignment]: hinge assigned to Hi to deliver to D
+[Log] - [ingredient assignment]: metal assigned to M to deliver to Hi
+[Log] - [ingredient assignment]: hinge assigned to Hi to deliver to D
+[Log] - [ingredient assignment]: metal assigned to M to deliver to Hi
+[Log] - [order complete] Order 0 completed (door) at time 18
+[Log] - Simulation completed at time-step 50

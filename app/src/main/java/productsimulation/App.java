@@ -5,10 +5,8 @@ import productsimulation.command.CommandParser;
 import productsimulation.model.Building;
 import productsimulation.model.FactoryType;
 import productsimulation.model.Recipe;
-import productsimulation.request.OneTimeServePolicy;
 import productsimulation.request.servePolicy.FIFOPolicy;
 import productsimulation.request.servePolicy.ServePolicy;
-import productsimulation.request.sourcePolicy.SoleSourcePolicy;
 import productsimulation.request.sourcePolicy.SourcePolicy;
 import productsimulation.request.sourcePolicy.SourceQLen;
 import productsimulation.setup.SetupParser;
@@ -21,10 +19,13 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class App {
-    private static void userInteract(CommandParser cmdParser) {
-        Scanner scanner = new Scanner(System.in);
-        while (true) {
+    public static void readInputCommand(CommandParser cmdParser, Readable inputSource, boolean isInteractive) {
+        Scanner scanner = new Scanner(inputSource);
+        if (isInteractive) {
             System.out.print("> ");
+        }
+
+        while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
             if (LogicTime.getInstance().getExitFlag()) {
                 break;
@@ -33,8 +34,12 @@ public class App {
             try {
                 cmd.execute();
             } catch (Exception e) {
-                e.printStackTrace();
-                System.out.println(e.getMessage());
+//                e.printStackTrace();
+                Log.level0Log(e.getMessage());
+            }
+
+            if (isInteractive) {
+                System.out.print("> ");
             }
         }
         scanner.close();
@@ -77,7 +82,7 @@ public class App {
         initialize(setupFilePath);
         // enter interaction phase
         CommandParser cmdParser = new CommandParser();
-        userInteract(cmdParser);
+        readInputCommand(cmdParser, new InputStreamReader(System.in), true);
     }
 
     public static void main(String[] args) {

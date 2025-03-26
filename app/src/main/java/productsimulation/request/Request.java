@@ -119,5 +119,12 @@ public class Request implements Serializable{
 
   public String getIngredient() { return ingredient; }
 
+  public String getRequesterName() {
+    if(requester == null) {
+      return "user";
+    }
+    return requester.getName();
+  }
+
   public Recipe getRecipe() { return recipe; }
 }

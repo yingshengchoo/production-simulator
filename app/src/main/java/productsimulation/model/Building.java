@@ -60,7 +60,9 @@ public abstract class Building implements Serializable {
 
     // 按recipe顺序dfs传播request
     public void addRequest(Request request) {
-        Log.debugLog("adding request: " + request.getIngredient() + " to " + name);
+//        [ingredient assignment]: wood assigned to W to deliver to D
+        Log.level1Log("[ingredient assignment]: " + request.getIngredient() + " assigned to " + name +
+                " to deliver to " + request.getRequesterName());
         requestQueue.add(request);
 
         // 更新total time

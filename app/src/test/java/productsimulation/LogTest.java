@@ -1,6 +1,8 @@
 package productsimulation;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceAccessMode;
+import org.junit.jupiter.api.parallel.ResourceLock;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -16,10 +18,12 @@ import static org.junit.jupiter.api.Assertions.*;
 // 2: 1 + ...
 // >=3: debug
 public class LogTest {
-    private String filePathStr = "src/test/resources/test.log";
+//    private String filePathStr = "src/test/resources/test.log";
+    private String filePathStr = "test.log";
+//    private String filePathStr = "~/log/myapp/test.log";
     private Path filePath = Paths.get(filePathStr);
 
-    public void cleanUpLogFile() {
+    private void cleanUpLogFile() {
         try {
             if (!Files.exists(filePath)) {
                 Files.createDirectories(filePath.getParent());
@@ -31,7 +35,7 @@ public class LogTest {
         }
     }
 
-    public String getActualLogFromFile() {
+    private String getActualLogFromFile() {
         try (InputStream actualOutputStream = Files.newInputStream(filePath)) {
             return new String(actualOutputStream.readAllBytes(), StandardCharsets.UTF_8);
         } catch (IOException e) {
