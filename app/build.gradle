@@ -47,6 +47,8 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 test{
+//    maxParallelForks = 1 // 限制并行测试
+//    forkEvery = 1 // 每个测试fork一个新的JVM进程
     testLogging{
         showStandardStreams=true
         exceptionFormat='full'

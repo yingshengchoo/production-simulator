@@ -1,6 +1,9 @@
 package productsimulation;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LoggerContext;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import productsimulation.command.CommandParser;
 import productsimulation.command.RequestCommand;
 import productsimulation.command.StepCommand;
@@ -27,23 +30,20 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class AppTest {
     private String filePathStr = "test.log";
-//    private String filePathStr = "~/log/myapp/test.log";
     private Path filePath = Paths.get(filePathStr);
 
-    private void cleanUpLogFile() {
+    private void cleanUpLogFile(Path p) {
         try {
-            if (!Files.exists(filePath)) {
-                Files.createDirectories(filePath.getParent());
-                Files.createFile(filePath);
-            }
-            Files.write(filePath, "".getBytes(StandardCharsets.UTF_8));
+            Files.deleteIfExists(p); // 删除旧日志文件
+            Files.createFile(p); // 重新创建日志文件
+            LogManager.shutdown();
         } catch (IOException e) {
-            System.err.println("Error when writing to" + filePathStr);
+            System.err.println("Error cleaning up " + filePathStr);
         }
     }
 
-    private String getActualLogFromFile() {
-        try (InputStream actualOutputStream = Files.newInputStream(filePath)) {
+    private String getActualLogFromFile(Path p) {
+        try (InputStream actualOutputStream = Files.newInputStream(p)) {
             return new String(actualOutputStream.readAllBytes(), StandardCharsets.UTF_8);
         } catch (IOException e) {
             System.err.println("Error when reading " + filePathStr);
@@ -167,29 +167,48 @@ class AppTest {
         demoHelper("json_inputs/doors2.json", "/user_inputs/input1.txt");
     }
 
-//    @Test
-//    public void door1LogLevel0() {
-//        Log.setLogLevel(0);
-//
-//        cleanUpLogFile();
-//        demoHelper("json_inputs/doors1.json", "/user_inputs/input1.txt");
-//        Log.debugLog("casual test 0");
-//        String actual = getActualLogFromFile();
-//
-//        String expectedOutput = readResourceFile("log_outputs/output1.txt");
-//        assertEquals(expectedOutput, actual);
-//    }
-//
-//    @Test
-//    public void door1LogLevel1() {
-//        Log.setLogLevel(1);
-//
-//        cleanUpLogFile();
-//        demoHelper("json_inputs/doors1.json", "/user_inputs/input1.txt");
-//        Log.debugLog("casual test 1");
-//        String actual = getActualLogFromFile();
-//
-//        String expectedOutput = readResourceFile("log_outputs/output2.txt");;
-//        assertEquals(expectedOutput, actual);
-//    }
+    @Test
+    @Disabled("gradle clean test --tests AppTest.door1LogLevel0")
+    public void door1LogLevel0() {
+//        System.setProperty("logFilename", "door1LogLevel0.log");
+//        LoggerContext context = (LoggerContext) LogManager.getContext(false);
+//        File file = new File("src/test/resources/log4j2.xml"); // 确保路径正确
+//        context.setConfigLocation(file.toURI());
+//        cleanUpLogFile(Paths.get("door1LogLevel0.log"));
+        cleanUpLogFile(Paths.get("test.log"));
+
+        Log.setLogLevel(0);
+        demoHelper("json_inputs/doors1.json", "/user_inputs/input1.txt");
+//        String actual = getActualLogFromFile(Paths.get("door1LogLevel0.log"));
+        String actual = getActualLogFromFile(Paths.get("test.log"));
+
+        String expectedOutput = readResourceFile("log_outputs/output1.txt");
+        assertEquals(expectedOutput, actual);
+    }
+
+    @Test
+    @Disabled("gradle clean test --tests AppTest.door1LogLevel1")
+    public void door1LogLevel1() {
+        cleanUpLogFile(Paths.get("test.log"));
+
+        Log.setLogLevel(1);
+        demoHelper("json_inputs/doors1.json", "/user_inputs/input1.txt");
+        String actual = getActualLogFromFile(Paths.get("test.log"));
+
+        String expectedOutput = readResourceFile("log_outputs/output2.txt");;
+        assertEquals(expectedOutput, actual);
+    }
+
+    @Test
+    @Disabled("gradle clean test --tests AppTest.door1LogLevel2")
+    public void door1LogLevel2() {
+        cleanUpLogFile(Paths.get("test.log"));
+
+        Log.setLogLevel(2);
+        demoHelper("json_inputs/doors1.json", "/user_inputs/input1.txt");
+        String actual = getActualLogFromFile(Paths.get("test.log"));
+
+        String expectedOutput = readResourceFile("log_outputs/output3.txt");
+        assertEquals(expectedOutput, actual);
+    }
 }

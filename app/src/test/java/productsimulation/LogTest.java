@@ -59,6 +59,12 @@ public class LogTest {
     }
 
     @Test
+    void test_continual() {
+        test_debugLog();
+        test_level0Log();
+    }
+
+    @Test
     void test_special() {
         // larger than 3, the same as 3.
         Log.setLogLevel(4);

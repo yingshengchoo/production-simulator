@@ -25,6 +25,8 @@ public abstract class Building implements Serializable {
     protected int totalRemainTime = 0;
     protected List<Request> requestQueue;
     protected Map<String, Integer> storage;
+    // 如果没有新增原料，就不输出库存检查过程。不论为true false，库存检查本身都会进行。
+    boolean newIngredientsArrived = false;
     protected List<Building> sources;
     protected SourcePolicy sourcePolicy;
     protected ServePolicy servePolicy;
@@ -63,6 +65,9 @@ public abstract class Building implements Serializable {
 //        [ingredient assignment]: wood assigned to W to deliver to D
         Log.level1Log("[ingredient assignment]: " + request.getIngredient() + " assigned to " + name +
                 " to deliver to " + request.getRequesterName());
+//        [source selection]: D (qlen) has request for door on 0
+        Log.level2Log("[source selection]: " + name + " (" + sourcePolicy.getPolicyName() + ") has request for "
+                + request.getIngredient() + " on " + LogicTime.getInstance().getStep());
         requestQueue.add(request);
 
         // 更新total time
@@ -73,7 +78,11 @@ public abstract class Building implements Serializable {
         for(String ingredient: ingredients.keySet()) {
             int num = ingredients.get(ingredient);
             for(int i = 0; i < num; i++) {
+//                [D:door:0] For ingredient wood
+                Log.level2Log("[" + name + ":" + request.getIngredient() + ":" + LogicTime.getInstance().getStep()
+                + "] For ingredient " + ingredient);
                 Building chosenSource = sourcePolicy.getSource(sources, ingredient);
+                Log.level2Log("    selecting " + chosenSource.getName());
                 Recipe childRecipe = chosenSource.type.getRecipeByProductName(ingredient);
                 Request req = new Request(ingredient, childRecipe, this);
                 chosenSource.addRequest(req);
@@ -144,10 +153,10 @@ public abstract class Building implements Serializable {
 
     private void update() {
         if(currentRequest != null && currentRemainTime == 0) {
-            Log.debugLog("request done: " +
-                    currentRequest.getIngredient() +
-                    " at time " + LogicTime.getInstance().getStep() +
-                    " at place " + name);
+            //      [ingredient delivered]: hinge to D from Hw2 on cycle 11
+            Log.level2Log("[ingredient delivered]: " + currentRequest.getIngredient()
+                    + " to " + currentRequest.getRequesterName()
+            + " from " + name + " on cycle " + LogicTime.getInstance().getStep());
             currentRequest.doneReportAndTransport();
             requestQueue.remove(currentRequest);
             currentRequest = null;
@@ -156,6 +165,7 @@ public abstract class Building implements Serializable {
 
     public void updateStorage(String itemName) {
         storage.put(itemName, storage.getOrDefault(itemName, 0) + 1);
+        newIngredientsArrived = true;
     }
 
     public void changeServePolicy(ServePolicy servePolicy) {

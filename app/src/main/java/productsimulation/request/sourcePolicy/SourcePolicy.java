@@ -17,4 +17,8 @@ public interface SourcePolicy {
         }
         return sourcesAfterFilter;
     }
+
+    default String getPolicyName() {
+        return "SourcePolicyName";
+    }
 }

@@ -7,7 +7,10 @@ import org.slf4j.LoggerFactory;
 import java.io.Serializable;
 
 public class Log implements Serializable {
-    private static final Logger logger = LoggerFactory.getLogger(App.class);
+    private static Logger getLogger() {
+        return LoggerFactory.getLogger(Log.class);
+    }
+//    private static final Logger logger = LoggerFactory.getLogger(Log.class);
 
     public static void setLogLevel(int level) {
         if(level >= 3) {
@@ -22,20 +25,32 @@ public class Log implements Serializable {
     }
 
     // the most detailed
+//    public static void debugLog(String logBody) {
+//        logger.debug(logBody);
+//    }
     public static void debugLog(String logBody) {
-        logger.debug(logBody);
+        getLogger().debug(logBody);
     }
 
+//    public static void level2Log(String logBody) {
+//        logger.info(logBody);
+//    }
     public static void level2Log(String logBody) {
-        logger.info(logBody);
+        getLogger().info(logBody);
     }
 
+//    public static void level1Log(String logBody) {
+//        logger.warn(logBody);
+//    }
     public static void level1Log(String logBody) {
-        logger.warn(logBody);
+        getLogger().warn(logBody);
     }
 
     // the least detailed
+//    public static void level0Log(String logBody) {
+//        logger.error(logBody);
+//    }
     public static void level0Log(String logBody) {
-        logger.error(logBody);
+        getLogger().error(logBody);
     }
 }

@@ -72,16 +72,30 @@ public class Request implements Serializable{
    *              ingredient name and the value is the quantity available
    */
   public void updateStatus(Map<String, Integer> stock) {
-      if (status == RequestStatus.WORKING) return;
+      updateStatus("stock_owner_name_placeholder", false, stock);
+  }
 
-      for (Map.Entry<String, Integer> ingredient : recipe.getIngredients().entrySet()) {
-        int stockQuantity = stock.getOrDefault(ingredient.getKey(), 0);
-        if (stockQuantity < ingredient.getValue()) {
-          status = RequestStatus.WAITING;
-          return;
-        }
+  public void updateStatus(String stockOwnerName, boolean newIngredientArrived, Map<String, Integer> stock) {
+    if (status == RequestStatus.WORKING) return;
+
+    boolean isReady = true;
+    for (Map.Entry<String, Integer> ingredient : recipe.getIngredients().entrySet()) {
+      int stockQuantity = stock.getOrDefault(ingredient.getKey(), 0);
+      if (stockQuantity < ingredient.getValue()) {
+        isReady = false;
       }
+      if(newIngredientArrived) {
+        Log.level2Log("    " + stockOwnerName + " need " +
+                stockQuantity + "/" + ingredient.getValue() + " " + ingredient.getKey()
+                + " for " + recipe.getOutput());
+      }
+    }
+
+    if(isReady) {
       status = RequestStatus.READY;
+    } else {
+      status = RequestStatus.WAITING;
+    }
   }
 
   public void readyToWorking(Map<String, Integer> stock) {
@@ -108,7 +122,6 @@ public class Request implements Serializable{
 
   public void doneReportAndTransport() {
     if(requester != null) {
-      Log.debugLog("sending " + ingredient + " to " + requester.getName());
       requester.updateStorage(ingredient);
     } else {
 //      [order complete] Order 0 completed (door) at time 21

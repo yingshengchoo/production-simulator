@@ -1,6 +1,7 @@
 package productsimulation.model;
 
 import productsimulation.Log;
+import productsimulation.LogicTime;
 import productsimulation.request.Request;
 import productsimulation.request.RequestStatus;
 import productsimulation.request.servePolicy.ServePolicy;
@@ -30,9 +31,15 @@ public class Factory extends Building implements Serializable {
     protected boolean goOneStep() {
         if(currentRequest == null) {
             if(!requestQueue.isEmpty()) {
+//                [recipe selection]: Hw2 has fifo on cycle 8
+                Log.level2Log("[request selection]: " + name + " has " + servePolicy.getPolicyName()
+                + " on cycle " + LogicTime.getInstance().getStep());
                 Request request = servePolicy.getRequest(requestQueue);
+                Log.level2Log("    request:[" + name + ":" + request.getIngredient() + ":"
+                        + request.getRequesterName() + "] is chosen");
                 // 库存中request原料齐备才可以开工
-                request.updateStatus(storage);
+                request.updateStatus(name, newIngredientsArrived, storage);
+                newIngredientsArrived = false;
                 if(request.getStatus() == RequestStatus.READY) {
                     request.readyToWorking(storage);
                 } else {
