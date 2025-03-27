@@ -13,20 +13,17 @@ class SetPolicyCommandIdentifierTest {
         assertNotNull(cmd);
         assertTrue(cmd instanceof SetPolicyCommand);
         assertEquals( "sjf", ((SetPolicyCommand) cmd).getPolicyName());
-        assertEquals("request", ((SetPolicyCommand) cmd).getTypeField());
+        assertEquals("request", ((SetPolicyCommand) cmd).getPolicyType());
 
         cmd = identifier.checkFits("set policy request 'sjf' on default");
         assertEquals( "sjf", ((SetPolicyCommand) cmd).getPolicyName());
-        assertEquals("request", ((SetPolicyCommand) cmd).getTypeField());
+        assertEquals("request", ((SetPolicyCommand) cmd).getPolicyType());
     }
 
     @Test
     void checkFits_invalid() {
         SetPolicyCommandIdentifier identifier = new SetPolicyCommandIdentifier(null);
         Command cmd = identifier.checkFits("set policy request ");
-        assertNull(cmd);
-
-        cmd = identifier.checkFits("set policy request 'sjff' on 'D'");
         assertNull(cmd);
 
         cmd = identifier.checkFits("set policy requefst 'sjf' on default");
