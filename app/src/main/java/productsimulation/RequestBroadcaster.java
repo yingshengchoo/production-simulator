@@ -65,4 +65,9 @@ public class RequestBroadcaster implements Serializable {
             }
         }
     }
+
+  public void reset(){
+    recipes.clear();
+    buildings.clear();
+  }
 }
