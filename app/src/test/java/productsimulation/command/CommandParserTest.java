@@ -7,7 +7,11 @@ import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.*;
 
 public  class CommandParserTest {
-
+    @Test
+    public void test_null_line() {
+        CommandParser parser = new CommandParser();
+        assertNull(parser.parseLine(null));
+    }
     @Test
     public void test_request_valid() {
         CommandParser parser = new CommandParser();
