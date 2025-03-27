@@ -2,6 +2,11 @@
 package productsimulation;
 
 import productsimulation.model.*;
+import productsimulation.request.servePolicy.FIFOPolicy;
+import productsimulation.request.servePolicy.ServePolicy;
+import productsimulation.request.sourcePolicy.SourcePolicy;
+import productsimulation.request.sourcePolicy.SourceQLen;
+
 import java.io.*;
 import java.util.List; 
 
@@ -14,7 +19,10 @@ public class State implements Serializable{
   private List<FactoryType> types;
   private RequestBroadcaster requestbroadcaster;
   private LogicTime logictime;
-  
+  private SourcePolicy defaultSourcePolicy;
+  private ServePolicy defaultServePolicy;
+
+
   /**
    * Constructs a State object class which represents the current state of the simulation.
    *
@@ -24,12 +32,19 @@ public class State implements Serializable{
    * @param requestbroadcaster is the requestbroadcaster used in the simulation
    * @param logictime          is the logictime used in the simulation. 
    */
-  private State(List<Building> buildings, List<FactoryType> types, List<Recipe> recipes, RequestBroadcaster requestbroadcaster, LogicTime logictime){
+  private State(List<Building> buildings, List<FactoryType> types, List<Recipe> recipes, RequestBroadcaster requestbroadcaster, LogicTime logictime) {
     this.buildings = buildings;
     this.types = types;
     this.recipes = recipes;
     this.requestbroadcaster = requestbroadcaster;
     this.logictime = logictime;
+    this.defaultSourcePolicy = new SourceQLen();
+    this.defaultServePolicy = new FIFOPolicy();
+
+    for(Building b: buildings) {
+      b.changeSourcePolicy(defaultSourcePolicy);
+      b.changeServePolicy(defaultServePolicy);
+    }
   }
 
   /**

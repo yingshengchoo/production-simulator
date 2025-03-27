@@ -5,8 +5,10 @@ import productsimulation.model.Building;
 import productsimulation.request.Policy;
 import productsimulation.request.servePolicy.FIFOPolicy;
 import productsimulation.request.servePolicy.ReadyPolicy;
+import productsimulation.request.servePolicy.ServePolicy;
 import productsimulation.request.servePolicy.SjfPolicy;
 import productsimulation.request.sourcePolicy.SoleSourcePolicy;
+import productsimulation.request.sourcePolicy.SourcePolicy;
 import productsimulation.request.sourcePolicy.SourceQLen;
 import productsimulation.request.sourcePolicy.SourceSimplelat;
 
@@ -30,12 +32,17 @@ public class SetPolicyCommand extends Command {
     public void execute() {
         if (policyTarget.equals("*")) {
             buildings.addAll(State.getInstance().getBuilding());
-        } else if (typeField.equals("default")) {
-            buildings.add(State.getInstance().getBuilding(policyTarget));
+        } else if (policyTarget.equals("default")) {
+            for (Building building : State.getInstance().getBuilding()) {
+                if (policy instanceof SourcePolicy && building.getSourcePolicy().getName().equals(policy.getName())) {
+                    buildings.add(building);
+                } else if (policy instanceof ServePolicy && building.getSourcePolicy().getName().equals(typeField)) {
+                    buildings.add(building);
+                }
+            }
+
         } else if  (policyTarget.startsWith("'") && policyTarget.endsWith("'")) {
             buildings.add(State.getInstance().getBuilding(policyTarget.substring(1, policyTarget.length() - 1)));
-        } else {
-
         }
 
         for (Building building : buildings) {

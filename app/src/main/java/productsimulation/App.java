@@ -77,16 +77,12 @@ public class App {
         // step 2: create LogicTime, RequestBroadcaster, State
         LogicTime logicTime = LogicTime.getInstance();
         RequestBroadcaster requestBroadcaster = RequestBroadcaster.getInstance();
-        SourcePolicy sourcePolicy = new SourceQLen();
-        ServePolicy servePolicy = new FIFOPolicy();
+
         State.initialize(new ArrayList<>(buildings.values()), new ArrayList<>(types.values()),
                 new ArrayList<>(recipes.values()), requestBroadcaster, logicTime);
 
         // step 3: fill out the data model
         for(Building b: buildings.values()) {
-            b.changeSourcePolicy(sourcePolicy);
-            b.changeServePolicy(servePolicy);
-
             logicTime.addObservers(b);
             requestBroadcaster.addBuildings(b);
         }

@@ -43,10 +43,6 @@ public class SetPolicyCommandIdentifier extends CommandIdentifier {
                 return null;
             }
 
-            if (!policyType.equals("request") && !policyType.equals("source") ) {
-                return null;
-            }
-
             return new SetPolicyCommand(policyType, policyTarget, policy);
         }
 
