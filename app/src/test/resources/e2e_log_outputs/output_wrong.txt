@@ -1,0 +1,9 @@
+Welcome to product simulation, you can:
+request 'itemName' from 'buildingName'
+step 1
+verbose 1
+finish
+set policy request on target
+save saveFileName
+load loadFileName
+>

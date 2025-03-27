@@ -57,12 +57,10 @@ public class RequestBroadcaster implements Serializable {
 
     public void userRequestHandler(String itemName, String buildingName) {
         Recipe r = recipes.get(itemName);
-        if(r != null) {
+        if(r != null && buildings.containsKey(buildingName)) {
             Request request = new Request(itemName, r, null);
-            if(buildings.containsKey(buildingName)) {
-                Building b = buildings.get(buildingName);
-                b.addRequest(request);
-            }
+            Building b = buildings.get(buildingName);
+            b.addRequest(request);
         }
     }
 

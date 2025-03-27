@@ -40,7 +40,7 @@ public class App {
             }
             Command cmd = cmdParser.parseLine(line);
             if (cmd == null) {
-                Log.level0Log("You enter an invalid command");
+                System.err.println("You enter an invalid command");
             }
             try {
                 cmd.execute();
@@ -58,31 +58,22 @@ public class App {
         scanner.close();
     }
 
-    private static void initialize(String setupFilePath) {
-        Log.debugLog("initializing with " + setupFilePath);
-        // step 1: read the json, apply check rules
-        SetupParser parser = new SetupParser();
-        InputStream inputStream = App.class.getClassLoader().getResourceAsStream(setupFilePath);
-        String error = parser.parse(new BufferedReader(new InputStreamReader(inputStream)));
-        if(error == null) {
-            Log.debugLog("The setup json is valid!");
-        } else {
-            Log.level0Log(error);
-            System.exit(1);
-        }
+    public static void modelSetup(SetupParser parser) {
         Map<String, Recipe> recipes = parser.getRecipeMap();
         Map<String, FactoryType> types = parser.getTypeMap();
         Map<String, Building> buildings = parser.getBuildingMap();
 
-        // step 2: create LogicTime, RequestBroadcaster, State
         LogicTime logicTime = LogicTime.getInstance();
         RequestBroadcaster requestBroadcaster = RequestBroadcaster.getInstance();
-
+        SourcePolicy sourcePolicy = new SourceQLen();
+        ServePolicy servePolicy = new FIFOPolicy();
         State.initialize(new ArrayList<>(buildings.values()), new ArrayList<>(types.values()),
                 new ArrayList<>(recipes.values()), requestBroadcaster, logicTime);
 
-        // step 3: fill out the data model
         for(Building b: buildings.values()) {
+            b.changeSourcePolicy(sourcePolicy);
+            b.changeServePolicy(servePolicy);
+
             logicTime.addObservers(b);
             requestBroadcaster.addBuildings(b);
         }
@@ -95,9 +86,29 @@ public class App {
         Recipe.setRecipeList(recipeList);
     }
 
+    private static boolean initialize(String setupFilePath) {
+        Log.debugLog("initializing with " + setupFilePath);
+        // step 1: read the json, apply check rules
+        SetupParser parser = new SetupParser();
+        InputStream inputStream = App.class.getClassLoader().getResourceAsStream(setupFilePath);
+        String error = parser.parse(new BufferedReader(new InputStreamReader(inputStream)));
+        if(error == null) {
+            Log.debugLog("The setup json is valid!");
+        } else {
+            Log.level0Log(error);
+            return false;
+        }
+
+        modelSetup(parser);
+        return true;
+    }
+
     private static void play(String setupFilePath) {
         //setup
-        initialize(setupFilePath);
+        boolean ret = initialize(setupFilePath);
+        if(!ret) {
+            return;
+        }
         // enter interaction phase
         CommandParser cmdParser = new CommandParser();
         readInputCommand(cmdParser, new InputStreamReader(System.in), true);
@@ -106,7 +117,7 @@ public class App {
     public static void main(String[] args) {
         if (args.length < 1) {
             System.err.println("Usage: ./app <setup_json_file_path>");
-            System.exit(1);
+            return;
         }
         String filePath = args[0];
         play(filePath);

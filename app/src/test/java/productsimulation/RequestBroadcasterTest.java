@@ -9,6 +9,12 @@ import java.util.Collections;
 
 public class RequestBroadcasterTest {
   @Test
+  public void test_userRequestHandler_illegal() {
+    RequestBroadcaster requestBroadcaster = RequestBroadcaster.getInstance();
+    requestBroadcaster.userRequestHandler("non_exist_item", "non_exist_building");
+  }
+
+  @Test
   public void test_getters() {
     RequestBroadcaster rb = RequestBroadcaster.getInstance();
 
