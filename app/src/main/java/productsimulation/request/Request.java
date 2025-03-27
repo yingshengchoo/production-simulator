@@ -31,7 +31,11 @@ public class Request implements Serializable{
     this.ingredient = ingredient;
     this.recipe = recipe;
     this.requester = requester;
-    this.status = RequestStatus.WAITING;
+    if(recipe.getIngredients().isEmpty()) {
+      this.status = RequestStatus.READY;
+    } else {
+      this.status = RequestStatus.WAITING;
+    }
   }
 
   private Request(String ingredient, Building requester, boolean dummy) {

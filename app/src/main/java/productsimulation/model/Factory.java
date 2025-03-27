@@ -32,14 +32,20 @@ public class Factory extends Building implements Serializable {
         if(currentRequest == null) {
             if(!requestQueue.isEmpty()) {
 //                [recipe selection]: Hw2 has fifo on cycle 8
-                Log.level2Log("[request selection]: " + name + " has " + servePolicy.getName()
-                + " on cycle " + LogicTime.getInstance().getStep());
+                Log.level2Log("[request selection]: " + name + " has serve policy '" + servePolicy.getName()
+                + "' on cycle " + LogicTime.getInstance().getStep());
+                for(Request request: requestQueue) {
+                    // 库存中request原料齐备才可以开工
+                    request.updateStatus(name, newIngredientsArrived, storage);
+                    newIngredientsArrived = false;
+                }
                 Request request = servePolicy.getRequest(requestQueue);
+                if (request == null) {
+                    Log.level2Log("    Request queue is not empty, but no request is is chosen in " + name);
+                    return false;
+                }
                 Log.level2Log("    request:[" + name + ":" + request.getIngredient() + ":"
                         + request.getRequesterName() + "] is chosen");
-                // 库存中request原料齐备才可以开工
-                request.updateStatus(name, newIngredientsArrived, storage);
-                newIngredientsArrived = false;
                 if(request.getStatus() == RequestStatus.READY) {
                     request.readyToWorking(storage);
                 } else {

@@ -172,10 +172,11 @@ class AppTest {
 
     @Test
     @Disabled("gradle clean test --tests AppTest.door1LogLevel0")
+    // todo AppTest中所有disable的test，都是同一个原因：gradle test --tests能跑，而gradle test不能跑
     public void door1LogLevel0() {
 //        System.setProperty("logFilename", "door1LogLevel0.log");
 //        LoggerContext context = (LoggerContext) LogManager.getContext(false);
-//        File file = new File("src/test/resources/log4j2.xml"); // 确保路径正确
+//        File file = new File("src/test/resources/log4j2.xml");
 //        context.setConfigLocation(file.toURI());
 //        cleanUpLogFile(Paths.get("door1LogLevel0.log"));
         cleanUpLogFile(Paths.get("test.log"));
@@ -189,67 +190,62 @@ class AppTest {
         assertEquals(expectedOutput, actual);
     }
 
+    private void handTestHelper(int logLevel, String setupFileName, String inputFileName, String outputFileName) {
+        Path path = Paths.get("test.log");
+        cleanUpLogFile(path);
+
+        Log.setLogLevel(logLevel);
+        demoHelper(setupFileName, inputFileName);
+        String actual = getActualLogFromFile(path);
+
+        String expectedOutput = readResourceFile(outputFileName);;
+        assertEquals(expectedOutput, actual);
+    }
+
     @Test
     @Disabled("gradle clean test --tests AppTest.door1LogLevel1")
     public void door1LogLevel1() {
-        cleanUpLogFile(Paths.get("test.log"));
-
-        Log.setLogLevel(1);
-        demoHelper("json_inputs/doors1.json", "/user_inputs/input1.txt");
-        String actual = getActualLogFromFile(Paths.get("test.log"));
-
-        String expectedOutput = readResourceFile("log_outputs/output2.txt");;
-        assertEquals(expectedOutput, actual);
+        handTestHelper(1, "json_inputs/doors1.json",
+                "/user_inputs/input1.txt",
+                "log_outputs/output2.txt");
     }
 
     @Test
     @Disabled("gradle clean test --tests AppTest.door1LogLevel2")
     public void door1LogLevel2() {
-        cleanUpLogFile(Paths.get("test.log"));
-
-        Log.setLogLevel(2);
-        demoHelper("json_inputs/doors1.json", "/user_inputs/input1.txt");
-        String actual = getActualLogFromFile(Paths.get("test.log"));
-
-        String expectedOutput = readResourceFile("log_outputs/output3.txt");
-        assertEquals(expectedOutput, actual);
+        handTestHelper(2, "json_inputs/doors1.json",
+                "/user_inputs/input1.txt",
+                "log_outputs/output3.txt");
     }
 
     @Test
     @Disabled("waiting for other code")
     public void servePolicy1() {
-        cleanUpLogFile(Paths.get("test.log"));
-
-        Log.setLogLevel(3);
-        demoHelper("json_inputs/servePolicy.json", "/user_inputs/input_servePolicy1.txt");
-        String actual = getActualLogFromFile(Paths.get("test.log"));
-
-        String expectedOutput = readResourceFile("log_outputs/output_servePolicy1.txt");;
-        assertEquals(expectedOutput, actual);
+        handTestHelper(3, "json_inputs/servePolicy.json",
+                "/user_inputs/input_servePolicy1.txt",
+                "log_outputs/output_servePolicy1.txt");
     }
     @Test
     @Disabled("waiting for other code")
     public void servePolicy2() {
-        cleanUpLogFile(Paths.get("test.log"));
-
-        Log.setLogLevel(3);
-        demoHelper("json_inputs/servePolicy.json", "/user_inputs/input_servePolicy2.txt");
-        String actual = getActualLogFromFile(Paths.get("test.log"));
-
-        String expectedOutput = readResourceFile("log_outputs/output_servePolicy2.txt");;
-        assertEquals(expectedOutput, actual);
+        handTestHelper(3, "json_inputs/servePolicy.json",
+                "/user_inputs/input_servePolicy2.txt",
+                "log_outputs/output_servePolicy2.txt");
     }
 
     @Test
     @Disabled("waiting for other code")
     public void servePolicy3() {
-        cleanUpLogFile(Paths.get("test.log"));
+        handTestHelper(3, "json_inputs/servePolicy.json",
+                "/user_inputs/input_servePolicy3.txt",
+                "log_outputs/output_servePolicy3.txt");
+    }
 
-        Log.setLogLevel(3);
-        demoHelper("json_inputs/servePolicy.json", "/user_inputs/input_servePolicy3.txt");
-        String actual = getActualLogFromFile(Paths.get("test.log"));
-
-        String expectedOutput = readResourceFile("log_outputs/output_servePolicy3.txt");;
-        assertEquals(expectedOutput, actual);
+    @Test
+    @Disabled("waiting for other code")
+    public void sourcePolicy1() {
+        handTestHelper(3, "json_inputs/sourcePolicy.json",
+                "/user_inputs/input_sourcePolicy1.txt",
+                "log_outputs/output_sourcePolicy1.txt");
     }
 }

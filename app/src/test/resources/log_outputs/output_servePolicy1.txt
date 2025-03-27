@@ -1,0 +1,71 @@
+[Log] - Checking recipe 'l1': {"water":1}
+[Log] - Checking recipe 'l2': {"water":1}
+[Log] - Checking recipe 'l3': {"water":3}
+[Log] - [ingredient assignment]: l3 assigned to A to deliver to user
+[Log] - [source selection]: A (qlen) has request for l3 on 0
+[Log] - [A:l3:0] For ingredient water
+[Log] -     selecting river
+[Log] - [ingredient assignment]: water assigned to river to deliver to A
+[Log] - [source selection]: river (qlen) has request for water on 0
+[Log] - [A:l3:0] For ingredient water
+[Log] -     selecting river
+[Log] - [ingredient assignment]: water assigned to river to deliver to A
+[Log] - [source selection]: river (qlen) has request for water on 0
+[Log] - [A:l3:0] For ingredient water
+[Log] -     selecting river
+[Log] - [ingredient assignment]: water assigned to river to deliver to A
+[Log] - [source selection]: river (qlen) has request for water on 0
+[Log] - [ingredient assignment]: l2 assigned to A to deliver to user
+[Log] - [source selection]: A (qlen) has request for l2 on 0
+[Log] - [A:l2:0] For ingredient water
+[Log] -     selecting river
+[Log] - [ingredient assignment]: water assigned to river to deliver to A
+[Log] - [source selection]: river (qlen) has request for water on 0
+[Log] - [ingredient assignment]: l1 assigned to A to deliver to user
+[Log] - [source selection]: A (qlen) has request for l1 on 0
+[Log] - [A:l1:0] For ingredient water
+[Log] -     selecting river
+[Log] - [ingredient assignment]: water assigned to river to deliver to A
+[Log] - [source selection]: river (qlen) has request for water on 0
+[Log] - [request selection]: A has serve policy 'fifo' on cycle 0
+[Log] -     request:[A:l3:user] is chosen
+[Log] - A is waiting for ingredients
+[Log] - river is processing request: water, 1
+[Log] - [ingredient delivered]: water to A from river on cycle 1
+[Log] - [request selection]: A has serve policy 'fifo' on cycle 1
+[Log] -     A need 1/3 water for l3
+[Log] -     request:[A:l3:user] is chosen
+[Log] - A is waiting for ingredients
+[Log] - river is processing request: water, 1
+[Log] - [ingredient delivered]: water to A from river on cycle 2
+[Log] - [request selection]: A has serve policy 'fifo' on cycle 2
+[Log] -     A need 2/3 water for l3
+[Log] -     request:[A:l3:user] is chosen
+[Log] - A is waiting for ingredients
+[Log] - river is processing request: water, 1
+[Log] - [ingredient delivered]: water to A from river on cycle 3
+[Log] - [request selection]: A has serve policy 'fifo' on cycle 3
+[Log] -     A need 3/3 water for l3
+[Log] -     request:[A:l3:user] is chosen
+[Log] - A is processing request: l3, 3
+[Log] - river is processing request: water, 1
+[Log] - [ingredient delivered]: water to A from river on cycle 4
+[Log] - A is processing request: l3, 2
+[Log] - river is processing request: water, 1
+[Log] - [ingredient delivered]: water to A from river on cycle 5
+[Log] - A is processing request: l3, 1
+[Log] - [ingredient delivered]: l3 to user from A on cycle 6
+[Log] - [order complete] Order 0 completed (l3) at time 6
+[Log] - [request selection]: A has serve policy 'fifo' on cycle 6
+[Log] -     A need 2/1 water for l2
+[Log] -     request:[A:l2:user] is chosen
+[Log] - A is processing request: l2, 2
+[Log] - A is processing request: l2, 1
+[Log] - [ingredient delivered]: l2 to user from A on cycle 8
+[Log] - [order complete] Order 4 completed (l2) at time 8
+[Log] - [request selection]: A has serve policy 'fifo' on cycle 8
+[Log] -     request:[A:l1:user] is chosen
+[Log] - A is processing request: l1, 1
+[Log] - [ingredient delivered]: l1 to user from A on cycle 9
+[Log] - [order complete] Order 6 completed (l1) at time 9
+[Log] - Simulation completed at time-step 9

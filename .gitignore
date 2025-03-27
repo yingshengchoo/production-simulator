@@ -6,6 +6,7 @@
 # for eclipse
 .project
 .settings
+.classpath
 # for emacs
 *\#*
 # Ignore Gradle project-specific cache directory
@@ -19,7 +20,3 @@ SavedStates
 # Ignore Gradle build output directory
 build
 app/bin
-
-# Ignore build.gradle file
-build.gradle
-app/build.gradle
