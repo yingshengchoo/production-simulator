@@ -1,0 +1,35 @@
+[Log] - [ingredient assignment]: diamond assigned to D to deliver to user
+[Log] - [ingredient assignment]: half_diamond assigned to steel_diamond to deliver to D
+[Log] - [ingredient assignment]: tiny_diamond assigned to diamond_mine to deliver to steel_diamond
+[Log] - [ingredient assignment]: sand assigned to Sa to deliver to user
+[Log] - [ingredient assignment]: half_sand assigned to steel_sand to deliver to Sa
+[Log] - [ingredient assignment]: tiny_sand assigned to sand_mine to deliver to steel_sand
+[Log] - [ingredient assignment]: half_sand assigned to steel_sand to deliver to Sa
+[Log] - [ingredient assignment]: tiny_sand assigned to sand_mine to deliver to steel_sand
+[Log] - [ingredient assignment]: half_sand assigned to steel_sand to deliver to Sa
+[Log] - [ingredient assignment]: tiny_sand assigned to sand_mine to deliver to steel_sand
+[Log] - [ingredient assignment]: half_sand assigned to steel_sand to deliver to Sa
+[Log] - [ingredient assignment]: tiny_sand assigned to sand_mine to deliver to steel_sand
+[Log] - [ingredient assignment]: half_sand assigned to steel_sand to deliver to Sa
+[Log] - [ingredient assignment]: tiny_sand assigned to sand_mine to deliver to steel_sand
+[Log] - [ingredient assignment]: special_steel assigned to St to deliver to user
+[Log] - [ingredient assignment]: steel assigned to steel to deliver to St
+[Log] - [ingredient assignment]: iron assigned to iron_mine1 to deliver to steel
+[Log] - [ingredient assignment]: iron assigned to iron_mine1 to deliver to steel
+[Log] - [ingredient assignment]: iron assigned to iron_mine1 to deliver to steel
+[Log] - [ingredient assignment]: special_steel assigned to St to deliver to user
+[Log] - [ingredient assignment]: steel assigned to steel_sand to deliver to St
+[Log] - [ingredient assignment]: iron assigned to iron_mine2 to deliver to steel_sand
+[Log] - [ingredient assignment]: iron assigned to iron_mine3 to deliver to steel_sand
+[Log] - [ingredient assignment]: iron assigned to iron_mine4 to deliver to steel_sand
+[Log] - [ingredient assignment]: special_steel assigned to St to deliver to user
+[Log] - [ingredient assignment]: steel assigned to steel_diamond to deliver to St
+[Log] - [ingredient assignment]: iron assigned to iron_mine1 to deliver to steel_diamond
+[Log] - [ingredient assignment]: iron assigned to iron_mine1 to deliver to steel_diamond
+[Log] - [ingredient assignment]: iron assigned to iron_mine1 to deliver to steel_diamond
+[Log] - [order complete] Order 3 completed (sand) at time 7
+[Log] - [order complete] Order 14 completed (special_steel) at time 13
+[Log] - [order complete] Order 0 completed (diamond) at time 22
+[Log] - [order complete] Order 19 completed (special_steel) at time 33
+[Log] - [order complete] Order 24 completed (special_steel) at time 63
+[Log] - Simulation completed at time-step 63
