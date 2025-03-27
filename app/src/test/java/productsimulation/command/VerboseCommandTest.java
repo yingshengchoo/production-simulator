@@ -4,9 +4,11 @@ import org.junit.jupiter.api.Test;
 
 import productsimulation.LogTest;
 
+import java.io.IOException;
+
 class VerboseCommandTest {
     @Test
-    void test_basic() {
+    void test_basic() throws IOException {
         LogTest logTest = new LogTest();
         VerboseCommand verboseCommand = new VerboseCommand(1);
         verboseCommand.execute();

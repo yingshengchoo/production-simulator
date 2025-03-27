@@ -20,31 +20,18 @@ import static org.junit.jupiter.api.Assertions.*;
 public class LogTest {
 //    private String filePathStr = "src/test/resources/test.log";
     private String filePathStr = "test.log";
-//    private String filePathStr = "~/log/myapp/test.log";
     private Path filePath = Paths.get(filePathStr);
 
-    private void cleanUpLogFile() {
-        try {
-            if (!Files.exists(filePath)) {
-                Files.createDirectories(filePath.getParent());
-                Files.createFile(filePath);
-            }
-            Files.write(filePath, "".getBytes(StandardCharsets.UTF_8));
-        } catch (IOException e) {
-            System.err.println("Error when writing to" + filePathStr);
-        }
+    private void cleanUpLogFile() throws IOException {
+        Files.write(filePath, "".getBytes(StandardCharsets.UTF_8));
     }
 
-    private String getActualLogFromFile() {
-        try (InputStream actualOutputStream = Files.newInputStream(filePath)) {
-            return new String(actualOutputStream.readAllBytes(), StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            System.err.println("Error when reading " + filePathStr);
-        }
-        return "";
+    private String getActualLogFromFile() throws IOException {
+        InputStream actualOutputStream = Files.newInputStream(filePath);
+        return new String(actualOutputStream.readAllBytes(), StandardCharsets.UTF_8);
     }
 
-    public void logTestHelper(String expected) {
+    public void logTestHelper(String expected) throws IOException {
         cleanUpLogFile();
         writeSomeLog();
         String actual = getActualLogFromFile();
@@ -59,13 +46,13 @@ public class LogTest {
     }
 
     @Test
-    void test_continual() {
+    void test_continual() throws IOException {
         test_debugLog();
         test_level0Log();
     }
 
     @Test
-    void test_special() {
+    void test_special() throws IOException {
         // larger than 3, the same as 3.
         Log.setLogLevel(4);
         String expected = "[Log] - level0 log\n" +
@@ -83,7 +70,7 @@ public class LogTest {
     }
 
     @Test
-    void test_debugLog() {
+    void test_debugLog() throws IOException {
         Log.setLogLevel(3);
         String expected = "[Log] - level0 log\n" +
                 "[Log] - level1 log\n" +
@@ -93,7 +80,7 @@ public class LogTest {
     }
 
     @Test
-    void test_level2Log() {
+    void test_level2Log() throws IOException {
         Log.setLogLevel(2);
         String expected = "[Log] - level0 log\n" +
                 "[Log] - level1 log\n" +
@@ -102,7 +89,7 @@ public class LogTest {
     }
 
     @Test
-    void test_level1Log() {
+    void test_level1Log() throws IOException {
         Log.setLogLevel(1);
         String expected = "[Log] - level0 log\n" +
                 "[Log] - level1 log\n";
@@ -110,7 +97,7 @@ public class LogTest {
     }
 
     @Test
-    void test_level0Log() {
+    void test_level0Log() throws IOException {
         Log.setLogLevel(0);
         String expected = "[Log] - level0 log\n";
         logTestHelper(expected);
