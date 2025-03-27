@@ -1,5 +1,6 @@
 package productsimulation.request.sourcePolicy;
 
+import productsimulation.Log;
 import productsimulation.model.Building;
 
 import java.util.List;
@@ -15,6 +16,7 @@ public class SourceQLen implements SourcePolicy, Serializable {
         Building source = null;
 
         for (Building building : buildings) {
+            Log.level2Log("    " + building.getName() + " " + building.getRequestCount());
             if (building.getRequestCount() < min && building.canProduce(ingredient)) {
                 min = building.getRequestCount();
                 source = building;

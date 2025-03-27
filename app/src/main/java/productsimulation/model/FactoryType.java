@@ -1,9 +1,6 @@
 package productsimulation.model;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.io.Serializable;
 
 
@@ -51,4 +48,16 @@ public class FactoryType implements Serializable {
   public String getName(){
     return name;
   }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        FactoryType that = (FactoryType) o;
+        return Objects.equals(name, that.name) && Objects.equals(recipes, that.recipes);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, recipes);
+    }
 }

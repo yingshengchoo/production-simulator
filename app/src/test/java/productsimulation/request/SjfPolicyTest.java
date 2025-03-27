@@ -18,6 +18,7 @@ class SjfPolicyTest {
 
         requests.add(0, RequestGenerator.generateRequest(6, new int[]{1,2}));
         requests.add(RequestGenerator.generateRequest(6, new int[]{1,2}));
+        request = policy.getRequest(requests);
         assertEquals(1, request.getId());
     }
 

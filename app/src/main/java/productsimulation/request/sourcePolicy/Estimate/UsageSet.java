@@ -18,7 +18,7 @@ public class UsageSet {
     }
 
     public int getIngredientRemain(Building building, String ingredient) {
-        int res = building.getStorage().get(ingredient);
+        int res = building.getStorage().getOrDefault(ingredient, 0);
         for (Entry entry : set) {
             if (entry.getBuilding().equals(building) && entry.getIngredient().equals(ingredient)) {
                 res -= entry.getAmount();

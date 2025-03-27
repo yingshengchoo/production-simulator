@@ -1,5 +1,6 @@
 package productsimulation.request.sourcePolicy;
 
+import productsimulation.Log;
 import productsimulation.model.Building;
 import productsimulation.model.Recipe;
 import productsimulation.request.Request;
@@ -32,6 +33,8 @@ public class SourceEstimate implements SourcePolicy {
                 min = cur;
                 source = b;
             }
+
+            Log.level2Log("    " + b.getName() + " " + cur);
         }
         return source;
     }
@@ -63,7 +66,7 @@ public class SourceEstimate implements SourcePolicy {
 
             // if there is shortage, estimate time for produce shortage(in parallel)
             if (shortage > 0) {
-                totalTime += produceShortage(request, shortage, usageSet, path);
+                totalTime += produceShortage(ing.getKey(), building, shortage, usageSet, path);
             }
         }
 
@@ -82,7 +85,8 @@ public class SourceEstimate implements SourcePolicy {
         return Math.max(0, required - remain);
     }
 
-    private int produceShortage(Request request,
+    private int produceShortage(String item,
+                                Building building,
                                 int shortage,
                                 UsageSet usageSet,
                                 Path path) {
@@ -93,7 +97,7 @@ public class SourceEstimate implements SourcePolicy {
 
             // 获取所有来源工厂的估算时间
             // get estimate time from all buildings
-            Map<Building, Integer> ts = getEstimatedTimeSet(request, usageSet, path, id);
+            Map<Building, Integer> ts = getEstimatedTimeSet(item, building, usageSet, path, id);
 
             // 选择 k个最快的
             // choose top k
@@ -116,12 +120,10 @@ public class SourceEstimate implements SourcePolicy {
     }
 
     // get estimate time map <Building, Integer> for each valid building
-    private Map<Building, Integer> getEstimatedTimeSet (Request request, UsageSet usageSet, Path path, int id) {
+    private Map<Building, Integer> getEstimatedTimeSet (String item, Building building, UsageSet usageSet, Path path, int id) {
         Map<Building, Integer> ts = new HashMap<>();
-        String item = request.getRecipe().getOutput();
 
-        for (Building source : Building.getBuildings()) {
-            // skip building cannot produce the item
+        for (Building source : building.getSources()) {
             if (!source.canProduce(item)) {
                 continue;
             }

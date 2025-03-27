@@ -13,12 +13,6 @@ import java.util.*;
 
 public abstract class Building implements Serializable {
 
-    private static List<Building> buildings = new ArrayList<>();
-
-    public static List<Building> getBuildings() {
-        return buildings;
-    }
-
     protected final String name;
     protected FactoryType type;
     protected Request currentRequest;
@@ -109,7 +103,7 @@ public abstract class Building implements Serializable {
           Map.Entry<String, Integer> entry = iterator.next();
           String item = entry.getKey();
             int count = entry.getValue();
-            result.append(item + ": " + count);
+            result.append(item).append(": ").append(count);
 
             if (iterator.hasNext()) {
                 result.append(",\n ");
@@ -125,7 +119,7 @@ public abstract class Building implements Serializable {
 
     StringBuilder result = new StringBuilder(" request queue size=");
     result.append(requestQueue.size());
-    
+
     //StringBuilder result = new StringBuilder("[");
     // if (requestQueue != null && !requestQueue.isEmpty()) {
     //     for (int i = 0; i < requestQueue.size(); i++) {

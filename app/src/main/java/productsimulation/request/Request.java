@@ -43,7 +43,7 @@ public class Request implements Serializable{
     this.ingredient = ingredient;
     this.recipe = Recipe.getRecipe(ingredient);
     this.requester = requester;
-    this.status = RequestStatus.WAITING;
+    this.status = recipe.getIngredients().isEmpty() ? RequestStatus.READY : RequestStatus.WAITING;
   }
 
   public static Request getDummyRequest(String ingredient, Building requester) {
