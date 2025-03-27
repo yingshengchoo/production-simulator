@@ -256,18 +256,40 @@ public abstract class Building implements Serializable {
         return name;
     }
 
+   /**
+    * Returns the sources of the building.
+    *
+    * @return    the list of building of sources
+    */
     public List<Building> getSources() {
         return sources;
     }
 
+    
+   /**
+    * Returns the ServePolicy used by the building
+    *
+    * @return    the Serve Policy
+    */
     public ServePolicy getServePolicy(){
       return servePolicy;
     }
 
+   /**
+    * Returns the SourcePolicy used by the building
+    *
+    * @return    the Source Policy
+    */
     public SourcePolicy getSourcePolicy(){
       return sourcePolicy;
     }
+
   
+   /**
+    * Returns the SourcePolicy used by the building
+    *
+    * @return    the Source Policy
+    */
     public int getCurrentRemainTime(){
         return currentRemainTime;
     }
