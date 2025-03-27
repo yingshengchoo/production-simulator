@@ -97,9 +97,9 @@ public class SetupParser {
     private void parseBuildings(JsonNode buildingsNode) {
         for (JsonNode buildingNode : buildingsNode) {
             String buildingName = buildingNode.get("name").asText();
-            if (buildingName.startsWith("'") && buildingName.endsWith("'")) {
-                buildingName = buildingName.substring(1, buildingName.length() - 1);
-            }
+//            if (buildingName.startsWith("'") && buildingName.endsWith("'")) {
+//                buildingName = buildingName.substring(1, buildingName.length() - 1);
+//            }
             Building building ;
 
             if (buildingNode.has("type")) {
