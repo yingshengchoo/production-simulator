@@ -37,10 +37,12 @@ public class MockingEnv {
         FactoryType ft4 = new FactoryType("t4", Map.of("r4", r4));
         Building b1 = new Mine("b1", ft1, null, qlen, fifo);
         Building b2 = new Mine("b2", ft2, null, qlen, fifo);
-        Building f3 = new Factory("f3", ft3, List.of(b1, b2), qlen, fifo);
-        Building f32 = new Factory("f32", ft3, List.of(b1, b2), qlen, fifo);
-        Building f4 = new Factory("f4", ft4, List.of(b1, b2), qlen, fifo);
-        buildings = List.of(b1, b2, f3, f32, f4);
+        Building b22 = new Mine("b22", ft2, null, qlen, fifo);
+        Building b23 = new Mine("b23", ft2, null, qlen, fifo);
+        Building f3 = new Factory("f3", ft3, List.of(b1, b2, b22, b23), qlen, fifo);
+        Building f32 = new Factory("f32", ft3, List.of(b1, b2, b22, b23), qlen, fifo);
+        Building f4 = new Factory("f4", ft4, List.of(b1, b2, b22, b23), qlen, fifo);
+        buildings = List.of(b1, b2, f3, f32, f4, b22, b23);
     }
 
     public List<Building> getBuildings() {

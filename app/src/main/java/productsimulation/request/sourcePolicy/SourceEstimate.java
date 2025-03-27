@@ -23,9 +23,7 @@ public class SourceEstimate implements SourcePolicy {
         int min = Integer.MAX_VALUE;
         Building source = null;
         for (Building b : buildings) {
-            if (!b.canProduce(ingredient)) {
-                continue;
-            }
+
             int cur = 0;
             UsageSet usageSet = new UsageSet();
             List<Request> requests = b.getRequestQueue();
@@ -34,6 +32,10 @@ public class SourceEstimate implements SourcePolicy {
             // calculate the total estimate time cost
             for (Request r : requests) {
                 cur += estimate(r, b, usageSet, new Path());
+            }
+
+            if (!b.canProduce(ingredient)) {
+                continue;
             }
 
             if (cur < min) {
@@ -154,7 +156,6 @@ public class SourceEstimate implements SourcePolicy {
         // find building's current request
         Request buildingCurrentRequest = building.getCurrentRequest();
 
-
         if (request == null || buildingCurrentRequest == null) {
             return false;
         }
@@ -169,7 +170,7 @@ public class SourceEstimate implements SourcePolicy {
 
 
 
-    private Map<Building, Integer> getTopK(int k, Map<Building, Integer> map) {
+    protected static Map<Building, Integer> getTopK(int k, Map<Building, Integer> map) {
 
         return map.entrySet().stream()
                 .sorted(Map.Entry.comparingByValue())
