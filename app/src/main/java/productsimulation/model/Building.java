@@ -205,14 +205,19 @@ public abstract class Building implements Serializable {
         return sources;
     }
 
+    public ServePolicy getServePolicy(){
+      return servePolicy;
+    }
+
+    public SourcePolicy getSourcePolicy(){
+      return sourcePolicy;
+    }
+  
     public int getCurrentRemainTime(){
         return currentRemainTime;
     }
 
-    public Request getCurrentRequest(){
-        return currentRequest;
-    }
-
+    
     public Map<String, Integer> getStorage(){
         return storage;
     }
