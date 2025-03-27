@@ -3,21 +3,18 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import productsimulation.model.Building;
 import productsimulation.request.Policy;
 import productsimulation.request.servePolicy.FIFOPolicy;
 import productsimulation.request.servePolicy.ReadyPolicy;
-import productsimulation.request.servePolicy.ServePolicy;
 import productsimulation.request.servePolicy.SjfPolicy;
-import productsimulation.request.sourcePolicy.SoleSourcePolicy;
-import productsimulation.request.sourcePolicy.SourcePolicy;
+import productsimulation.request.sourcePolicy.SourceEstimate;
 import productsimulation.request.sourcePolicy.SourceQLen;
 import productsimulation.request.sourcePolicy.SourceSimplelat;
 
 public class SetPolicyCommandIdentifier extends CommandIdentifier {
     Set<Policy> policies = new HashSet<>(Arrays.asList(
             new FIFOPolicy(), new ReadyPolicy(), new SjfPolicy(),
-            new SoleSourcePolicy(), new SourceQLen(), new SourceSimplelat()
+            new SourceEstimate(), new SourceQLen(), new SourceSimplelat()
     ));
     public SetPolicyCommandIdentifier(CommandIdentifier next) {
         super(next);

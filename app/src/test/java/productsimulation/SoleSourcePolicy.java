@@ -1,6 +1,7 @@
-package productsimulation.request.sourcePolicy;
+package productsimulation;
 
 import productsimulation.model.Building;
+import productsimulation.request.sourcePolicy.SourcePolicy;
 
 import java.util.List;
 import java.io.Serializable;

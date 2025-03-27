@@ -1,17 +1,14 @@
 package productsimulation;
 
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.core.LoggerContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import productsimulation.command.CommandParser;
 import productsimulation.command.RequestCommand;
 import productsimulation.command.StepCommand;
 import productsimulation.model.*;
-import productsimulation.request.OneTimeServePolicy;
 import productsimulation.request.Request;
 import productsimulation.request.servePolicy.*;
-import productsimulation.request.sourcePolicy.SoleSourcePolicy;
 import productsimulation.request.sourcePolicy.SourcePolicy;
 
 import java.io.*;
@@ -25,8 +22,7 @@ import org.junit.jupiter.api.Test;
 import productsimulation.request.sourcePolicy.SourceQLen;
 import productsimulation.setup.SetupParser;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 class AppTest {
     private String filePathStr = "test.log";
@@ -123,7 +119,8 @@ class AppTest {
         SetupParser parser = new SetupParser();
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream(setupFileName);
         assertNotNull(inputStream);
-        parser.parse(new BufferedReader(new InputStreamReader(inputStream)));
+        String error = parser.parse(new BufferedReader(new InputStreamReader(inputStream)));
+        assertNull(error);
         Map<String, Recipe> recipes = parser.getRecipeMap();
         Map<String, FactoryType> types = parser.getTypeMap();
         Map<String, Building> buildings = parser.getBuildingMap();
@@ -143,9 +140,12 @@ class AppTest {
             requestBroadcaster.addBuildings(b);
         }
 
+        ArrayList<Recipe> recipeList = new ArrayList<>();
         for(Recipe r: recipes.values()) {
             requestBroadcaster.addRecipes(r);
+            recipeList.add(r);
         }
+        Recipe.setRecipeList(recipeList);
 
         CommandParser cmdParser = new CommandParser();
         assertNotNull(AppTest.class.getResource(inputFileName));
@@ -219,14 +219,14 @@ class AppTest {
     }
 
     @Test
-    @Disabled("waiting for other code")
+    @Disabled("gradle clean test --tests AppTest.servePolicy1")
     public void servePolicy1() {
         handTestHelper(3, "json_inputs/servePolicy.json",
                 "/user_inputs/input_servePolicy1.txt",
                 "log_outputs/output_servePolicy1.txt");
     }
     @Test
-    @Disabled("waiting for other code")
+    @Disabled("gradle clean test --tests AppTest.servePolicy2")
     public void servePolicy2() {
         handTestHelper(3, "json_inputs/servePolicy.json",
                 "/user_inputs/input_servePolicy2.txt",
@@ -234,7 +234,7 @@ class AppTest {
     }
 
     @Test
-    @Disabled("waiting for other code")
+    @Disabled("wgradle clean test --tests AppTest.servePolicy3")
     public void servePolicy3() {
         handTestHelper(3, "json_inputs/servePolicy.json",
                 "/user_inputs/input_servePolicy3.txt",
@@ -242,10 +242,26 @@ class AppTest {
     }
 
     @Test
-    @Disabled("waiting for other code")
+    @Disabled("gradle clean test --tests AppTest.sourcePolicy1")
     public void sourcePolicy1() {
-        handTestHelper(3, "json_inputs/sourcePolicy.json",
+        handTestHelper(1, "json_inputs/sourcePolicy.json",
                 "/user_inputs/input_sourcePolicy1.txt",
                 "log_outputs/output_sourcePolicy1.txt");
+    }
+
+    @Test
+    @Disabled("gradle clean test --tests AppTest.sourcePolicy2")
+    public void sourcePolicy2() {
+        handTestHelper(1, "json_inputs/sourcePolicy.json",
+                "/user_inputs/input_sourcePolicy2.txt",
+                "log_outputs/output_sourcePolicy2.txt");
+    }
+
+    @Test
+    @Disabled("gradle clean test --tests AppTest.sourcePolicy3")
+    public void sourcePolicy3() {
+        handTestHelper(3, "json_inputs/sourcePolicy.json",
+                "/user_inputs/input_sourcePolicy3.txt",
+                "log_outputs/output_sourcePolicy3.txt");
     }
 }

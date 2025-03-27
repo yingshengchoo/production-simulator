@@ -1,7 +1,8 @@
 package productsimulation.model;
 
 import static org.junit.jupiter.api.Assertions.*;
-import productsimulation.request.*;
+
+import productsimulation.SoleSourcePolicy;
 import productsimulation.request.servePolicy.*;
 import productsimulation.request.sourcePolicy.*;
 import org.junit.jupiter.api.Test;

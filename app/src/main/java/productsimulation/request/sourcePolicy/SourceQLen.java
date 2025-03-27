@@ -16,10 +16,12 @@ public class SourceQLen implements SourcePolicy, Serializable {
         Building source = null;
 
         for (Building building : buildings) {
-            Log.level2Log("    " + building.getName() + " " + building.getRequestCount());
-            if (building.getRequestCount() < min && building.canProduce(ingredient)) {
-                min = building.getRequestCount();
-                source = building;
+            if (building.canProduce(ingredient)) {
+                Log.level2Log("    " + building.getName() + " " + building.getRequestCount());
+                if (building.getRequestCount() < min) {
+                    min = building.getRequestCount();
+                    source = building;
+                }
             }
         }
 

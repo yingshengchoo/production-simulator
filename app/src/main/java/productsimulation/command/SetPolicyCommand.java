@@ -3,14 +3,8 @@ package productsimulation.command;
 import productsimulation.State;
 import productsimulation.model.Building;
 import productsimulation.request.Policy;
-import productsimulation.request.servePolicy.FIFOPolicy;
-import productsimulation.request.servePolicy.ReadyPolicy;
 import productsimulation.request.servePolicy.ServePolicy;
-import productsimulation.request.servePolicy.SjfPolicy;
-import productsimulation.request.sourcePolicy.SoleSourcePolicy;
 import productsimulation.request.sourcePolicy.SourcePolicy;
-import productsimulation.request.sourcePolicy.SourceQLen;
-import productsimulation.request.sourcePolicy.SourceSimplelat;
 
 import java.util.*;
 

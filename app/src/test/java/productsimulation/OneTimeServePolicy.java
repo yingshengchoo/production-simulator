@@ -1,5 +1,6 @@
-package productsimulation.request;
+package productsimulation;
 
+import productsimulation.request.Request;
 import productsimulation.request.servePolicy.ServePolicy;
 import java.io.Serializable;
 import java.util.List;

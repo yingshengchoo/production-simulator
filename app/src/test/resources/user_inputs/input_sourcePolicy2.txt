@@ -1,0 +1,7 @@
+set policy source 'simplelat' on 'St'
+request 'diamond' from 'D'
+request 'sand' from 'Sa'
+request 'special_steel' from 'St'
+request 'special_steel' from 'St'
+request 'special_steel' from 'St'
+finish
