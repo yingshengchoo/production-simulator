@@ -46,6 +46,9 @@ public class BuildingTest {
 
     assertTrue(f1.hashCode() == f2.hashCode());
     assertFalse(f1.hashCode() == f3.hashCode());
+
+    assertFalse(f1.equals(null));
+    assertFalse(f1.equals(new Recipe(1, Collections.emptyMap())));
   }
   
   @Test
