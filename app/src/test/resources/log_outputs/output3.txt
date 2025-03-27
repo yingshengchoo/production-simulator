@@ -1,97 +1,106 @@
 [Log] - [ingredient assignment]: door assigned to D to deliver to user
 [Log] - [source selection]: D (qlen) has request for door on 0
 [Log] - [D:door:0] For ingredient wood
+[Log] -     W 0
 [Log] -     selecting W
 [Log] - [ingredient assignment]: wood assigned to W to deliver to D
 [Log] - [source selection]: W (qlen) has request for wood on 0
 [Log] - [D:door:0] For ingredient handle
+[Log] -     Ha 0
 [Log] -     selecting Ha
 [Log] - [ingredient assignment]: handle assigned to Ha to deliver to D
 [Log] - [source selection]: Ha (qlen) has request for handle on 0
 [Log] - [Ha:handle:0] For ingredient metal
+[Log] -     M 0
 [Log] -     selecting M
 [Log] - [ingredient assignment]: metal assigned to M to deliver to Ha
 [Log] - [source selection]: M (qlen) has request for metal on 0
 [Log] - [D:door:0] For ingredient hinge
+[Log] -     Hi 0
 [Log] -     selecting Hi
 [Log] - [ingredient assignment]: hinge assigned to Hi to deliver to D
 [Log] - [source selection]: Hi (qlen) has request for hinge on 0
 [Log] - [Hi:hinge:0] For ingredient metal
+[Log] -     M 1
 [Log] -     selecting M
 [Log] - [ingredient assignment]: metal assigned to M to deliver to Hi
 [Log] - [source selection]: M (qlen) has request for metal on 0
 [Log] - [D:door:0] For ingredient hinge
+[Log] -     Hi 1
 [Log] -     selecting Hi
 [Log] - [ingredient assignment]: hinge assigned to Hi to deliver to D
 [Log] - [source selection]: Hi (qlen) has request for hinge on 0
 [Log] - [Hi:hinge:0] For ingredient metal
+[Log] -     M 2
 [Log] -     selecting M
 [Log] - [ingredient assignment]: metal assigned to M to deliver to Hi
 [Log] - [source selection]: M (qlen) has request for metal on 0
 [Log] - [D:door:0] For ingredient hinge
+[Log] -     Hi 2
 [Log] -     selecting Hi
 [Log] - [ingredient assignment]: hinge assigned to Hi to deliver to D
 [Log] - [source selection]: Hi (qlen) has request for hinge on 0
 [Log] - [Hi:hinge:0] For ingredient metal
+[Log] -     M 3
 [Log] -     selecting M
 [Log] - [ingredient assignment]: metal assigned to M to deliver to Hi
 [Log] - [source selection]: M (qlen) has request for metal on 0
-[Log] - [request selection]: D has fifo on cycle 0
-[Log] -     request:[D:door:user] is chosen
-[Log] - [request selection]: Hi has fifo on cycle 0
+[Log] - [request selection]: Hi has serve policy 'fifo' on cycle 0
 [Log] -     request:[Hi:hinge:D] is chosen
-[Log] - [request selection]: Ha has fifo on cycle 0
+[Log] - [request selection]: D has serve policy 'fifo' on cycle 0
+[Log] -     request:[D:door:user] is chosen
+[Log] - [request selection]: Ha has serve policy 'fifo' on cycle 0
 [Log] -     request:[Ha:handle:D] is chosen
 [Log] - [ingredient delivered]: metal to Ha from M on cycle 1
 [Log] - [ingredient delivered]: wood to D from W on cycle 1
-[Log] - [request selection]: D has fifo on cycle 1
-[Log] -     request:[D:door:user] is chosen
+[Log] - [request selection]: Hi has serve policy 'fifo' on cycle 1
+[Log] -     request:[Hi:hinge:D] is chosen
+[Log] - [request selection]: D has serve policy 'fifo' on cycle 1
 [Log] -     D need 1/1 wood for door
 [Log] -     D need 0/1 handle for door
 [Log] -     D need 0/3 hinge for door
-[Log] - [request selection]: Hi has fifo on cycle 1
-[Log] -     request:[Hi:hinge:D] is chosen
-[Log] - [request selection]: Ha has fifo on cycle 1
-[Log] -     request:[Ha:handle:D] is chosen
-[Log] -     Ha need 1/1 metal for handle
-[Log] - [ingredient delivered]: metal to Hi from M on cycle 2
-[Log] - [request selection]: D has fifo on cycle 2
 [Log] -     request:[D:door:user] is chosen
-[Log] - [request selection]: Hi has fifo on cycle 2
-[Log] -     request:[Hi:hinge:D] is chosen
+[Log] - [request selection]: Ha has serve policy 'fifo' on cycle 1
+[Log] -     Ha need 1/1 metal for handle
+[Log] -     request:[Ha:handle:D] is chosen
+[Log] - [ingredient delivered]: metal to Hi from M on cycle 2
+[Log] - [request selection]: Hi has serve policy 'fifo' on cycle 2
 [Log] -     Hi need 1/1 metal for hinge
+[Log] -     request:[Hi:hinge:D] is chosen
+[Log] - [request selection]: D has serve policy 'fifo' on cycle 2
+[Log] -     request:[D:door:user] is chosen
 [Log] - [ingredient delivered]: metal to Hi from M on cycle 3
 [Log] - [ingredient delivered]: hinge to D from Hi on cycle 3
-[Log] - [request selection]: D has fifo on cycle 3
-[Log] -     request:[D:door:user] is chosen
+[Log] - [request selection]: Hi has serve policy 'fifo' on cycle 3
+[Log] -     Hi need 1/1 metal for hinge
+[Log] -     request:[Hi:hinge:D] is chosen
+[Log] - [request selection]: D has serve policy 'fifo' on cycle 3
 [Log] -     D need 1/1 wood for door
 [Log] -     D need 0/1 handle for door
 [Log] -     D need 1/3 hinge for door
-[Log] - [request selection]: Hi has fifo on cycle 3
-[Log] -     request:[Hi:hinge:D] is chosen
-[Log] -     Hi need 1/1 metal for hinge
+[Log] -     request:[D:door:user] is chosen
 [Log] - [ingredient delivered]: metal to Hi from M on cycle 4
 [Log] - [ingredient delivered]: hinge to D from Hi on cycle 4
-[Log] - [request selection]: D has fifo on cycle 4
-[Log] -     request:[D:door:user] is chosen
+[Log] - [request selection]: Hi has serve policy 'fifo' on cycle 4
+[Log] -     Hi need 1/1 metal for hinge
+[Log] -     request:[Hi:hinge:D] is chosen
+[Log] - [request selection]: D has serve policy 'fifo' on cycle 4
 [Log] -     D need 1/1 wood for door
 [Log] -     D need 0/1 handle for door
 [Log] -     D need 2/3 hinge for door
-[Log] - [request selection]: Hi has fifo on cycle 4
-[Log] -     request:[Hi:hinge:D] is chosen
-[Log] -     Hi need 1/1 metal for hinge
-[Log] - [ingredient delivered]: hinge to D from Hi on cycle 5
-[Log] - [request selection]: D has fifo on cycle 5
 [Log] -     request:[D:door:user] is chosen
+[Log] - [ingredient delivered]: hinge to D from Hi on cycle 5
+[Log] - [request selection]: D has serve policy 'fifo' on cycle 5
 [Log] -     D need 1/1 wood for door
 [Log] -     D need 0/1 handle for door
 [Log] -     D need 3/3 hinge for door
-[Log] - [ingredient delivered]: handle to D from Ha on cycle 6
-[Log] - [request selection]: D has fifo on cycle 6
 [Log] -     request:[D:door:user] is chosen
+[Log] - [ingredient delivered]: handle to D from Ha on cycle 6
+[Log] - [request selection]: D has serve policy 'fifo' on cycle 6
 [Log] -     D need 1/1 wood for door
 [Log] -     D need 1/1 handle for door
 [Log] -     D need 3/3 hinge for door
+[Log] -     request:[D:door:user] is chosen
 [Log] - [ingredient delivered]: door to user from D on cycle 18
 [Log] - [order complete] Order 0 completed (door) at time 18
 [Log] - Simulation completed at time-step 50
