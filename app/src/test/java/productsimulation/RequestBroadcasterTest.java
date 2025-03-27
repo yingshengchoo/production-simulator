@@ -9,8 +9,11 @@ import java.util.Collections;
 
 public class RequestBroadcasterTest {
   @Test
-  public void test_() {
+  public void test_getters() {
     RequestBroadcaster rb = RequestBroadcaster.getInstance();
+
+    rb.reset();
+    
     assertEquals(0, rb.getBuildingsSize());
     assertEquals(0, rb.getRecipesSize());
     Recipe r1 = new Recipe(1, Collections.emptyMap(), "hotpot");

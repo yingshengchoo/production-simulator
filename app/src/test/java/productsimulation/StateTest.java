@@ -175,4 +175,44 @@ class StateTest {
     assertThrows(IllegalStateException.class, () -> State.getInstance());
   }
     
+
+  @Test
+  public void test_getBuildings(){
+    ArrayList<Building> buildings = new ArrayList<>();
+    Building mine = new Mine("G", new FactoryType("Gold", Collections.emptyMap()), new ArrayList<>(), null, null);
+    buildings.add(mine);
+    ArrayList<Building> sources = new ArrayList<>();
+    sources.add(mine);
+    Building factory = new Factory("GC", new FactoryType("GoldChain", Collections.emptyMap()), sources, null, null);
+    buildings.add(factory);
+
+    Map<String, Recipe> recipes = new HashMap<>();
+    Map<String, Integer> ingredients = new HashMap<>();
+    ingredients.put("Egg", 2);
+    Recipe eggroll = new Recipe(3, ingredients, "EggRoll");
+    recipes.put("EggRoll", eggroll);
+
+    ArrayList<Recipe> stateRecipes = new ArrayList<>();
+    stateRecipes.add(eggroll);
+    
+    ArrayList<FactoryType> types = new ArrayList<>();
+    types.add(new FactoryType("EggRoll", recipes));
+
+    RequestBroadcaster requestBroadcaster = RequestBroadcaster.getInstance();
+    requestBroadcaster.addRecipes(eggroll);
+    requestBroadcaster.addBuildings(mine);
+    requestBroadcaster.addBuildings(factory);
+
+    LogicTime logicTime = LogicTime.getInstance();
+    logicTime.addObservers(mine);
+    logicTime.addObservers(factory);
+    
+    State.initialize(buildings, types, stateRecipes, requestBroadcaster, logicTime);
+
+    State state = State.getInstance();
+
+    assertEquals(state.getBuilding(), buildings);
+    assertEquals(factory, state.getBuilding("GC"));
+    assertNull(state.getBuilding("DNE"));
+  }
 }
