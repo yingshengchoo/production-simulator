@@ -217,7 +217,10 @@ public abstract class Building implements Serializable {
         return currentRemainTime;
     }
 
-    
+    public Request getCurrentRequest(){
+        return currentRequest;
+    }
+
     public Map<String, Integer> getStorage(){
         return storage;
     }
