@@ -316,13 +316,4 @@ public abstract class Building implements Serializable {
     public List<Request> getRequestQueue() {
         return requestQueue;
     }
-
-    public SourcePolicy getSourcePolicy() {
-        return sourcePolicy;
-    }
-
-    public ServePolicy getServePolicy() {
-        return servePolicy;
-    }
-
 }
