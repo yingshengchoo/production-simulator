@@ -54,7 +54,7 @@ public class BuildingTest {
     f.updateStorage("item1");
     f.updateStorage("item2");
     f.updateStorage("item2");
-    String expected = " storage=[item2: 2,\nitem1: 1],\n request queue size=0";
+    String expected = " storage=[item2: 2, item1: 1],\n request queue size=0";
     assertEquals(expected, f.printStorageAndRequest());
   }
 

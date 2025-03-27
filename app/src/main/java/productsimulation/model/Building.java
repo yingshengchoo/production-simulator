@@ -112,7 +112,7 @@ public abstract class Building implements Serializable {
             result.append(item + ": " + count);
 
             if (iterator.hasNext()) {
-                result.append(",\n ");
+                result.append(", ");
             }
         }
     }
