@@ -22,7 +22,7 @@ public class RequestBroadcasterTest {
     rb.addRecipes(r2);
     FactoryType t1 = new FactoryType("type1", Collections.emptyMap());
     Factory f1 =  new Factory("factory1", t1, Collections.emptyList(), null, null);
-    Factory f2 = new Factory("factory1", t1, Collections.emptyList(), null, null);
+    Factory f2 = new Factory("factory2", t1, Collections.emptyList(), null, null);
     Mine m1 = new Mine("mine1", new FactoryType("minetype", Collections.emptyMap()), null, null);
     rb.addBuildings(f1);
     rb.addBuildings(f2);
