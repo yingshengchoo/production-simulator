@@ -30,17 +30,18 @@ public class SetPolicyCommand extends Command {
 
     @Override
     public void execute() {
+        ServePolicy defaultServe = State.getInstance().getDefaultServePolicy();
+        SourcePolicy defaultSource = State.getInstance().getDefaultSourcePolicy();
         if (policyTarget.equals("*")) {
             buildings.addAll(State.getInstance().getBuilding());
         } else if (policyTarget.equals("default")) {
             for (Building building : State.getInstance().getBuilding()) {
-                if (policy instanceof SourcePolicy && building.getSourcePolicy().getName().equals(policy.getName())) {
+                if (policy instanceof SourcePolicy && building.getSourcePolicy().getName().equals(defaultSource.getName())) {
                     buildings.add(building);
-                } else if (policy instanceof ServePolicy && building.getSourcePolicy().getName().equals(typeField)) {
+                } else if (policy instanceof ServePolicy && building.getSourcePolicy().getName().equals(defaultServe.getName())) {
                     buildings.add(building);
                 }
             }
-
         } else if  (policyTarget.startsWith("'") && policyTarget.endsWith("'")) {
             buildings.add(State.getInstance().getBuilding(policyTarget.substring(1, policyTarget.length() - 1)));
         }
@@ -48,6 +49,14 @@ public class SetPolicyCommand extends Command {
         for (Building building : buildings) {
             building.changePolicy(policy);
         }
+
+        if (policy instanceof SourcePolicy) {
+            State.getInstance().setDefaultSourcePolicy(defaultSource);
+        } else if (policy instanceof ServePolicy) {
+            State.getInstance().setDefaultServePolicy(defaultServe);
+        }
+
+
     }
 
     public String getTypeField() {
