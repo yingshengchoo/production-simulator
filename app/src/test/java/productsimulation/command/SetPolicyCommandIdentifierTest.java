@@ -20,8 +20,16 @@ class SetPolicyCommandIdentifierTest {
         assertEquals("request", ((SetPolicyCommand) cmd).getTypeField());
     }
 
+    @Test
     void checkFits_invalid() {
         SetPolicyCommandIdentifier identifier = new SetPolicyCommandIdentifier(null);
         Command cmd = identifier.checkFits("set policy request ");
+        assertNull(cmd);
+
+        cmd = identifier.checkFits("set policy request 'sjff' on 'D'");
+        assertNull(cmd);
+
+        cmd = identifier.checkFits("set policy requefst 'sjf' on default");
+        assertNull(cmd);
     }
 }
