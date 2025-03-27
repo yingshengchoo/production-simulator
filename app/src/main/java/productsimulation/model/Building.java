@@ -227,7 +227,7 @@ public abstract class Building implements Serializable {
 
     
   
-  @Override
+   @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
 

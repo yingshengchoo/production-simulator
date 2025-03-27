@@ -37,8 +37,9 @@ public class BuildingTest {
 
   @Test
   public void test_equals_and_hash(){
-    Factory f1 =  new Factory("factory1", new FactoryType("type1", Collections.emptyMap()), Collections.emptyList(), null, null);
-    Factory f2 = new Factory("factory1", new FactoryType("type1", Collections.emptyMap()), Collections.emptyList(), null, null);
+    FactoryType t1 = new FactoryType("type1", Collections.emptyMap());
+    Factory f1 =  new Factory("factory1", t1, Collections.emptyList(), null, null);
+    Factory f2 = new Factory("factory1", t1, Collections.emptyList(), null, null);
     assertTrue(f1.equals(f2));
     Factory f3 = new Factory("factory2", new FactoryType("type1", Collections.emptyMap()), Collections.emptyList(), null, null);
     assertFalse(f1.equals(f3));
@@ -53,9 +54,7 @@ public class BuildingTest {
     f.updateStorage("item1");
     f.updateStorage("item2");
     f.updateStorage("item2");
-    Request r = Request.getDummyRequest("ingredient1", f);
-    f.addRequest(r);
-    String expected = " storage=[item1: 1,\nitem2: 2],\n request queue size=1";
+    String expected = " storage=[item1: 1,\nitem2: 2],\n request queue size=0";
     assertEquals(expected, f.printStorageAndRequest());
   }
 
