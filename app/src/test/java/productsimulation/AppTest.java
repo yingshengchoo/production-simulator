@@ -260,7 +260,7 @@ class AppTest {
     @Test
     @Disabled("gradle clean test --tests AppTest.sourcePolicy3")
     public void sourcePolicy3() {
-        handTestHelper(1, "json_inputs/sourcePolicy.json",
+        handTestHelper(3, "json_inputs/sourcePolicy.json",
                 "/user_inputs/input_sourcePolicy3.txt",
                 "log_outputs/output_sourcePolicy3.txt");
     }

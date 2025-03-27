@@ -194,7 +194,7 @@ public abstract class Building implements Serializable {
     }
 
     // return: still have/no request for this building now.
-    protected abstract boolean goOneStep();
+    public abstract boolean goOneStep();
 
     private void update() {
         if(currentRequest != null && currentRemainTime == 0) {
@@ -303,6 +303,7 @@ public abstract class Building implements Serializable {
         if (o == null || getClass() != o.getClass()) return false;
 
         Building building = (Building) o;
+        // System.out.println("in building equals");
         return Objects.equals(name, building.name) && Objects.equals(type, building.type);
     }
 

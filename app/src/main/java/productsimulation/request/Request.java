@@ -22,10 +22,6 @@ public class Request implements Serializable{
   private final Building requester;
   private RequestStatus status;
 
-  public Request(String ingredient, Building requester) {
-    this(ingredient, requester, false);
-  }
-
   public Request(String ingredient, Recipe recipe, Building requester) {
     this.id = idGenerator.nextId();
     this.ingredient = ingredient;
@@ -136,6 +132,9 @@ public class Request implements Serializable{
   public Recipe getRecipe() { return recipe; }
 
   public boolean isSameItemRequester(Request request) {
+    if(requester == null) {
+      return ingredient.equals(request.ingredient);
+    }
     return ingredient.equals(request.ingredient) && requester.equals(request.requester);
   }
 }

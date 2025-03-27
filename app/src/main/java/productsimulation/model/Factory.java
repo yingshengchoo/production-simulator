@@ -28,7 +28,8 @@ public class Factory extends Building implements Serializable {
         super(name, type, sourcePolicy, servePolicy);
     }
 
-    protected boolean goOneStep() {
+    public boolean goOneStep() {
+
         if(currentRequest == null) {
             if(!requestQueue.isEmpty()) {
 //                [recipe selection]: Hw2 has fifo on cycle 8
@@ -39,14 +40,17 @@ public class Factory extends Building implements Serializable {
                     request.updateStatus(name, newIngredientsArrived, storage);
                     newIngredientsArrived = false;
                 }
+
                 Request request = servePolicy.getRequest(requestQueue);
+
                 if (request == null) {
                     Log.level2Log("    Request queue is not empty, but no request is is chosen in " + name);
                     return false;
                 }
+
                 Log.level2Log("    request:[" + name + ":" + request.getIngredient() + ":"
                         + request.getRequesterName() + "] is chosen");
-                if(request.getStatus() == RequestStatus.READY) {
+                if(request.getStatus().equals(RequestStatus.READY)) {
                     request.readyToWorking(storage);
                 } else {
                     Log.debugLog(name + " is waiting for ingredients");

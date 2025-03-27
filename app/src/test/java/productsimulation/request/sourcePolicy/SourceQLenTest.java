@@ -20,9 +20,6 @@ class SourceQLenTest {
         Request request2 = new Request("r3", Recipe.getRecipe("r3"), null);
         // Request request3 = new Request("r3", Recipe.getRecipe("r3"), null);
 
-        for (String s : Recipe.getRecipe("r3").getIngredients().keySet()) {
-            System.out.println(s);
-        }
         f3.addRequest(request);
         f3.addRequest(request2);
 

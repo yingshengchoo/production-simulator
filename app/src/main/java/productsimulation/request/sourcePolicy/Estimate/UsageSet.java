@@ -30,7 +30,8 @@ public class UsageSet {
 
     public boolean isRecorded(Request request) {
         for (Entry entry : set) {
-            if (request.equals(entry.getRequest())) {
+            // System.out.println(entry.getRequest().getRecipe().getOutput());
+            if (request.isSameItemRequester(entry.getRequest())) {
                 return true;
             }
         }
@@ -41,8 +42,9 @@ public class UsageSet {
         set.removeIf(e -> pathToRemove.isPrefixOf(e.getPath()));
     }
 
-    public void addRecord(Building building, Path path, Request request) {
+    public void recordWorking(Building building, Path path, Request request) {
         Entry entry = new Entry(path, request, building, "", 0);
         set.add(entry);
     }
 }
+

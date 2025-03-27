@@ -25,12 +25,13 @@ public class Mine extends Building implements Serializable {
         super(name, type, sourcePolicy, servePolicy);
     }
 
-    protected boolean goOneStep() {
+    public boolean goOneStep() {
         if(currentRequest == null) {
             if(!requestQueue.isEmpty()) {
                 Request request = servePolicy.getRequest(requestQueue);
                 // 相比factory，mine不需要等待原材料/检查库存
                 currentRequest = request;
+                request.readyToWorking(storage);
                 Recipe currentRecipe = type.getRecipeByProductName(currentRequest.getIngredient());
                 currentRemainTime = currentRecipe.getLatency();
             } else {

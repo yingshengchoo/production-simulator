@@ -3,6 +3,7 @@ package productsimulation.request.sourcePolicy;
 import productsimulation.Log;
 import productsimulation.model.Building;
 import productsimulation.model.Recipe;
+import productsimulation.request.IdGenerator;
 import productsimulation.request.Request;
 import productsimulation.request.RequestStatus;
 import productsimulation.request.sourcePolicy.Estimate.*;
@@ -12,6 +13,8 @@ import java.util.stream.Collectors;
 
 
 public class SourceEstimate implements SourcePolicy {
+    IdGenerator idGenerator = new IdGenerator();
+
 
     @Override
     public Building getSource(List<Building> buildings, String ingredient) {
@@ -20,19 +23,25 @@ public class SourceEstimate implements SourcePolicy {
         int min = Integer.MAX_VALUE;
         Building source = null;
         for (Building b : buildings) {
+            if (!b.canProduce(ingredient)) {
+                continue;
+            }
             int cur = 0;
+            UsageSet usageSet = new UsageSet();
             List<Request> requests = b.getRequestQueue();
 
             // 取building中所有request的总estimate time
             // calculate the total estimate time cost
             for (Request r : requests) {
-                cur += estimate(r, b, new UsageSet(), new Path());
+                cur += estimate(r, b, usageSet, new Path());
             }
 
             if (cur < min) {
                 min = cur;
                 source = b;
             }
+
+            idGenerator.reset();
 
             Log.level2Log("    " + b.getName() + " " + cur);
         }
@@ -43,7 +52,7 @@ public class SourceEstimate implements SourcePolicy {
         // 1. 若在 usageSet 未记录但 building 正在处理Request
         // if the request is not recorded in the usage set and is current processing
         if (isWorkingAndNotRegistered(building, request, usageSet)) {
-            usageSet.addRecord(building, path, request);
+            usageSet.recordWorking(building, path, request);
             return building.getCurrentRemainTime();
         }
 
@@ -93,7 +102,7 @@ public class SourceEstimate implements SourcePolicy {
         int timeCost = 0;
 
         while (shortage > 0) {
-            int id = IdGenerator.nextId();
+            int id = idGenerator.nextId();
 
             // 获取所有来源工厂的估算时间
             // get estimate time from all buildings
@@ -145,14 +154,17 @@ public class SourceEstimate implements SourcePolicy {
         // find building's current request
         Request buildingCurrentRequest = building.getCurrentRequest();
 
-        if (request == null) {
+
+        if (request == null || buildingCurrentRequest == null) {
             return false;
         }
 
-        // return true if request is working & request is 'same' & not recorded
-        else return request.getStatus() == RequestStatus.WORKING &&
-                request.isSameItemRequester(buildingCurrentRequest) &&
-                !usageSet.isRecorded(request);
+        else {
+            // return true if request is working & request is 'same' & not recorded
+            return buildingCurrentRequest.getStatus() == RequestStatus.WORKING &&
+                    request.isSameItemRequester(buildingCurrentRequest) &&
+                    !usageSet.isRecorded(request);
+        }
     }
 
 
