@@ -203,6 +203,23 @@ public class State implements Serializable{
   public List<Building> getBuilding() {
     return buildings;
   }
+
+  public ServePolicy getDefaultServePolicy() {
+    return defaultServePolicy;
+  }
+
+  public SourcePolicy getDefaultSourcePolicy() {
+    return defaultSourcePolicy;
+  }
+
+  public void setDefaultSourcePolicy(SourcePolicy defaultSourcePolicy) {
+    this.defaultSourcePolicy = defaultSourcePolicy;
+  }
+
+  public void setDefaultServePolicy(ServePolicy defaultServePolicy) {
+    this.defaultServePolicy = defaultServePolicy;
+  }
+
 }
 
 
