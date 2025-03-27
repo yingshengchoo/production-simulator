@@ -35,7 +35,7 @@ public abstract class Building implements Serializable {
     /**
      * Constructs a Building with the specified name, type, sources, and policies.
      *
-     * @param name         is the coordinate of the top left of the ship.
+     * @param name         is the name the Building.
      * @param type         is the Building Type.
      * @param sources      is list of buildings that provides the ingredients to make the recipes.
      * @param sourcePolicy is the policy that the building uses to select between sources.
@@ -52,6 +52,15 @@ public abstract class Building implements Serializable {
         storage = new HashMap<>();
     }
 
+  
+    /**
+     * Constructs a Building with the specified name, type, policies, and no sources.
+     *
+     * @param name         is the name the Building.
+     * @param type         is the Building Type.
+     * @param sourcePolicy is the policy that the building uses to select between sources.
+     * @param servePolicy  is the policy that the building uses to select between requests.
+     */
     public Building(String name, FactoryType type, SourcePolicy sourcePolicy, ServePolicy servePolicy) {
         this.name = name;
         this.type = type;
@@ -61,7 +70,13 @@ public abstract class Building implements Serializable {
         storage = new HashMap<>();
     }
 
-    // 按recipe顺序dfs传播request
+  
+    /**
+     * Adds the request into the relavant buildings.
+     *
+     * @param request    Is the request to be processed.
+     */
+  // 按recipe顺序dfs传播request
     public void addRequest(Request request) {
 //        [ingredient assignment]: wood assigned to W to deliver to D
         Log.level1Log("[ingredient assignment]: " + request.getIngredient() + " assigned to " + name +
@@ -91,14 +106,31 @@ public abstract class Building implements Serializable {
         }
     }
 
+    /**
+     * Checks whether a Recipe can be produced.
+     *
+     * @param itemName    Is the name of the item to be produced
+     * @return            the boolean value of the result. 
+     */
     public boolean canProduce(String itemName) {
         return type.getRecipeByProductName(itemName) != null;
     }
 
+    
+    /**
+     * initializes the sources of the building
+     *
+     * @param sources     Is the list of buildings that provide components of the ingredients of the recipe it produces
+     */
     public void setSources(List<Building> sources) {
         this.sources = sources;
     }
 
+   /**
+     * A helper function that prints out the string representation of the ingredients which can be used.
+     *
+     * @return            is the string representation
+     */
   private String printStorage() {
     StringBuilder result = new StringBuilder(" storage=[");
     
@@ -121,8 +153,13 @@ public abstract class Building implements Serializable {
     return result.toString();
    }
 
+    
+   /**
+     * A helper function that prints out the string representation of number of Requests in the Queue.
+     *
+     * @return            is the string representation
+     */
     private String printRequestQueue() {
-
     StringBuilder result = new StringBuilder(" request queue size=");
     result.append(requestQueue.size());
     
@@ -142,9 +179,22 @@ public abstract class Building implements Serializable {
     return result.toString();
   }
 
+  
+   /**
+     * Returns the string representation of the Storage and request of the building.
+     *
+     * @return            is the string representation
+     */
   public String printStorageAndRequest(){
     return printStorage() + ",\n" + printRequestQueue();
   }
+  
+  
+   /**
+     * returns the number of Requests in the Queue.
+     *
+     * @return            is the number of requests
+     */
     public int getRequestCount() {
         return requestQueue.size();
     }
@@ -197,6 +247,11 @@ public abstract class Building implements Serializable {
         return totalRemainTime;
     }
 
+   /**
+    * Gets the name of the Building
+    *
+    * @return    the name of the mine
+    */
     public String getName() {
         return name;
     }

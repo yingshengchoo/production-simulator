@@ -27,6 +27,7 @@ public class RequestBroadcasterTest {
     rb.addBuildings(f1);
     rb.addBuildings(f2);
     rb.addBuildings(m1);
+
     assertEquals(2, rb.getRecipesSize());
     assertEquals(3, rb.getBuildingsSize());
 

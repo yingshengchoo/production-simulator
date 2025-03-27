@@ -77,14 +77,5 @@ public class Mine extends Building implements Serializable {
       "\n}";
   }
 
-  /**
-   * Gets the name of the Mine
-   *
-   * @return    the name of the mine
-   */
-  public String getName(){
-    return name;
-  }
-
-
+ 
 }
