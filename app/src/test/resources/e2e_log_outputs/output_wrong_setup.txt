@@ -1,0 +1,2 @@
+[Log] - initializing with
+[Log] - Failed to parse JSON file.

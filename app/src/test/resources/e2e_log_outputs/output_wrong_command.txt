@@ -1,0 +1,14 @@
+[Log] - initializing with json_inputs/doors1.json
+[Log] - Checking recipe 'door': {"wood":1,"handle":1,"hinge":3}
+[Log] - Checking recipe 'handle': {"metal":1}
+[Log] - Checking recipe 'hinge': {"metal":1}
+[Log] - The setup json is valid!
+Welcome to product simulation, you can:
+request 'itemName' from 'buildingName'
+step 1
+verbose 1
+finish
+set policy request on target
+save saveFileName
+load loadFileName
+>

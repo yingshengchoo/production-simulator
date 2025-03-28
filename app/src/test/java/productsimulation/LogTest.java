@@ -1,5 +1,7 @@
 package productsimulation;
 
+import org.apache.logging.log4j.LogManager;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.ResourceAccessMode;
 import org.junit.jupiter.api.parallel.ResourceLock;
@@ -21,6 +23,12 @@ public class LogTest {
 //    private String filePathStr = "src/test/resources/test.log";
     private String filePathStr = "test.log";
     private Path filePath = Paths.get(filePathStr);
+
+    @AfterEach
+    void tearDown() {
+        // 确保日志完全刷新和关闭
+        LogManager.shutdown();
+    }
 
     private void cleanUpLogFile() throws IOException {
         Files.write(filePath, "".getBytes(StandardCharsets.UTF_8));
