@@ -28,9 +28,9 @@ public class UsageSet {
         return Math.max(res, 0);
     }
 
-    public boolean isRecorded(Request request) {
+    public boolean isRecorded(Request request, Building building) {
         for (Entry entry : set) {
-            if (request.isSameItemRequester(entry.getRequest())) {
+            if (request.isSameItemRequester(entry.getRequest()) && building.equals(entry.getBuilding())) {
                 return true;
             }
         }
@@ -44,8 +44,6 @@ public class UsageSet {
     public void recordWorking(Building building, Path path, Request request) {
         Entry entry = new Entry(path, request, building, "", 0);
         set.add(entry);
-        System.out.println("recorded " + request.getRecipe().getOutput() +
-                entry.getIngredient() + " " + entry.getAmount() + " " + entry.getBuilding().getName());
     }
 }
 

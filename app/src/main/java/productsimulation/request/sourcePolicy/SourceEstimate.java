@@ -24,6 +24,9 @@ public class SourceEstimate implements SourcePolicy {
         Building source = null;
         for (Building b : buildings) {
 
+            if (!b.canProduce(ingredient)) {
+                continue;
+            }
             int cur = 0;
             UsageSet usageSet = new UsageSet();
             List<Request> requests = b.getRequestQueue();
@@ -32,10 +35,6 @@ public class SourceEstimate implements SourcePolicy {
             // calculate the total estimate time cost
             for (Request r : requests) {
                 cur += estimate(r, b, usageSet, new Path());
-            }
-
-            if (!b.canProduce(ingredient)) {
-                continue;
             }
 
             if (cur < min) {
@@ -164,7 +163,7 @@ public class SourceEstimate implements SourcePolicy {
             // return true if request is working & request is 'same' & not recorded
             return buildingCurrentRequest.getStatus() == RequestStatus.WORKING &&
                     request.isSameItemRequester(buildingCurrentRequest) &&
-                    !usageSet.isRecorded(request);
+                    !usageSet.isRecorded(request, building);
         }
     }
 
