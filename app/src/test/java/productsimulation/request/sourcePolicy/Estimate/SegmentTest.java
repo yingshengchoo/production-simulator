@@ -8,6 +8,29 @@ import productsimulation.request.MockingEnv;
 
 class SegmentTest {
 
+    @Test
+    void testHashCode_sameObject() {
+        Segment segment = new Segment(1, mockingEnv.getBuilding());
+        assertEquals(segment.hashCode(), segment.hashCode());
+    }
+
+    @Test
+    void testHashCode_differentObjectsSameValues() {
+        Building building = mockingEnv.getBuilding();
+        Segment segment1 = new Segment(1, building);
+        Segment segment2 = new Segment(1, building);
+        assertEquals(segment1.hashCode(), segment2.hashCode());
+    }
+
+    @Test
+    void testHashCode_differentObjectsDifferentValues() {
+        Building building1 = mockingEnv.getBuildings().get(0);
+        Building building2 = mockingEnv.getBuildings().get(1);
+        Segment segment1 = new Segment(1, building1);
+        Segment segment2 = new Segment(2, building2);
+        assertNotEquals(segment1.hashCode(), segment2.hashCode());
+    }
+
     MockingEnv mockingEnv = new MockingEnv();
     @Test
     void testEquals_sameObject() {
