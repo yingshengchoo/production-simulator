@@ -8,6 +8,8 @@ import productsimulation.model.*;
 import productsimulation.request.servePolicy.FIFOPolicy;
 import productsimulation.request.servePolicy.ReadyPolicy;
 import productsimulation.request.servePolicy.SjfPolicy;
+import productsimulation.request.sourcePolicy.SourceEstimate;
+import productsimulation.request.sourcePolicy.SourceSimplelat;
 
 import java.util.*;
 
@@ -68,7 +70,7 @@ class SetPolicyCommandTest {
     }
 
     @Test
-    void test_execute_default_building_after_change() {
+    void test_execute_default_building_after_change_serve() {
         setUpEnvironment();
         SetPolicyCommand cm1 = new SetPolicyCommand("request", "GC", "ready");
         cm1.execute();
@@ -85,6 +87,50 @@ class SetPolicyCommandTest {
                 assertEquals(new ReadyPolicy().getName(), building.getServePolicy().getName());
             }
         }
+    }
+
+    @Test
+    void test_execute_all_building_after_change_serve() {
+        setUpEnvironment();
+        SetPolicyCommand cm1 = new SetPolicyCommand("request", "GC", "ready");
+        cm1.execute();
+        for (Building building : cm1.getTargetBuildings()) {
+            assertEquals(new ReadyPolicy().getName(), building.getServePolicy().getName());
+        }
+
+        SetPolicyCommand cmd = new SetPolicyCommand("request", "*", "sjf");
+        assertDoesNotThrow(() -> cmd.execute());
+        for (Building building : State.getInstance().getBuilding()) {
+                assertEquals(new SjfPolicy().getName(), building.getServePolicy().getName());
+
+        }
+    }
+
+    @Test
+    void test_execute_default_building_after_change_source() {
+        setUpEnvironment();
+        SetPolicyCommand cmd1 = new SetPolicyCommand("source", "GC", "simplelat");
+        cmd1.execute();
+        assertEquals(new SourceSimplelat().getName(), cmd1.getTargetBuildings().get(0).getSourcePolicy().getName());
+        SetPolicyCommand cmd2 = new SetPolicyCommand("source", "default", "estimate");
+        List<Building> buildings = cmd2.getTargetBuildings();
+        cmd2.execute();
+//        assertEquals("estimate", buildings.get(0).getSourcePolicy().getName());
+
+    }
+
+    @Test
+    void test_execute_all_building_after_change_source() {
+        setUpEnvironment();
+        SetPolicyCommand cmd1 = new SetPolicyCommand("source", "GC", "simplelat");
+        cmd1.execute();
+        assertEquals(new SourceSimplelat().getName(), cmd1.getTargetBuildings().get(0).getSourcePolicy().getName());
+        SetPolicyCommand cmd2 = new SetPolicyCommand("source", "*", "simplelat");
+        cmd2.execute();
+        for (Building building : State.getInstance().getBuilding()) {
+            assertEquals(new SourceSimplelat().getName(), building.getSourcePolicy().getName());
+        }
+
     }
 
 

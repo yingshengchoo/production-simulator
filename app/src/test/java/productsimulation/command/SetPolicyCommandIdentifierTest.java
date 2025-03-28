@@ -28,5 +28,10 @@ class SetPolicyCommandIdentifierTest {
 
         cmd = identifier.checkFits("set policy requefst 'sjf' on default");
         assertNull(cmd);
+
+        cmd = identifier.checkFits("set policy request ' on default");
+        assertNull(cmd);
+
+        cmd = identifier.checkFits("set policy request 'sjf' default");
     }
 }
