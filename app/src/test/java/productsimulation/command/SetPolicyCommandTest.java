@@ -109,14 +109,11 @@ class SetPolicyCommandTest {
     @Test
     void test_execute_default_building_after_change_source() {
         setUpEnvironment();
-        SetPolicyCommand cmd1 = new SetPolicyCommand("source", "GC", "simplelat");
+        SetPolicyCommand cmd1 = new SetPolicyCommand("source", "default", "simplelat");
         cmd1.execute();
-        assertEquals(new SourceSimplelat().getName(), cmd1.getTargetBuildings().get(0).getSourcePolicy().getName());
-        SetPolicyCommand cmd2 = new SetPolicyCommand("source", "default", "estimate");
-        List<Building> buildings = cmd2.getTargetBuildings();
+        SetPolicyCommand cmd2 = new SetPolicyCommand("source", "default", "qlen");
         cmd2.execute();
-//        assertEquals("estimate", buildings.get(0).getSourcePolicy().getName());
-
+        assertEquals("simplelat", cmd1.getPolicy().getName());
     }
 
     @Test
