@@ -198,7 +198,7 @@ public class SourceEstimate implements SourcePolicy {
     }
 
     public String getName() {
-        return "source estimate";
+        return "estimate";
     }
 
 }

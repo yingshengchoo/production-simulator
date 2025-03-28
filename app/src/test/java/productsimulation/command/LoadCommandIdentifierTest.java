@@ -8,7 +8,7 @@ class LoadCommandIdentifierTest {
     LoadCommandIdentifier loadCommandIdentifier = new LoadCommandIdentifier(null);
 
     @Test
-    void checkFits() {
+    void checkFits_invalid() {
         Command cmd = loadCommandIdentifier.checkFits("load ");
         assertNull(cmd);
     }
