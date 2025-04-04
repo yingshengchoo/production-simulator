@@ -125,7 +125,6 @@ public class App {
         }
         // enter interaction phase
         CommandParser cmdParser = new CommandParser();
-//        readInputCommand(cmdParser, new InputStreamReader(System.in), true);
         readInputCommand(cmdParser, new InputStreamReader(System.in));
     }
 

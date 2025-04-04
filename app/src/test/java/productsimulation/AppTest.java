@@ -246,15 +246,7 @@ class AppTest {
 //        return content.toString();
 //    }
 //
-//    @Test
-//    public void door1LogLevel0() throws IOException {
-//        Log.setLogLevel(0);
-//        demoHelper("json_inputs/doors1.json", "/user_inputs/input1.txt");
-//        String actual = getActualLogFromFile(Paths.get("test.log"));
 //
-//        String expectedOutput = readResourceFile("log_outputs/output1.txt");
-//        assertEquals(expectedOutput, actual);
-//    }
 //    private void demoHelper(String setupFileName, String inputFileName) {
 //        SetupParser parser = new SetupParser();
 //        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(setupFileName);
@@ -285,14 +277,14 @@ class AppTest {
 //        String expectedOutput = readResourceFile(outputFileName);;
 //        assertEquals(expectedOutput, actual);
 //    }
-
+//
 //    @Test
-//    public void door1LogLevel1() throws IOException {
-//        testHelper("json_inputs/doors1.json",
-//                "e2e_user_inputs/input_door1_level1.txt",
-//                "e2e_log_outputs/output_door1_level1.txt");
+//    public void door1LogLevel0() throws IOException {
+//        handTestHelper(0, "json_inputs/doors1.json",
+//                "/user_inputs/input1.txt",
+//                "log_outputs/output1.txt");
 //    }
-
+//
 //    @Test
 //    public void door1LogLevel1() throws IOException {
 //        handTestHelper(1, "json_inputs/doors1.json",
