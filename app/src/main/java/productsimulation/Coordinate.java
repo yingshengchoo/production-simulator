@@ -1,8 +1,10 @@
 package productsimulation;
 
 import java.util.Objects;
+import java.io.Serializable;
 
-public class Coordinate {
+
+public class Coordinate implements Serializable {
     public int x;
     public int y;
 
