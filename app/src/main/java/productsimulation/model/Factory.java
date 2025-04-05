@@ -9,7 +9,7 @@ import productsimulation.request.sourcePolicy.SourcePolicy;
 import java.io.Serializable;
 import java.util.List;
 
-public class Factory extends Building implements Serializable {
+public class Factory extends Building {
   
   /**
    * Constructs a Factory with the specified name, type, sources, and policies.
@@ -72,25 +72,6 @@ public class Factory extends Building implements Serializable {
         totalRemainTime -= 1;
         return false;
     }
-
-
-  //A helper function that returns a string representation of the sources.
-  private String printSources() {
-    StringBuilder result = new StringBuilder("[");
-    if (super.sources != null && !super.sources.isEmpty()) {
-        for (int i = 0; i < super.sources.size(); i++) {
-            Building b = super.sources.get(i);
-            result.append(b.getName());
-           
-            if (i < super.sources.size() - 1) {
-                result.append(", ");
-            }
-        }
-    }
-    
-    result.append("]");  
-    return result.toString();
-  }
 
   // Returns the String representation of Factory.
   @Override

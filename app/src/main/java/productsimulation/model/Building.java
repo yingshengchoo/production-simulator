@@ -147,7 +147,24 @@ public abstract class Building implements Serializable {
     return result.toString();
    }
 
+   //A helper function that returns a string representation of the sources.
+  protected String printSources() {
+    StringBuilder result = new StringBuilder("[");
+    if (sources != null && !sources.isEmpty()) {
+        for (int i = 0; i < sources.size(); i++) {
+            Building b = sources.get(i);
+            result.append(b.getName());
+           
+            if (i < sources.size() - 1) {
+                result.append(", ");
+            }
+        }
+    }
     
+    result.append("]");  
+    return result.toString();
+  }
+
    /**
      * A helper function that prints out the string representation of number of Requests in the Queue.
      *
