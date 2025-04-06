@@ -1,7 +1,6 @@
 package productsimulation;
 
-import productsimulation.model.Building;
-
+import productsimulation.model.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -52,6 +51,13 @@ public class LogicTime implements Serializable{
         boolean finished = true;
         for(int i = 0; i < timeDiff; i++) {
             finished = true;
+            //確保 Storage 有先發給Sources request 
+            for(Building b: observers){
+              if(b instanceof Storage){
+                Storage s = (Storage) b;
+                s.sendRequest();
+              }
+            }
             // 新一步
             for(Building b: observers) {
                 boolean idle = b.notified();

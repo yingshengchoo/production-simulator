@@ -213,7 +213,7 @@ public abstract class Building implements Serializable {
     // return: still have/no request for this building now.
     public abstract boolean goOneStep();
 
-    private void update() {
+    protected void update() {
         if(currentRequest != null && currentRemainTime == 0) {
             //      [ingredient delivered]: hinge to D from Hw2 on cycle 11
             Log.level2Log("[ingredient delivered]: " + currentRequest.getIngredient()

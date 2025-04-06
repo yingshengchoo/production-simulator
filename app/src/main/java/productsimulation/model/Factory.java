@@ -6,7 +6,6 @@ import productsimulation.request.Request;
 import productsimulation.request.RequestStatus;
 import productsimulation.request.servePolicy.ServePolicy;
 import productsimulation.request.sourcePolicy.SourcePolicy;
-import java.io.Serializable;
 import java.util.List;
 
 public class Factory extends Building {
