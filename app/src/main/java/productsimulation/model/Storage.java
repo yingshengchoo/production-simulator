@@ -64,7 +64,7 @@ public class Storage extends Building {
     if(R == 0){
       this.frequency = -1;
     } else {
-     this.frequency = (int)Math.ceil((totalCapacity * totalCapacity) / (R * priority));
+      this.frequency = (int)Math.ceil((totalCapacity * totalCapacity) / (R * priority));
     }
   }  
 
@@ -166,7 +166,10 @@ public class Storage extends Building {
   public int getR(){
     return R;
   }
-  
+
+  public int getTotalCapacity(){
+    return totalCapacity;
+  }
   @Override
   public void addRequest(Request request){
       //[ingredient assignment]: wood assigned to W to deliver to D
