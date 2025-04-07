@@ -89,7 +89,7 @@ public class StorageTest {
    
    t.stepNHandler(1);
    assertEquals(1, t.getStep());
-   assertEquals(100, s1.getR());
+   assertEquals(101, s1.getR());
    s1.updateFrequency();
    assertEquals(1, s1.getFrequency());
    assertEquals(1, f.getRequestCount());
