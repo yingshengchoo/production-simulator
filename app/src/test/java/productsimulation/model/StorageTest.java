@@ -19,7 +19,7 @@ public class StorageTest {
   @BeforeEach
   public void setup(){
     LogicTime.getInstance().reset();
-    
+    RequestBroadcaster.getInstance().reset();
   }
   
   @Test
@@ -49,7 +49,7 @@ public class StorageTest {
    Storage s1 = new Storage("Drawer", socks, sources, 100, 100, new SourceQLen(), new FIFOPolicy());
    ArrayList<Building> sources2 = new ArrayList<>();
    sources2.add(s1);
-   Recipe pair = new Recipe(1,Map.of("Socks", 2), "pairOfSocks");
+   Recipe pair = new Recipe(1,Map.of("socks", 2), "pairOfSocks");
    Factory f = new Factory("SocksFactory", new FactoryType("PairOfSocks", Map.of("pairOfSocks", pair)), sources2, new SourceQLen(), new FIFOPolicy());
 
    t.addObservers(m1);
