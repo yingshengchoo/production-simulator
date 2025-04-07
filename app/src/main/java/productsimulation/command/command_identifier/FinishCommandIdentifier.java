@@ -1,4 +1,7 @@
-package productsimulation.command;
+package productsimulation.command.command_identifier;
+
+import productsimulation.command.Command;
+import productsimulation.command.FinishCommand;
 
 public class FinishCommandIdentifier extends CommandIdentifier {
 
@@ -7,7 +10,7 @@ public class FinishCommandIdentifier extends CommandIdentifier {
     }
 
     @Override
-    protected Command checkFits(String line) {
+    public Command checkFits(String line) {
         if ("finish".equals(line.trim())) {
             return new FinishCommand();
         }

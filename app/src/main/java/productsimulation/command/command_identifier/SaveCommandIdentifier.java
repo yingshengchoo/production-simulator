@@ -1,4 +1,7 @@
-package productsimulation.command;
+package productsimulation.command.command_identifier;
+
+import productsimulation.command.Command;
+import productsimulation.command.SaveCommand;
 
 public class SaveCommandIdentifier extends CommandIdentifier {
 
@@ -7,7 +10,7 @@ public class SaveCommandIdentifier extends CommandIdentifier {
     }
 
     @Override
-    protected Command checkFits(String line) {
+    public Command checkFits(String line) {
         if (!line.startsWith("save ")) {
             return null;
         }

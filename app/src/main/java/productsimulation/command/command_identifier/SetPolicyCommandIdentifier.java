@@ -1,4 +1,7 @@
-package productsimulation.command;
+package productsimulation.command.command_identifier;
+
+import productsimulation.command.Command;
+import productsimulation.command.SetPolicyCommand;
 
 public class SetPolicyCommandIdentifier extends CommandIdentifier {
     public SetPolicyCommandIdentifier(CommandIdentifier next) {
@@ -6,7 +9,7 @@ public class SetPolicyCommandIdentifier extends CommandIdentifier {
     }
 
     @Override
-    protected Command checkFits(String line) {
+    public Command checkFits(String line) {
         line = line.trim();
         if (!line.startsWith("set policy")) {
             return null;

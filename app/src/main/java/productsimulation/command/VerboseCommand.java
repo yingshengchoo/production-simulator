@@ -10,8 +10,9 @@ public class VerboseCommand extends Command {
     }
 
     @Override
-    public void execute() {
+    public String execute() {
         Log.setLogLevel(verboseLevel);
+        return null;
     }
 
     public int getLevel() {

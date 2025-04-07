@@ -1,5 +1,7 @@
 package productsimulation.command;
 
+import productsimulation.command.command_identifier.*;
+
 public class CommandParser {
   private final CommandIdentifier commandIdentifier;
 
