@@ -11,8 +11,17 @@ import productsimulation.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
+import org.junit.jupiter.api.BeforeEach;
+
 
 public class StorageTest {
+
+  @BeforeEach
+  public void setup(){
+    LogicTime.getInstance().reset();
+    
+  }
+  
   @Test
   public void test_toString() {
     ArrayList<Building> sources = new ArrayList<>();
