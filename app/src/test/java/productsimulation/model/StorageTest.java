@@ -52,23 +52,23 @@ public class StorageTest {
    //F = 100*100/(100*100) = 1
    //we expect the storage to request sock at t =0 and t =1;
    
-   assert(t.getStep() == 0);
+   assertTrue(t.getStep() == 0);
    f.addRequest(new Request("pairOfSocks", pair, null));
-   assert(f.getRequestCount() == 1);
-   assert(s1.getRequestCount() == 1);
-   assert(s1.getStockCount() == 0);
-   assert(m1.getRequestCount() == 0);
-   assert(m2.getRequestCount() == 0);
+   assertTrue(f.getRequestCount() == 1);
+   assertTrue(s1.getRequestCount() == 1);
+   assertTrue(s1.getStockCount() == 0);
+   assertTrue(m1.getRequestCount() == 0);
+   assertTrue(m2.getRequestCount() == 0);
    
    t.stepNHandler(1);
-   assert(t.getStep() ==1);
+   assertTrue(t.getStep() ==1);
    
    
    t.stepNHandler(1);
-   assert(t.getStep() == 2);
+   assertTrue(t.getStep() == 2);
 
    t.stepNHandler(1);
-   assert(t.getStep() == 2);
+   assertTrue(t.getStep() == 2);
  }
 
 }
