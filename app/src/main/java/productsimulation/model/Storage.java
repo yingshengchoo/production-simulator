@@ -199,13 +199,13 @@ public class Storage extends Building {
   
   @Override
   public String toString() {
-    return "Storage\n{name='" + super.name + 
-           "',\n stores='" + super.type.getName() + 
+    return "Storage\n{name='" + super.name +   
+           "',\n stores='" + recipe.getOutput() + 
            "',\n sources=" + printSources() + 
            ",\n capacity=" + totalCapacity +
       // ",\n sourcePolicy=" + super.sourcePolicy.toString() + 
            // "',\n servePolicy=" + super.servePolicy.toString() + "'" +
-      ",\n" + printStorageAndRequest()+
-      "\n}";
+           ",\n" + printStorageAndRequest()+
+           "\n}";
   }
 }
