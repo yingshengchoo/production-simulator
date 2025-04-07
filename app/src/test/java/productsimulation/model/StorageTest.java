@@ -57,12 +57,21 @@ public class StorageTest {
    t.addObservers(s1);
    t.addObservers(f);
 
+   RequestBroadcaster rb = RequestBroadcaster.getInstance();
+   rb.addBuildings(m1);
+   rb.addBuildings(m2);
+   rb.addBuildings(s1);
+   rb.addBuildings(f);
+   rb.addRecipes(socks);
+   rb.addRecipes(pair);
+
    
    //F = 100*100/(100*100) = 1
    //we expect the storage to request sock at t =0 and t =1;
    
    assertEquals(0, t.getStep());
-   f.addRequest(new Request("pairOfSocks", pair, null));
+   rb.userRequestHandler(pair.getOutput(),f.getName()); 
+
    assertEquals(1, f.getRequestCount());
    assertEquals(2, s1.getRequestCount());
    assertEquals(0, s1.getStockCount());
