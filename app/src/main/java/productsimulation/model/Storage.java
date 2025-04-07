@@ -17,9 +17,9 @@ public class Storage extends Building {
   private int priority;
   private int frequency;
   private int totalCapacity;
-  private int remainingCapacity;
   private List<Request> readyQueue;
   private Recipe recipe;
+  private int R;
   /**
    * Constructs a Mine with the specified name, type, sources, and policies.
    *
@@ -34,8 +34,8 @@ public class Storage extends Building {
     this.recipe = recipe;
     this.totalCapacity = totalCapacity;
     this.priority = priority;
-    this.remainingCapacity = totalCapacity;
     this.frequency = -1;
+    this.R = totalCapacity;
     readyQueue = new ArrayList<>();
   }
 
@@ -52,24 +52,23 @@ public class Storage extends Building {
         super(name, type, sourcePolicy, servePolicy);
         this.totalCapacity = totalCapacity;
         this.priority = priority;
-        this.remainingCapacity = totalCapacity;
         this.frequency = -1;
+        this.R = totalCapacity;
   }
 
   /**
    * Updates the frequency of the request 
    */
   private void updateFrequency(){
-    if(remainingCapacity == 0){
+    if(storage.size() == 0){
       this.frequency = -1;
     }
-    this.frequency = (int)Math.ceil((totalCapacity * totalCapacity) / (remainingCapacity * priority));
+    this.frequency = (int)Math.ceil((totalCapacity * totalCapacity) / (R * priority));
   }  
 
   @Override
   public boolean goOneStep() {
     //Serve policy used should always be fifo.
-    assert servePolicy.getName() == "fifo";
     
     if(!requestQueue.isEmpty()) {
       //    [recipe selection]: Hw2 has fifo on cycle 8
@@ -97,7 +96,8 @@ public class Storage extends Building {
           return false;
         }
         //add request to request queue to send at next time step
-        requestQueue.add(request);
+        readyQueue.add(request);
+        R--;//consumes one storage
         //keeps updating until we get a request
         currentRemainTime = recipe.getLatency();
         request = servePolicy.getRequest(requestQueue);
@@ -117,7 +117,7 @@ public class Storage extends Building {
   @Override
   public int getRequestCount() {
     if(hasStock()){
-      assert requestQueue.isEmpty(); //if has stock there should be no request
+      //if has stock there should be no request
       return -1 * getStockCount();
     } else {
       return requestQueue.size();
@@ -133,12 +133,15 @@ public class Storage extends Building {
     }
   }
 
-  private int getStockCount(){
-    return totalCapacity - remainingCapacity;
+  private boolean hasStock(){
+    return getStockCount() != 0;
   }
 
-  private boolean hasStock(){
-    return remainingCapacity != totalCapacity;
+  @Override
+  public void updateStorage(String itemName){
+    super.updateStorage(itemName);
+    //No need here R--; I believe...
+    //source increases storage (R++) and outstanding request -1 (R--) which cancels out
   }
   
   @Override
@@ -152,6 +155,10 @@ public class Storage extends Building {
     }
     
     readyQueue.clear();
+  }
+
+  public int getStockCount(){
+    return storage.size();
   }
   
   @Override
@@ -168,6 +175,7 @@ public class Storage extends Building {
       totalRemainTime += request.getLatency();
       //Storage only sends request to sources periodically.
       //so sends request to sources in goOneStep()
+      R++;
   }
 
   /**
@@ -185,6 +193,7 @@ public class Storage extends Building {
       Recipe childRecipe = chosenSource.type.getRecipeByProductName(recipe.getOutput());
       Request req = new Request(recipe.getOutput(), childRecipe,this);
       chosenSource.addRequest(req);
+      R--;
     }
   }
   
