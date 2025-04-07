@@ -200,9 +200,10 @@ public class Storage extends Building {
   @Override
   public String toString() {
     return "Storage\n{name='" + super.name + 
-           "',\n type='" + super.type.getName() + 
+           "',\n stores='" + super.type.getName() + 
            "',\n sources=" + printSources() + 
-           // ",\n sourcePolicy=" + super.sourcePolicy.toString() + 
+           ",\n capacity=" + totalCapacity +
+      // ",\n sourcePolicy=" + super.sourcePolicy.toString() + 
            // "',\n servePolicy=" + super.servePolicy.toString() + "'" +
       ",\n" + printStorageAndRequest()+
       "\n}";
