@@ -60,10 +60,11 @@ public class Storage extends Building {
    * Updates the frequency of the request 
    */
   private void updateFrequency(){
-    if(storage.size() == 0){
+    if((totalCapacity - storage.size()) == 0){
       this.frequency = -1;
+    } else {
+     this.frequency = (int)Math.ceil((totalCapacity * totalCapacity) / (R * priority));
     }
-    this.frequency = (int)Math.ceil((totalCapacity * totalCapacity) / (R * priority));
   }  
 
   @Override
@@ -195,6 +196,10 @@ public class Storage extends Building {
       chosenSource.addRequest(req);
       R--;
     }
+  }
+  
+  public int getFrequency(){
+    return frequency;
   }
   
   @Override
