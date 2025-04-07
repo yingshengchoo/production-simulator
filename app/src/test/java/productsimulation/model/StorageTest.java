@@ -68,6 +68,10 @@ public class StorageTest {
    
    //F = 100*100/(100*100) = 1
    //we expect the storage to request sock at t =0 and t =1;
+
+   assertEquals(100, s1.getR());
+   s1.updateFrequency();
+   assertEquals(1, s1.getFrequency());
    
    assertEquals(0, t.getStep());
    rb.userRequestHandler(pair.getOutput(),f.getName()); 

@@ -59,8 +59,9 @@ public class Storage extends Building {
   /**
    * Updates the frequency of the request 
    */
-  private void updateFrequency(){
-    if((totalCapacity - storage.size()) == 0){
+  public void updateFrequency(){
+    //frequency should never be 0.
+    if(R == 0){
       this.frequency = -1;
     } else {
      this.frequency = (int)Math.ceil((totalCapacity * totalCapacity) / (R * priority));
@@ -161,6 +162,10 @@ public class Storage extends Building {
   public int getStockCount(){
     return storage.size();
   }
+
+  public int getR(){
+    return R;
+  }
   
   @Override
   public void addRequest(Request request){
@@ -185,7 +190,7 @@ public class Storage extends Building {
   public void sendRequest(){
     updateFrequency();
     boolean validFrequency = (frequency != -1);
-    boolean isOnFrequency = (LogicTime.getInstance().getStep() % frequency == 0);
+\    boolean isOnFrequency = (LogicTime.getInstance().getStep() % frequency == 0);
     if(validFrequency && isOnFrequency){
       Log.level2Log("[" + name + ":" + recipe.getOutput() + ":" + LogicTime.getInstance().getStep()
                 + "] For Storage " + name);
