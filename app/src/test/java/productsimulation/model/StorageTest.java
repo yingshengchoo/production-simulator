@@ -20,7 +20,7 @@ public class StorageTest {
     sources.add(new Factory("DoorInc", new FactoryType("Door", Collections.emptyMap()), Collections.emptyList(), null, null));
     sources.add(new Mine("DiamondMine", new FactoryType("Diamond", Collections.emptyMap()), Collections.emptyList(), null, null));
     Storage s1 = new Storage("Drawer", new Recipe(2, Collections.emptyMap(), "socks"), sources, 150, 10, null, null);
-    String expected = "Storage\n{name='Drawer',\n stores='socks',\n sources=[Closet, DoorInc, DiamondMine],\n capacity=150,\n storage=[],\n request queue size =0\n}";
+    String expected = "Storage\n{name='Drawer',\n stores='socks',\n sources=[Closet, DoorInc, DiamondMine],\n capacity=150,\n storage=[],\n request queue size=0\n}";
 
     assertEquals(expected, s1.toString());
   
