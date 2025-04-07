@@ -1,4 +1,6 @@
-package productsimulation.command;
+package productsimulation.command.command_identifier;
+
+import productsimulation.command.Command;
 
 public abstract class CommandIdentifier {
     private final CommandIdentifier next;
@@ -7,7 +9,7 @@ public abstract class CommandIdentifier {
         this.next = next;
     }
 
-    protected abstract Command checkFits(String line);
+    public abstract Command checkFits(String line);
 
     public Command checkInput(String line) {
 

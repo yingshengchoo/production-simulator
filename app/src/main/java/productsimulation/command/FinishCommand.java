@@ -1,6 +1,5 @@
 package productsimulation.command;
 
-import productsimulation.Log;
 import productsimulation.LogicTime;
 
 public class FinishCommand extends Command {
@@ -9,7 +8,8 @@ public class FinishCommand extends Command {
     }
 
     @Override
-    public void execute() {
+    public String execute() {
         LogicTime.getInstance().finishHandler();
+        return null;
     }
 }

@@ -19,7 +19,7 @@ public class SetPolicyCommand extends Command {
     private final String policyTarget;      // "default", "*", or "'building name'"
     private Policy policy;
     private final List<Building> buildings;
-    Set<Policy> policies = new HashSet<>(Arrays.asList(
+    Set<Policy> availablePoliciesToSet = new HashSet<>(Arrays.asList(
             new FIFOPolicy(), new ReadyPolicy(), new SjfPolicy(),
             new SourceEstimate(), new SourceQLen(), new SourceSimplelat()
     ));
@@ -28,7 +28,7 @@ public class SetPolicyCommand extends Command {
 
         this.policyType = policyType;
         this.policyTarget = policyTarget;
-        for (Policy p : policies) {
+        for (Policy p : availablePoliciesToSet) {
             if (p.getName().equals(policy)) {
                 this.policy = p;
                 break;
@@ -67,7 +67,10 @@ public class SetPolicyCommand extends Command {
     }
 
     @Override
-    public void execute() {
+    public String execute() {
+        if (policy == null) {
+            return "The policy you want to set does not exist";
+        }
         for (Building building : buildings) {
             building.changePolicy(policy);
         }
@@ -77,7 +80,7 @@ public class SetPolicyCommand extends Command {
         } else if (policy instanceof ServePolicy &&  policyTarget.equals("default")) {
             State.getInstance().setDefaultServePolicy((ServePolicy) policy);
         }
-
+        return null;
 }
 
     public String getPolicyType() {

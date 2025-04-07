@@ -5,5 +5,5 @@ import java.io.IOException;
 public abstract class Command {
   public Command() {}
 
-  public abstract void execute() throws IOException, ClassNotFoundException;
+  public abstract String execute() throws IOException, ClassNotFoundException;
 }
