@@ -80,7 +80,7 @@ public class StorageTest {
    assertEquals(100, s1.getPriority());
    assertEquals(100, s1.getTotalCapacity());
    s1.updateFrequency();
-   assertEquals(1, (int)Math.ceil((s1.getTotalCapacity() * s1.getTotalCapacity()) / (s1.getR() * s1.getPriority())));
+   assertEquals(1, (int)Math.ceil((double)(s1.getTotalCapacity() * s1.getTotalCapacity()) / (double)(s1.getR() * s1.getPriority())));
    assertEquals((int)Math.ceil((s1.getTotalCapacity() * s1.getTotalCapacity()) / (s1.getR() * s1.getPriority())), s1.getFrequency());
    assertEquals(100, s1.getTotalCapacity());
    assertEquals(1, f.getRequestCount());

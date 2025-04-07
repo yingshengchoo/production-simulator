@@ -64,7 +64,7 @@ public class Storage extends Building {
     if(R == 0){
       this.frequency = -1;
     } else {
-      this.frequency = (int)Math.ceil((totalCapacity * totalCapacity) / (R * priority));
+      this.frequency = (int)Math.ceil((double)(totalCapacity * totalCapacity) / (double)(R * priority));
     }
   }  
 
