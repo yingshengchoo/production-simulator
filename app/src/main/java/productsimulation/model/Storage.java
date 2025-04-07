@@ -170,6 +170,10 @@ public class Storage extends Building {
   public int getTotalCapacity(){
     return totalCapacity;
   }
+
+  public int getPriority(){
+    return priority;
+  }
   @Override
   public void addRequest(Request request){
       //[ingredient assignment]: wood assigned to W to deliver to D
