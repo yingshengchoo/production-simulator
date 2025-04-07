@@ -189,9 +189,11 @@ public class Storage extends Building {
    */
   public void sendRequest(){
     updateFrequency();
-    boolean validFrequency = (frequency != -1);
+    if (frequency != -1){
+      return;
+    }
     boolean isOnFrequency = (LogicTime.getInstance().getStep() % frequency == 0);
-    if(validFrequency && isOnFrequency){
+    if(isOnFrequency){
       Log.level2Log("[" + name + ":" + recipe.getOutput() + ":" + LogicTime.getInstance().getStep()
                 + "] For Storage " + name);
       Building chosenSource = sourcePolicy.getSource(sources, recipe.getOutput());
