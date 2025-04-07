@@ -190,7 +190,7 @@ public class Storage extends Building {
   public void sendRequest(){
     updateFrequency();
     boolean validFrequency = (frequency != -1);
-\    boolean isOnFrequency = (LogicTime.getInstance().getStep() % frequency == 0);
+    boolean isOnFrequency = (LogicTime.getInstance().getStep() % frequency == 0);
     if(validFrequency && isOnFrequency){
       Log.level2Log("[" + name + ":" + recipe.getOutput() + ":" + LogicTime.getInstance().getStep()
                 + "] For Storage " + name);
