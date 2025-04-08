@@ -46,7 +46,7 @@ public class StorageTest {
    Mine m2 = new Mine("SocksMine2", new FactoryType("SmellySocks", Map.of("socks", socks)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy());
    sources.add(m1);
    sources.add(m2);
-   Storage s1 = new Storage("Drawer", socks, sources, 100, 101, new SourceQLen(), new FIFOPolicy());
+   Storage s1 = new Storage("Drawer", socks, sources, 100, 102, new SourceQLen(), new FIFOPolicy());
    ArrayList<Building> sources2 = new ArrayList<>();
    sources2.add(s1);
    Recipe pair = new Recipe(1,Map.of("socks", 2), "pairOfSocks");
@@ -79,7 +79,7 @@ public class StorageTest {
    rb.userRequestHandler(pair.getOutput(),f.getName()); 
 
    assertEquals(102, s1.getR());
-   assertEquals(101, s1.getPriority());
+   assertEquals(102, s1.getPriority());
    assertEquals(100, s1.getTotalCapacity());
    s1.updateFrequency();
    assertEquals(1, s1.getFrequency());
@@ -95,6 +95,7 @@ public class StorageTest {
    assertEquals(1, t.getStep());
    assertEquals(99, s1.getR());
    s1.updateFrequency();
+   
    assertEquals(1, s1.getFrequency());
    assertTrue(LogicTime.getInstance().getStep() % s1.getFrequency() == 0); 
    assertEquals(socks, m1.type.getRecipeByProductName(socks.getOutput()));
