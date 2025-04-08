@@ -290,6 +290,27 @@ public abstract class Building implements Serializable {
         }
     }
 
+    boolean isNeighbourBuilding(Building b) {
+        return isNeighborCoordinate(b.getCoordinate());
+    }
+
+    boolean isNeighborCoordinate(Coordinate c) {
+        if (this.getCoordinate() == null || c == null) {
+            return false;
+        }
+
+        int diffX = Math.abs(this.getCoordinate().x - c.x);
+        int diffY = Math.abs(this.getCoordinate().y - c.y);
+
+        if (diffX == 1 && diffY != 1) {
+            return true;
+        } else if (diffY == 1 && diffX != 1) {
+            return true;
+        }
+
+        return false;
+    }
+
     public boolean notified() {
         return goOneStep();
     }
