@@ -82,10 +82,6 @@ public class Storage extends Building {
 
       Request request = servePolicy.getRequest(requestQueue);
 
-      if (request == null) {
-        Log.level2Log("    Request queue is not empty, but no request is is chosen in " + name);
-        return false;
-      }
       while(request != null){
         Log.level2Log("    request:[" + name + ":" + request.getIngredient() + ":"
                       + request.getRequesterName() + "] is chosen");
