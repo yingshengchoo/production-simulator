@@ -171,7 +171,7 @@ public class Storage extends Building {
   }
 
   public int getStockCount(){
-    return storage.get(recipe.getOutput());
+    return storage.getOrDefault(recipe.getOutput(), 0);
   }
 
   public int getR(){
