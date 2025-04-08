@@ -1,0 +1,163 @@
+{
+  "types" : [
+    {
+      "name" : "SpecialSteelFactory",
+      "recipes" : [
+        "special_steel"
+      ]
+    },
+    {
+      "name" : "DiamondFactory",
+      "recipes" : [
+        "diamond"
+      ]
+    },
+    {
+      "name" : "SandFactory",
+      "recipes" : [
+        "sand"
+      ]
+    },
+    {
+      "name" : "steelDiamondFactory",
+      "recipes" : [
+        "steel",
+        "half_diamond"
+      ]
+    },
+    {
+      "name" : "steelSandFactory",
+      "recipes" : [
+        "steel",
+        "half_sand"
+      ]
+    },
+    {
+      "name" : "steelFactory",
+      "recipes" : [
+        "steel"
+      ]
+    }
+  ],
+  "buildings" : [
+    {
+      "name" : "St",
+      "type" : "SpecialSteelFactory",
+      "sources" : ["steel", "steel_diamond", "steel_sand"]
+    },
+    {
+      "name" : "D",
+      "type" : "DiamondFactory",
+      "sources" : ["steel_diamond"]
+    },
+    {
+      "name" : "Sa",
+      "type" : "SandFactory",
+      "sources" : ["steel_sand"]
+    },
+    {
+      "name" : "steel_diamond",
+      "type" : "steelDiamondFactory",
+      "sources" : ["iron_mine1", "diamond_mine"]
+    },
+    {
+      "name" : "steel_sand",
+      "type" : "steelSandFactory",
+      "sources" : ["iron_mine2", "iron_mine3", "iron_mine4", "sand_mine"]
+    },
+    {
+      "name" : "steel",
+      "type" : "steelFactory",
+      "sources" : ["iron_mine1"]
+    },
+    {
+      "name" : "iron_mine1",
+      "mine" : "iron",
+      "sources" : []
+    },
+    {
+      "name" : "iron_mine2",
+      "mine" : "iron",
+      "sources" : []
+    },
+    {
+      "name" : "iron_mine3",
+      "mine" : "iron",
+      "sources" : []
+    },
+    {
+      "name" : "iron_mine4",
+      "mine" : "iron",
+      "sources" : []
+    },
+    {
+      "name" : "diamond_mine",
+      "mine" : "tiny_diamond",
+      "sources" : []
+    },
+    {
+      "name" : "sand_mine",
+      "mine" : "tiny_sand",
+      "sources" : []
+    }
+  ],
+  "recipes" : [
+    {
+      "output" : "special_steel",
+      "ingredients" : {
+        "steel": 1
+      },
+      "latency" : 2
+    },
+    {
+      "output" : "diamond",
+      "ingredients" : {
+        "half_diamond": 1
+      },
+      "latency" : 1
+    },
+    {
+      "output": "sand",
+      "ingredients": {
+        "half_sand": 5
+      },
+      "latency": 1
+    },
+    {
+      "output": "half_diamond",
+      "ingredients": {
+        "tiny_diamond": 1
+      },
+      "latency": 20
+    },
+    {
+      "output": "half_sand",
+      "ingredients": {
+        "tiny_sand": 1
+      },
+      "latency": 1
+    },
+    {
+      "output": "steel",
+      "ingredients": {
+        "iron": 3
+      },
+      "latency": 1
+    },
+    {
+      "output": "iron",
+      "ingredients": {},
+      "latency": 10
+    },
+    {
+      "output": "tiny_sand",
+      "ingredients": {},
+      "latency": 1
+    },
+    {
+      "output": "tiny_diamond",
+      "ingredients": {},
+      "latency": 1
+    }
+  ]
+}

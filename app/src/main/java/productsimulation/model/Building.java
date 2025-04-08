@@ -1,5 +1,6 @@
 package productsimulation.model;
 
+import productsimulation.Coordinate;
 import productsimulation.Log;
 import productsimulation.LogicTime;
 import productsimulation.request.Policy;
@@ -26,6 +27,16 @@ public abstract class Building implements Serializable {
     protected SourcePolicy sourcePolicy;
     protected ServePolicy servePolicy;
 
+    protected Coordinate coordinate;
+
+
+    static List<Building> buildings = new ArrayList<>();
+
+    public Building(String name, FactoryType type, List<Building> sources, SourcePolicy sourcePolicy, ServePolicy servePolicy, Coordinate coordinate) {
+        this(name, type, sources, sourcePolicy, servePolicy);
+        this.coordinate = coordinate;
+    }
+
     /**
      * Constructs a Building with the specified name, type, sources, and policies.
      *
@@ -36,25 +47,10 @@ public abstract class Building implements Serializable {
      * @param servePolicy  is the policy that the building uses to select between requests.
      */
     public Building(String name, FactoryType type, List<Building> sources, SourcePolicy sourcePolicy, ServePolicy servePolicy) {
-        this.name = name;
-        this.type = type;
+        this(name, type, sourcePolicy, servePolicy);
         this.sources = sources;
-        this.sourcePolicy = sourcePolicy;
-        this.servePolicy = servePolicy;
-
-        requestQueue = new ArrayList<>();
-        storage = new HashMap<>();
     }
 
-  
-    /**
-     * Constructs a Building with the specified name, type, policies, and no sources.
-     *
-     * @param name         is the name the Building.
-     * @param type         is the Building Type.
-     * @param sourcePolicy is the policy that the building uses to select between sources.
-     * @param servePolicy  is the policy that the building uses to select between requests.
-     */
     public Building(String name, FactoryType type, SourcePolicy sourcePolicy, ServePolicy servePolicy) {
         this.name = name;
         this.type = type;
@@ -62,6 +58,71 @@ public abstract class Building implements Serializable {
         this.servePolicy = servePolicy;
         requestQueue = new ArrayList<>();
         storage = new HashMap<>();
+        this.coordinate = getValidCoordinate();
+        buildings.add(this);
+    }
+
+    public static Coordinate getValidCoordinate() {
+        List<Coordinate> existingCoordinates = new ArrayList<>();
+        for (Building b : buildings) {
+            existingCoordinates.add(b.getCoordinate());
+        }
+
+        // first coordinate on 0,0
+        if (existingCoordinates.isEmpty()) {
+            return new Coordinate(0, 0);
+        }
+
+        // for every exist building, try coordinates in their range.
+        for (Coordinate c : existingCoordinates) {
+            for (int dx = 5; dx <= 10; dx++) {
+                for (int dy = 5; dy <= 10; dy++) {
+                    // 正右上
+                    int candidateX = c.x + dx;
+                    int candidateY = c.y + dy;
+                    if (isValid(candidateX, candidateY, existingCoordinates)) {
+                        return new Coordinate(candidateX, candidateY);
+                    }
+                    // 左右上
+                    candidateX = c.x - dx;
+                    candidateY = c.y + dy;
+                    if (isValid(candidateX, candidateY, existingCoordinates)) {
+                        return new Coordinate(candidateX, candidateY);
+                    }
+                    // 右下
+                    candidateX = c.x + dx;
+                    candidateY = c.y - dy;
+                    if (isValid(candidateX, candidateY, existingCoordinates)) {
+                        return new Coordinate(candidateX, candidateY);
+                    }
+                    // 左下
+                    candidateX = c.x - dx;
+                    candidateY = c.y - dy;
+                    if (isValid(candidateX, candidateY, existingCoordinates)) {
+                        return new Coordinate(candidateX, candidateY);
+                    }
+                }
+            }
+        }
+
+        throw new RuntimeException("no valid coordinate!");
+    }
+
+    private static boolean isValid(int candidateX, int candidateY, List<Coordinate> existingPoints) {
+        boolean withinX = false;
+        boolean withinY = false;
+        for (Coordinate c : existingPoints) {
+            if (Math.abs(candidateX - c.x) < 5 || Math.abs(candidateY - c.y) < 5) {
+                return false;
+            }
+            if (Math.abs(candidateX - c.x) <= 10) {
+                withinX = true;
+            }
+            if (Math.abs(candidateY - c.y) <= 10) {
+                withinY = true;
+            }
+        }
+        return withinX && withinY;
     }
 
   
@@ -246,6 +307,27 @@ public abstract class Building implements Serializable {
         }
     }
 
+    boolean isNeighbourBuilding(Building b) {
+        return isNeighborCoordinate(b.getCoordinate());
+    }
+
+    boolean isNeighborCoordinate(Coordinate c) {
+        if (this.getCoordinate() == null || c == null) {
+            return false;
+        }
+
+        int diffX = Math.abs(this.getCoordinate().x - c.x);
+        int diffY = Math.abs(this.getCoordinate().y - c.y);
+
+        if (diffX == 1 && diffY == 0) {
+            return true;
+        } else if (diffY == 1 && diffX == 0) {
+            return true;
+        }
+
+        return false;
+    }
+
     public boolean notified() {
         return goOneStep();
     }
@@ -333,5 +415,9 @@ public abstract class Building implements Serializable {
 
     public List<Request> getRequestQueue() {
         return requestQueue;
+    }
+
+    public Coordinate getCoordinate() {
+        return coordinate;
     }
 }

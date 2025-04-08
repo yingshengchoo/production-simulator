@@ -26,12 +26,25 @@ public class App {
             "save saveFileName\n" +
             "load loadFileName\n";
 
-    public static void readInputCommand(CommandParser cmdParser, Readable inputSource, boolean isInteractive) {
+    /**
+     * Reads and processes input commands.
+     * <p>
+     * This method reads from the given input source, parses each line using the provided CommandParser,
+     * and executes the resulting commands. If interactive mode is enabled, it will print a prompt after each input line.
+     * The loop will terminate when the exit flag from LogicTime is set to true.
+     *
+     * @param cmdParser     The command parser used to parse input lines into commands.
+     * @param inputSource   The input source to read from, which can be any object implementing the Readable interface.
+     * @see CommandParser#parseLine(String)
+     * @see LogicTime#getExitFlag()
+     */
+//    public static void readInputCommand(CommandParser cmdParser, Readable inputSource, boolean isInteractive) {
+    public static void readInputCommand(CommandParser cmdParser, Readable inputSource) {
         Scanner scanner = new Scanner(inputSource);
-        if (isInteractive) {
+//        if (isInteractive) {
             System.out.print(beginPrompt);
             System.out.print("> ");
-        }
+//        }
 
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
@@ -45,19 +58,20 @@ public class App {
             try {
                 cmd.execute();
             } catch (Exception e) {
-                StringWriter sw = new StringWriter();
-                PrintWriter pw = new PrintWriter(sw);
-                e.printStackTrace(pw);
-                Log.debugLog(sw.toString());
+                Log.debugLog(e.getClass().getName());
             }
 
-            if (isInteractive) {
+//            if (isInteractive) {
                 System.out.print("> ");
-            }
+//            }
         }
         scanner.close();
     }
 
+    // todo 目前，全局的recipes，types，buildings在setupParser中首次解析完毕之后，
+    // todo 分散到了LogicTime，RequestBroadcaster，Recipe，State各个地方。
+    // todo 值得注意的是，目前的setupParser所返回的，是unmodifiable map
+    // todo 为了支持编辑功能，重构时直接将setupParser的get方法改为set ModelManager，上述四个类删除相应field
     public static void modelSetup(SetupParser parser) {
         Map<String, Recipe> recipes = parser.getRecipeMap();
         Map<String, FactoryType> types = parser.getTypeMap();
@@ -111,7 +125,7 @@ public class App {
         }
         // enter interaction phase
         CommandParser cmdParser = new CommandParser();
-        readInputCommand(cmdParser, new InputStreamReader(System.in), true);
+        readInputCommand(cmdParser, new InputStreamReader(System.in));
     }
 
     public static void main(String[] args) {

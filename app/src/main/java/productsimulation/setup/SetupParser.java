@@ -3,6 +3,7 @@ package productsimulation.setup;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import productsimulation.model.*;
+import productsimulation.setup.json_rules.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;

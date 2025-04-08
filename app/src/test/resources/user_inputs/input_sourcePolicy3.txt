@@ -1,4 +1,4 @@
-set policy source 'source estimate' on 'St'
+set policy source 'estimate' on 'St'
 request 'diamond' from 'D'
 request 'sand' from 'Sa'
 request 'special_steel' from 'St'

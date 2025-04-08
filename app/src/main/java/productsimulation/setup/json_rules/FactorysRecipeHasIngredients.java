@@ -1,4 +1,4 @@
-package productsimulation.setup;
+package productsimulation.setup.json_rules;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import productsimulation.Log;

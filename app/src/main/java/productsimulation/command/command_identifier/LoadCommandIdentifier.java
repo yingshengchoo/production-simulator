@@ -1,4 +1,7 @@
-package productsimulation.command;
+package productsimulation.command.command_identifier;
+
+import productsimulation.command.Command;
+import productsimulation.command.LoadCommand;
 
 public class LoadCommandIdentifier extends CommandIdentifier {
 
@@ -7,7 +10,7 @@ public class LoadCommandIdentifier extends CommandIdentifier {
     }
 
     @Override
-    protected Command checkFits(String line) {
+    public Command checkFits(String line) {
         if (!line.startsWith("load ")) {
             return null;
         }

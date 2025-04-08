@@ -1,6 +1,7 @@
 package productsimulation.command;
 
 import org.junit.jupiter.api.Test;
+import productsimulation.command.command_identifier.LoadCommandIdentifier;
 
 import static org.junit.jupiter.api.Assertions.*;
 

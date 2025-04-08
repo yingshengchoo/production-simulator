@@ -1,6 +1,7 @@
 package productsimulation.command;
 
 import org.junit.jupiter.api.Test;
+import productsimulation.command.command_identifier.SetPolicyCommandIdentifier;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -31,7 +32,5 @@ class SetPolicyCommandIdentifierTest {
 
         cmd = identifier.checkFits("set policy request ' on default");
         assertNull(cmd);
-
-        cmd = identifier.checkFits("set policy request 'sjf' default");
     }
 }

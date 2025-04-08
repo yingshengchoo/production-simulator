@@ -9,8 +9,9 @@ public class StepCommand extends Command {
     }
 
     @Override
-    public void execute() {
+    public String execute() {
         LogicTime.getInstance().stepNHandler(step);
+        return null;
     }
 
     public int getSteps() {
