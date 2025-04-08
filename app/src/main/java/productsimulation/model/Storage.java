@@ -206,7 +206,7 @@ public class Storage extends Building {
       Building chosenSource = sourcePolicy.getSource(sources, recipe.getOutput());
       Log.level2Log("    selecting " + chosenSource.getName());
       Recipe childRecipe = chosenSource.type.getRecipeByProductName(recipe.getOutput());
-      Request req = new Request(recipe.getOutput(), childRecipe,this);
+      Request req = new Request(recipe.getOutput(), childRecipe, this);
       chosenSource.addRequest(req);
       R--;
     }
