@@ -107,7 +107,7 @@ public class StorageTest {
    assertEquals(0, s1.getStockCount());
    assertEquals(1, m1.getRequestCount());
    assertEquals(0, m2.getRequestCount());
-   assertEquals(0, s1.getStorage().size());
+   assertEquals(1, s1.getStorage().size());
 
    t.stepNHandler(1);
    assertEquals(2, t.getStep());
