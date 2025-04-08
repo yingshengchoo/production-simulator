@@ -182,7 +182,7 @@ public class Storage extends Building {
     return totalCapacity;
   }
 
-  public int getPriority(){
+  public double getPriority(){
     return priority;
   }
 
