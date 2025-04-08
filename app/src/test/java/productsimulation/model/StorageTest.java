@@ -30,7 +30,7 @@ public class StorageTest {
     recipeList.add(new Recipe(3, Collections.emptyMap(), "a"));
     recipeList.add(new Recipe(2, Collections.emptyMap(), "socks"));
     Recipe.setRecipeList(recipeList);
-    sources.add(new Storage("Closet", "a" , Collections.emptyList(), 100, 3, null,null, new Coordinate(0,0));
+    sources.add(new Storage("Closet", "a" , Collections.emptyList(), 100, 3, null,null, new Coordinate(0,0)));
     sources.add(new Factory("DoorInc", new FactoryType("Door", Collections.emptyMap()), Collections.emptyList(), null, null));
     sources.add(new Mine("DiamondMine", new FactoryType("Diamond", Collections.emptyMap()), Collections.emptyList(), null, null));
                 Storage s1 = new Storage("Drawer", "socks", sources, 150, 10, null, null, new Coordinate(1,1));
