@@ -92,7 +92,7 @@ public class StorageTest {
    assertEquals(101, s1.getR());
    s1.updateFrequency();
    assertTrue(LogicTime.getInstance().getStep() % s1.getFrequency() == 0); 
-   assertEquals(m1, s1.getSourcePolicy().getSource(sources, socks.getOutput()));
+   assertEquals(m1, s1.getSourcePolicy().getSource(s1.getSources(), socks.getOutput()));
    assertEquals(socks, m1.type.getRecipeByProductName(socks.getOutput()));
 
    s1.sendRequest();
