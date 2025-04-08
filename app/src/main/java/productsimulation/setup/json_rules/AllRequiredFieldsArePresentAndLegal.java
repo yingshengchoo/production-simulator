@@ -38,8 +38,8 @@ public class AllRequiredFieldsArePresentAndLegal extends InputRuleChecker {
             if (!building.has("name")) {
                 return "A building should have a name";
             }
-            if (!building.has("type") && !building.has("mine")) {
-                return "A building should have a type or a mine";
+            if (!building.has("type") && !building.has("mine") && !building.has("stores")) {
+                return "A building should have a type or a mine or a storage";
             }
             if (!building.has("sources")) {
                 return "A building should have a source";

@@ -104,7 +104,7 @@ class AllRequiredFieldsArePresentAndLegalTest {
                 + "  {\"name\": \"Factory1\",  \"sources\": []}"
                 + "]"
                 + "}";
-        String expectedRes4 = "A building should have a type or a mine";
+        String expectedRes4 = "A building should have a type or a mine or a storage";
         jsons.add(json4);
         expectedResult.add(expectedRes4);
 
