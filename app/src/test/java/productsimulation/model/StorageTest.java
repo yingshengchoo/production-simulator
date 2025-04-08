@@ -158,7 +158,7 @@ public class StorageTest {
    assertEquals(1, s1.getStorage().size());
 
    t.stepNHandler(1);
-    assertEquals(4, t.getStep());
+   assertEquals(5, t.getStep());
    assertEquals(2, s1.getFrequency());
    assertEquals(1, f.getRequestCount());
    assertEquals(-1, s1.getRequestCount());
@@ -183,10 +183,12 @@ public class StorageTest {
     sources.add(new Mine("DiamondMine", new FactoryType("Diamond", Collections.emptyMap()), Collections.emptyList(), null, null));
     Storage s1 = new Storage("Drawer", "socks", sources, 150, 10, null, null);
 
+    s1.updateFrequency();
     assertEquals((int)Math.ceil((double)(s1.getTotalCapacity() * s1.getTotalCapacity()) / (double)(s1.getR() * s1.getPriority())), s1.getFrequency());
 
 
     Storage s2 = new Storage("closet", "socks", new ArrayList<>(), 0, 10, null, null);
+    s2.updateFrequency();
     assertEquals(0, s2.getR());
     assertEquals(-1, s2.getFrequency());
   }
