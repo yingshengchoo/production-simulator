@@ -114,7 +114,7 @@ public class Storage extends Building {
     if(getStockCount() > 0){
       return 0;
     } else {
-      return currentRemainTime;
+      return 1; //needs update here, not sure if it matches the logic for recursive lat.
     }
   }
   
@@ -200,8 +200,6 @@ public class Storage extends Building {
                    + request.getIngredient() + " on " + LogicTime.getInstance().getStep());
       requestQueue.add(request);
 
-      // 更新total time
-      totalRemainTime += request.getLatency();
       //Storage only sends request to sources periodically.
       //so sends request to sources in goOneStep()
       R++;

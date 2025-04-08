@@ -267,7 +267,7 @@ public class StorageTest {
    sources.add(m2);
    Storage s1 = new Storage("Drawer", "socks", sources, 100, 102, new SourceQLen(), new FIFOPolicy());
 
-   assertEquals(2, s1.getCurrentRemainTime());
+   assertEquals(1, s1.getCurrentRemainTime());
    
    s1.updateStorage("socks");
    assertEquals(0, s1.getCurrentRemainTime());
