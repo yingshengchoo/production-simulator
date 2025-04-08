@@ -1,5 +1,6 @@
 package productsimulation.model;
 
+import productsimulation.Coordinate;
 import productsimulation.Log;
 import productsimulation.request.Request;
 import productsimulation.request.servePolicy.ServePolicy;
@@ -34,6 +35,10 @@ public class Mine extends Building {
         super(name, type, sourcePolicy, servePolicy);
     }
 
+  public Mine(String name, FactoryType type, List<Building> sources, SourcePolicy sourcePolicy, ServePolicy servePolicy, Coordinate coordinate){
+    super(name, type, sources, sourcePolicy, servePolicy, coordinate);
+   }
+  
     public boolean goOneStep() {
         if(currentRequest == null) {
             if(!requestQueue.isEmpty()) {

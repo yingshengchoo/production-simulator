@@ -56,6 +56,7 @@ public class Storage extends Building {
     this(name, itemToStore, new ArrayList<>(), totalCapacity, priority, sourcePolicy, servePolicy, coordinate);
   }
 
+  
   /**
    * Updates the frequency of the request 
    */

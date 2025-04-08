@@ -1,5 +1,6 @@
 package productsimulation.model;
 
+import productsimulation.Coordinate;
 import productsimulation.Log;
 import productsimulation.LogicTime;
 import productsimulation.request.Request;
@@ -23,10 +24,15 @@ public class Factory extends Building {
     super(name, type, sources, sourcePolicy, servePolicy);
   }
 
-    public Factory(String name, FactoryType type, SourcePolicy sourcePolicy, ServePolicy servePolicy){
-        super(name, type, sourcePolicy, servePolicy);
-    }
+  public Factory(String name, FactoryType type, SourcePolicy sourcePolicy, ServePolicy servePolicy){
+    super(name, type, sourcePolicy, servePolicy);
+  }
 
+  public Factory(String name, FactoryType type, List<Building> sources, SourcePolicy sourcePolicy, ServePolicy servePolicy, Coordinate coordinate){
+    super(name, type, sources, sourcePolicy, servePolicy, coordinate);
+  }
+
+  
     public boolean goOneStep() {
 
         if(currentRequest == null) {
