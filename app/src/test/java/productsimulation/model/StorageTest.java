@@ -46,7 +46,7 @@ public class StorageTest {
    Mine m2 = new Mine("SocksMine2", new FactoryType("SmellySocks", Map.of("socks", socks)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy());
    sources.add(m1);
    sources.add(m2);
-   Storage s1 = new Storage("Drawer", socks, sources, 100, 100, new SourceQLen(), new FIFOPolicy());
+   Storage s1 = new Storage("Drawer", socks, sources, 100, 101, new SourceQLen(), new FIFOPolicy());
    ArrayList<Building> sources2 = new ArrayList<>();
    sources2.add(s1);
    Recipe pair = new Recipe(1,Map.of("socks", 2), "pairOfSocks");
