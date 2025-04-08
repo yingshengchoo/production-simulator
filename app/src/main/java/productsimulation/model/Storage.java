@@ -174,6 +174,11 @@ public class Storage extends Building {
   public int getPriority(){
     return priority;
   }
+
+  public String getRecipeOutput(){
+    return recipe.getOutput();
+  }
+  
   @Override
   public void addRequest(Request request){
       //[ingredient assignment]: wood assigned to W to deliver to D
