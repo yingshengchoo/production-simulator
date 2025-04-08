@@ -41,7 +41,7 @@ public class StorageTest {
    LogicTime t = LogicTime.getInstance();
    
    ArrayList<Building> sources = new ArrayList<>();
-   Recipe socks = new Recipe(2, Collections.emptyMap(), "socks");
+   Recipe socks = new Recipe(1, Collections.emptyMap(), "socks");
    Mine m1 = new Mine("SocksMine1", new FactoryType("SmellySocks", Map.of("socks", socks)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy());
    Mine m2 = new Mine("SocksMine2", new FactoryType("SmellySocks", Map.of("socks", socks)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy());
    sources.add(m1);
@@ -102,8 +102,18 @@ public class StorageTest {
    assertEquals(1, m1.getRequestCount());
    assertEquals(0, m2.getRequestCount());
    assertEquals(0, s1.getStorage().size());
+
    t.stepNHandler(1);
    assertEquals(2, t.getStep());
+   assertEquals(100, s1.getR());
+   assertTrue(LogicTime.getInstance().getStep() % s1.getFrequency() == 0); 
+   assertEquals(1, s1.getFrequency());
+   assertEquals(0, f.getRequestCount());
+   assertEquals(2, s1.getRequestCount());
+   assertEquals(0, s1.getStockCount());
+   assertEquals(0, m1.getRequestCount());
+   assertEquals(1, m2.getRequestCount());
+   assertEquals(1, s1.getStorage().size());
 
    t.stepNHandler(1);
    assertEquals(3, t.getStep());
