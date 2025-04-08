@@ -173,24 +173,50 @@ public class StorageTest {
 
   @Test
   public void test_updateFrequency(){
-    ArrayList<Building> sources = new ArrayList<>();
     ArrayList<Recipe> recipeList = new ArrayList<>();
     recipeList.add(new Recipe(3, Collections.emptyMap(), "a"));
     recipeList.add(new Recipe(2, Collections.emptyMap(), "socks"));
     Recipe.setRecipeList(recipeList);
-    sources.add(new Storage("Closet", "a" , Collections.emptyList(), 100, 3, null,null));
-    sources.add(new Factory("DoorInc", new FactoryType("Door", Collections.emptyMap()), Collections.emptyList(), null, null));
-    sources.add(new Mine("DiamondMine", new FactoryType("Diamond", Collections.emptyMap()), Collections.emptyList(), null, null));
-    Storage s1 = new Storage("Drawer", "socks", sources, 150, 10, null, null);
+    Storage s1 = new Storage("Drawer", "socks", 150, 10, null, null);
 
     s1.updateFrequency();
     assertEquals((int)Math.ceil((double)(s1.getTotalCapacity() * s1.getTotalCapacity()) / (double)(s1.getR() * s1.getPriority())), s1.getFrequency());
 
 
-    Storage s2 = new Storage("closet", "socks", new ArrayList<>(), 0, 10, null, null);
+    Storage s2 = new Storage("closet", "socks", 0, 10, null, null);
     s2.updateFrequency();
     assertEquals(0, s2.getR());
     assertEquals(-1, s2.getFrequency());
   }
-  
+
+  @Test
+  public void test_noSendRequest(){
+    //Setup: A Storage
+   
+   ArrayList<Building> sources = new ArrayList<>();
+   Recipe socks = new Recipe(100, Collections.emptyMap(), "socks");
+   Recipe pair = new Recipe(1,Map.of("socks", 2), "pairOfSocks");
+   ArrayList<Recipe> rl = new ArrayList<>();
+   rl.add(socks);
+   rl.add(pair);
+   Recipe.setRecipeList(rl);
+   
+   Mine m1 = new Mine("SocksMine1", new FactoryType("SmellySocks", Map.of("socks", socks)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy());
+   Mine m2 = new Mine("SocksMine2", new FactoryType("SmellySocks", Map.of("socks", socks)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy());
+   sources.add(m1);
+   sources.add(m2);
+   Storage s1 = new Storage("Drawer", "socks", sources, 0, 102, new SourceQLen(), new FIFOPolicy());
+   ArrayList<Building> sources2 = new ArrayList<>();
+   sources2.add(s1);
+
+   assertEquals("socks", s1.getRecipeOutput());
+
+   //frequency is -1, so no requests should be sent to sources
+   assertEquals(-1, s1.getFrequency());
+   s1.sendRequest();
+   s1.sendRequest();
+   s1.sendRequest();
+   assertEquals(0, m1.getRequestCount());
+   assertEquals(0, m2.getRequestCount());
+  }
 }

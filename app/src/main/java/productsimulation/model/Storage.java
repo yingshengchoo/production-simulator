@@ -106,11 +106,7 @@ public class Storage extends Building {
       return true;
     }
 
-    if(requestQueue.isEmpty()){
-      return false;
-    } else{
-      return true;
-    }
+    return false;
   }
 
   @Override
