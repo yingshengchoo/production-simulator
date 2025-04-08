@@ -30,10 +30,10 @@ public class StorageTest {
     recipeList.add(new Recipe(3, Collections.emptyMap(), "a"));
     recipeList.add(new Recipe(2, Collections.emptyMap(), "socks"));
     Recipe.setRecipeList(recipeList);
-    sources.add(new Storage("Closet", "a" , Collections.emptyList(), 100, 3, null,null));
+    sources.add(new Storage("Closet", "a" , Collections.emptyList(), 100, 3, null,null, new Coordinate(0,0));
     sources.add(new Factory("DoorInc", new FactoryType("Door", Collections.emptyMap()), Collections.emptyList(), null, null));
     sources.add(new Mine("DiamondMine", new FactoryType("Diamond", Collections.emptyMap()), Collections.emptyList(), null, null));
-    Storage s1 = new Storage("Drawer", "socks", sources, 150, 10, null, null);
+                Storage s1 = new Storage("Drawer", "socks", sources, 150, 10, null, null, new Coordinate(1,1));
     String expected = "Storage\n{name='Drawer',\n stores='socks',\n sources=[Closet, DoorInc, DiamondMine],\n capacity=150,\n storage=[socks: 0],\n request queue size=0\n}";
 
     assertEquals(expected, s1.toString());
@@ -57,7 +57,7 @@ public class StorageTest {
    Mine m2 = new Mine("SocksMine2", new FactoryType("SmellySocks", Map.of("socks", socks)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy());
    sources.add(m1);
    sources.add(m2);
-   Storage s1 = new Storage("Drawer", "socks", sources, 100, 102, new SourceQLen(), new FIFOPolicy());
+   Storage s1 = new Storage("Drawer", "socks", sources, 100, 102, new SourceQLen(), new FIFOPolicy(), new Coordinate(5,5));
    ArrayList<Building> sources2 = new ArrayList<>();
    sources2.add(s1);
    Factory f = new Factory("SocksFactory", new FactoryType("PairOfSocks", Map.of("pairOfSocks", pair)), sources2, new SourceQLen(), new FIFOPolicy());
@@ -177,13 +177,13 @@ public class StorageTest {
     recipeList.add(new Recipe(3, Collections.emptyMap(), "a"));
     recipeList.add(new Recipe(2, Collections.emptyMap(), "socks"));
     Recipe.setRecipeList(recipeList);
-    Storage s1 = new Storage("Drawer", "socks", 150, 10, null, null);
+    Storage s1 = new Storage("Drawer", "socks", 150, 10, null, null, new Coordinate(4,2));
 
     s1.updateFrequency();
     assertEquals((int)Math.ceil((double)(s1.getTotalCapacity() * s1.getTotalCapacity()) / (double)(s1.getR() * s1.getPriority())), s1.getFrequency());
 
 
-    Storage s2 = new Storage("closet", "socks", 0, 10, null, null);
+    Storage s2 = new Storage("closet", "socks", 0, 10, null, null, new Coordinate(1,2));
     s2.updateFrequency();
     assertEquals(0, s2.getR());
     assertEquals(-1, s2.getFrequency());
@@ -205,7 +205,7 @@ public class StorageTest {
    Mine m2 = new Mine("SocksMine2", new FactoryType("SmellySocks", Map.of("socks", socks)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy());
    sources.add(m1);
    sources.add(m2);
-   Storage s1 = new Storage("Drawer", "socks", sources, 0, 102, new SourceQLen(), new FIFOPolicy());
+   Storage s1 = new Storage("Drawer", "socks", sources, 0, 102, new SourceQLen(), new FIFOPolicy(), new Coordinate(3,3));
 
    assertEquals("socks", s1.getRecipeOutput());
 
@@ -232,7 +232,7 @@ public class StorageTest {
    Mine m2 = new Mine("SocksMine2", new FactoryType("SockOre", Map.of("socks", socks)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy());
    sources.add(m1);
    sources.add(m2);
-   Storage s1 = new Storage("Drawer", "socks", sources, 100, 102, new SourceQLen(), new FIFOPolicy());
+   Storage s1 = new Storage("Drawer", "socks", sources, 100, 102, new SourceQLen(), new FIFOPolicy(), new Coordinate(1,0));
 
    assertEquals(0, s1.getTotalRemainTime());
    s1.addRequest(Request.getDummyRequest("socks", s1));
@@ -240,7 +240,7 @@ public class StorageTest {
    s1.addRequest(Request.getDummyRequest("socks", s1));
    assertEquals(4, s1.getTotalRemainTime());
 
-   Storage s2 = new Storage("Drawer", "socks", sources, 100, 102, new SourceQLen(), new FIFOPolicy());
+   Storage s2 = new Storage("Drawer", "socks", sources, 100, 102, new SourceQLen(), new FIFOPolicy(), new Coordinate(5,4));
    assertEquals(0, s2.getTotalRemainTime());
    s2.updateStorage("socks");
    assertEquals(-2, s2.getTotalRemainTime());
@@ -265,7 +265,7 @@ public class StorageTest {
    Mine m2 = new Mine("SocksMine2", new FactoryType("SockET", Map.of("socks", socks2)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy());
    sources.add(m1);
    sources.add(m2);
-   Storage s1 = new Storage("Drawer", "socks", sources, 100, 102, new SourceQLen(), new FIFOPolicy());
+   Storage s1 = new Storage("Drawer", "socks", sources, 100, 102, new SourceQLen(), new FIFOPolicy(), new Coordinate(7,7));
 
    assertEquals(1, s1.getCurrentRemainTime());
    
