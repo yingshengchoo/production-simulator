@@ -206,8 +206,6 @@ public class StorageTest {
    sources.add(m1);
    sources.add(m2);
    Storage s1 = new Storage("Drawer", "socks", sources, 0, 102, new SourceQLen(), new FIFOPolicy());
-   ArrayList<Building> sources2 = new ArrayList<>();
-   sources2.add(s1);
 
    assertEquals("socks", s1.getRecipeOutput());
 
@@ -218,5 +216,40 @@ public class StorageTest {
    s1.sendRequest();
    assertEquals(0, m1.getRequestCount());
    assertEquals(0, m2.getRequestCount());
+  }
+
+  @Test
+  public void test_getTotalLatency(){
+   ArrayList<Building> sources = new ArrayList<>();
+   Recipe socks = new Recipe(2, Collections.emptyMap(), "socks");
+   Recipe pair = new Recipe(1,Map.of("socks", 2), "pairOfSocks");
+   ArrayList<Recipe> rl = new ArrayList<>();
+   rl.add(socks);
+   rl.add(pair);
+   Recipe.setRecipeList(rl);
+   
+   Mine m1 = new Mine("SocksMine1", new FactoryType("SockTree", Map.of("socks", socks)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy());
+   Mine m2 = new Mine("SocksMine2", new FactoryType("SockOre", Map.of("socks", socks)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy());
+   sources.add(m1);
+   sources.add(m2);
+   Storage s1 = new Storage("Drawer", "socks", sources, 100, 102, new SourceQLen(), new FIFOPolicy());
+
+   assertEquals(0, s1.getTotalRemainTime());
+   s1.addRequest(Request.getDummyRequest("socks", s1));
+   assertEquals(2, s1.getTotalRemainTime());
+   s1.addRequest(Request.getDummyRequest("socks", s1));
+   assertEquals(4, s1.getTotalRemainTime());
+
+   Storage s2 = new Storage("Drawer", "socks", sources, 100, 102, new SourceQLen(), new FIFOPolicy());
+   assertEquals(0, s2.getTotalRemainTime());
+   s2.updateStorage("socks");
+   assertEquals(-2, s2.getTotalRemainTime());
+   s2.updateStorage("socks");
+   assertEquals(-4, s2.getTotalRemainTime());
+  }
+
+  @Test
+  public void test_getCurrentRemainTime(){
+    
   }
 }

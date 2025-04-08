@@ -136,12 +136,13 @@ public class Storage extends Building {
   public int getReqCount(){
     return requestQueue.size();
   }
+
   @Override
   public int getTotalRemainTime(){
     if(hasStock()){
       return -1 * recipe.getLatency() * getStockCount();
     } else {
-      return totalRemainTime;
+      return recipe.getLatency() * requestQueue.size();
     }
   }
 
