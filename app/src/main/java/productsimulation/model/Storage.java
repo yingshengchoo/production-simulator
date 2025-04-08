@@ -92,15 +92,14 @@ public class Storage extends Building {
         Log.level2Log("    request:[" + name + ":" + request.getIngredient() + ":"
                       + request.getRequesterName() + "] is chosen");
         if(request.getStatus().equals(RequestStatus.READY) && (getStockCount() > 0)) {
-          request.readyToWorking(storage);
+          request.readyToWorking(storage); //stock -1.
         } else {
           Log.debugLog(name + " is waiting for ingredients");
           return false;
         }
         
         //move request to ready queue to send at next time step
-        storage.get(recipe.getOutput());
-        requestQueue.remove(request);
+        requestQueue.remove(request); 
         readyQueue.add(request);
         R--;//consumes one storage
         //keeps updating until we get a request
