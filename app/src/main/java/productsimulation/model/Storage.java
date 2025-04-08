@@ -97,7 +97,9 @@ public class Storage extends Building {
           Log.debugLog(name + " is waiting for ingredients");
           return false;
         }
-        //add request to request queue to send at next time step
+
+        //move request to ready queue to send at next time step
+        requestQueue.remove(request);
         readyQueue.add(request);
         R--;//consumes one storage
         //keeps updating until we get a request
