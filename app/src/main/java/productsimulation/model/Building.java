@@ -302,9 +302,9 @@ public abstract class Building implements Serializable {
         int diffX = Math.abs(this.getCoordinate().x - c.x);
         int diffY = Math.abs(this.getCoordinate().y - c.y);
 
-        if (diffX == 1 && diffY != 1) {
+        if (diffX == 1 && diffY == 0) {
             return true;
-        } else if (diffY == 1 && diffX != 1) {
+        } else if (diffY == 1 && diffX == 0) {
             return true;
         }
 
