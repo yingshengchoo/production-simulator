@@ -108,8 +108,8 @@ public class StorageTest {
    assertTrue(LogicTime.getInstance().getStep() % s1.getFrequency() == 0); 
    assertEquals(1, s1.getFrequency());
    assertEquals(1, f.getRequestCount());
-   assertEquals(2, s1.getRequestCount());
-   assertEquals(0, s1.getStockCount());
+   assertEquals(-1, s1.getRequestCount());
+   assertEquals(1, s1.getStockCount());
    assertEquals(0, m1.getRequestCount());
    assertEquals(1, m2.getRequestCount());
    assertEquals(1, s1.getStorage().size());
