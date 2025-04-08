@@ -11,6 +11,7 @@ import java.lang.Math;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.HashMap;
 
 public class Storage extends Building {
 
@@ -29,14 +30,14 @@ public class Storage extends Building {
    * @param sourcePolicy is the policy that the building uses to select between sources.
    * @param servePolicy  is the policy that the building uses to select between requests.
    */
-  public Storage(String name, Recipe recipe, List<Building> sources, int totalCapacity, int priority, SourcePolicy sourcePolicy, ServePolicy servePolicy){
-    super(name, new FactoryType(name, Map.of(recipe.getOutput(), recipe)), sources, sourcePolicy, new FIFOPolicy()); // Storage only supports FIFO!
-    this.recipe = recipe;
+  public Storage(String name, String itemToStore, List<Building> sources, int totalCapacity, int priority, SourcePolicy sourcePolicy, ServePolicy servePolicy){
+    super(name, new FactoryType(name, Map.of(itemToStore, new Recipe(Recipe.getRecipe(itemToStore).getLatency(), new HashMap<>()), itemToStore))), sources, sourcePolicy, new FIFOPolicy()); // Storage only supports FIFO!
+    this.recipe = new Recipe(Recipe.getRecipe(itemToStore).getLatency(), new HashMap<>(), itemToStore);
     this.totalCapacity = totalCapacity;
     this.priority = priority;
     this.frequency = -1;
     this.R = totalCapacity;
-    super.storage.put(recipe.getOutput(), 0);
+    super.storage.put(itemToStore, 0);
     readyQueue = new ArrayList<>();
   }
 
@@ -49,14 +50,8 @@ public class Storage extends Building {
    * @param sourcePolicy is the policy that the building uses to select between sources.
    * @param servePolicy  is the policy that the building uses to select between requests.
    */
-  public Storage(String name, FactoryType type, Recipe storageType, int totalCapacity, int priority, SourcePolicy sourcePolicy, ServePolicy servePolicy){
-        super(name, type, sourcePolicy, servePolicy);
-        this.totalCapacity = totalCapacity;
-        this.priority = priority;
-        this.frequency = -1;
-        this.R = totalCapacity;
-        super.storage.put(recipe.getOutput(), 0);
-        readyQueue = new ArrayList<>();
+  public Storage(String name, String itemToStore, int totalCapacity, int priority, SourcePolicy sourcePolicy, ServePolicy servePolicy){
+    this(name, itemToStore, new ArrayList<>(), totalCapacity, priority, sourcePolicy, servePolicy);
   }
 
   /**
@@ -95,8 +90,6 @@ public class Storage extends Building {
         Log.level2Log("    request:[" + name + ":" + request.getIngredient() + ":"
                       + request.getRequesterName() + "] is chosen");
         if(request.getStatus().equals(RequestStatus.READY) && (getStockCount() > 0)) {
-          request.readyToWorking(storage); //stock -1.
-          //remove this after fixing the recipe logic
           storage.put(recipe.getOutput(), storage.get(recipe.getOutput())-1);
         } else {
           currentRemainTime--; //revist logic here. E.g. if storage has not sent request ot sources due to low frequency. Also in general..
