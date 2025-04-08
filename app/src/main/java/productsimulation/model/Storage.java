@@ -36,6 +36,7 @@ public class Storage extends Building {
     this.priority = priority;
     this.frequency = -1;
     this.R = totalCapacity;
+    super.storage.put(recipe.getOutput(), 0);
     readyQueue = new ArrayList<>();
   }
 
@@ -54,6 +55,8 @@ public class Storage extends Building {
         this.priority = priority;
         this.frequency = -1;
         this.R = totalCapacity;
+        super.storage.put(recipe.getOutput(), 0);
+        readyQueue = new ArrayList<>();
   }
 
   /**
@@ -93,7 +96,10 @@ public class Storage extends Building {
                       + request.getRequesterName() + "] is chosen");
         if(request.getStatus().equals(RequestStatus.READY) && (getStockCount() > 0)) {
           request.readyToWorking(storage); //stock -1.
+          //remove this after fixing the recipe logic
+          storage.put(recipe.getOutput(), storage.get(recipe.getOutput())-1);
         } else {
+          currentRemainTime--; //revist logic here. E.g. if storage has not sent request ot sources due to low frequency. Also in general..
           Log.debugLog(name + " is waiting for ingredients");
           return false;
         }
@@ -118,6 +124,15 @@ public class Storage extends Building {
     }
   }
 
+  @Override
+  public int getCurrentRemainTime(){
+    if(getStockCount() > 0){
+      return 0;
+    } else {
+      return currentRemainTime;
+    }
+  }
+  
   @Override
   public int getRequestCount() {
     if(hasStock()){
