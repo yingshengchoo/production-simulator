@@ -91,14 +91,15 @@ public class Storage extends Building {
       while(request != null){
         Log.level2Log("    request:[" + name + ":" + request.getIngredient() + ":"
                       + request.getRequesterName() + "] is chosen");
-        if(request.getStatus().equals(RequestStatus.READY)) {
+        if(request.getStatus().equals(RequestStatus.READY) && (getStockCount() > 0)) {
           request.readyToWorking(storage);
         } else {
           Log.debugLog(name + " is waiting for ingredients");
           return false;
         }
-
+        
         //move request to ready queue to send at next time step
+        storage.get(recipe.getOutput())
         requestQueue.remove(request);
         readyQueue.add(request);
         R--;//consumes one storage
@@ -170,7 +171,7 @@ public class Storage extends Building {
   }
 
   public int getStockCount(){
-    return storage.size();
+    return storage.get(recipe.getOutput());
   }
 
   public int getR(){
