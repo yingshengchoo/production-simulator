@@ -41,7 +41,7 @@ public class StorageTest {
    LogicTime t = LogicTime.getInstance();
    
    ArrayList<Building> sources = new ArrayList<>();
-   Recipe socks = new Recipe(1, Collections.emptyMap(), "socks");
+   Recipe socks = new Recipe(2, Collections.emptyMap(), "socks");
    Mine m1 = new Mine("SocksMine1", new FactoryType("SmellySocks", Map.of("socks", socks)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy());
    Mine m2 = new Mine("SocksMine2", new FactoryType("SmellySocks", Map.of("socks", socks)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy());
    sources.add(m1);
