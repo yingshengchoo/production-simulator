@@ -43,6 +43,18 @@ public class Storage extends Building {
     readyQueue = new ArrayList<>();
   }
 
+  // Constructor without coordinate input
+  public Storage(String name, String itemToStore, List<Building> sources, int totalCapacity, double priority, SourcePolicy sourcePolicy, ServePolicy servePolicy){
+    super(name, new FactoryType(name, Map.of(itemToStore, new Recipe(Recipe.getRecipe(itemToStore).getLatency(), new HashMap<>(), itemToStore))), sources, sourcePolicy, new FIFOPolicy()); // Storage only supports FIFO!
+    this.recipe = new Recipe(Recipe.getRecipe(itemToStore).getLatency(), new HashMap<>(), itemToStore);
+    this.totalCapacity = totalCapacity;
+    this.priority = priority;
+    this.frequency = -1;
+    this.R = totalCapacity;
+    super.storage.put(itemToStore, 0);
+    readyQueue = new ArrayList<>();
+  }
+  
   /**
    * Constructs a Mine with the specified name, type, sources, and policies.
    *
