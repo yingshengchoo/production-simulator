@@ -14,7 +14,8 @@ public class CommandParser {
                                             new SetPolicyCommandIdentifier(
                                                     new SaveCommandIdentifier(
                                                             new LoadCommandIdentifier(
-                                                                    null)))))));
+                                                                    new ConnectCommandIdentifier(
+                                                                    null))))))));
   }
 
   public Command parseLine(String line) {
