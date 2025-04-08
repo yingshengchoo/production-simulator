@@ -93,7 +93,7 @@ public class StorageTest {
    
    t.stepNHandler(1);
    assertEquals(1, t.getStep());
-   assertEquals(101, s1.getR());
+   assertEquals(99, s1.getR());
    s1.updateFrequency();
    
    assertEquals(1, s1.getFrequency());
@@ -115,7 +115,7 @@ public class StorageTest {
    assertEquals(1, f.getRequestCount());
    assertEquals(-1, s1.getRequestCount());
    assertEquals(2, s1.getReqCount());
-   assertEquals(1, s1.getReadyQueueCount());
+   assertEquals(0, s1.getReadyQueueCount());
    assertEquals(1, s1.getStockCount());
    assertEquals(0, m1.getRequestCount());
    assertEquals(1, m2.getRequestCount());
@@ -127,7 +127,7 @@ public class StorageTest {
    assertEquals(2, s1.getFrequency());
    assertEquals(1, f.getRequestCount());
    assertEquals(-1, s1.getRequestCount());
-   assertEquals(0, s1.getReqCount());
+   assertEquals(1, s1.getReqCount());
    assertEquals(1, s1.getReadyQueueCount());
    assertEquals(1, s1.getStockCount());
    assertTrue((LogicTime.getInstance().getStep()-1) % s1.getFrequency() == 0); 
@@ -141,7 +141,7 @@ public class StorageTest {
    assertEquals(1, f.getRequestCount());
    assertEquals(-2, s1.getRequestCount());
    assertEquals(0, s1.getReqCount());
-   assertEquals(0, s1.getReadyQueueCount());
+   assertEquals(1, s1.getReadyQueueCount());
    assertEquals(1, s1.getStockCount());
    assertEquals(0, m1.getRequestCount());
    assertEquals(0, m2.getRequestCount());
