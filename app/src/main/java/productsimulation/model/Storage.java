@@ -15,7 +15,7 @@ import java.util.HashMap;
 
 public class Storage extends Building {
 
-  private int priority;
+  private double priority;
   private int frequency;
   private int totalCapacity;
   private List<Request> readyQueue;
@@ -30,7 +30,7 @@ public class Storage extends Building {
    * @param sourcePolicy is the policy that the building uses to select between sources.
    * @param servePolicy  is the policy that the building uses to select between requests.
    */
-  public Storage(String name, String itemToStore, List<Building> sources, int totalCapacity, int priority, SourcePolicy sourcePolicy, ServePolicy servePolicy){
+  public Storage(String name, String itemToStore, List<Building> sources, int totalCapacity, double priority, SourcePolicy sourcePolicy, ServePolicy servePolicy){
     super(name, new FactoryType(name, Map.of(itemToStore, new Recipe(Recipe.getRecipe(itemToStore).getLatency(), new HashMap<>(), itemToStore))), sources, sourcePolicy, new FIFOPolicy()); // Storage only supports FIFO!
     this.recipe = new Recipe(Recipe.getRecipe(itemToStore).getLatency(), new HashMap<>(), itemToStore);
     this.totalCapacity = totalCapacity;
@@ -50,7 +50,7 @@ public class Storage extends Building {
    * @param sourcePolicy is the policy that the building uses to select between sources.
    * @param servePolicy  is the policy that the building uses to select between requests.
    */
-  public Storage(String name, String itemToStore, int totalCapacity, int priority, SourcePolicy sourcePolicy, ServePolicy servePolicy){
+  public Storage(String name, String itemToStore, int totalCapacity, double priority, SourcePolicy sourcePolicy, ServePolicy servePolicy){
     this(name, itemToStore, new ArrayList<>(), totalCapacity, priority, sourcePolicy, servePolicy);
   }
 
