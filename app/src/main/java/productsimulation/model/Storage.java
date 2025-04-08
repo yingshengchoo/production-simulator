@@ -201,7 +201,7 @@ public class Storage extends Building {
    */
   public void sendRequest(){
     updateFrequency();
-    if (frequency != -1){
+    if (frequency == -1){
       return;
     }
     boolean isOnFrequency = (LogicTime.getInstance().getStep() % frequency == 0);
