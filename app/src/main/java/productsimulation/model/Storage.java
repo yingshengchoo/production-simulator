@@ -126,6 +126,14 @@ public class Storage extends Building {
     }
   }
 
+  //checks that the item is in ready queue, for testing**
+  public int getReadyQueueCount(){
+    return readyQueue.size();
+  }
+  //check the request queue count, for testing
+  public int getReqCount(){
+    return requestQueue.size();
+  }
   @Override
   public int getTotalRemainTime(){
     if(hasStock()){
