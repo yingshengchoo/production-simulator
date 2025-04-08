@@ -250,6 +250,27 @@ public class StorageTest {
 
   @Test
   public void test_getCurrentRemainTime(){
-    
+   ArrayList<Building> sources = new ArrayList<>();
+   Recipe socks1 = new Recipe(10, Collections.emptyMap(), "socks");
+   Recipe socks2 = new Recipe(2, Collections.emptyMap(), "socks");
+   
+   Recipe pair = new Recipe(1,Map.of("socks", 2), "pairOfSocks");
+   ArrayList<Recipe> rl = new ArrayList<>();
+   rl.add(socks1);
+   rl.add(socks2);
+   rl.add(pair);
+   Recipe.setRecipeList(rl);
+   
+   Mine m1 = new Mine("SocksMine1", new FactoryType("SockED", Map.of("socks", socks1)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy());
+   Mine m2 = new Mine("SocksMine2", new FactoryType("SockET", Map.of("socks", socks2)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy());
+   sources.add(m1);
+   sources.add(m2);
+   Storage s1 = new Storage("Drawer", "socks", sources, 100, 102, new SourceQLen(), new FIFOPolicy());
+
+   assertEquals(2, s1.getCurrentRemainTime());
+   
+   s1.updateStorage("socks");
+   assertEquals(0, s1.getCurrentRemainTime());
+   
   }
 }
