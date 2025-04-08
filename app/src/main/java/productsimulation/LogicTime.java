@@ -51,13 +51,7 @@ public class LogicTime implements Serializable{
         boolean finished = true;
         for(int i = 0; i < timeDiff; i++) {
             finished = true;
-            //確保 Storage 有先發給Sources request 
-            for(Building b: observers){
-              if(b instanceof Storage){
-                Storage s = (Storage) b;
-                s.sendRequest();
-              }
-            }
+            
             // 新一步
             for(Building b: observers) {
                 boolean idle = b.notified();
@@ -65,6 +59,13 @@ public class LogicTime implements Serializable{
             }
             if(finished && timeDiff == Integer.MAX_VALUE) {
                 break;
+            }
+            //確保 Storage 有先發給Sources request 
+            for(Building b: observers){
+              if(b instanceof Storage){
+                Storage s = (Storage) b;
+                s.sendRequest();
+              }
             }
             currentStep += 1;
             for(Building b: observers) {
