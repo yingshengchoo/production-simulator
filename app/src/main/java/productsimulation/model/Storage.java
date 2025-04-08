@@ -99,7 +99,7 @@ public class Storage extends Building {
         }
         
         //move request to ready queue to send at next time step
-        storage.get(recipe.getOutput())
+        storage.get(recipe.getOutput());
         requestQueue.remove(request);
         readyQueue.add(request);
         R--;//consumes one storage
