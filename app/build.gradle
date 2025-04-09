@@ -70,6 +70,9 @@ test{
         exceptionFormat='full'
         events = ["passed", "failed", "skipped"]
     }
+    systemProperty "testfx.headless", "true"
+    systemProperty "testfx.robot", "glass"
+
 }
 clover{
     compiler {
