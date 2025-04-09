@@ -2,6 +2,7 @@ package productsimulation.setup;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import productsimulation.Coordinate;
 import productsimulation.model.*;
 import productsimulation.setup.json_rules.*;
 
@@ -33,10 +34,13 @@ public class SetupParser {
                                                                                 new FactorysRecipeHasIngredients(
                                                                                         new MinesRecipeHasEmptyIngredients(
                                                                                                 new RecipeHasValidLatencyNumber(
-                                                                                                        new FactoryCanGetAllIngredientsItNeeds(null)
+                                                                                                        new FactoryCanGetAllIngredientsItNeeds(
+                                                                                                                new NoRepetitiveCoordinate(
+                                                                                                                       new  StorageHasRequiredFields(null)
+                                                                                                                )
+                                                                                                        )
                                                                                                 )))))))))))
-        )
-                ;
+        );
     }
 
     private JsonNode parseJson(BufferedReader reader) {
@@ -88,7 +92,6 @@ public class SetupParser {
                 String recipeName = recName.asText();
                 Recipe rcp = recipeMap.get(recipeName);
                 recipesForType.put(recipeName, rcp);
-
             }
             FactoryType factoryType = new FactoryType(typeName, recipesForType);
             typeMap.put(typeName, factoryType);
@@ -96,31 +99,69 @@ public class SetupParser {
     }
 
     private void parseBuildings(JsonNode buildingsNode) {
+        // First pass: process buildings that specify coordinates.
         for (JsonNode buildingNode : buildingsNode) {
-            String buildingName = buildingNode.get("name").asText();
-//            if (buildingName.startsWith("'") && buildingName.endsWith("'")) {
-//                buildingName = buildingName.substring(1, buildingName.length() - 1);
-//            }
-            Building building ;
+            if (buildingNode.has("x") && buildingNode.has("y")) {
+                String buildingName = buildingNode.get("name").asText();
+                Building building;
+                int x = buildingNode.get("x").asInt();
+                int y = buildingNode.get("y").asInt();
+                Coordinate coord = new Coordinate(x, y);
 
-            if (buildingNode.has("type")) {
-                String typeName = buildingNode.get("type").asText();
-                FactoryType ft = typeMap.get(typeName);
-                building = new Factory(buildingName, ft, null, null);
-            } else  {
-                // 我记得mine可以有多种output
-                String mineOutput = buildingNode.get("mine").asText();
-//                FactoryType dummyType = new FactoryType(mineOutput, new HashMap<>());
-//                mine还是有个recipes会比较符合直觉
-//                这里我写得比较粗糙，没有考虑异常。
-                Map<String, Recipe> recipes = new HashMap<>();
-                recipes.put(mineOutput, recipeMap.get(mineOutput));
-                FactoryType dummyType = new FactoryType(mineOutput, recipes);
-                building = new Mine(buildingName, dummyType, null, null);
+                if (buildingNode.has("type")) {
+                    String typeName = buildingNode.get("type").asText();
+                    FactoryType ft = typeMap.get(typeName);
+                    building = new Factory(buildingName, ft, null,null, null, coord);
+                } else if (buildingNode.has("mine")) {
+                    String mineOutput = buildingNode.get("mine").asText();
+                    Map<String, Recipe> recipes = new HashMap<>();
+                    recipes.put(mineOutput, recipeMap.get(mineOutput));
+                    FactoryType dummyType = new FactoryType(mineOutput, recipes);
+                    building = new Mine(buildingName, dummyType, null,null, null, coord);
+                } else if (buildingNode.has("stores")) {
+                    String storeItem = buildingNode.get("stores").asText();
+                    int capacity = buildingNode.get("capacity").asInt();
+                    double priority = buildingNode.get("priority").asDouble();
+                    // Create a Storage building. Assume Storage is defined in productsimulation.model.
+                    building = new Storage(buildingName, storeItem, capacity, priority, null, null, coord);
+                } else {
+                    continue;
+                }
+
+                buildingMap.put(buildingName, building);
             }
-            buildingMap.put(buildingName, building);
         }
 
+        // Second pass: process buildings that do not have coordinates (legacy input).
+        for (JsonNode buildingNode : buildingsNode) {
+            if (!(buildingNode.has("x") && buildingNode.has("y"))) {
+                String buildingName = buildingNode.get("name").asText();
+                Building building;
+                // For buildings without coordinates, use a constructor that auto-assigns a valid coordinate.
+                if (buildingNode.has("type")) {
+                    String typeName = buildingNode.get("type").asText();
+                    FactoryType ft = typeMap.get(typeName);
+                    building = new Factory(buildingName, ft, null, null); // This constructor should auto-assign a coordinate.
+                } else if (buildingNode.has("mine")) {
+                    String mineOutput = buildingNode.get("mine").asText();
+                    Map<String, Recipe> recipes = new HashMap<>();
+                    recipes.put(mineOutput, recipeMap.get(mineOutput));
+                    FactoryType dummyType = new FactoryType(mineOutput, recipes);
+                    building = new Mine(buildingName, dummyType, null, null);
+                } else if (buildingNode.has("stores")) {
+                    String storeItem = buildingNode.get("stores").asText();
+                    int capacity = buildingNode.get("capacity").asInt();
+                    double priority = buildingNode.get("priority").asDouble();
+                    building = new Storage(buildingName, storeItem, null, capacity, priority, null, null);
+                } else {
+                    continue;
+                }
+
+                buildingMap.put(buildingName, building);
+            }
+        }
+
+        // Third pass: assign sources to each building.
         for (JsonNode buildingNode : buildingsNode) {
             String buildingName = buildingNode.get("name").asText();
             List<Building> sources = new ArrayList<>();
@@ -128,7 +169,6 @@ public class SetupParser {
                 String srcName = src.asText();
                 sources.add(buildingMap.get(srcName));
             }
-
             buildingMap.get(buildingName).setSources(sources);
         }
     }

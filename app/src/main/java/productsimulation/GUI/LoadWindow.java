@@ -1,59 +1,17 @@
 package productsimulation.GUI;
 
-import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class GUI extends Application {
+public class LoadWindow {
 
-    private Label label;
-
-    @Override
-    public void start(Stage stage) {
-        label = new Label(getWelcomeMessage());
-
-        Button saveButton = createSaveButton();
-        Button loadButton = createLoadButton();
-
-        HBox topBar = new HBox(10, saveButton, loadButton);
-
-        BorderPane root = new BorderPane();
-        root.setTop(topBar);
-        root.setCenter(label);
-
-        Scene scene = new Scene(root, 640, 480);
-        stage.setScene(scene);
-        stage.setTitle("JavaFX GUI");
-        stage.show();
-    }
-
-    private Button createSaveButton() {
-        Button button = new Button("Save");
-        button.setOnAction(e -> handleSave());
-        return button;
-    }
-
-    private Button createLoadButton() {
-        Button button = new Button("Load");
-        button.setOnAction(e -> openDragAndDropWindow());
-        return button;
-    }
-
-    private void handleSave() {
-        System.out.println("Save button clicked!");
-        label.setText("You clicked Save!");
-    }
-
-    private void openDragAndDropWindow() {
+    public static void show() {
         Stage popupStage = new Stage();
         popupStage.initModality(Modality.APPLICATION_MODAL);
         popupStage.setTitle("Drag and Drop a File");
@@ -87,15 +45,5 @@ public class GUI extends Application {
         Scene popupScene = new Scene(dropPane);
         popupStage.setScene(popupScene);
         popupStage.show();
-    }
-
-    private String getWelcomeMessage() {
-        String javaVersion = System.getProperty("java.version");
-        String javafxVersion = System.getProperty("javafx.version");
-        return "Hello, JavaFX " + javafxVersion + ", running on Java " + javaVersion + ".";
-    }
-
-    public static void main(String[] args) {
-        launch();
     }
 }
