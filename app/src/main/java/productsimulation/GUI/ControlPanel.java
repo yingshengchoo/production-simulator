@@ -11,7 +11,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import productsimulation.State;
 import productsimulation.command.CommandParser;
-
 import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,7 +29,7 @@ public class ControlPanel extends VBox {
         setPadding(new Insets(10));
         setSpacing(15);
 
-        // Main Buttons on the Control Panel
+        // --- Main Command Buttons ---
         Button stepButton = new Button("Step");
         Button finishButton = new Button("Finish");
         Button requestButton = new Button("Request Item");
@@ -39,6 +38,7 @@ public class ControlPanel extends VBox {
         Button verbosityButton = new Button("Set Verbosity");
         Button loadButton = new Button("Load Setup");
         Button saveButton = new Button("Save Simulation");
+        Button addBuildingButton = new Button("Add Building");
 
         // Event Handlers:
         stepButton.setOnAction(e -> openStepWindow());
@@ -83,17 +83,29 @@ public class ControlPanel extends VBox {
             }
         });
 
-        // Add all main buttons to the panel.
+        addBuildingButton.setOnAction(e -> {
+            String cmd = AddBuildingDialog.showAddBuildingDialog(simulationState);
+            if (cmd != null) {
+                try {
+                    commandParser.parseLine(cmd);
+                } catch (Exception ex) {
+                    showError("Add Building error: " + ex.getMessage());
+                }
+                boardDisplay.refresh();
+            }
+        });
+
         getChildren().addAll(stepButton, finishButton, requestButton, connectButton,
-                policyButton, verbosityButton, loadButton, saveButton);
+                policyButton, verbosityButton, loadButton, saveButton, addBuildingButton);
     }
 
-    // Opens a new modal window for the Step command.
+    // --- Modal Dialog Windows for Commands ---
+
     private void openStepWindow() {
         Stage stepStage = new Stage();
         stepStage.setTitle("Step Simulation");
-        GridPane grid = createDefaultGrid();
 
+        GridPane grid = createDefaultGrid();
         Label label = new Label("Enter number of steps:");
         Spinner<Integer> stepSpinner = new Spinner<>(1, 100, 1);
         Button submit = new Button("Submit");
@@ -114,14 +126,12 @@ public class ControlPanel extends VBox {
         showModalWindow(stepStage, grid);
     }
 
-    // Opens a new modal window for the Request Item command.
     private void openRequestWindow() {
         Stage reqStage = new Stage();
         reqStage.setTitle("Request Item");
-        GridPane grid = createDefaultGrid();
 
+        GridPane grid = createDefaultGrid();
         Label itemLabel = new Label("Item:");
-        // Use a fixed list; you can update this list dynamically if needed.
         ComboBox<String> itemCombo = new ComboBox<>(FXCollections.observableArrayList("door", "handle", "hinge"));
         itemCombo.setPromptText("Select item");
 
@@ -158,12 +168,11 @@ public class ControlPanel extends VBox {
         showModalWindow(reqStage, grid);
     }
 
-    // Opens a new modal window for the Connect Buildings command.
     private void openConnectWindow() {
         Stage connStage = new Stage();
         connStage.setTitle("Connect Buildings");
-        GridPane grid = createDefaultGrid();
 
+        GridPane grid = createDefaultGrid();
         Label sourceLabel = new Label("Source:");
         List<String> buildingNames = simulationState.getBuildings().stream()
                 .map(b -> b.getName())
@@ -201,12 +210,11 @@ public class ControlPanel extends VBox {
         showModalWindow(connStage, grid);
     }
 
-    // Opens a new modal window for the Set Policy command.
     private void openPolicyWindow() {
         Stage policyStage = new Stage();
         policyStage.setTitle("Set Policy");
-        GridPane grid = createDefaultGrid();
 
+        GridPane grid = createDefaultGrid();
         Label typeLabel = new Label("Policy Type:");
         ComboBox<String> typeCombo = new ComboBox<>(FXCollections.observableArrayList("request", "source"));
         typeCombo.setPromptText("Select type");
@@ -263,12 +271,11 @@ public class ControlPanel extends VBox {
         showModalWindow(policyStage, grid);
     }
 
-    // Opens a new modal window for the Set Verbosity command.
     private void openVerbosityWindow() {
         Stage verbStage = new Stage();
         verbStage.setTitle("Set Verbosity");
-        GridPane grid = createDefaultGrid();
 
+        GridPane grid = createDefaultGrid();
         Label verbLabel = new Label("Verbosity Level:");
         ComboBox<Integer> verbCombo = new ComboBox<>(FXCollections.observableArrayList(0, 1, 2));
         verbCombo.setPromptText("Select level");
@@ -295,7 +302,7 @@ public class ControlPanel extends VBox {
         showModalWindow(verbStage, grid);
     }
 
-    // Helper method: creates a default GridPane with common settings.
+    // Helper method: create a default GridPane.
     private GridPane createDefaultGrid() {
         GridPane grid = new GridPane();
         grid.setHgap(10);
@@ -304,7 +311,7 @@ public class ControlPanel extends VBox {
         return grid;
     }
 
-    // Helper method: configures and shows a window modally.
+    // Helper method: show a modal window with the given content.
     private void showModalWindow(Stage stage, GridPane content) {
         Scene scene = new Scene(content);
         stage.initModality(Modality.APPLICATION_MODAL);
@@ -312,7 +319,7 @@ public class ControlPanel extends VBox {
         stage.showAndWait();
     }
 
-    // Helper method: shows an error alert.
+    // Helper method: show an error alert.
     private void showError(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR, message, ButtonType.OK);
         alert.showAndWait();
