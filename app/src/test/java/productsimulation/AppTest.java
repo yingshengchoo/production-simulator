@@ -122,7 +122,7 @@ class AppTest {
         try {
             System.setIn(input);
             System.setOut(out);
-            String[] args = { "-nw", testSetupFname }; //for testing command line only
+            String[] args = { testSetupFname }; 
             App.main(args);
         }
         finally {
