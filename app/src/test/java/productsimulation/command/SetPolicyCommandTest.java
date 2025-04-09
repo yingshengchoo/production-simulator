@@ -5,10 +5,8 @@ import productsimulation.LogicTime;
 import productsimulation.RequestBroadcaster;
 import productsimulation.State;
 import productsimulation.model.*;
-import productsimulation.request.servePolicy.FIFOPolicy;
 import productsimulation.request.servePolicy.ReadyPolicy;
 import productsimulation.request.servePolicy.SjfPolicy;
-import productsimulation.request.sourcePolicy.SourceEstimate;
 import productsimulation.request.sourcePolicy.SourceSimplelat;
 
 import java.util.*;
@@ -64,7 +62,7 @@ class SetPolicyCommandTest {
 
         SetPolicyCommand cmd = new SetPolicyCommand("request", "default", "sjf");
         assertDoesNotThrow(() -> cmd.execute());
-        for (Building building : State.getInstance().getBuilding()) {
+        for (Building building : State.getInstance().getBuildings()) {
            assertEquals(new SjfPolicy().getName(), building.getServePolicy().getName());
         }
     }
@@ -80,7 +78,7 @@ class SetPolicyCommandTest {
 
         SetPolicyCommand cmd = new SetPolicyCommand("request", "default", "sjf");
         assertDoesNotThrow(() -> cmd.execute());
-        for (Building building : State.getInstance().getBuilding()) {
+        for (Building building : State.getInstance().getBuildings()) {
             if (!building.getName().equals("GC")) {
                 assertEquals(new SjfPolicy().getName(), building.getServePolicy().getName());
             } else {
@@ -100,7 +98,7 @@ class SetPolicyCommandTest {
 
         SetPolicyCommand cmd = new SetPolicyCommand("request", "*", "sjf");
         assertDoesNotThrow(() -> cmd.execute());
-        for (Building building : State.getInstance().getBuilding()) {
+        for (Building building : State.getInstance().getBuildings()) {
                 assertEquals(new SjfPolicy().getName(), building.getServePolicy().getName());
 
         }
@@ -124,7 +122,7 @@ class SetPolicyCommandTest {
         assertEquals(new SourceSimplelat().getName(), cmd1.getTargetBuildings().get(0).getSourcePolicy().getName());
         SetPolicyCommand cmd2 = new SetPolicyCommand("source", "*", "simplelat");
         cmd2.execute();
-        for (Building building : State.getInstance().getBuilding()) {
+        for (Building building : State.getInstance().getBuildings()) {
             assertEquals(new SourceSimplelat().getName(), building.getSourcePolicy().getName());
         }
 

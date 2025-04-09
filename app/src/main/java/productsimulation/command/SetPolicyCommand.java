@@ -40,28 +40,28 @@ public class SetPolicyCommand extends Command {
 
         if (policyType.equals("source")) {
             if (policyTarget.equals("*")) {
-                buildings.addAll(State.getInstance().getBuilding());
+                buildings.addAll(State.getInstance().getBuildings());
             } else if (policyTarget.equals("default")) {
-                for (Building building : State.getInstance().getBuilding()) {
+                for (Building building : State.getInstance().getBuildings()) {
                     if (building.getSourcePolicy().getName().equals(defaultSource.getName())) {
                         buildings.add(building);
                     }
                 }
             } else
             {
-                buildings.add(State.getInstance().getBuilding(policyTarget));
+                buildings.add(State.getInstance().getBuildings(policyTarget));
             }
         } else {
             if (policyTarget.equals("*")) {
-                buildings.addAll(State.getInstance().getBuilding());
+                buildings.addAll(State.getInstance().getBuildings());
             } else if (policyTarget.equals("default")) {
-                for (Building building : State.getInstance().getBuilding()) {
+                for (Building building : State.getInstance().getBuildings()) {
                     if (building.getServePolicy().getName().equals(defaultServe.getName())) {
                         buildings.add(building);
                     }
                 }
             }else {
-                buildings.add(State.getInstance().getBuilding(policyTarget));
+                buildings.add(State.getInstance().getBuildings(policyTarget));
             }
         }
     }

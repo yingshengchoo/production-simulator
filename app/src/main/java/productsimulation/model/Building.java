@@ -420,4 +420,8 @@ public abstract class Building implements Serializable {
     public Coordinate getCoordinate() {
         return coordinate;
     }
+
+    public int getX() {return coordinate.x;}
+
+    public int getY() {return coordinate.y;}
 }

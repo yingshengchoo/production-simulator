@@ -1,101 +1,94 @@
 package productsimulation.GUI;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.input.DragEvent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Duration;
+import productsimulation.App;
+import productsimulation.Log;
+import productsimulation.State;
+import productsimulation.command.CommandParser;
 
 public class GUI extends Application {
 
-    private Label label;
+    // Simulation engine objects.
+    private State simulationState;
+    private CommandParser commandParser;
+
+    // UI components.
+    private BoardDisplay boardDisplay;
+    private TextArea logArea;
+
+    // For future updates: if you add current cycle tracking to your simulation engine,
+    // you can uncomment and update the cycleLabel below.
+    // private Label cycleLabel;
 
     @Override
-    public void start(Stage stage) {
-        label = new Label(getWelcomeMessage());
+    public void start(Stage primaryStage) {
+        // Initialize the simulation engine and command parser.
+        simulationState = State.getInstance();
+        commandParser = new CommandParser();
 
-        Button saveButton = createSaveButton();
-        Button loadButton = createLoadButton();
+        // Create the board display adapter.
+        boardDisplay = new BoardDisplay(simulationState);
 
-        HBox topBar = new HBox(10, saveButton, loadButton);
+        // For now, we omit the cycle display.
+        // If simulationState had a getCurrentCycle() method, you could initialize and update a cycle label.
+        // cycleLabel = new Label("Cycle: " + simulationState.getCurrentCycle());
+        // cycleLabel.getStyleClass().add("cycle-label");
 
+        // Set up the main layout.
         BorderPane root = new BorderPane();
-        root.setTop(topBar);
-        root.setCenter(label);
+        // root.setTop(cycleLabel);  // Uncomment this if you add current cycle tracking later.
+        root.setCenter(boardDisplay.getCanvasPane());
 
-        Scene scene = new Scene(root, 640, 480);
-        stage.setScene(scene);
-        stage.setTitle("JavaFX GUI");
-        stage.show();
+        // Create the control panel on the right.
+        ControlPanel controlPanel = new ControlPanel(commandParser, boardDisplay, simulationState);
+        root.setRight(controlPanel);
+
+        // Create and add a log area at the bottom.
+        logArea = new TextArea();
+        logArea.setEditable(false);
+        logArea.setPrefRowCount(6);
+        root.setBottom(logArea);
+
+        // Create the scene.
+        Scene scene = new Scene(root, 1200, 800);
+        // Optionally add a stylesheet:
+        // scene.getStylesheets().add(getClass().getResource("gui.css").toExternalForm());
+
+        primaryStage.setScene(scene);
+        primaryStage.setTitle("Production Simulation");
+        primaryStage.show();
+
+        // Use a Timeline to periodically update the UI.
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
+            updateUI();
+        }));
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.play();
     }
 
-    private Button createSaveButton() {
-        Button button = new Button("Save");
-        button.setOnAction(e -> handleSave());
-        return button;
-    }
-
-    private Button createLoadButton() {
-        Button button = new Button("Load");
-        button.setOnAction(e -> openDragAndDropWindow());
-        return button;
-    }
-
-    private void handleSave() {
-        System.out.println("Save button clicked!");
-        label.setText("You clicked Save!");
-    }
-
-    private void openDragAndDropWindow() {
-        Stage popupStage = new Stage();
-        popupStage.initModality(Modality.APPLICATION_MODAL);
-        popupStage.setTitle("Drag and Drop a File");
-
-        Label dropLabel = new Label("Drop a file here");
-        dropLabel.setStyle("-fx-border-color: #aaa; -fx-border-width: 2px; -fx-padding: 50px;");
-
-        StackPane dropPane = new StackPane(dropLabel);
-        dropPane.setPrefSize(300, 200);
-
-        dropPane.setOnDragOver(event -> {
-            if (event.getGestureSource() != dropPane && event.getDragboard().hasFiles()) {
-                event.acceptTransferModes(TransferMode.COPY);
-            }
-            event.consume();
-        });
-
-        dropPane.setOnDragDropped((DragEvent event) -> {
-            Dragboard db = event.getDragboard();
-            boolean success = false;
-            if (db.hasFiles()) {
-                String filePath = db.getFiles().get(0).getAbsolutePath();
-                System.out.println("File dropped: " + filePath);
-                dropLabel.setText("Loaded: " + filePath);
-                success = true;
-            }
-            event.setDropCompleted(success);
-            event.consume();
-        });
-
-        Scene popupScene = new Scene(dropPane);
-        popupStage.setScene(popupScene);
-        popupStage.show();
-    }
-
-    private String getWelcomeMessage() {
-        String javaVersion = System.getProperty("java.version");
-        String javafxVersion = System.getProperty("javafx.version");
-        return "Hello, JavaFX " + javafxVersion + ", running on Java " + javaVersion + ".";
+    private void updateUI() {
+        boardDisplay.refresh();
+        // For now, we skip updating the cycle label.
+        // If you add a getCurrentCycle(), you could update it here:
+        // cycleLabel.setText("Cycle: " + simulationState.getCurrentCycle());
+//        logArea.setText(Log.getLogText());
     }
 
     public static void main(String[] args) {
-        launch();
+        // If the -nw flag is specified, launch the textual interface (via App.java).
+        for (String arg : args) {
+            if (arg.equals("-nw")) {
+                App.main(args);
+                return;
+            }
+        }
+        launch(args);
     }
 }

@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.io.*;
 
-import org.junit.jupiter.api.Disabled;
 import productsimulation.model.*;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedConstruction;
@@ -211,8 +210,8 @@ class StateTest {
 
     State state = State.getInstance();
 
-    assertEquals(state.getBuilding(), buildings);
-    assertEquals(factory, state.getBuilding("GC"));
-    assertNull(state.getBuilding("DNE"));
+    assertEquals(state.getBuildings(), buildings);
+    assertEquals(factory, state.getBuildings("GC"));
+    assertNull(state.getBuildings("DNE"));
   }
 }
