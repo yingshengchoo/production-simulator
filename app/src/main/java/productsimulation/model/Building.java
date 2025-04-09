@@ -109,6 +109,9 @@ public abstract class Building implements Serializable {
     }
 
     private static boolean isValid(int candidateX, int candidateY, List<Coordinate> existingPoints) {
+        if(candidateX < 0 || candidateY <0){
+          return false;
+        }
         boolean withinX = false;
         boolean withinY = false;
         for (Coordinate c : existingPoints) {
