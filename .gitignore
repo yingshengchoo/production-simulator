@@ -20,3 +20,5 @@ SavedStates
 # Ignore Gradle build output directory
 build
 app/bin
+/app/src/main/java/productsimulation/concat_java.py
+/app/src/main/java/productsimulation/my_combined.java
