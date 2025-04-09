@@ -191,7 +191,7 @@ public class State implements Serializable{
     instance = null;
   }
 
-  public Building getBuilding(String name) {
+  public Building getBuildings(String name) {
     for (Building b : buildings) {
       if (b.getName().equals(name)) {
         return b;
@@ -200,7 +200,7 @@ public class State implements Serializable{
     return null;
   }
 
-  public List<Building> getBuilding() {
+  public List<Building> getBuildings() {
     return buildings;
   }
 
