@@ -70,8 +70,9 @@ test{
         exceptionFormat='full'
         events = ["passed", "failed", "skipped"]
     }
-    systemProperty "testfx.headless", "true"
-    systemProperty "testfx.robot", "glass"
+    systemProperty 'java.awt.headless', 'true'
+    systemProperty 'testfx.headless', 'true'
+    systemProperty 'testfx.robot', 'lass'
 
 }
 clover{

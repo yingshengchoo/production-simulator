@@ -121,15 +121,15 @@ public class App {
     }
 
     //If GUI is True, open GUI
-    private static void play(String setupFilePath, boolean GUI) {
+    private static void play(String setupFilePath, boolean useGUI) {
         //setup
         boolean ret = initialize(setupFilePath);
         if(!ret) {
             return;
         }
         // enter interaction phase
-        if(GUI){
-          Application.launch(GUI.class);
+        if(useGUI){
+          GUI.launch();
         } else {
           CommandParser cmdParser = new CommandParser();
           readInputCommand(cmdParser, new InputStreamReader(System.in));
