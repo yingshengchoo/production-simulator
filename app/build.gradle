@@ -70,7 +70,7 @@ test{
         exceptionFormat='full'
         events = ["passed", "failed", "skipped"]
     }
-    systemProperty 'java.awt.headless', 'true'
+
     systemProperty 'testfx.headless', 'true'
     systemProperty 'testfx.robot', 'lass'
 
