@@ -17,9 +17,8 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Scanner;
 
-import javafx.application.Application;
 
-public class App extends Applicaiton {
+public class App {
     private static String beginPrompt = "Welcome to product simulation, you can:\n" +
             "request 'itemName' from 'buildingName'\n" +
             "step 1\n" +
