@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Scanner;
 
+import javafx.application.Application;
 
 public class App {
     private static String beginPrompt = "Welcome to product simulation, you can:\n" +
@@ -128,7 +129,7 @@ public class App {
         }
         // enter interaction phase
         if(useGUI){
-          GUI.launch();
+          Application.launch(GUI.class);
         } else {
           CommandParser cmdParser = new CommandParser();
           readInputCommand(cmdParser, new InputStreamReader(System.in));
