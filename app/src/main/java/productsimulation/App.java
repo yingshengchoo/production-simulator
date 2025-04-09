@@ -5,6 +5,7 @@ import productsimulation.command.CommandParser;
 import productsimulation.model.Building;
 import productsimulation.model.FactoryType;
 import productsimulation.model.Recipe;
+import productsimulation.GUI.GUI;
 import productsimulation.request.servePolicy.FIFOPolicy;
 import productsimulation.request.servePolicy.ServePolicy;
 import productsimulation.request.sourcePolicy.SourcePolicy;
@@ -15,6 +16,8 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Scanner;
+
+import javafx.application.Application;
 
 public class App {
     private static String beginPrompt = "Welcome to product simulation, you can:\n" +
@@ -117,23 +120,42 @@ public class App {
         return true;
     }
 
-    private static void play(String setupFilePath) {
+    //If GUI is True, open GUI
+    private static void play(String setupFilePath, boolean GUI) {
         //setup
         boolean ret = initialize(setupFilePath);
         if(!ret) {
             return;
         }
         // enter interaction phase
-        CommandParser cmdParser = new CommandParser();
-        readInputCommand(cmdParser, new InputStreamReader(System.in));
+        if(GUI){
+          Application.launch(GUI.class);
+        } else {
+          CommandParser cmdParser = new CommandParser();
+          readInputCommand(cmdParser, new InputStreamReader(System.in));
+        }
     }
 
     public static void main(String[] args) {
-        if (args.length < 1) {
-            System.err.println("Usage: ./app <setup_json_file_path>");
+        if (args.length < 1 || args.length > 2) {
+            System.err.println("Usage: java App [-nw] <setup_json_file_path>");
             return;
         }
-        String filePath = args[0];
-        play(filePath);
+
+        boolean useGUI = true;
+        String filePath;
+
+        if (args[0].equals("-nw")) {
+            useGUI = false;
+            if (args.length < 2) {
+                System.err.println("Usage: java App -nw <setup_json_file_path>");
+                return;
+            }
+            filePath = args[1];
+        } else {
+            filePath = args[0];
+        }
+
+        play(filePath, useGUI);
     }
 }
