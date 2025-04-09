@@ -2,10 +2,13 @@ package productsimulation.GUI;
 
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import productsimulation.State;
 import productsimulation.command.CommandParser;
 
@@ -15,9 +18,9 @@ import java.util.stream.Collectors;
 
 public class ControlPanel extends VBox {
 
-    private CommandParser commandParser;
-    private BoardDisplay boardDisplay;
-    private State simulationState;
+    private final CommandParser commandParser;
+    private final BoardDisplay boardDisplay;
+    private final State simulationState;
 
     public ControlPanel(CommandParser commandParser, BoardDisplay boardDisplay, State simulationState) {
         this.commandParser = commandParser;
@@ -27,218 +30,36 @@ public class ControlPanel extends VBox {
         setPadding(new Insets(10));
         setSpacing(15);
 
-        // --- Simulation Control Section ---
-        TitledPane simControlPane = new TitledPane();
-        simControlPane.setText("Simulation Control");
-        GridPane simControlGrid = new GridPane();
-        simControlGrid.setHgap(10);
-        simControlGrid.setVgap(10);
-        simControlGrid.setPadding(new Insets(10));
-
-        // STEP control using a Spinner.
-        Label stepLabel = new Label("Step count:");
-        Spinner<Integer> stepSpinner = new Spinner<>(1, 100, 1);
+        // Main Buttons on the Control Panel
         Button stepButton = new Button("Step");
-        stepButton.setOnAction(e -> {
-            int steps = stepSpinner.getValue();
-            try {
-                commandParser.parseLine("step " + steps);
-            } catch(Exception ex) {
-                showError("Step error: " + ex.getMessage());
-            }
-            boardDisplay.refresh();
-        });
-        simControlGrid.add(stepLabel, 0, 0);
-        simControlGrid.add(stepSpinner, 1, 0);
-        simControlGrid.add(stepButton, 2, 0);
-
-        // FINISH button.
         Button finishButton = new Button("Finish");
+        Button requestButton = new Button("Request Item");
+        Button connectButton = new Button("Connect Buildings");
+        Button policyButton = new Button("Set Policy");
+        Button verbosityButton = new Button("Set Verbosity");
+        Button loadButton = new Button("Load Setup");
+        Button saveButton = new Button("Save Simulation");
+
+        // Event Handlers:
+        stepButton.setOnAction(e -> openStepWindow());
+
         finishButton.setOnAction(e -> {
             try {
                 commandParser.parseLine("finish");
-            } catch(Exception ex) {
+            } catch (Exception ex) {
                 showError("Finish error: " + ex.getMessage());
             }
             boardDisplay.refresh();
         });
-        simControlGrid.add(finishButton, 0, 1, 3, 1);
-        simControlPane.setContent(simControlGrid);
 
-        // --- Request Item Section ---
-        TitledPane requestPane = new TitledPane();
-        requestPane.setText("Request Item");
-        GridPane requestGrid = new GridPane();
-        requestGrid.setHgap(10);
-        requestGrid.setVgap(10);
-        requestGrid.setPadding(new Insets(10));
+        requestButton.setOnAction(e -> openRequestWindow());
 
-        Label requestItemLabel = new Label("Item:");
-        // For now, a fixed list of items; you could later update it dynamically.
-        ComboBox<String> itemCombo = new ComboBox<>(FXCollections.observableArrayList("door", "handle", "hinge"));
-        itemCombo.setPromptText("Select item");
+        connectButton.setOnAction(e -> openConnectWindow());
 
-        Label requestBuildingLabel = new Label("From Building:");
-        // Populate building names from simulationState.
-        List<String> buildingNames = simulationState.getBuildings().stream()
-                .map(b -> b.getName())
-                .collect(Collectors.toList());
-        ComboBox<String> requestBuildingCombo = new ComboBox<>(FXCollections.observableArrayList(buildingNames));
-        requestBuildingCombo.setPromptText("Select building");
+        policyButton.setOnAction(e -> openPolicyWindow());
 
-        Button requestButton = new Button("Request");
-        requestButton.setOnAction(e -> {
-            String item = itemCombo.getValue();
-            String building = requestBuildingCombo.getValue();
-            if(item == null || building == null) {
-                showError("Please select both an item and a building.");
-                return;
-            }
-            String cmd = String.format("request '%s' from '%s'", item, building);
-            try {
-                commandParser.parseLine(cmd);
-            } catch(Exception ex) {
-                showError("Request error: " + ex.getMessage());
-            }
-            boardDisplay.refresh();
-        });
+        verbosityButton.setOnAction(e -> openVerbosityWindow());
 
-        requestGrid.add(requestItemLabel, 0, 0);
-        requestGrid.add(itemCombo, 1, 0);
-        requestGrid.add(requestBuildingLabel, 0, 1);
-        requestGrid.add(requestBuildingCombo, 1, 1);
-        requestGrid.add(requestButton, 0, 2, 2, 1);
-        requestPane.setContent(requestGrid);
-
-        // --- Connect Buildings Section ---
-        TitledPane connectPane = new TitledPane();
-        connectPane.setText("Connect Buildings");
-        GridPane connectGrid = new GridPane();
-        connectGrid.setHgap(10);
-        connectGrid.setVgap(10);
-        connectGrid.setPadding(new Insets(10));
-
-        Label connectSourceLabel = new Label("Source:");
-        ComboBox<String> connectSourceCombo = new ComboBox<>(FXCollections.observableArrayList(buildingNames));
-        connectSourceCombo.setPromptText("Select source");
-
-        Label connectDestLabel = new Label("Destination:");
-        ComboBox<String> connectDestCombo = new ComboBox<>(FXCollections.observableArrayList(buildingNames));
-        connectDestCombo.setPromptText("Select destination");
-
-        Button connectButton = new Button("Connect");
-        connectButton.setOnAction(e -> {
-            String source = connectSourceCombo.getValue();
-            String dest = connectDestCombo.getValue();
-            if(source == null || dest == null) {
-                showError("Please select both a source and a destination building.");
-                return;
-            }
-            String cmd = String.format("connect '%s' to '%s'", source, dest);
-            try {
-                commandParser.parseLine(cmd);
-            } catch(Exception ex) {
-                showError("Connect error: " + ex.getMessage());
-            }
-            boardDisplay.refresh();
-        });
-
-        connectGrid.add(connectSourceLabel, 0, 0);
-        connectGrid.add(connectSourceCombo, 1, 0);
-        connectGrid.add(connectDestLabel, 0, 1);
-        connectGrid.add(connectDestCombo, 1, 1);
-        connectGrid.add(connectButton, 0, 2, 2, 1);
-        connectPane.setContent(connectGrid);
-
-        // --- Set Policy / Verbosity Section ---
-        TitledPane policyPane = new TitledPane();
-        policyPane.setText("Set Policy / Verbosity");
-        GridPane policyGrid = new GridPane();
-        policyGrid.setHgap(10);
-        policyGrid.setVgap(10);
-        policyGrid.setPadding(new Insets(10));
-
-        // Policy configuration:
-        Label policyTypeLabel = new Label("Policy Type:");
-        ComboBox<String> policyTypeCombo = new ComboBox<>(FXCollections.observableArrayList("request", "source"));
-        policyTypeCombo.setPromptText("Select type");
-
-        Label policyValueLabel = new Label("Policy Value:");
-        ComboBox<String> policyValueCombo = new ComboBox<>();
-        // Update policy values when type changes.
-        policyTypeCombo.setOnAction(e -> {
-            String type = policyTypeCombo.getValue();
-            if ("request".equals(type)) {
-                policyValueCombo.setItems(FXCollections.observableArrayList("fifo", "sjf", "ready", "default"));
-            } else if ("source".equals(type)) {
-                policyValueCombo.setItems(FXCollections.observableArrayList("qlen", "simplelat", "recursivelat", "default"));
-            } else {
-                policyValueCombo.setItems(FXCollections.observableArrayList());
-            }
-        });
-        policyValueCombo.setPromptText("Select value");
-
-        Label policyTargetLabel = new Label("Policy Target:");
-        // Target: a building name, "*" or "default".
-        ComboBox<String> policyTargetCombo = new ComboBox<>(FXCollections.observableArrayList(buildingNames));
-        policyTargetCombo.getItems().addAll("*", "default");
-        policyTargetCombo.setPromptText("Select target");
-
-        Button policyButton = new Button("Set Policy");
-        policyButton.setOnAction(e -> {
-            String type = policyTypeCombo.getValue();
-            String value = policyValueCombo.getValue();
-            String target = policyTargetCombo.getValue();
-            if (type == null || value == null || target == null) {
-                showError("Please select policy type, value, and target.");
-                return;
-            }
-            String cmd = String.format("set policy %s '%s' on %s", type, value, target);
-            try {
-                commandParser.parseLine(cmd);
-            } catch(Exception ex) {
-                showError("Policy error: " + ex.getMessage());
-            }
-            boardDisplay.refresh();
-        });
-
-        policyGrid.add(policyTypeLabel, 0, 0);
-        policyGrid.add(policyTypeCombo, 1, 0);
-        policyGrid.add(policyValueLabel, 0, 1);
-        policyGrid.add(policyValueCombo, 1, 1);
-        policyGrid.add(policyTargetLabel, 0, 2);
-        policyGrid.add(policyTargetCombo, 1, 2);
-        policyGrid.add(policyButton, 0, 3, 2, 1);
-
-        // Verbosity configuration:
-        Label verbosityLabel = new Label("Verbosity:");
-        ComboBox<Integer> verbosityCombo = new ComboBox<>(FXCollections.observableArrayList(0, 1, 2));
-        verbosityCombo.setPromptText("Select level");
-        Button verbosityButton = new Button("Set Verbosity");
-        verbosityButton.setOnAction(e -> {
-            Integer level = verbosityCombo.getValue();
-            if (level == null) {
-                showError("Please select a verbosity level.");
-                return;
-            }
-            try {
-                commandParser.parseLine("verbose " + level);
-            } catch(Exception ex) {
-                showError("Verbosity error: " + ex.getMessage());
-            }
-            boardDisplay.refresh();
-        });
-        policyGrid.add(verbosityLabel, 0, 4);
-        policyGrid.add(verbosityCombo, 1, 4);
-        policyGrid.add(verbosityButton, 0, 5, 2, 1);
-        policyPane.setContent(policyGrid);
-
-        // --- File Load/Save Section ---
-        TitledPane filePane = new TitledPane();
-        filePane.setText("Load / Save");
-        HBox fileBox = new HBox(10);
-        Button loadButton = new Button("Load Setup");
-        Button saveButton = new Button("Save Simulation");
         loadButton.setOnAction(e -> {
             File f = FileDialogs.showLoadDialog();
             if (f != null) {
@@ -250,6 +71,7 @@ public class ControlPanel extends VBox {
                 boardDisplay.refresh();
             }
         });
+
         saveButton.setOnAction(e -> {
             File f = FileDialogs.showSaveDialog();
             if (f != null) {
@@ -260,13 +82,237 @@ public class ControlPanel extends VBox {
                 }
             }
         });
-        fileBox.getChildren().addAll(loadButton, saveButton);
-        filePane.setContent(fileBox);
 
-        // Add all sections to the main control panel.
-        getChildren().addAll(simControlPane, requestPane, connectPane, policyPane, filePane);
+        // Add all main buttons to the panel.
+        getChildren().addAll(stepButton, finishButton, requestButton, connectButton,
+                policyButton, verbosityButton, loadButton, saveButton);
     }
 
+    // Opens a new modal window for the Step command.
+    private void openStepWindow() {
+        Stage stepStage = new Stage();
+        stepStage.setTitle("Step Simulation");
+        GridPane grid = createDefaultGrid();
+
+        Label label = new Label("Enter number of steps:");
+        Spinner<Integer> stepSpinner = new Spinner<>(1, 100, 1);
+        Button submit = new Button("Submit");
+        submit.setOnAction(e -> {
+            int steps = stepSpinner.getValue();
+            try {
+                commandParser.parseLine("step " + steps);
+            } catch(Exception ex) {
+                showError("Step error: " + ex.getMessage());
+            }
+            boardDisplay.refresh();
+            stepStage.close();
+        });
+
+        grid.add(label, 0, 0);
+        grid.add(stepSpinner, 1, 0);
+        grid.add(submit, 0, 1, 2, 1);
+        showModalWindow(stepStage, grid);
+    }
+
+    // Opens a new modal window for the Request Item command.
+    private void openRequestWindow() {
+        Stage reqStage = new Stage();
+        reqStage.setTitle("Request Item");
+        GridPane grid = createDefaultGrid();
+
+        Label itemLabel = new Label("Item:");
+        // Use a fixed list; you can update this list dynamically if needed.
+        ComboBox<String> itemCombo = new ComboBox<>(FXCollections.observableArrayList("door", "handle", "hinge"));
+        itemCombo.setPromptText("Select item");
+
+        Label buildingLabel = new Label("From Building:");
+        List<String> buildingNames = simulationState.getBuildings().stream()
+                .map(b -> b.getName())
+                .collect(Collectors.toList());
+        ComboBox<String> buildingCombo = new ComboBox<>(FXCollections.observableArrayList(buildingNames));
+        buildingCombo.setPromptText("Select building");
+
+        Button submit = new Button("Submit");
+        submit.setOnAction(e -> {
+            String item = itemCombo.getValue();
+            String building = buildingCombo.getValue();
+            if(item == null || building == null) {
+                showError("Please select both an item and a building.");
+                return;
+            }
+            String cmd = String.format("request '%s' from '%s'", item, building);
+            try {
+                commandParser.parseLine(cmd);
+            } catch(Exception ex) {
+                showError("Request error: " + ex.getMessage());
+            }
+            boardDisplay.refresh();
+            reqStage.close();
+        });
+
+        grid.add(itemLabel, 0, 0);
+        grid.add(itemCombo, 1, 0);
+        grid.add(buildingLabel, 0, 1);
+        grid.add(buildingCombo, 1, 1);
+        grid.add(submit, 0, 2, 2, 1);
+        showModalWindow(reqStage, grid);
+    }
+
+    // Opens a new modal window for the Connect Buildings command.
+    private void openConnectWindow() {
+        Stage connStage = new Stage();
+        connStage.setTitle("Connect Buildings");
+        GridPane grid = createDefaultGrid();
+
+        Label sourceLabel = new Label("Source:");
+        List<String> buildingNames = simulationState.getBuildings().stream()
+                .map(b -> b.getName())
+                .collect(Collectors.toList());
+        ComboBox<String> sourceCombo = new ComboBox<>(FXCollections.observableArrayList(buildingNames));
+        sourceCombo.setPromptText("Select source");
+
+        Label destLabel = new Label("Destination:");
+        ComboBox<String> destCombo = new ComboBox<>(FXCollections.observableArrayList(buildingNames));
+        destCombo.setPromptText("Select destination");
+
+        Button submit = new Button("Submit");
+        submit.setOnAction(e -> {
+            String source = sourceCombo.getValue();
+            String dest = destCombo.getValue();
+            if(source == null || dest == null) {
+                showError("Please select both a source and a destination building.");
+                return;
+            }
+            String cmd = String.format("connect '%s' to '%s'", source, dest);
+            try {
+                commandParser.parseLine(cmd);
+            } catch(Exception ex) {
+                showError("Connect error: " + ex.getMessage());
+            }
+            boardDisplay.refresh();
+            connStage.close();
+        });
+
+        grid.add(sourceLabel, 0, 0);
+        grid.add(sourceCombo, 1, 0);
+        grid.add(destLabel, 0, 1);
+        grid.add(destCombo, 1, 1);
+        grid.add(submit, 0, 2, 2, 1);
+        showModalWindow(connStage, grid);
+    }
+
+    // Opens a new modal window for the Set Policy command.
+    private void openPolicyWindow() {
+        Stage policyStage = new Stage();
+        policyStage.setTitle("Set Policy");
+        GridPane grid = createDefaultGrid();
+
+        Label typeLabel = new Label("Policy Type:");
+        ComboBox<String> typeCombo = new ComboBox<>(FXCollections.observableArrayList("request", "source"));
+        typeCombo.setPromptText("Select type");
+
+        Label valueLabel = new Label("Policy Value:");
+        ComboBox<String> valueCombo = new ComboBox<>();
+        typeCombo.setOnAction(e -> {
+            String type = typeCombo.getValue();
+            if ("request".equals(type)) {
+                valueCombo.setItems(FXCollections.observableArrayList("fifo", "sjf", "ready", "default"));
+            } else if ("source".equals(type)) {
+                valueCombo.setItems(FXCollections.observableArrayList("qlen", "simplelat", "recursivelat", "default"));
+            } else {
+                valueCombo.setItems(FXCollections.observableArrayList());
+            }
+        });
+        valueCombo.setPromptText("Select value");
+
+        Label targetLabel = new Label("Policy Target:");
+        List<String> buildingNames = simulationState.getBuildings().stream()
+                .map(b -> b.getName())
+                .collect(Collectors.toList());
+        ComboBox<String> targetCombo = new ComboBox<>(FXCollections.observableArrayList(buildingNames));
+        // Include "*" and "default" as additional targets.
+        targetCombo.getItems().addAll("*", "default");
+        targetCombo.setPromptText("Select target");
+
+        Button submit = new Button("Submit");
+        submit.setOnAction(e -> {
+            String type = typeCombo.getValue();
+            String value = valueCombo.getValue();
+            String target = targetCombo.getValue();
+            if (type == null || value == null || target == null) {
+                showError("Please select policy type, value, and target.");
+                return;
+            }
+            String cmd = String.format("set policy %s '%s' on %s", type, value, target);
+            try {
+                commandParser.parseLine(cmd);
+            } catch(Exception ex) {
+                showError("Policy error: " + ex.getMessage());
+            }
+            boardDisplay.refresh();
+            policyStage.close();
+        });
+
+        grid.add(typeLabel, 0, 0);
+        grid.add(typeCombo, 1, 0);
+        grid.add(valueLabel, 0, 1);
+        grid.add(valueCombo, 1, 1);
+        grid.add(targetLabel, 0, 2);
+        grid.add(targetCombo, 1, 2);
+        grid.add(submit, 0, 3, 2, 1);
+        showModalWindow(policyStage, grid);
+    }
+
+    // Opens a new modal window for the Set Verbosity command.
+    private void openVerbosityWindow() {
+        Stage verbStage = new Stage();
+        verbStage.setTitle("Set Verbosity");
+        GridPane grid = createDefaultGrid();
+
+        Label verbLabel = new Label("Verbosity Level:");
+        ComboBox<Integer> verbCombo = new ComboBox<>(FXCollections.observableArrayList(0, 1, 2));
+        verbCombo.setPromptText("Select level");
+
+        Button submit = new Button("Submit");
+        submit.setOnAction(e -> {
+            Integer level = verbCombo.getValue();
+            if (level == null) {
+                showError("Please select a verbosity level.");
+                return;
+            }
+            try {
+                commandParser.parseLine("verbose " + level);
+            } catch(Exception ex) {
+                showError("Verbosity error: " + ex.getMessage());
+            }
+            boardDisplay.refresh();
+            verbStage.close();
+        });
+
+        grid.add(verbLabel, 0, 0);
+        grid.add(verbCombo, 1, 0);
+        grid.add(submit, 0, 1, 2, 1);
+        showModalWindow(verbStage, grid);
+    }
+
+    // Helper method: creates a default GridPane with common settings.
+    private GridPane createDefaultGrid() {
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+        return grid;
+    }
+
+    // Helper method: configures and shows a window modally.
+    private void showModalWindow(Stage stage, GridPane content) {
+        Scene scene = new Scene(content);
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setScene(scene);
+        stage.showAndWait();
+    }
+
+    // Helper method: shows an error alert.
     private void showError(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR, message, ButtonType.OK);
         alert.showAndWait();
