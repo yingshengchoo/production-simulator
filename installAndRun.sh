@@ -4,3 +4,4 @@ if [ $# -ne 1 ]; then
 fi
 ./gradlew clean installDist
 ./app/build/install/app/bin/app "$1"
+#./app/build/install/app/bin/app -nw "$1"

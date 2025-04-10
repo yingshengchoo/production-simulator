@@ -18,19 +18,13 @@ class BoardTest {
     }
 
     @Test
-    void isOccupied() {
+    void test_board() {
         Board board = new Board();
         Coordinate c1 = new Coordinate(2, 3);
-        assertFalse(board.isOccupied(c1));
-        board.placeOnBoard(c1);
-        assertTrue(board.isOccupied(c1));
-    }
-
-    @Test
-    void placeOnBoard() {
-        Board board = new Board();
-        Coordinate c1 = new Coordinate(2, 3);
-        assertTrue(board.placeOnBoard(c1));
-        assertFalse(board.placeOnBoard(c1));
+        assertEquals(0, board.getBoardPosStatus(c1));
+        board.setBoardPosStatus(c1, 1);
+        assertEquals(1, board.getBoardPosStatus(c1));
+        Coordinate c2 = new Coordinate(-1, 0);
+        assertEquals(-1, board.getBoardPosStatus(c2));
     }
 }

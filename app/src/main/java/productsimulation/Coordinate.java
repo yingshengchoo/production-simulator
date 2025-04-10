@@ -13,6 +13,14 @@ public class Coordinate implements Serializable {
         this.y = y;
     }
 
+    public static int ManhattanDis(Coordinate c1, Coordinate c2) {
+        return Math.abs(c1.x - c2.x) + Math.abs(c1.y - c2.y);
+    }
+
+    public static boolean isNeighbor(Coordinate c1, Coordinate c2) {
+        return ManhattanDis(c1, c2) == 1;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
