@@ -30,16 +30,21 @@ public class Road {
         generateRoad(st, ed);
     }
 
+//    todo 等Building类中的static buildingList到位
+//    public void connectHandler(String srcName, String dstName) {
+//        Building.
+//    }
+
     // 此处不检查夹角，依靠shortestPath内的逻辑检查夹角
     private void setDirection(RoadTile lastTile, Coordinate lastPos, Coordinate c) {
         if(lastPos.x + 1 == c.x) {
-            lastTile.direction.addDirection(Direction.RIGHT);
+            lastTile.getDirection().addDirection(Direction.RIGHT);
         } else if(lastPos.y + 1 == c.y) {
-            lastTile.direction.addDirection(Direction.UP);
+            lastTile.getDirection().addDirection(Direction.UP);
         } else if(lastPos.x - 1 == c.x) {
-            lastTile.direction.addDirection(Direction.LEFT);
-        } else if(lastPos.y - 1 == c.y) {
-            lastTile.direction.addDirection(Direction.DOWN);
+            lastTile.getDirection().addDirection(Direction.LEFT);
+        } else {
+            lastTile.getDirection().addDirection(Direction.DOWN);
         }
     }
 
@@ -81,6 +86,9 @@ public class Road {
             lastPos = c;
             lastTile = tile;
         }
+        if(!Coordinate.isNeighbor(lastPos, exit)) {
+            throw new IllegalArgumentException("invalid road");
+        }
         setDirection(lastTile, lastPos, exit);
     }
 
@@ -101,6 +109,7 @@ public class Road {
         distanceMap.put(new Pair<>(st, ed), distance);
     }
 
+    // 假定输入的dir是合法的，即{{-1, 0}, {1, 0}, {0, -1}, {0, 1}}中的一个
     private static boolean hasDirectionConflict(int[] dir, Coordinate coordinate) {
         // 如果不是路，则不存在道路方向冲突
         if(!existingRoadTiles.containsKey(coordinate)) {
@@ -110,25 +119,25 @@ public class Road {
         RoadTile tile = existingRoadTiles.get(coordinate);
         // 左
         if(dir[0] == -1 && dir[1] == 0) {
-            if(tile.direction.hasDirection(Direction.RIGHT)) {
+            if(tile.getDirection().hasDirection(Direction.RIGHT)) {
                 return true;
             }
         }
         // 右
         else if(dir[0] == 1 && dir[1] == 0) {
-            if(tile.direction.hasDirection(Direction.LEFT)) {
+            if(tile.getDirection().hasDirection(Direction.LEFT)) {
                 return true;
             }
         }
         // 下
         else if(dir[0] == 0 && dir[1] == -1) {
-            if(tile.direction.hasDirection(Direction.UP)) {
+            if(tile.getDirection().hasDirection(Direction.UP)) {
                 return true;
             }
         }
         // 上
-        else if(dir[0] == 0 && dir[1] == 1) {
-            if(tile.direction.hasDirection(Direction.DOWN)) {
+        else{
+            if(tile.getDirection().hasDirection(Direction.DOWN)) {
                 return true;
             }
         }
@@ -167,9 +176,10 @@ public class Road {
             }
 
             // 如果当前距离大于记录的最短距离，跳过
-            if (currentDist > distance.get(current)) {
-                continue;
-            }
+//            从clover来看似乎不会执行到
+//            if (currentDist > distance.get(current)) {
+//                continue;
+//            }
 
             // 遍历四个方向
             for (int[] dir : directions) {

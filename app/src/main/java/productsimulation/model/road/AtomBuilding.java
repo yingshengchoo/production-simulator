@@ -21,12 +21,6 @@ public class AtomBuilding extends Building {
         Board.getBoard().setBoardPosWeight(c, Integer.MAX_VALUE);
     }
 
-    public ArrayList<Coordinate> getCoordinates() {
-        ArrayList<Coordinate> list = new ArrayList<>();
-        list.add(position);
-        return list;
-    }
-
     @Override
     public boolean goOneStep() {
         return false;
