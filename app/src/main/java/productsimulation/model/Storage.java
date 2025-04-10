@@ -219,6 +219,7 @@ public class Storage extends Building {
       //so sends request to sources in goOneStep()
       Log.level2Log("[" + name + ":" + recipe.getOutput() + ":" + LogicTime.getInstance().getStep()
                 + "] For Storage " + name);
+      //only do this if storage == 0, otherwise return the request.
       Building chosenSource = sourcePolicy.getSource(sources, recipe.getOutput());
       Log.level2Log("    selecting " + chosenSource.getName());
       Recipe childRecipe = chosenSource.type.getRecipeByProductName(recipe.getOutput());
