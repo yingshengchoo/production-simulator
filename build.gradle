@@ -16,13 +16,15 @@ allprojects{
     }
     apply plugin: 'com.bmuschko.clover'
     dependencies {
-        clover 'org.openclover:clover:4.4.1'
+        clover 'org.openclover:clover:4.5.2'
         
     }
 }
 clover{
     compiler {
         additionalArgs = "-g:lines,source,vars"
+        sourceCompatibility = 16
+        targetCompatibility = 16
     }
     report {
         xml=true
