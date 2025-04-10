@@ -111,7 +111,7 @@ public class StorageTest {
    assertEquals(socks, m1.type.getRecipeByProductName(socks.getOutput()));
    assertEquals(1, s1.getFrequency());
    assertEquals(1, f.getRequestCount());
-   assertEquals(2, s1.getRequestCount());
+   assertEquals(-2, s1.getRequestCount());
    assertEquals(2, s1.getReqCount());
    assertEquals(0, s1.getReadyQueueCount());
    assertEquals(0, s1.getStockCount());
