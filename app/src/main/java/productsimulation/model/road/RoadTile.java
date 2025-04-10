@@ -7,7 +7,7 @@ public class RoadTile {
     //        为了clover不用Enum
     Direction direction;
     //        与building紧邻的tile比较特殊，可以允许各种方向
-    private boolean isEnd;
+//    private boolean isEnd;
 
     RoadTile(Coordinate c, Direction direction) {
         this.c = c;
@@ -20,7 +20,7 @@ public class RoadTile {
 
     public Direction getDirection() { return direction; }
 
-    public boolean getIsEnd() { return isEnd; }
-
-    public void setIsEnd(boolean b) { isEnd = b; }
+//    public boolean getIsEnd() { return isEnd; }
+//
+//    public void setIsEnd(boolean b) { isEnd = b; }
 }

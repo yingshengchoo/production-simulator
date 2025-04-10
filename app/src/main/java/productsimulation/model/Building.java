@@ -427,11 +427,4 @@ public abstract class Building implements Serializable {
     public int getX() {return coordinate.x;}
 
     public int getY() {return coordinate.y;}
-
-//    目前除了road类，都暂时假设building的占地都为1
-    public ArrayList<Coordinate> getCoordinates() {
-        ArrayList<Coordinate> list = new ArrayList<>();
-        list.add(coordinate);
-        return list;
-    }
 }

@@ -1,5 +1,6 @@
 package productsimulation.model.road;
 
+import productsimulation.Board;
 import productsimulation.Coordinate;
 import productsimulation.model.Building;
 import productsimulation.model.FactoryType;
@@ -17,7 +18,7 @@ public class AtomBuilding extends Building {
     public AtomBuilding(Coordinate c) {
         super("noname", new FactoryType("typename", new HashMap<>()), new ArrayList<>(), new SourceQLen(), new FIFOPolicy(), c);
         this.position = c;
-        Road.board.setBoardPosStatus(c, 1);
+        Board.getBoard().setBoardPosWeight(c, Integer.MAX_VALUE);
     }
 
     public ArrayList<Coordinate> getCoordinates() {
