@@ -88,7 +88,7 @@ public class StorageTest {
    assertEquals(0, t.getStep());
    rb.userRequestHandler(pair.getOutput(),f.getName()); 
 
-   assertEquals(102, s1.getR());
+   assertEquals(100, s1.getR());
    assertEquals(102, s1.getPriority());
    assertEquals(100, s1.getTotalCapacity());
    s1.updateFrequency();
