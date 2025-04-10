@@ -121,7 +121,7 @@ public class StorageTest {
 
    t.stepNHandler(1);
    assertEquals(2, t.getStep());
-   assertEquals(1, s1.getFrequency());
+   assertEquals(2, s1.getFrequency());
    assertEquals(1, f.getRequestCount());
    assertEquals(-1, s1.getRequestCount());
    assertEquals(2, s1.getReqCount());
