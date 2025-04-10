@@ -47,8 +47,14 @@ public abstract class Building implements Serializable {
      * @param servePolicy  is the policy that the building uses to select between requests.
      */
     public Building(String name, FactoryType type, List<Building> sources, SourcePolicy sourcePolicy, ServePolicy servePolicy) {
-        this(name, type, sourcePolicy, servePolicy);
+        this.name = name;
+        this.type = type;
+        this.sourcePolicy = sourcePolicy;
+        this.servePolicy = servePolicy;
+        requestQueue = new ArrayList<>();
+        storage = new HashMap<>();
         this.sources = sources;
+        buildings.add(this);
     }
 
     public Building(String name, FactoryType type, SourcePolicy sourcePolicy, ServePolicy servePolicy) {
