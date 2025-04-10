@@ -1,5 +1,6 @@
 package productsimulation.model;
 
+import productsimulation.Board;
 import productsimulation.Coordinate;
 import productsimulation.Log;
 import productsimulation.LogicTime;
@@ -118,6 +119,13 @@ public abstract class Building implements Serializable {
         if(candidateX < 0 || candidateY <0){
           return false;
         }
+
+        Board board = Board.getBoard();
+        int weight = board.getBoardPosWeight(new Coordinate(candidateX, candidateY));
+        if (weight == 1 || weight == Integer.MAX_VALUE) {
+            return false;
+        }
+
         boolean withinX = false;
         boolean withinY = false;
         for (Coordinate c : existingPoints) {
