@@ -217,8 +217,14 @@ public class Storage extends Building {
 
       //Storage only sends request to sources periodically.
       //so sends request to sources in goOneStep()
-      R++;
-  }
+      Log.level2Log("[" + name + ":" + recipe.getOutput() + ":" + LogicTime.getInstance().getStep()
+                + "] For Storage " + name);
+      Building chosenSource = sourcePolicy.getSource(sources, recipe.getOutput());
+      Log.level2Log("    selecting " + chosenSource.getName());
+      Recipe childRecipe = chosenSource.type.getRecipeByProductName(recipe.getOutput());
+      Request req = new Request(recipe.getOutput(), childRecipe, this);
+      chosenSource.addRequest(req);
+    }
 
   /**
    * Sends request to sources  
