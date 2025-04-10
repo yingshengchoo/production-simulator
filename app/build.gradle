@@ -78,6 +78,8 @@ test{
 clover{
     compiler {
         additionalArgs = "-g:lines,source,vars"
+        sourceCompatibility = 16
+        targetCompatibility = 16
     }
     report {
         xml=true
