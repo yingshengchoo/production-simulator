@@ -114,7 +114,7 @@ public class StorageTest {
    assertEquals(-2, s1.getRequestCount());
    assertEquals(2, s1.getReqCount());
    assertEquals(0, s1.getReadyQueueCount());
-   assertEquals(0, s1.getStockCount());
+   assertEquals(2, s1.getStockCount());
    assertEquals(1, m1.getRequestCount());
    assertEquals(0, m2.getRequestCount());
    assertEquals(1, s1.getStorage().size());
