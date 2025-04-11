@@ -16,7 +16,7 @@ import productsimulation.command.CommandParser;
 public class GUI extends Application {
 
     // Simulation engine objects.
-    private State simulationState;
+//    private State simulationState;
     private CommandParser commandParser;
 
     // UI components.
@@ -30,11 +30,11 @@ public class GUI extends Application {
     @Override
     public void start(Stage primaryStage) {
         // Initialize the simulation engine and command parser.
-        simulationState = State.getInstance();
+//        simulationState = State.getInstance();
         commandParser = new CommandParser();
 
         // Create the board display adapter.
-        boardDisplay = new BoardDisplay(simulationState);
+        boardDisplay = new BoardDisplay();
 
         // For now, we omit the cycle display.
         // If simulationState had a getCurrentCycle() method, you could initialize and update a cycle label.
@@ -47,7 +47,7 @@ public class GUI extends Application {
         root.setCenter(boardDisplay.getCanvasPane());
 
         // Create the control panel on the right.
-        ControlPanel controlPanel = new ControlPanel(commandParser, boardDisplay, simulationState);
+        ControlPanel controlPanel = new ControlPanel(commandParser, boardDisplay);
         root.setRight(controlPanel);
 
         // Create and add a log area at the bottom.

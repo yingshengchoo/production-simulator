@@ -5,6 +5,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import productsimulation.Board;
 import productsimulation.State;
 import productsimulation.model.Building;
 import productsimulation.model.Factory;
@@ -13,7 +14,9 @@ import productsimulation.model.Storage;
 import java.util.List;
 
 public class BoardDisplay {
-    private State state;
+//    Use Board for model, instead of State.
+//    private State state;
+    private Board board;
     private Canvas canvas;
 
     // Dynamic scaling variables.
@@ -21,8 +24,8 @@ public class BoardDisplay {
     private double offsetX = 0;
     private double offsetY = 0;
 
-    public BoardDisplay(State state) {
-        this.state = state;
+    public BoardDisplay() {
+        this.board = Board.getBoard();
         canvas = new Canvas(800, 600);
     }
 
@@ -34,7 +37,7 @@ public class BoardDisplay {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
-        List<Building> buildings = state.getBuildings();
+        List<Building> buildings = Building.buildings;
         if (buildings.isEmpty()) return;
 
         // Calculate the bounding box of all building coordinates.

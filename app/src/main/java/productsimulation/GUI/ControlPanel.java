@@ -11,6 +11,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import productsimulation.State;
 import productsimulation.command.CommandParser;
+import productsimulation.model.Building;
+
 import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,12 +21,12 @@ public class ControlPanel extends VBox {
 
     private final CommandParser commandParser;
     private final BoardDisplay boardDisplay;
-    private final State simulationState;
+//    private final State simulationState;
 
-    public ControlPanel(CommandParser commandParser, BoardDisplay boardDisplay, State simulationState) {
+    public ControlPanel(CommandParser commandParser, BoardDisplay boardDisplay) {
         this.commandParser = commandParser;
         this.boardDisplay = boardDisplay;
-        this.simulationState = simulationState;
+//        this.simulationState = simulationState;
 
         setPadding(new Insets(10));
         setSpacing(15);
@@ -84,7 +86,7 @@ public class ControlPanel extends VBox {
         });
 
         addBuildingButton.setOnAction(e -> {
-            String cmd = AddBuildingDialog.showAddBuildingDialog(simulationState);
+            String cmd = AddBuildingDialog.showAddBuildingDialog();
             if (cmd != null) {
                 try {
                     commandParser.parseLine(cmd);
@@ -136,8 +138,8 @@ public class ControlPanel extends VBox {
         itemCombo.setPromptText("Select item");
 
         Label buildingLabel = new Label("From Building:");
-        List<String> buildingNames = simulationState.getBuildings().stream()
-                .map(b -> b.getName())
+        List<String> buildingNames = Building.buildings.stream()
+                .map(Building::getName)
                 .collect(Collectors.toList());
         ComboBox<String> buildingCombo = new ComboBox<>(FXCollections.observableArrayList(buildingNames));
         buildingCombo.setPromptText("Select building");
@@ -174,8 +176,8 @@ public class ControlPanel extends VBox {
 
         GridPane grid = createDefaultGrid();
         Label sourceLabel = new Label("Source:");
-        List<String> buildingNames = simulationState.getBuildings().stream()
-                .map(b -> b.getName())
+        List<String> buildingNames = Building.buildings.stream()
+                .map(Building::getName)
                 .collect(Collectors.toList());
         ComboBox<String> sourceCombo = new ComboBox<>(FXCollections.observableArrayList(buildingNames));
         sourceCombo.setPromptText("Select source");
@@ -234,8 +236,8 @@ public class ControlPanel extends VBox {
         valueCombo.setPromptText("Select value");
 
         Label targetLabel = new Label("Policy Target:");
-        List<String> buildingNames = simulationState.getBuildings().stream()
-                .map(b -> b.getName())
+        List<String> buildingNames = Building.buildings.stream()
+                .map(Building::getName)
                 .collect(Collectors.toList());
         ComboBox<String> targetCombo = new ComboBox<>(FXCollections.observableArrayList(buildingNames));
         // Include "*" and "default" as additional targets.
