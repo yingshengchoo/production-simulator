@@ -192,7 +192,9 @@ public class State implements Serializable{
   }
 
   public Building getBuildings(String name) {
-    for (Building b : buildings) {
+    // use Building.buildings instead for uniform management
+//    for (Building b : buildings) {
+    for (Building b : Building.buildings) {
       if (b.getName().equals(name)) {
         return b;
       }
@@ -201,7 +203,9 @@ public class State implements Serializable{
   }
 
   public List<Building> getBuildings() {
-    return buildings;
+// use Building.buildings instead for uniform management
+    return Building.buildings;
+//    return buildings;
   }
 
   public ServePolicy getDefaultServePolicy() {
