@@ -121,8 +121,10 @@ public class StorageTest {
    assertEquals(0, m2.getRequestCount());
    assertEquals(1, s1.getStorage().size());
 
-   //M1 and M2 finishes making socks and send s the completed item to storage
-   //
+   //Storage complets the requests sending the ingredients to Factory
+   //M1 finishes making the ingredient and sends it to storage.
+   //Now, storage has 1 item
+   //Since frequency is still 1, it sends a request to m2.
    t.stepNHandler(1);
    assertEquals(2, t.getStep());
    assertEquals(2, s1.getFrequency());
@@ -132,19 +134,20 @@ public class StorageTest {
    assertEquals(0, s1.getReadyQueueCount());
    assertEquals(1, s1.getStockCount());
    assertEquals(0, m1.getRequestCount());
-   assertEquals(0, m2.getRequestCount());
+   assertEquals(1, m2.getRequestCount());
    assertEquals(1, s1.getStorage().size());
 
+   //M2 finishes and sends the ingredient to storage increasing it to 2.
+   //
    t.stepNHandler(1);
    assertEquals(3, t.getStep());
-  
    assertEquals(2, s1.getFrequency());
    assertEquals(1, f.getRequestCount());
-   assertEquals(-1, s1.getRequestCount());
+   assertEquals(-2, s1.getRequestCount());
    assertEquals(1, s1.getStorage().size());
    assertEquals(0, s1.getReadyQueueCount());
    assertEquals(0, s1.getReqCount());
-   assertEquals(1, s1.getStockCount());
+   assertEquals(2, s1.getStockCount());
    assertEquals(1, m1.getRequestCount());
    assertEquals(0, m2.getRequestCount());
 
