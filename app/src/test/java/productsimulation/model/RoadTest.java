@@ -256,7 +256,6 @@ class RoadTest {
     }
 
     @Test
-    @Disabled("waiting for Building debug")
 //    测对无关路线的复用
     void test_generateRoad_reuse7() {
         AtomBuilding b1 = new AtomBuilding(new Coordinate(1,1));
@@ -279,8 +278,39 @@ class RoadTest {
         ArrayList<RoadTile> roadTiles1 = road1.roadTiles;
         ArrayList<RoadTile> roadTiles2 = road2.roadTiles;
         assertEquals(8, roadTiles1.size());
-        assertEquals(27, roadTiles2.size());
-        assertEquals(27, Road.existingRoadTiles.size());
+        assertEquals(18, roadTiles2.size());
+        assertEquals(26, Road.existingRoadTiles.size());
+    }
+
+    @Test
+//    @Disabled("waiting for Building debug")
+//    测对无关路线的复用
+    void test_generateRoad_reuse8() {
+        AtomBuilding b1 = new AtomBuilding(new Coordinate(1,1));
+        AtomBuilding b2 = new AtomBuilding(new Coordinate(10, 1));
+        AtomBuilding b3 = new AtomBuilding(new Coordinate(1, 10));
+        AtomBuilding b4 = new AtomBuilding(new Coordinate(10, 10));
+        Road road1 = new Road(b3, b4);
+        assertEquals(1, Road.distanceMap.size());
+
+        AtomBuilding block1 = new AtomBuilding(new Coordinate(5, 0));
+        AtomBuilding block2 = new AtomBuilding(new Coordinate(5, 1));
+        AtomBuilding block3 = new AtomBuilding(new Coordinate(5, 2));
+        AtomBuilding block4 = new AtomBuilding(new Coordinate(5, 3));
+        AtomBuilding block5 = new AtomBuilding(new Coordinate(5, 4));
+        AtomBuilding block6 = new AtomBuilding(new Coordinate(5, 5));
+        AtomBuilding block7 = new AtomBuilding(new Coordinate(5, 6));
+        AtomBuilding block8 = new AtomBuilding(new Coordinate(5, 7));
+        AtomBuilding block9 = new AtomBuilding(new Coordinate(5, 8));
+
+        Road road2 = new Road(b1, b2);
+        assertEquals(2, Road.distanceMap.size());
+
+        ArrayList<RoadTile> roadTiles1 = road1.roadTiles;
+        ArrayList<RoadTile> roadTiles2 = road2.roadTiles;
+        assertEquals(8, roadTiles1.size());
+        assertEquals(26, roadTiles2.size());
+        assertEquals(26, Road.existingRoadTiles.size());
     }
 
     @Test
