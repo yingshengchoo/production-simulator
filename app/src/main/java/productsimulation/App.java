@@ -20,7 +20,7 @@ import java.util.Scanner;
 import javafx.application.Application;
 
 public class App {
-    private static String beginPrompt = "Welcome to product simulation, you can:\n" +
+    private static final String beginPrompt = "Welcome to product simulation, you can:\n" +
             "request 'itemName' from 'buildingName'\n" +
             "step 1\n" +
             "verbose 1\n" +

@@ -3,11 +3,11 @@ package productsimulation;
 import java.util.HashMap;
 
 public class Board {
-    private int height;
-    private int width;
+    private final int height;
+    private final int width;
     private static Board singleton = null;
-    private static int HEIGHT = 100;
-    private static int WIDTH = 100;
+    private static final int HEIGHT = 100;
+    private static final int WIDTH = 100;
 
     private Board(int height, int width) {
         this.height = height;

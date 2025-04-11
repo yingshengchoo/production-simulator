@@ -13,10 +13,9 @@ public class AddBuildingDialog {
 
     /**
      * Opens a modal dialog to add a new building.
-     * @param state The simulation state (can be used for dynamic data or validation).
      * @return A command string for creating the building, or null if cancelled/invalid.
      */
-    public static String showAddBuildingDialog(State state) {
+    public static String showAddBuildingDialog() {
         Stage addStage = new Stage();
         addStage.initModality(Modality.APPLICATION_MODAL);
         addStage.setTitle("Add New Building");

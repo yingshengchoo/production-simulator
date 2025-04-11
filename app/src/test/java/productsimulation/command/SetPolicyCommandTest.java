@@ -20,6 +20,7 @@ class SetPolicyCommandTest {
     public void cleanUpBefore() {
         Board.getBoard().cleanup();
         Building.buildings.clear();
+        State.getInstance().setInstanceToNull();
     }
 
     void setUpEnvironment() {

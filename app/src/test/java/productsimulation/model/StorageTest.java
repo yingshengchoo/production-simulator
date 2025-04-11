@@ -83,77 +83,84 @@ public class StorageTest {
    //we expect the storage to request sock at t =0 and t =1;
 
    assertEquals(100, s1.getR());
-   s1.updateFrequency();
    assertEquals(1, s1.getFrequency());
    
    assertEquals(0, t.getStep());
    rb.userRequestHandler(pair.getOutput(),f.getName()); 
 
-   assertEquals(102, s1.getR());
+   //DFS propogates the requests down
+   //Factory has 1 request, Storage: 2 request, M1: 1 request, M2: 1 request
+   //M1 and M2 Makes the socks
+   assertEquals(100, s1.getR());
    assertEquals(102, s1.getPriority());
    assertEquals(100, s1.getTotalCapacity());
-   s1.updateFrequency();
    assertEquals(1, s1.getFrequency());
    assertEquals(1, f.getRequestCount());
    assertEquals(2, s1.getRequestCount());
    assertEquals(2, s1.getReqCount());
    assertEquals(0, s1.getReadyQueueCount());
    assertEquals(0, s1.getStockCount());
-   assertEquals(0, m1.getRequestCount());
-   assertEquals(0, m2.getRequestCount());
+   assertEquals(1, m1.getRequestCount());
+   assertEquals(1, m2.getRequestCount());
    
    t.stepNHandler(1);
    assertEquals(1, t.getStep());
-   assertEquals(101, s1.getR());
-   s1.updateFrequency();
-   
+   assertEquals(99, s1.getR());
+
+   //M1 and M2 finishes making the requests and sends ingredient to storage
+   //As Step 1 % frequenyc 1 = 0, storage sends a request to M1
    assertEquals(1, s1.getFrequency());
    assertTrue(LogicTime.getInstance().getStep() % s1.getFrequency() == 0); 
    assertEquals(socks, m1.type.getRecipeByProductName(socks.getOutput()));
    assertEquals(1, s1.getFrequency());
    assertEquals(1, f.getRequestCount());
-   assertEquals(2, s1.getRequestCount());
+   assertEquals(-2, s1.getRequestCount());
    assertEquals(2, s1.getReqCount());
    assertEquals(0, s1.getReadyQueueCount());
-   assertEquals(0, s1.getStockCount());
+   assertEquals(2, s1.getStockCount());
    assertEquals(1, m1.getRequestCount());
    assertEquals(0, m2.getRequestCount());
    assertEquals(1, s1.getStorage().size());
 
+   //Storage complets the requests sending the ingredients to Factory
+   //M1 finishes making the ingredient and sends it to storage.
+   //Now, storage has 1 item
+   //Since frequency is still 1, it sends a request to m2.
    t.stepNHandler(1);
    assertEquals(2, t.getStep());
-   assertEquals(1, s1.getFrequency());
-   assertEquals(1, f.getRequestCount());
-   assertEquals(-1, s1.getRequestCount());
-   assertEquals(2, s1.getReqCount());
-   assertEquals(0, s1.getReadyQueueCount());
-   assertEquals(1, s1.getStockCount());
-   assertEquals(0, m1.getRequestCount());
-   assertEquals(1, m2.getRequestCount());
-   assertEquals(1, s1.getStorage().size());
-
-   t.stepNHandler(1);
-   assertEquals(3, t.getStep());
-  
-   assertEquals(1, s1.getFrequency());
-   assertEquals(1, f.getRequestCount());
-   assertEquals(-1, s1.getRequestCount());
-   assertEquals(1, s1.getStorage().size());
-   assertEquals(0, s1.getReadyQueueCount());
-   assertEquals(1, s1.getReqCount());
-   assertEquals(1, s1.getStockCount());
-   assertTrue((LogicTime.getInstance().getStep()-1) % s1.getFrequency() == 0); 
-   assertEquals(1, m1.getRequestCount());
-   assertEquals(0, m2.getRequestCount());
-
-   t.stepNHandler(1);
-   assertEquals(4, t.getStep());
    assertEquals(2, s1.getFrequency());
    assertEquals(1, f.getRequestCount());
    assertEquals(-1, s1.getRequestCount());
    assertEquals(0, s1.getReqCount());
    assertEquals(0, s1.getReadyQueueCount());
    assertEquals(1, s1.getStockCount());
+   assertEquals(0, m1.getRequestCount());
+   assertEquals(0, m2.getRequestCount());
+   assertEquals(1, s1.getStorage().size());
+
+   //Factory finishes the pair of socks and the request is done.
+   //M2 finishes and sends the ingredient to storage increasing it to 2.
+
+   t.stepNHandler(1);
+   assertEquals(3, t.getStep());
+   assertEquals(2, s1.getFrequency());
+   assertEquals(0, f.getRequestCount());
+   assertEquals(-1, s1.getRequestCount());
+   assertEquals(1, s1.getStorage().size());
+   assertEquals(0, s1.getReadyQueueCount());
+   assertEquals(0, s1.getReqCount());
+   assertEquals(1, s1.getStockCount());
+   assertEquals(1, m1.getRequestCount());
+   assertEquals(0, m2.getRequestCount());
+
+   t.stepNHandler(1);
+   assertEquals(4, t.getStep());
+   assertEquals(2, s1.getFrequency());
+   assertEquals(0, f.getRequestCount());
+   assertEquals(-2, s1.getRequestCount());
+   assertEquals(0, s1.getReqCount());
+   assertEquals(0, s1.getReadyQueueCount());
+   assertEquals(2, s1.getStockCount());
    assertEquals(0, m1.getRequestCount());
    assertEquals(0, m2.getRequestCount());
    assertEquals(1, s1.getStorage().size());
@@ -162,10 +169,10 @@ public class StorageTest {
    assertEquals(5, t.getStep());
    assertEquals(2, s1.getFrequency());
    assertEquals(0, f.getRequestCount());
-   assertEquals(-1, s1.getRequestCount());
+   assertEquals(-2, s1.getRequestCount());
    assertEquals(0, s1.getReqCount());
    assertEquals(0, s1.getReadyQueueCount());
-   assertEquals(1, s1.getStockCount());
+   assertEquals(2, s1.getStockCount());
    assertEquals(1, m1.getRequestCount());
    assertEquals(0, m2.getRequestCount());
    assertEquals(1, s1.getStorage().size());
@@ -180,12 +187,10 @@ public class StorageTest {
     Recipe.setRecipeList(recipeList);
     Storage s1 = new Storage("Drawer", "socks", 150, 10, null, null, new Coordinate(4,2));
 
-    s1.updateFrequency();
     assertEquals((int)Math.ceil((double)(s1.getTotalCapacity() * s1.getTotalCapacity()) / (double)(s1.getR() * s1.getPriority())), s1.getFrequency());
 
 
     Storage s2 = new Storage("closet", "socks", 0, 10, null, null, new Coordinate(1,2));
-    s2.updateFrequency();
     assertEquals(0, s2.getR());
     assertEquals(-1, s2.getFrequency());
   }

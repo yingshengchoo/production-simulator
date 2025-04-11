@@ -18,7 +18,6 @@ import java.util.HashMap;
 public class Storage extends Building {
 
   private double priority;
-  private int frequency;
   private int totalCapacity;
   private List<Request> readyQueue;
   private Recipe recipe;
@@ -37,7 +36,6 @@ public class Storage extends Building {
     this.recipe = new Recipe(Recipe.getRecipe(itemToStore).getLatency(), new HashMap<>(), itemToStore);
     this.totalCapacity = totalCapacity;
     this.priority = priority;
-    this.frequency = -1;
     this.R = totalCapacity;
     super.storage.put(itemToStore, 0);
     readyQueue = new ArrayList<>();
@@ -62,7 +60,6 @@ public class Storage extends Building {
     this.recipe = new Recipe(Recipe.getRecipe(itemToStore).getLatency(), new HashMap<>(), itemToStore);
     this.totalCapacity = totalCapacity;
     this.priority = priority;
-    this.frequency = -1;
     this.R = totalCapacity;
     super.storage.put(itemToStore, 0);
     readyQueue = new ArrayList<>();
@@ -81,60 +78,29 @@ public class Storage extends Building {
     this(name, itemToStore, new ArrayList<>(), totalCapacity, priority, sourcePolicy, servePolicy, coordinate);
   }
 
-  
-  /**
-   * Updates the frequency of the request 
-   */
-  public void updateFrequency(){
-    //frequency should never be 0.
-    if(R == 0){
-      this.frequency = -1;
-    } else {
-      this.frequency = (int)Math.ceil((double)(totalCapacity * totalCapacity) / (double)(R * priority));
-    }
-  }  
-
   @Override
   public boolean goOneStep() {
     //Serve policy used should always be fifo.
-    
-    if(!requestQueue.isEmpty()) {
-      //    [recipe selection]: Hw2 has fifo on cycle 8
-      Log.level2Log("[request selection]: " + name + " has serve policy '" + servePolicy.getName()
-                  + "' on cycle " + LogicTime.getInstance().getStep());
-      for(Request request: requestQueue) {
-        // 库存中request原料齐备才可以开工
-        request.updateStatus(name, newIngredientsArrived, storage);
-        newIngredientsArrived = false;
-      }
 
-      Request request = servePolicy.getRequest(requestQueue);
-
-      while(request != null){
-        Log.level2Log("    request:[" + name + ":" + request.getIngredient() + ":"
-                      + request.getRequesterName() + "] is chosen");
-        if(request.getStatus().equals(RequestStatus.READY) && (getStockCount() > 0)) {
-          storage.put(recipe.getOutput(), storage.get(recipe.getOutput())-1);
-        } else {
-          currentRemainTime--; //revist logic here. E.g. if storage has not sent request ot sources due to low frequency. Also in general..
-          Log.debugLog(name + " is waiting for ingredients");
-          return false;
-        }
-        
-        //move request to ready queue to send at next time step
-        requestQueue.remove(request); 
-        readyQueue.add(request);
-        R--;//consumes one storage
-        //keeps updating until we get a request
-        currentRemainTime = recipe.getLatency();
-        request = servePolicy.getRequest(requestQueue);
+    //Has stock and has request to handle
+    while(getReqCount() > 0){
+      //Serve Policy is always Fifo
+      Log.level2Log("[request selection]: " + name + " has serve policy 'fifo' on cycle " + LogicTime.getInstance().getStep());
+      if(!hasStock()){
+        Log.debugLog(name + " is waiting for ingredients");
+        return false;
       }
-    } else {
-      //      Log.debugLog("no request here: " + name);
-      return true;
+      //FIFO POLICY HERE: Directly writing it without calling the pre written funciton :P
+      Request request = requestQueue.get(0);
+      storage.put(recipe.getOutput(), storage.get(recipe.getOutput())-1);
+      requestQueue.remove(request); 
+      //Adds request to ready queue which will be sent back to requester the next time step.
+      readyQueue.add(request);
+      R--;//Update R 
+      //keeps updating until we get a request
+      currentRemainTime = recipe.getLatency();
     }
-
-    return false;
+    return true;
   }
 
   @Override
@@ -226,22 +192,35 @@ public class Storage extends Building {
 //    [source selection]: D (qlen) has request for door on 0
       Log.level2Log("[source selection]: " + name + " (" + sourcePolicy.getName() + ") has request for "
                    + request.getIngredient() + " on " + LogicTime.getInstance().getStep());
-      requestQueue.add(request);
 
-      //Storage only sends request to sources periodically.
-      //so sends request to sources in goOneStep()
-      R++;
+      //有貨不用往下椽
+      if(getStockCount() > 0){
+        readyQueue.add(request);
+        R--;
+      } else {
+        //沒貨繼續往下傳
+        requestQueue.add(request);
+        //Storage only sends request to sources periodically.
+        //so sends request to sources in goOneStep()
+        Log.level2Log("[" + name + ":" + recipe.getOutput() + ":" + LogicTime.getInstance().getStep()
+                + "] For Storage " + name);
+        //only do this if storage == 0, otherwise return the request.
+        Building chosenSource = sourcePolicy.getSource(sources, recipe.getOutput());
+        Log.level2Log("    selecting " + chosenSource.getName());
+        Recipe childRecipe = chosenSource.type.getRecipeByProductName(recipe.getOutput());
+        Request req = new Request(recipe.getOutput(), childRecipe, this);
+        chosenSource.addRequest(req);
+      }
   }
-
+  
   /**
    * Sends request to sources  
    */
   public void sendRequest(){
-    updateFrequency();
-    if (frequency == -1){
+    if (getFrequency() == -1){
       return;
     }
-    boolean isOnFrequency = (LogicTime.getInstance().getStep() % frequency == 0);
+    boolean isOnFrequency = (LogicTime.getInstance().getStep() % getFrequency() == 0);
     if(isOnFrequency){
       Log.level2Log("[" + name + ":" + recipe.getOutput() + ":" + LogicTime.getInstance().getStep()
                 + "] For Storage " + name);
@@ -253,9 +232,14 @@ public class Storage extends Building {
       R--;
     }
   }
-  
+
+  // returns the frequency of the Storage system.
   public int getFrequency(){
-    return frequency;
+    if(R == 0){
+      return -1;
+    } else {
+      return (int)Math.ceil((double)(totalCapacity * totalCapacity) / (double)(R * priority));
+    }
   }
   
   @Override

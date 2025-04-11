@@ -10,7 +10,6 @@ public class Log implements Serializable {
     private static Logger getLogger() {
         return LoggerFactory.getLogger(Log.class);
     }
-//    private static final Logger logger = LoggerFactory.getLogger(Log.class);
 
     public static void setLogLevel(int level) {
         if(level >= 3) {
@@ -25,31 +24,19 @@ public class Log implements Serializable {
     }
 
     // the most detailed
-//    public static void debugLog(String logBody) {
-//        logger.debug(logBody);
-//    }
     public static void debugLog(String logBody) {
         getLogger().debug(logBody);
     }
 
-//    public static void level2Log(String logBody) {
-//        logger.info(logBody);
-//    }
     public static void level2Log(String logBody) {
         getLogger().info(logBody);
     }
 
-//    public static void level1Log(String logBody) {
-//        logger.warn(logBody);
-//    }
     public static void level1Log(String logBody) {
         getLogger().warn(logBody);
     }
 
     // the least detailed
-//    public static void level0Log(String logBody) {
-//        logger.error(logBody);
-//    }
     public static void level0Log(String logBody) {
         getLogger().error(logBody);
     }
