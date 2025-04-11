@@ -60,7 +60,6 @@ public class LogicTime implements Serializable{
             if(finished && timeDiff == Integer.MAX_VALUE) {
                 break;
             }
-            currentStep += 1;
             //確保 Storage 有先發給Sources request 
             for(Building b: observers){
               if(b instanceof Storage){
@@ -68,7 +67,7 @@ public class LogicTime implements Serializable{
                 s.sendRequest();
               }
             }
-
+            currentStep += 1;
             for(Building b: observers) {
                 b.updateNotified();
             }
