@@ -7,6 +7,8 @@ import productsimulation.request.Request;
 import productsimulation.request.RequestStatus;
 import productsimulation.request.servePolicy.ServePolicy;
 import productsimulation.request.sourcePolicy.SourcePolicy;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class Factory extends Building {
@@ -31,6 +33,20 @@ public class Factory extends Building {
   public Factory(String name, BuildingType type, List<Building> sources, SourcePolicy sourcePolicy, ServePolicy servePolicy, Coordinate coordinate){
     super(name, type, sources, sourcePolicy, servePolicy, coordinate);
   }
+
+    public static Factory addFactory(List<Building> sources, SourcePolicy sourcePolicy,
+                                     ServePolicy servePolicy, Coordinate coordinate, BuildingType type) {
+        List<Coordinate> existingCoordinates = new ArrayList<>();
+        for (Building b : buildings) {
+            existingCoordinates.add(b.getCoordinate());
+        }
+
+        if (!Building.isValid(coordinate.x, coordinate.y, existingCoordinates)) {
+            throw new RuntimeException("invalid coordinate!");
+        }
+
+        return new Factory(type.getName(), type, sources, sourcePolicy, servePolicy, coordinate);
+    }
 
   
     public boolean goOneStep() {

@@ -116,7 +116,8 @@ public abstract class Building implements Serializable {
         throw new RuntimeException("no valid coordinate!");
     }
 
-    private static boolean isValid(int candidateX, int candidateY, List<Coordinate> existingPoints) {
+    static boolean isValid(int candidateX, int candidateY, List<Coordinate> existingPoints) {
+        if (existingPoints.size() == 0) return true;
         if(candidateX < 0 || candidateY <0){
           return false;
         }
