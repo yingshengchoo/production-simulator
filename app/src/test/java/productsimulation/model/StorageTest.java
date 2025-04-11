@@ -160,7 +160,7 @@ public class StorageTest {
    assertEquals(0, s1.getReqCount());
    assertEquals(0, s1.getReadyQueueCount());
    assertEquals(2, s1.getStockCount());
-   assertEquals(1, m1.getRequestCount());
+   assertEquals(0, m1.getRequestCount());
    assertEquals(0, m2.getRequestCount());
    assertEquals(1, s1.getStorage().size());
 
@@ -168,11 +168,11 @@ public class StorageTest {
    assertEquals(5, t.getStep());
    assertEquals(2, s1.getFrequency());
    assertEquals(0, f.getRequestCount());
-   assertEquals(-3, s1.getRequestCount());
+   assertEquals(-2, s1.getRequestCount());
    assertEquals(0, s1.getReqCount());
    assertEquals(0, s1.getReadyQueueCount());
-   assertEquals(3, s1.getStockCount());
-   assertEquals(0, m1.getRequestCount());
+   assertEquals(2, s1.getStockCount());
+   assertEquals(1, m1.getRequestCount());
    assertEquals(0, m2.getRequestCount());
    assertEquals(1, s1.getStorage().size());
 
