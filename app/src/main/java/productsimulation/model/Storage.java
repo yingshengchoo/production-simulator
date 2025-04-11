@@ -18,7 +18,6 @@ import java.util.HashMap;
 public class Storage extends Building {
 
   private double priority;
-  private int frequency;
   private int totalCapacity;
   private List<Request> readyQueue;
   private Recipe recipe;
@@ -37,7 +36,6 @@ public class Storage extends Building {
     this.recipe = new Recipe(Recipe.getRecipe(itemToStore).getLatency(), new HashMap<>(), itemToStore);
     this.totalCapacity = totalCapacity;
     this.priority = priority;
-    this.frequency = -1;
     this.R = totalCapacity;
     super.storage.put(itemToStore, 0);
     readyQueue = new ArrayList<>();
@@ -49,7 +47,6 @@ public class Storage extends Building {
     this.recipe = new Recipe(Recipe.getRecipe(itemToStore).getLatency(), new HashMap<>(), itemToStore);
     this.totalCapacity = totalCapacity;
     this.priority = priority;
-    this.frequency = -1;
     this.R = totalCapacity;
     super.storage.put(itemToStore, 0);
     readyQueue = new ArrayList<>();
@@ -210,7 +207,7 @@ public class Storage extends Building {
     if (getFrequency() == -1){
       return;
     }
-    boolean isOnFrequency = (LogicTime.getInstance().getStep() % frequency == 0);
+    boolean isOnFrequency = (LogicTime.getInstance().getStep() % getFrequency() == 0);
     if(isOnFrequency){
       Log.level2Log("[" + name + ":" + recipe.getOutput() + ":" + LogicTime.getInstance().getStep()
                 + "] For Storage " + name);
