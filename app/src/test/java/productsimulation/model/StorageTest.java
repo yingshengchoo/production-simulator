@@ -141,6 +141,7 @@ public class StorageTest {
    //M2 finishes and sends the ingredient to storage increasing it to 2.
    //
    t.stepNHandler(1);
+   assertEquals(4, t.getStep());
    assertEquals(3, t.getStep());
    assertEquals(2, s1.getFrequency());
    assertEquals(0, f.getRequestCount());
@@ -156,7 +157,7 @@ public class StorageTest {
    assertEquals(4, t.getStep());
    assertEquals(2, s1.getFrequency());
    assertEquals(0, f.getRequestCount());
-   assertEquals(-1, s1.getRequestCount());
+   assertEquals(-3, s1.getRequestCount());
    assertEquals(0, s1.getReqCount());
    assertEquals(0, s1.getReadyQueueCount());
    assertEquals(1, s1.getStockCount());
