@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import productsimulation.Board;
 import productsimulation.model.Building;
 import productsimulation.model.Recipe;
+import productsimulation.model.road.Road;
 import productsimulation.request.MockingEnv;
 import productsimulation.request.Request;
 
@@ -16,6 +17,7 @@ class SourceEstimateTest {
     public void cleanUpBefore() {
         Board.getBoard().cleanup();
         Building.buildings.clear();
+        Road.cleanup();
     }
     MockingEnv mockingEnv = new MockingEnv();
     @Test

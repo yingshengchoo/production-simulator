@@ -18,6 +18,7 @@ class SetupParserTest {
     void setUp() {
         Board.getBoard().cleanup();
         Road.cleanup();
+        Building.buildings.clear();
         parser = new SetupParser();
     }
 

@@ -4,14 +4,23 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Answers.RETURNS_DEFAULTS;
 import static org.mockito.Mockito.mock;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import productsimulation.Board;
 import productsimulation.model.Building;
+import productsimulation.model.road.Road;
 
 import java.util.List;
 
 class PathTest {
+    @BeforeEach
+    public void cleanUpBefore() {
+        Board.getBoard().cleanup();
+        Building.buildings.clear();
+        Road.cleanup();
+    }
 
     private Building createBuildingMock() {
         return mock(Building.class, new Answer<Object>() {
