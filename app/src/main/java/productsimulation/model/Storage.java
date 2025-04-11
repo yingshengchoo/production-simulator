@@ -68,19 +68,6 @@ public class Storage extends Building {
     this(name, itemToStore, new ArrayList<>(), totalCapacity, priority, sourcePolicy, servePolicy, coordinate);
   }
 
-  
-  /**
-   * Updates the frequency of the request 
-   */
-  public void updateFrequency(){
-    //frequency should never be 0.
-    if(R == 0){
-      this.frequency = -1;
-    } else {
-      this.frequency = (int)Math.ceil((double)(totalCapacity * totalCapacity) / (double)(R * priority));
-    }
-  }  
-
   @Override
   public boolean goOneStep() {
     //Serve policy used should always be fifo.
@@ -219,8 +206,7 @@ public class Storage extends Building {
    * Sends request to sources  
    */
   public void sendRequest(){
-    updateFrequency();
-    if (frequency == -1){
+    if (getFrequency() == -1){
       return;
     }
     boolean isOnFrequency = (LogicTime.getInstance().getStep() % frequency == 0);
@@ -235,9 +221,14 @@ public class Storage extends Building {
       R--;
     }
   }
-  
+
+  // returns the frequency of the Storage system.
   public int getFrequency(){
-    return frequency;
+    if(R == 0){
+      return -1;
+    } else {
+      return (int)Math.ceil((double)(totalCapacity * totalCapacity) / (double)(R * priority));
+    }
   }
   
   @Override
