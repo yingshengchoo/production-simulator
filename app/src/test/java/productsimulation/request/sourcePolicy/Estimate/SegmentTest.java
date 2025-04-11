@@ -6,13 +6,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import productsimulation.Board;
 import productsimulation.model.Building;
+import productsimulation.model.road.Road;
 import productsimulation.request.MockingEnv;
+
+import java.util.HashMap;
 
 class SegmentTest {
     @BeforeEach
     public void cleanUpBefore() {
         Board.getBoard().cleanup();
         Building.buildings.clear();
+        Road.cleanup();
     }
 
     @Test

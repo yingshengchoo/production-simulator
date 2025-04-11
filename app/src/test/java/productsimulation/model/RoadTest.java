@@ -23,8 +23,7 @@ class RoadTest {
     @BeforeEach
     public void setUp() {
         Board.getBoard().cleanup();
-        Road.distanceMap = new HashMap<>();
-        Road.existingRoadTiles = new HashMap<>();
+        Road.cleanup();
     }
 
     @Test

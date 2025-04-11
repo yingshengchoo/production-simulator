@@ -14,9 +14,14 @@ import java.util.*;
 public class Road {
     // key: (source,destination), value: distance
     // 如果存在，返回最短路程；如果不存在，说明不可达
-    public static HashMap<Pair<Building, Building>, Integer> distanceMap;
+    public static HashMap<Pair<Building, Building>, Integer> distanceMap = new HashMap<>();
     // 虽然已经有board，但让board存带方向信息的roadtile并不合适
-    public static HashMap<Coordinate, RoadTile> existingRoadTiles;
+    public static HashMap<Coordinate, RoadTile> existingRoadTiles = new HashMap<>();
+
+    public static void cleanup() {
+        distanceMap.clear();
+        existingRoadTiles.clear();
+    }
 
 //    road的起点建筑和终点建筑
     private Building st;

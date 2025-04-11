@@ -27,7 +27,8 @@ public class App {
             "finish\n" +
             "set policy request on target\n" +
             "save saveFileName\n" +
-            "load loadFileName\n";
+            "load loadFileName\n" +
+            "connect 'buildingName1' 'buildingName2'\n";
 
     /**
      * Reads and processes input commands.
@@ -44,10 +45,8 @@ public class App {
 //    public static void readInputCommand(CommandParser cmdParser, Readable inputSource, boolean isInteractive) {
     public static void readInputCommand(CommandParser cmdParser, Readable inputSource) {
         Scanner scanner = new Scanner(inputSource);
-//        if (isInteractive) {
-            System.out.print(beginPrompt);
-            System.out.print("> ");
-//        }
+        System.out.print(beginPrompt);
+        System.out.print("> ");
 
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
@@ -64,9 +63,7 @@ public class App {
                 Log.debugLog(e.getClass().getName());
             }
 
-//            if (isInteractive) {
-                System.out.print("> ");
-//            }
+            System.out.print("> ");
         }
         scanner.close();
     }

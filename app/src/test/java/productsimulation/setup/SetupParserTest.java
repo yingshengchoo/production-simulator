@@ -4,6 +4,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import productsimulation.Board;
 import productsimulation.model.*;
+import productsimulation.model.road.Road;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
@@ -15,6 +17,7 @@ class SetupParserTest {
     @BeforeEach
     void setUp() {
         Board.getBoard().cleanup();
+        Road.cleanup();
         parser = new SetupParser();
     }
 
