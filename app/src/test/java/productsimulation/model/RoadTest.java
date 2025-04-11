@@ -67,6 +67,7 @@ class RoadTest {
         // make the path not continuous
         coordinates.clear();
         coordinates.add(new Coordinate(1, 3));
+        assertThrows(InvocationTargetException.class, ()->placeRoadMethod.invoke(road, coordinates, new Coordinate(0, 0)));
         coordinates.add(new Coordinate(2, 5));
         assertThrows(InvocationTargetException.class, ()->placeRoadMethod.invoke(road, coordinates, new Coordinate(0, 0)));
     }
@@ -75,12 +76,16 @@ class RoadTest {
     void test_generateRoad_new() {
         AtomBuilding b1 = new AtomBuilding(new Coordinate(1,1));
         AtomBuilding b2 = new AtomBuilding(new Coordinate(10, 10));
+        AtomBuilding b3 = new AtomBuilding(new Coordinate(1, 3));
         Road road = new Road(b1, b2);
-//        确认路已修建，且全局可见
         assertEquals(1, Road.distanceMap.size());
         ArrayList<RoadTile> roadTiles = road.roadTiles;
         assertEquals(17, roadTiles.size());
         assertEquals(17, Road.existingRoadTiles.size());
+        Road road2 = new Road(b1, b3);
+        assertEquals(2, Road.distanceMap.size());
+        assertEquals(1, road2.roadTiles.size());
+        assertEquals(18, Road.existingRoadTiles.size());
     }
 
     @Test
