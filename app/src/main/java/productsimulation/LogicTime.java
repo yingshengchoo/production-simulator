@@ -1,9 +1,9 @@
 package productsimulation;
 
 import productsimulation.model.*;
-import java.util.ArrayList;
+import productsimulation.model.road.RequestQueue;
+
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.io.Serializable;
 
@@ -51,6 +51,8 @@ public class LogicTime implements Serializable{
         boolean finished = true;
         for(int i = 0; i < timeDiff; i++) {
             finished = true;
+
+            RequestQueue.goOneStep();
             
             // 新一步
             for(Building b: observers) {

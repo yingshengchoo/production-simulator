@@ -4,6 +4,7 @@ import productsimulation.Board;
 import productsimulation.Coordinate;
 import productsimulation.Log;
 import productsimulation.LogicTime;
+import productsimulation.model.road.Road;
 import productsimulation.request.Policy;
 import productsimulation.request.Request;
 import productsimulation.request.servePolicy.ServePolicy;
@@ -117,7 +118,7 @@ public abstract class Building implements Serializable {
     }
 
     static boolean isValid(int candidateX, int candidateY, List<Coordinate> existingPoints) {
-        if (existingPoints.size() == 0) return true;
+        if (existingPoints.isEmpty()) return true;
         if(candidateX < 0 || candidateY <0){
           return false;
         }
@@ -175,6 +176,10 @@ public abstract class Building implements Serializable {
                 Log.level2Log("    selecting " + chosenSource.getName());
                 Recipe childRecipe = chosenSource.type.getRecipeByProductName(ingredient);
                 Request req = new Request(ingredient, childRecipe,this);
+
+                // set transport latency!
+                req.setTransLatency(Road.getDistance(this, chosenSource));
+
                 chosenSource.addRequest(req);
             }
         }

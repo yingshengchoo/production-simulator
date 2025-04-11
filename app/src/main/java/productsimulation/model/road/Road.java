@@ -221,4 +221,12 @@ public class Road {
         Collections.reverse(path);
         return distance.get(pathEnd);
     }
+
+    public static int getDistance(Building a, Building b) {
+        if(distanceMap.containsKey(new Pair<>(a, b))) {
+            return distanceMap.get(new Pair<>(a, b));
+        } else {
+            throw new IllegalArgumentException("road not connected!");
+        }
+    }
 }

@@ -4,6 +4,8 @@ import productsimulation.Log;
 import productsimulation.LogicTime;
 import productsimulation.model.Building;
 import productsimulation.model.Recipe;
+import productsimulation.model.road.RequestQueue;
+
 import java.util.Map;
 
 import java.io.Serializable;
@@ -21,7 +23,7 @@ public class Request implements Serializable{
   private final Recipe recipe;
   private final Building requester;
   private RequestStatus status;
-  int transLatency;
+  int transLatency = 0;
 
   public Request(String ingredient, Recipe recipe, Building requester, int transLatency) {
     this(ingredient, recipe, requester);
@@ -118,7 +120,11 @@ public class Request implements Serializable{
 
   public void doneReportAndTransport() {
     if(requester != null) {
-      requester.updateStorage(ingredient);
+      if (transLatency <= 0) {
+        requester.updateStorage(ingredient);
+      } else {
+        RequestQueue.addRequest(this);
+      }
     } else {
 //      [order complete] Order 0 completed (door) at time 21
       Log.level0Log("[order complete] Order " + id + " completed (" + ingredient + ")" +
@@ -145,7 +151,7 @@ public class Request implements Serializable{
   }
 
   public boolean isReadyToDeliver() {
-    return this.transLatency == 0;
+    return this.transLatency <= 0;
   }
 
   public void decreaseTransLatency() {
@@ -154,5 +160,9 @@ public class Request implements Serializable{
 
   public Building getRequester() {
     return requester;
+  }
+
+  public void setTransLatency(int transLatency) {
+    this.transLatency = transLatency;
   }
 }
