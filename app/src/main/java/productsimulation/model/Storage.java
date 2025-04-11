@@ -94,7 +94,7 @@ public class Storage extends Building {
         return false;
       }
       //FIFO POLICY HERE: Directly writing it without calling the pre written funciton :P
-      Request request = requestQueue.getFirst();
+      Request request = requestQueue.get(0);
       requestQueue.remove(request); 
       //Adds request to ready queue which will be sent back to requester the next time step.
       readyQueue.add(request);
