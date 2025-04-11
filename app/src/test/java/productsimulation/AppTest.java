@@ -10,7 +10,6 @@ import productsimulation.model.*;
 import productsimulation.request.Request;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -19,7 +18,6 @@ import java.util.*;
 import org.junit.jupiter.api.Test;
 import productsimulation.request.servePolicy.ServePolicy;
 import productsimulation.request.sourcePolicy.SourcePolicy;
-import productsimulation.setup.SetupParser;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -35,6 +33,8 @@ class AppTest {
     @BeforeEach
     void setUp() throws IOException {
         LogicTime.getInstance().reset();
+        Board.getBoard().cleanup();
+        Building.buildings.clear();
         Request.clearIds();
         cleanUpLogFile(filePath);
     }
@@ -56,10 +56,10 @@ class AppTest {
         // skip parsing the type
         Map<String, Recipe> woodMineRecipes = new HashMap<>();
         woodMineRecipes.put("wood", woodMineRecipe);
-        FactoryType woodMineType = new FactoryType("wood_mine", woodMineRecipes);
+        BuildingType woodMineType = new BuildingType("wood_mine", woodMineRecipes);
         Map<String, Recipe> woodSwordRecipes = new HashMap<>();
         woodSwordRecipes.put("wooden_sword", woodSwordRecipe);
-        FactoryType woodSwordType = new FactoryType("sword_factory", woodSwordRecipes);
+        BuildingType woodSwordType = new BuildingType("sword_factory", woodSwordRecipes);
         // skip serving policy and request policy
         SourcePolicy soleSourcePolicy = new SoleSourcePolicy();
         ServePolicy oneTimeServePolicy = new OneTimeServePolicy();

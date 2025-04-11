@@ -3,7 +3,6 @@ package productsimulation.model;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 
 import productsimulation.request.servePolicy.FIFOPolicy;
 import productsimulation.request.sourcePolicy.SourceQLen;
@@ -21,6 +20,8 @@ public class StorageTest {
   public void setup(){
     LogicTime.getInstance().reset();
     RequestBroadcaster.getInstance().reset();
+    Board.getBoard().cleanup();
+    Building.buildings.clear();
   }
   
   @Test
@@ -31,8 +32,8 @@ public class StorageTest {
     recipeList.add(new Recipe(2, Collections.emptyMap(), "socks"));
     Recipe.setRecipeList(recipeList);
     sources.add(new Storage("Closet", "a" , Collections.emptyList(), 100, 3, null,null));
-    sources.add(new Factory("DoorInc", new FactoryType("Door", Collections.emptyMap()), Collections.emptyList(), null, null));
-    sources.add(new Mine("DiamondMine", new FactoryType("Diamond", Collections.emptyMap()), Collections.emptyList(), null, null));
+    sources.add(new Factory("DoorInc", new BuildingType("Door", Collections.emptyMap()), Collections.emptyList(), null, null));
+    sources.add(new Mine("DiamondMine", new BuildingType("Diamond", Collections.emptyMap()), Collections.emptyList(), null, null));
                 Storage s1 = new Storage("Drawer", "socks", sources, 150, 10, null, null, new Coordinate(1,1));
     String expected = "Storage\n{name='Drawer',\n stores='socks',\n sources=[Closet, DoorInc, DiamondMine],\n capacity=150,\n storage=[socks: 0],\n request queue size=0\n}";
 
@@ -53,14 +54,14 @@ public class StorageTest {
    rl.add(pair);
    Recipe.setRecipeList(rl);
    
-   Mine m1 = new Mine("SocksMine1", new FactoryType("SmellySocks", Map.of("socks", socks)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy());
-   Mine m2 = new Mine("SocksMine2", new FactoryType("SmellySocks", Map.of("socks", socks)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy());
+   Mine m1 = new Mine("SocksMine1", new BuildingType("SmellySocks", Map.of("socks", socks)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy());
+   Mine m2 = new Mine("SocksMine2", new BuildingType("SmellySocks", Map.of("socks", socks)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy());
    sources.add(m1);
    sources.add(m2);
    Storage s1 = new Storage("Drawer", "socks", sources, 100, 102, new SourceQLen(), new FIFOPolicy(), new Coordinate(5,5));
    ArrayList<Building> sources2 = new ArrayList<>();
    sources2.add(s1);
-   Factory f = new Factory("SocksFactory", new FactoryType("PairOfSocks", Map.of("pairOfSocks", pair)), sources2, new SourceQLen(), new FIFOPolicy());
+   Factory f = new Factory("SocksFactory", new BuildingType("PairOfSocks", Map.of("pairOfSocks", pair)), sources2, new SourceQLen(), new FIFOPolicy());
 
    assertEquals("socks", s1.getRecipeOutput());
    
@@ -206,8 +207,8 @@ public class StorageTest {
    rl.add(pair);
    Recipe.setRecipeList(rl);
    
-   Mine m1 = new Mine("SocksMine1", new FactoryType("SmellySocks", Map.of("socks", socks)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy());
-   Mine m2 = new Mine("SocksMine2", new FactoryType("SmellySocks", Map.of("socks", socks)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy());
+   Mine m1 = new Mine("SocksMine1", new BuildingType("SmellySocks", Map.of("socks", socks)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy());
+   Mine m2 = new Mine("SocksMine2", new BuildingType("SmellySocks", Map.of("socks", socks)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy());
    sources.add(m1);
    sources.add(m2);
    Storage s1 = new Storage("Drawer", "socks", sources, 0, 102, new SourceQLen(), new FIFOPolicy(), new Coordinate(3,3));
@@ -233,8 +234,8 @@ public class StorageTest {
    rl.add(pair);
    Recipe.setRecipeList(rl);
    
-   Mine m1 = new Mine("SocksMine1", new FactoryType("SockTree", Map.of("socks", socks)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy());
-   Mine m2 = new Mine("SocksMine2", new FactoryType("SockOre", Map.of("socks", socks)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy());
+   Mine m1 = new Mine("SocksMine1", new BuildingType("SockTree", Map.of("socks", socks)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy());
+   Mine m2 = new Mine("SocksMine2", new BuildingType("SockOre", Map.of("socks", socks)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy());
    sources.add(m1);
    sources.add(m2);
    Storage s1 = new Storage("Drawer", "socks", sources, 100, 102, new SourceQLen(), new FIFOPolicy(), new Coordinate(1,0));
@@ -266,8 +267,8 @@ public class StorageTest {
    rl.add(pair);
    Recipe.setRecipeList(rl);
    
-   Mine m1 = new Mine("SocksMine1", new FactoryType("SockED", Map.of("socks", socks1)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy());
-   Mine m2 = new Mine("SocksMine2", new FactoryType("SockET", Map.of("socks", socks2)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy());
+   Mine m1 = new Mine("SocksMine1", new BuildingType("SockED", Map.of("socks", socks1)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy());
+   Mine m2 = new Mine("SocksMine2", new BuildingType("SockET", Map.of("socks", socks2)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy());
    sources.add(m1);
    sources.add(m2);
    Storage s1 = new Storage("Drawer", "socks", sources, 100, 102, new SourceQLen(), new FIFOPolicy(), new Coordinate(7,7));

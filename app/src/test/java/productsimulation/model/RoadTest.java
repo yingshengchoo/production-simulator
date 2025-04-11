@@ -1,6 +1,8 @@
 package productsimulation.model;
 
+import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import productsimulation.Board;
 import productsimulation.Coordinate;
@@ -18,22 +20,11 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 class RoadTest {
-    // todo 把手动调试换成自动assert，正确的道路只需满足以下条件：1.总长度符合预期 2.相邻的坐标相邻(已由placeRoad保证) 3.起点和起点建筑相邻，终点和终点建筑相邻
-    // 封装为一个函数，入参为road和预期长度
     @BeforeEach
     public void setUp() {
-        Road.board = new Board();
-        Road.existingRoads = new HashMap<>();
+        Board.getBoard().cleanup();
+        Road.distanceMap = new HashMap<>();
         Road.existingRoadTiles = new HashMap<>();
-    }
-
-    private int getTotalRoads() {
-        int roadCount = 0;
-        for (Map.Entry<Building, HashMap<Building, Road>> entry : Road.existingRoads.entrySet()) {
-            HashMap<Building, Road> subMap = entry.getValue();
-            roadCount += subMap.size();
-        }
-        return roadCount;
     }
 
     @Test
@@ -50,13 +41,12 @@ class RoadTest {
         coordinates.add(new Coordinate(1, 0));
 
         Road road = new Road();
-        Method placeRoadMethod = Road.class.getDeclaredMethod("placeRoad", ArrayList.class, Coordinate.class, boolean.class);
+        Method placeRoadMethod = Road.class.getDeclaredMethod("placeRoad", ArrayList.class, Coordinate.class);
         placeRoadMethod.setAccessible(true);
-        placeRoadMethod.invoke(road, coordinates, new Coordinate(0, 0), false);
+        placeRoadMethod.invoke(road, coordinates, new Coordinate(0, 0));
 
         ArrayList<RoadTile> roadTiles = road.roadTiles;
         assertEquals(8, roadTiles.size());
-        assertTrue(roadTiles.get(0).getIsEnd());
         assertEquals(roadTiles.get(0).getDirection().getDirections(), "UP");
         assertTrue(roadTiles.get(1).getDirection().hasDirection(Direction.UP));
         assertEquals(roadTiles.get(2).getDirection().getDirections(), "RIGHT");
@@ -67,70 +57,56 @@ class RoadTest {
         assertEquals(roadTiles.get(6).getDirection().getDirections(), "LEFT");
 
         // coordinate is null
-        assertThrows(InvocationTargetException.class, ()->placeRoadMethod.invoke(road, null, new Coordinate(0, 0), false));
-
+        assertThrows(InvocationTargetException.class, ()->placeRoadMethod.invoke(road, null, new Coordinate(0, 0)));
+        // exit is null
+        assertThrows(InvocationTargetException.class, ()->placeRoadMethod.invoke(road, coordinates, null));
         // add a building on the road path
         AtomBuilding b1 = new AtomBuilding(new Coordinate(1, 0));
-        assertThrows(InvocationTargetException.class, ()->placeRoadMethod.invoke(road, coordinates, new Coordinate(0, 0), false));
+        assertThrows(InvocationTargetException.class, ()->placeRoadMethod.invoke(road, coordinates, new Coordinate(0, 0)));
 
         // make the path not continuous
         coordinates.clear();
         coordinates.add(new Coordinate(1, 3));
+        assertThrows(InvocationTargetException.class, ()->placeRoadMethod.invoke(road, coordinates, new Coordinate(0, 0)));
         coordinates.add(new Coordinate(2, 5));
-        assertThrows(InvocationTargetException.class, ()->placeRoadMethod.invoke(road, coordinates, new Coordinate(0, 0), false));
-    }
-
-    @Test
-    void test_chooseBuildingPort() {
-        ArrayList<Coordinate> coordinates = new ArrayList<>();
-        Road road = new Road();
-        assertNull(road.chooseBuildingPort(coordinates));
-        Coordinate c1 = new Coordinate(1,1);
-        Coordinate c2 = new Coordinate(1,2);
-        Coordinate c3 = new Coordinate(1,3);
-        Coordinate c4 = new Coordinate(2,2);
-        coordinates.add(c1);
-        coordinates.add(c2);
-        coordinates.add(c3);
-        coordinates.add(c4);
-        Road.board.setBoardPosStatus(c1, 1);
-        Road.board.setBoardPosStatus(c2, 1);
-        Road.board.setBoardPosStatus(c3, 1);
-        Road.board.setBoardPosStatus(c4, 1);
-        assertEquals(new Coordinate(1, 4), road.chooseBuildingPort(coordinates));
-        AtomBuilding b1 = new AtomBuilding(new Coordinate(0, 3));
-        AtomBuilding b2 = new AtomBuilding(new Coordinate(1, 4));
-        AtomBuilding b3 = new AtomBuilding(new Coordinate(2, 3));
-        assertNull(road.chooseBuildingPort(coordinates));
-    }
-
-    @Test
-    void test_earlyStop() {
-
+        assertThrows(InvocationTargetException.class, ()->placeRoadMethod.invoke(road, coordinates, new Coordinate(0, 0)));
     }
 
     @Test
     void test_generateRoad_new() {
         AtomBuilding b1 = new AtomBuilding(new Coordinate(1,1));
         AtomBuilding b2 = new AtomBuilding(new Coordinate(10, 10));
+        AtomBuilding b3 = new AtomBuilding(new Coordinate(1, 3));
         Road road = new Road(b1, b2);
-//        确认路已修建，且全局可见
-        assertEquals(1, getTotalRoads());
+        assertEquals(1, Road.distanceMap.size());
         ArrayList<RoadTile> roadTiles = road.roadTiles;
-        assertEquals(19, roadTiles.size());
+        assertEquals(17, roadTiles.size());
+        assertEquals(17, Road.existingRoadTiles.size());
+        Road road2 = new Road(b1, b3);
+        assertEquals(2, Road.distanceMap.size());
+        assertEquals(1, road2.roadTiles.size());
+        assertEquals(18, Road.existingRoadTiles.size());
     }
 
     @Test
     void test_generateRoad_special() {
         AtomBuilding b1 = new AtomBuilding(new Coordinate(1,1));
         AtomBuilding b2 = new AtomBuilding(new Coordinate(10, 10));
+        AtomBuilding b2_1 = new AtomBuilding(new Coordinate(10, 11));
 //        起点和终点相同，不应该生成新路
         Road road1 = new Road(b1, b1);
-        assertEquals(0, getTotalRoads());
+        assertEquals(0, Road.distanceMap.size());
         Road road2 = new Road(b1, b2);
 //        同起点同终点已有路，不应该生成新路
         Road road3 = new Road(b1, b2);
-        assertEquals(1, getTotalRoads());
+//        两个建筑相邻，distanceMap中增加item，但不应该生成新路
+        Road road4 = new Road(b2, b2_1);
+        assertEquals(2, Road.distanceMap.size());
+        assertEquals(17, Road.existingRoadTiles.size());
+//        起点和终点对调，理应生成新路，因为道路有向。
+        Road road5 = new Road(b2, b1);
+        assertEquals(3, Road.distanceMap.size());
+        assertEquals(31, Road.existingRoadTiles.size());
     }
 
     @Test
@@ -141,13 +117,15 @@ class RoadTest {
         AtomBuilding b3 = new AtomBuilding(new Coordinate(1, 10));
         Road road1 = new Road(b3, b2);
 //        确认路已修建，且全局可见
-        assertEquals(1, getTotalRoads());
+        assertEquals(1, Road.distanceMap.size());
 //        确认路线正确
         ArrayList<RoadTile> roadTiles = road1.roadTiles;
-        assertEquals(10, roadTiles.size());
+        assertEquals(8, roadTiles.size());
+        assertEquals(8, Road.existingRoadTiles.size());
         Road road2 = new Road(b1, b2);
         ArrayList<RoadTile> roadTiles2 = road2.roadTiles;
-        assertEquals(11, roadTiles2.size());
+        assertEquals(17, roadTiles2.size());
+        assertEquals(17, Road.existingRoadTiles.size());
     }
 
     @Test
@@ -158,19 +136,20 @@ class RoadTest {
         AtomBuilding b3 = new AtomBuilding(new Coordinate(1, 3));
         Road road1 = new Road(b2, b3);
 //        确认路已修建，且全局可见
-        assertEquals(1, getTotalRoads());
+        assertEquals(1, Road.distanceMap.size());
         Road road2 = new Road(b1, b3);
-        assertEquals(2, getTotalRoads());
+        assertEquals(2, Road.distanceMap.size());
         Road road3 = new Road(b1, b2);
-        assertEquals(3, getTotalRoads());
+        assertEquals(3, Road.distanceMap.size());
 
         //        确认路线正确
         ArrayList<RoadTile> roadTiles1 = road1.roadTiles;
         ArrayList<RoadTile> roadTiles2= road2.roadTiles;
         ArrayList<RoadTile> roadTiles3 = road3.roadTiles;
-        assertEquals(10, roadTiles1.size());
-        assertEquals(3, roadTiles2.size());
+        assertEquals(8, roadTiles1.size());
+        assertEquals(5, roadTiles2.size());
         assertEquals(6, roadTiles3.size());
+        assertEquals(13, Road.existingRoadTiles.size());
     }
 
     @Test
@@ -181,15 +160,16 @@ class RoadTest {
         AtomBuilding b3 = new AtomBuilding(new Coordinate(20, 20));
         Road road1 = new Road(b3, b2);
 //        确认路已修建，且全局可见
-        assertEquals(1, getTotalRoads());
+        assertEquals(1, Road.distanceMap.size());
         Road road2 = new Road(b1, b2);
-        assertEquals(2, getTotalRoads());
+        assertEquals(2, Road.distanceMap.size());
 
         //        确认路线正确
         ArrayList<RoadTile> roadTiles1 = road1.roadTiles;
         ArrayList<RoadTile> roadTiles2 = road2.roadTiles;
-        assertEquals(21, roadTiles1.size());
-        assertEquals(19, roadTiles2.size());
+        assertEquals(19, roadTiles1.size());
+        assertEquals(17, roadTiles2.size());
+        assertEquals(36, Road.existingRoadTiles.size());
     }
 
     @Test
@@ -203,36 +183,134 @@ class RoadTest {
         Road road2 = new Road(b1, b3);
         Road road3 = new Road(b1, b4);
 //        确认路已修建，且全局可见
-        assertEquals(3, Road.existingRoads.size());
+        assertEquals(3, Road.distanceMap.size());
 //        确认路线正确
         ArrayList<RoadTile> roadTiles1 = road1.roadTiles;
         ArrayList<RoadTile> roadTiles2 = road2.roadTiles;
         ArrayList<RoadTile> roadTiles3 = road3.roadTiles;
-        assertEquals(10, roadTiles1.size());
-        assertEquals(19, roadTiles2.size());
+        assertEquals(8, roadTiles1.size());
+        assertEquals(17, roadTiles2.size());
         assertEquals(18, roadTiles3.size());
+        assertEquals(27, Road.existingRoadTiles.size());
     }
 
     @Test
-//    测n 对 1，这个例子适合展示
+//    测n 对 1
     void test_generateRoad_reuse5() {
         AtomBuilding b1 = new AtomBuilding(new Coordinate(10,10));
         AtomBuilding b2 = new AtomBuilding(new Coordinate(1, 1));
         AtomBuilding b3 = new AtomBuilding(new Coordinate(1, 10));
         AtomBuilding b4 = new AtomBuilding(new Coordinate(1, 20));
         Road road1 = new Road(b2, b1);
-        assertEquals(1, getTotalRoads());
+        assertEquals(1, Road.distanceMap.size());
         Road road2 = new Road(b3, b1);
-        assertEquals(2, getTotalRoads());
+        assertEquals(2, Road.distanceMap.size());
         Road road3 = new Road(b4, b1);
-        assertEquals(3, getTotalRoads());
+        assertEquals(3, Road.distanceMap.size());
 
         ArrayList<RoadTile> roadTiles1 = road1.roadTiles;
         ArrayList<RoadTile> roadTiles2 = road2.roadTiles;
         ArrayList<RoadTile> roadTiles3 = road3.roadTiles;
         assertEquals(17, roadTiles1.size());
-        assertEquals(7, roadTiles2.size());
-        assertEquals(12, roadTiles3.size());
+        assertEquals(8, roadTiles2.size());
+        assertEquals(18, roadTiles3.size());
+        assertEquals(32, Road.existingRoadTiles.size());
+    }
+
+    @Test
+//    测对无关路线的复用
+    void test_generateRoad_reuse6() {
+        AtomBuilding b1 = new AtomBuilding(new Coordinate(1,1));
+        AtomBuilding b2 = new AtomBuilding(new Coordinate(20, 10));
+        AtomBuilding b3 = new AtomBuilding(new Coordinate(10, 1));
+        AtomBuilding b4 = new AtomBuilding(new Coordinate(10, 10));
+        Road road1 = new Road(b3, b4);
+        assertEquals(1, Road.distanceMap.size());
+        Road road2 = new Road(b1, b2);
+        assertEquals(2, Road.distanceMap.size());
+
+        ArrayList<RoadTile> roadTiles1 = road1.roadTiles;
+        ArrayList<RoadTile> roadTiles2 = road2.roadTiles;
+        assertEquals(8, roadTiles1.size());
+        assertEquals(27, roadTiles2.size());
+        assertEquals(27, Road.existingRoadTiles.size());
+    }
+
+    @Test
+//    和reuse6一样，但不应该复用，因为道路的方向跟刚刚相反
+    void test_generateRoad_reuse6_reverse() {
+        AtomBuilding b1 = new AtomBuilding(new Coordinate(1,1));
+        AtomBuilding b2 = new AtomBuilding(new Coordinate(20, 10));
+        AtomBuilding b3 = new AtomBuilding(new Coordinate(10, 1));
+        AtomBuilding b4 = new AtomBuilding(new Coordinate(10, 10));
+        Road road1 = new Road(b4, b3);
+        assertEquals(1, Road.distanceMap.size());
+        Road road2 = new Road(b1, b2);
+        assertEquals(2, Road.distanceMap.size());
+
+        ArrayList<RoadTile> roadTiles1 = road1.roadTiles;
+        ArrayList<RoadTile> roadTiles2 = road2.roadTiles;
+        assertEquals(8, roadTiles1.size());
+        assertEquals(27, roadTiles2.size());
+        assertEquals(34, Road.existingRoadTiles.size());
+    }
+
+    @Test
+//    测对无关路线的复用
+    void test_generateRoad_reuse7() {
+        AtomBuilding b1 = new AtomBuilding(new Coordinate(1,1));
+        AtomBuilding b2 = new AtomBuilding(new Coordinate(10, 1));
+        AtomBuilding b3 = new AtomBuilding(new Coordinate(1, 10));
+        AtomBuilding b4 = new AtomBuilding(new Coordinate(10, 10));
+        Road road1 = new Road(b3, b4);
+        assertEquals(1, Road.distanceMap.size());
+
+        AtomBuilding block1 = new AtomBuilding(new Coordinate(5, 0));
+        AtomBuilding block2 = new AtomBuilding(new Coordinate(5, 1));
+        AtomBuilding block3 = new AtomBuilding(new Coordinate(5, 2));
+        AtomBuilding block4 = new AtomBuilding(new Coordinate(5, 3));
+        AtomBuilding block5 = new AtomBuilding(new Coordinate(5, 4));
+        AtomBuilding block6 = new AtomBuilding(new Coordinate(5, 5));
+
+        Road road2 = new Road(b1, b2);
+        assertEquals(2, Road.distanceMap.size());
+
+        ArrayList<RoadTile> roadTiles1 = road1.roadTiles;
+        ArrayList<RoadTile> roadTiles2 = road2.roadTiles;
+        assertEquals(8, roadTiles1.size());
+        assertEquals(18, roadTiles2.size());
+        assertEquals(26, Road.existingRoadTiles.size());
+    }
+
+    @Test
+//    @Disabled("waiting for Building debug")
+//    测对无关路线的复用
+    void test_generateRoad_reuse8() {
+        AtomBuilding b1 = new AtomBuilding(new Coordinate(1,1));
+        AtomBuilding b2 = new AtomBuilding(new Coordinate(10, 1));
+        AtomBuilding b3 = new AtomBuilding(new Coordinate(1, 10));
+        AtomBuilding b4 = new AtomBuilding(new Coordinate(10, 10));
+        Road road1 = new Road(b3, b4);
+        assertEquals(1, Road.distanceMap.size());
+
+        AtomBuilding block1 = new AtomBuilding(new Coordinate(5, 0));
+        AtomBuilding block2 = new AtomBuilding(new Coordinate(5, 1));
+        AtomBuilding block3 = new AtomBuilding(new Coordinate(5, 2));
+        AtomBuilding block4 = new AtomBuilding(new Coordinate(5, 3));
+        AtomBuilding block5 = new AtomBuilding(new Coordinate(5, 4));
+        AtomBuilding block6 = new AtomBuilding(new Coordinate(5, 5));
+        AtomBuilding block7 = new AtomBuilding(new Coordinate(5, 6));
+        AtomBuilding block8 = new AtomBuilding(new Coordinate(5, 7));
+        AtomBuilding block9 = new AtomBuilding(new Coordinate(5, 8));
+
+        Road road2 = new Road(b1, b2);
+        assertEquals(2, Road.distanceMap.size());
+
+        ArrayList<RoadTile> roadTiles1 = road1.roadTiles;
+        ArrayList<RoadTile> roadTiles2 = road2.roadTiles;
+        assertEquals(8, roadTiles1.size());
+        assertEquals(26, roadTiles2.size());
+        assertEquals(26, Road.existingRoadTiles.size());
     }
 
     @Test
@@ -249,7 +327,8 @@ class RoadTest {
         AtomBuilding b9 = new AtomBuilding(new Coordinate(0, 3));
         Road road = new Road(b1, b2);
 //        确认路并未修建
-        assertEquals(0, getTotalRoads());
+        assertEquals(1, Road.distanceMap.size());
+        assertEquals(0, Road.existingRoadTiles.size());
     }
 
     @Test
@@ -258,7 +337,7 @@ class RoadTest {
         AtomBuilding b2 = new AtomBuilding(new Coordinate(10, 10));
         AtomBuilding b = new AtomBuilding(new Coordinate(15, 10));
         Road road1 = new Road(b, b2);
-        assertEquals(1, getTotalRoads());
+        assertEquals(1, Road.distanceMap.size());
 
         AtomBuilding b3 = new AtomBuilding(new Coordinate(3, 0));
         AtomBuilding b4 = new AtomBuilding(new Coordinate(3, 1));
@@ -268,7 +347,8 @@ class RoadTest {
         AtomBuilding b8 = new AtomBuilding(new Coordinate(1, 3));
         AtomBuilding b9 = new AtomBuilding(new Coordinate(0, 3));
         Road road2 = new Road(b1, b2);
-        assertEquals(1, getTotalRoads());
+        assertEquals(2, Road.distanceMap.size());
+        assertEquals(4, Road.existingRoadTiles.size());
     }
 
     @Test
@@ -276,16 +356,17 @@ class RoadTest {
         Coordinate c1 = new Coordinate(0, 0);
         Coordinate c2 = new Coordinate(5, 2);
         ArrayList<Coordinate> p1 = new ArrayList<>();
-        assertEquals(7, Road.shortestPath(c1, c2, p1));
+//        此处的distance并非曼哈顿距离，而是带权距离。
+        assertEquals(12, Road.shortestPath(c1, c2, p1));
 //        System.out.println(p1);
-        Road.board.setBoardPosStatus(new Coordinate(1, 0), 1);
-        Road.board.setBoardPosStatus(new Coordinate(1, 1), 1);
-        Road.board.setBoardPosStatus(new Coordinate(1, 2), 1);
-        Road.board.setBoardPosStatus(new Coordinate(1, 3), 1);
+        Board.getBoard().setBoardPosWeight(new Coordinate(1, 0), Integer.MAX_VALUE);
+        Board.getBoard().setBoardPosWeight(new Coordinate(1, 1), Integer.MAX_VALUE);
+        Board.getBoard().setBoardPosWeight(new Coordinate(1, 2), Integer.MAX_VALUE);
+        Board.getBoard().setBoardPosWeight(new Coordinate(1, 3), Integer.MAX_VALUE);
         ArrayList<Coordinate> p2 = new ArrayList<>();
-        assertEquals(11, Road.shortestPath(c1, c2, p2));
+        assertEquals(20, Road.shortestPath(c1, c2, p2));
 //        System.out.println(p2);
-        Road.board.setBoardPosStatus(new Coordinate(0, 3), 1);
+        Board.getBoard().setBoardPosWeight(new Coordinate(0, 3), Integer.MAX_VALUE);
         ArrayList<Coordinate> p3 = new ArrayList<>();
         assertEquals(-1, Road.shortestPath(c1, c2, p3));
     }

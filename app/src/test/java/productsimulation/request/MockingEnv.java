@@ -31,10 +31,10 @@ public class MockingEnv {
         Recipe.setRecipeList(List.of(r1, r2, r3, r4));
 
         // init Buildings
-        FactoryType ft1 = new FactoryType("t1", Map.of("r1", r1));
-        FactoryType ft2 = new FactoryType("t2", Map.of("r2", r2));
-        FactoryType ft3 = new FactoryType("t3", Map.of("r3", r3));
-        FactoryType ft4 = new FactoryType("t4", Map.of("r4", r4));
+        BuildingType ft1 = new BuildingType("t1", Map.of("r1", r1));
+        BuildingType ft2 = new BuildingType("t2", Map.of("r2", r2));
+        BuildingType ft3 = new BuildingType("t3", Map.of("r3", r3));
+        BuildingType ft4 = new BuildingType("t4", Map.of("r4", r4));
         Building b1 = new Mine("b1", ft1, null, qlen, fifo);
         Building b2 = new Mine("b2", ft2, null, qlen, fifo);
         Building b22 = new Mine("b22", ft2, null, qlen, fifo);

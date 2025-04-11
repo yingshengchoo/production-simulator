@@ -16,7 +16,7 @@ public class State implements Serializable{
   
   private List<Building> buildings;
   private List<Recipe> recipes;
-  private List<FactoryType> types;
+  private List<BuildingType> types;
   private RequestBroadcaster requestbroadcaster;
   private LogicTime logictime;
   private SourcePolicy defaultSourcePolicy;
@@ -32,7 +32,7 @@ public class State implements Serializable{
    * @param requestbroadcaster is the requestbroadcaster used in the simulation
    * @param logictime          is the logictime used in the simulation. 
    */
-  private State(List<Building> buildings, List<FactoryType> types, List<Recipe> recipes, RequestBroadcaster requestbroadcaster, LogicTime logictime) {
+  private State(List<Building> buildings, List<BuildingType> types, List<Recipe> recipes, RequestBroadcaster requestbroadcaster, LogicTime logictime) {
     this.buildings = buildings;
     this.types = types;
     this.recipes = recipes;
@@ -54,7 +54,7 @@ public class State implements Serializable{
    * @param types         is the list types of Factory in the simulation.
    * @param recipes       is the list of recipes in the simulation.
    */
-  public static void initialize(List<Building> buildings, List<FactoryType> types, List<Recipe> recipes, RequestBroadcaster requestbroadcaster, LogicTime logictime) {
+  public static void initialize(List<Building> buildings, List<BuildingType> types, List<Recipe> recipes, RequestBroadcaster requestbroadcaster, LogicTime logictime) {
     if (instance == null) {
       instance = new State(buildings, types, recipes, requestbroadcaster, logictime);
     }

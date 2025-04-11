@@ -3,7 +3,7 @@ package productsimulation;
 import productsimulation.command.Command;
 import productsimulation.command.CommandParser;
 import productsimulation.model.Building;
-import productsimulation.model.FactoryType;
+import productsimulation.model.BuildingType;
 import productsimulation.model.Recipe;
 import productsimulation.GUI.GUI;
 import productsimulation.request.servePolicy.FIFOPolicy;
@@ -77,7 +77,7 @@ public class App {
     // todo 为了支持编辑功能，重构时直接将setupParser的get方法改为set ModelManager，上述四个类删除相应field
     public static void modelSetup(SetupParser parser) {
         Map<String, Recipe> recipes = parser.getRecipeMap();
-        Map<String, FactoryType> types = parser.getTypeMap();
+        Map<String, BuildingType> types = parser.getTypeMap();
         Map<String, Building> buildings = parser.getBuildingMap();
 
         LogicTime logicTime = LogicTime.getInstance();

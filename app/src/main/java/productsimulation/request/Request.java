@@ -21,6 +21,12 @@ public class Request implements Serializable{
   private final Recipe recipe;
   private final Building requester;
   private RequestStatus status;
+  int transLatency;
+
+  public Request(String ingredient, Recipe recipe, Building requester, int transLatency) {
+    this(ingredient, recipe, requester);
+    this.transLatency = transLatency;
+  }
 
   public Request(String ingredient, Recipe recipe, Building requester) {
     this.id = idGenerator.nextId();
@@ -136,5 +142,17 @@ public class Request implements Serializable{
       return ingredient.equals(request.ingredient);
     }
     return ingredient.equals(request.ingredient) && requester.equals(request.requester);
+  }
+
+  public boolean isReadyToDeliver() {
+    return this.transLatency == 0;
+  }
+
+  public void decreaseTransLatency() {
+    this.transLatency--;
+  }
+
+  public Building getRequester() {
+    return requester;
   }
 }

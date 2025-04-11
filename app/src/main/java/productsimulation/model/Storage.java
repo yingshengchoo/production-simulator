@@ -32,7 +32,7 @@ public class Storage extends Building {
    * @param servePolicy  is the policy that the building uses to select between requests.
    */
   public Storage(String name, String itemToStore, List<Building> sources, int totalCapacity, double priority, SourcePolicy sourcePolicy, ServePolicy servePolicy, Coordinate coordinate){
-    super(name, new FactoryType(name, Map.of(itemToStore, new Recipe(Recipe.getRecipe(itemToStore).getLatency(), new HashMap<>(), itemToStore))), sources, sourcePolicy, new FIFOPolicy(), coordinate); // Storage only supports FIFO!
+    super(name, new BuildingType(name, Map.of(itemToStore, new Recipe(Recipe.getRecipe(itemToStore).getLatency(), new HashMap<>(), itemToStore))), sources, sourcePolicy, new FIFOPolicy(), coordinate); // Storage only supports FIFO!
     this.recipe = new Recipe(Recipe.getRecipe(itemToStore).getLatency(), new HashMap<>(), itemToStore);
     this.totalCapacity = totalCapacity;
     this.priority = priority;
@@ -41,9 +41,22 @@ public class Storage extends Building {
     readyQueue = new ArrayList<>();
   }
 
+  public static Storage addStorage(List<Building> sources, SourcePolicy sourcePolicy,
+                                   ServePolicy servePolicy, Coordinate coordinate, StorageType type) {
+    List<Coordinate> existingCoordinates = new ArrayList<>();
+    for (Building b : buildings) {
+      existingCoordinates.add(b.getCoordinate());
+    }
+    if (!Building.isValid(coordinate.x, coordinate.y, existingCoordinates)) {
+      throw new RuntimeException("invalid coordinate!");
+    }
+
+    return new Storage(type.getName(), type.getItemToStore(), sources, type.getCapacity(), type.getPriority(), sourcePolicy, servePolicy, coordinate);
+  }
+
   // Constructor without coordinate input
   public Storage(String name, String itemToStore, List<Building> sources, int totalCapacity, double priority, SourcePolicy sourcePolicy, ServePolicy servePolicy){
-    super(name, new FactoryType(name, Map.of(itemToStore, new Recipe(Recipe.getRecipe(itemToStore).getLatency(), new HashMap<>(), itemToStore))), sources, sourcePolicy, new FIFOPolicy()); // Storage only supports FIFO!
+    super(name, new BuildingType(name, Map.of(itemToStore, new Recipe(Recipe.getRecipe(itemToStore).getLatency(), new HashMap<>(), itemToStore))), sources, sourcePolicy, new FIFOPolicy()); // Storage only supports FIFO!
     this.recipe = new Recipe(Recipe.getRecipe(itemToStore).getLatency(), new HashMap<>(), itemToStore);
     this.totalCapacity = totalCapacity;
     this.priority = priority;

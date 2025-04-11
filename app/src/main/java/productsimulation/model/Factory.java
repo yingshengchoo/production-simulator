@@ -7,6 +7,8 @@ import productsimulation.request.Request;
 import productsimulation.request.RequestStatus;
 import productsimulation.request.servePolicy.ServePolicy;
 import productsimulation.request.sourcePolicy.SourcePolicy;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class Factory extends Building {
@@ -20,17 +22,31 @@ public class Factory extends Building {
    * @param sourcePolicy is the policy that the building uses to select between sources.
    * @param servePolicy  is the policy that the building uses to select between requests.
    */
-  public Factory(String name, FactoryType type, List<Building> sources, SourcePolicy sourcePolicy, ServePolicy servePolicy){
+  public Factory(String name, BuildingType type, List<Building> sources, SourcePolicy sourcePolicy, ServePolicy servePolicy){
     super(name, type, sources, sourcePolicy, servePolicy);
   }
 
-  public Factory(String name, FactoryType type, SourcePolicy sourcePolicy, ServePolicy servePolicy){
+  public Factory(String name, BuildingType type, SourcePolicy sourcePolicy, ServePolicy servePolicy){
     super(name, type, sourcePolicy, servePolicy);
   }
 
-  public Factory(String name, FactoryType type, List<Building> sources, SourcePolicy sourcePolicy, ServePolicy servePolicy, Coordinate coordinate){
+  public Factory(String name, BuildingType type, List<Building> sources, SourcePolicy sourcePolicy, ServePolicy servePolicy, Coordinate coordinate){
     super(name, type, sources, sourcePolicy, servePolicy, coordinate);
   }
+
+    public static Factory addFactory(List<Building> sources, SourcePolicy sourcePolicy,
+                                     ServePolicy servePolicy, Coordinate coordinate, BuildingType type) {
+        List<Coordinate> existingCoordinates = new ArrayList<>();
+        for (Building b : buildings) {
+            existingCoordinates.add(b.getCoordinate());
+        }
+
+        if (!Building.isValid(coordinate.x, coordinate.y, existingCoordinates)) {
+            throw new RuntimeException("invalid coordinate!");
+        }
+
+        return new Factory(type.getName(), type, sources, sourcePolicy, servePolicy, coordinate);
+    }
 
   
     public boolean goOneStep() {

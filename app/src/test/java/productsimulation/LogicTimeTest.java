@@ -2,7 +2,7 @@ package productsimulation;
 
 import org.junit.jupiter.api.Test;
 import productsimulation.model.Building;
-import productsimulation.model.FactoryType;
+import productsimulation.model.BuildingType;
 import productsimulation.model.Mine;
 import productsimulation.model.Recipe;
 import productsimulation.request.servePolicy.ServePolicy;
@@ -35,7 +35,7 @@ class LogicTimeTest {
         Recipe woodMineRecipe = new Recipe(1, new HashMap<String, Integer>(),"wood");
         Map<String, Recipe> woodMineRecipes = new HashMap<>();
         woodMineRecipes.put("wood", woodMineRecipe);
-        FactoryType woodMineType = new FactoryType("wood_mine", woodMineRecipes);
+        BuildingType woodMineType = new BuildingType("wood_mine", woodMineRecipes);
         SourcePolicy soleSourcePolicy = new SoleSourcePolicy();
         ServePolicy oneTimeServePolicy = new OneTimeServePolicy();
         Mine woodMine = new Mine("FirstWoodMine", woodMineType,

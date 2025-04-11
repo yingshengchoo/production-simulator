@@ -1,5 +1,6 @@
 package productsimulation.model;
 
+import productsimulation.Board;
 import productsimulation.Coordinate;
 import productsimulation.Log;
 import productsimulation.LogicTime;
@@ -15,7 +16,7 @@ import java.util.*;
 public abstract class Building implements Serializable {
 
     protected final String name;
-    protected FactoryType type;
+    protected BuildingType type;
     protected Request currentRequest;
     protected int currentRemainTime;
     protected int totalRemainTime = 0;
@@ -30,11 +31,18 @@ public abstract class Building implements Serializable {
     protected Coordinate coordinate;
 
 
-    static List<Building> buildings = new ArrayList<>();
+    public static List<Building> buildings = new ArrayList<>();
 
-    public Building(String name, FactoryType type, List<Building> sources, SourcePolicy sourcePolicy, ServePolicy servePolicy, Coordinate coordinate) {
-        this(name, type, sources, sourcePolicy, servePolicy);
+    public Building(String name, BuildingType type, List<Building> sources, SourcePolicy sourcePolicy, ServePolicy servePolicy, Coordinate coordinate) {
+        this.name = name;
+        this.type = type;
+        this.sourcePolicy = sourcePolicy;
+        this.servePolicy = servePolicy;
+        requestQueue = new ArrayList<>();
+        storage = new HashMap<>();
+        this.sources = sources;
         this.coordinate = coordinate;
+        buildings.add(this);
     }
 
     /**
@@ -46,12 +54,12 @@ public abstract class Building implements Serializable {
      * @param sourcePolicy is the policy that the building uses to select between sources.
      * @param servePolicy  is the policy that the building uses to select between requests.
      */
-    public Building(String name, FactoryType type, List<Building> sources, SourcePolicy sourcePolicy, ServePolicy servePolicy) {
+    public Building(String name, BuildingType type, List<Building> sources, SourcePolicy sourcePolicy, ServePolicy servePolicy) {
         this(name, type, sourcePolicy, servePolicy);
         this.sources = sources;
     }
 
-    public Building(String name, FactoryType type, SourcePolicy sourcePolicy, ServePolicy servePolicy) {
+    public Building(String name, BuildingType type, SourcePolicy sourcePolicy, ServePolicy servePolicy) {
         this.name = name;
         this.type = type;
         this.sourcePolicy = sourcePolicy;
@@ -108,10 +116,18 @@ public abstract class Building implements Serializable {
         throw new RuntimeException("no valid coordinate!");
     }
 
-    private static boolean isValid(int candidateX, int candidateY, List<Coordinate> existingPoints) {
+    static boolean isValid(int candidateX, int candidateY, List<Coordinate> existingPoints) {
+        if (existingPoints.size() == 0) return true;
         if(candidateX < 0 || candidateY <0){
           return false;
         }
+
+        Board board = Board.getBoard();
+        int weight = board.getBoardPosWeight(new Coordinate(candidateX, candidateY));
+        if (weight == 1 || weight == Integer.MAX_VALUE) {
+            return false;
+        }
+
         boolean withinX = false;
         boolean withinY = false;
         for (Coordinate c : existingPoints) {
@@ -427,11 +443,4 @@ public abstract class Building implements Serializable {
     public int getX() {return coordinate.x;}
 
     public int getY() {return coordinate.y;}
-
-//    目前除了road类，都暂时假设building的占地都为1
-    public ArrayList<Coordinate> getCoordinates() {
-        ArrayList<Coordinate> list = new ArrayList<>();
-        list.add(coordinate);
-        return list;
-    }
 }

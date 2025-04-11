@@ -2,6 +2,7 @@ package productsimulation.setup;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import productsimulation.Board;
 import productsimulation.model.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -9,11 +10,11 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SetupParserTest {
-
     private SetupParser parser;
 
     @BeforeEach
     void setUp() {
+        Board.getBoard().cleanup();
         parser = new SetupParser();
     }
 
@@ -28,7 +29,7 @@ class SetupParserTest {
         }
 
         Map<String, Recipe> recipeMap = parser.getRecipeMap();
-        Map<String, FactoryType> typeMap = parser.getTypeMap();
+        Map<String, BuildingType> typeMap = parser.getTypeMap();
         Map<String, Building> buildingMap = parser.getBuildingMap();
 
         assertEquals(5, recipeMap.size(), "Should have 5 recipes in doors1.json");
@@ -47,7 +48,7 @@ class SetupParserTest {
         }
 
         Map<String, Recipe> recipeMap = parser.getRecipeMap();
-        Map<String, FactoryType> typeMap = parser.getTypeMap();
+        Map<String, BuildingType> typeMap = parser.getTypeMap();
         Map<String, Building> buildingMap = parser.getBuildingMap();
 
         assertEquals(5, recipeMap.size());

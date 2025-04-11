@@ -1,6 +1,8 @@
 package productsimulation.request.sourcePolicy;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import productsimulation.Board;
 import productsimulation.model.Building;
 import productsimulation.model.Recipe;
 import productsimulation.request.MockingEnv;
@@ -9,6 +11,11 @@ import productsimulation.request.Request;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SourceQLenTest {
+    @BeforeEach
+    public void cleanUpBefore() {
+        Board.getBoard().cleanup();
+        Building.buildings.clear();
+    }
     MockingEnv mockingEnv = new MockingEnv();
 
     @Test
