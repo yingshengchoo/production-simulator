@@ -134,7 +134,7 @@ public class StorageTest {
    assertEquals(0, s1.getReadyQueueCount());
    assertEquals(1, s1.getStockCount());
    assertEquals(0, m1.getRequestCount());
-   assertEquals(1, m2.getRequestCount());
+   assertEquals(0, m2.getRequestCount());
    assertEquals(1, s1.getStorage().size());
 
    //Factory finishes the pair of socks and the request is done.
@@ -144,11 +144,11 @@ public class StorageTest {
    assertEquals(3, t.getStep());
    assertEquals(2, s1.getFrequency());
    assertEquals(0, f.getRequestCount());
-   assertEquals(-2, s1.getRequestCount());
+   assertEquals(-1, s1.getRequestCount());
    assertEquals(1, s1.getStorage().size());
    assertEquals(0, s1.getReadyQueueCount());
    assertEquals(0, s1.getReqCount());
-   assertEquals(2, s1.getStockCount());
+   assertEquals(1, s1.getStockCount());
    assertEquals(1, m1.getRequestCount());
    assertEquals(0, m2.getRequestCount());
 
@@ -156,23 +156,23 @@ public class StorageTest {
    assertEquals(4, t.getStep());
    assertEquals(2, s1.getFrequency());
    assertEquals(0, f.getRequestCount());
-   assertEquals(-3, s1.getRequestCount());
+   assertEquals(-2, s1.getRequestCount());
    assertEquals(0, s1.getReqCount());
    assertEquals(0, s1.getReadyQueueCount());
-   assertEquals(3, s1.getStockCount());
-   assertEquals(0, m1.getRequestCount());
-   assertEquals(1, m2.getRequestCount());
+   assertEquals(2, s1.getStockCount());
+   assertEquals(1, m1.getRequestCount());
+   assertEquals(0, m2.getRequestCount());
    assertEquals(1, s1.getStorage().size());
 
    t.stepNHandler(1);
    assertEquals(5, t.getStep());
    assertEquals(2, s1.getFrequency());
    assertEquals(0, f.getRequestCount());
-   assertEquals(-1, s1.getRequestCount());
+   assertEquals(-3, s1.getRequestCount());
    assertEquals(0, s1.getReqCount());
    assertEquals(0, s1.getReadyQueueCount());
-   assertEquals(1, s1.getStockCount());
-   assertEquals(1, m1.getRequestCount());
+   assertEquals(3, s1.getStockCount());
+   assertEquals(0, m1.getRequestCount());
    assertEquals(0, m2.getRequestCount());
    assertEquals(1, s1.getStorage().size());
 
