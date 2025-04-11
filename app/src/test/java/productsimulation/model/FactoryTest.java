@@ -4,9 +4,16 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Collections;
 import java.util.ArrayList;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import productsimulation.Board;
 
 public class FactoryTest {
+  @BeforeEach
+  public void cleanUpBefore() {
+    Board.getBoard().cleanup();
+  }
   @Test
   public void test_toString(){
     ArrayList<Building> sources = new ArrayList<>();

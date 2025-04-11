@@ -1,6 +1,8 @@
 package productsimulation.command;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import productsimulation.Board;
 import productsimulation.LogicTime;
 import productsimulation.RequestBroadcaster;
 import productsimulation.State;
@@ -14,6 +16,12 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SetPolicyCommandTest {
+    @BeforeEach
+    public void cleanUpBefore() {
+        Board.getBoard().cleanup();
+        Building.buildings.clear();
+    }
+
     void setUpEnvironment() {
         ArrayList<Building> buildings = new ArrayList<>();
         Building mine = new Mine("G", new BuildingType("Gold", Collections.emptyMap()), new ArrayList<>(), null, null);

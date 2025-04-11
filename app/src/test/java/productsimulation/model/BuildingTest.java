@@ -2,6 +2,8 @@ package productsimulation.model;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.junit.jupiter.api.BeforeEach;
+import productsimulation.Board;
 import productsimulation.SoleSourcePolicy;
 import productsimulation.request.servePolicy.*;
 import productsimulation.request.sourcePolicy.*;
@@ -11,6 +13,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class BuildingTest {
+  @BeforeEach
+  public void cleanUpBefore() {
+    Board.getBoard().cleanup();
+    Building.buildings.clear();
+  }
+
   @Test
   public void test_getters() {
     ArrayList<Building> sources = new ArrayList<>();

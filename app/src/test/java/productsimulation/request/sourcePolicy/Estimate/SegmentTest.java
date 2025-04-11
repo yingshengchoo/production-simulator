@@ -2,11 +2,18 @@ package productsimulation.request.sourcePolicy.Estimate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import productsimulation.Board;
 import productsimulation.model.Building;
 import productsimulation.request.MockingEnv;
 
 class SegmentTest {
+    @BeforeEach
+    public void cleanUpBefore() {
+        Board.getBoard().cleanup();
+        Building.buildings.clear();
+    }
 
     @Test
     void testHashCode_sameObject() {

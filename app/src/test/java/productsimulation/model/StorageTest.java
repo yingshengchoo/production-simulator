@@ -20,6 +20,8 @@ public class StorageTest {
   public void setup(){
     LogicTime.getInstance().reset();
     RequestBroadcaster.getInstance().reset();
+    Board.getBoard().cleanup();
+    Building.buildings.clear();
   }
   
   @Test

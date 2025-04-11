@@ -31,7 +31,7 @@ public abstract class Building implements Serializable {
     protected Coordinate coordinate;
 
 
-    static List<Building> buildings = new ArrayList<>();
+    public static List<Building> buildings = new ArrayList<>();
 
     public Building(String name, BuildingType type, List<Building> sources, SourcePolicy sourcePolicy, ServePolicy servePolicy, Coordinate coordinate) {
         this.name = name;

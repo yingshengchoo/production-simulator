@@ -2,6 +2,7 @@ package productsimulation.setup;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import productsimulation.Board;
 import productsimulation.model.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -9,11 +10,11 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SetupParserTest {
-
     private SetupParser parser;
 
     @BeforeEach
     void setUp() {
+        Board.getBoard().cleanup();
         parser = new SetupParser();
     }
 

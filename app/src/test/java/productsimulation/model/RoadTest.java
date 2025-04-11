@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class RoadTest {
     @BeforeEach
     public void setUp() {
-        Board.cleanup();
+        Board.getBoard().cleanup();
         Road.distanceMap = new HashMap<>();
         Road.existingRoadTiles = new HashMap<>();
     }

@@ -22,8 +22,8 @@ public class Board {
     }
 
     // 仅用于测试
-    public static void cleanup() {
-        singleton = null;
+    public void cleanup() {
+        singleton.boardPosWeight.clear();
     }
 
     // 之前设计全部推翻。现在把权值设在坐标上，用于确认最短路。

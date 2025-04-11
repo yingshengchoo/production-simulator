@@ -17,6 +17,8 @@ class StateTest {
 
   @BeforeEach
   public void resetState() {
+    Board.getBoard().cleanup();
+    Building.buildings.clear();
     try{
       State.getInstance().reset();
       State.getInstance().setInstanceToNull();

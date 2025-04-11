@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class BoardTest {
     @BeforeEach
     public void setUp() {
-        Board.cleanup();
+        Board.getBoard().cleanup();
     }
 
     @Test

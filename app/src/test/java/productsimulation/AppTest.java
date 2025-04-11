@@ -33,6 +33,8 @@ class AppTest {
     @BeforeEach
     void setUp() throws IOException {
         LogicTime.getInstance().reset();
+        Board.getBoard().cleanup();
+        Building.buildings.clear();
         Request.clearIds();
         cleanUpLogFile(filePath);
     }
