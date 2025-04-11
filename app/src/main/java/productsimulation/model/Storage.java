@@ -82,10 +82,11 @@ public class Storage extends Building {
       }
       //FIFO POLICY HERE: Directly writing it without calling the pre written funciton :P
       Request request = requestQueue.get(0);
+      request.readyToWorking(storage); //consume the storages
       requestQueue.remove(request); 
       //Adds request to ready queue which will be sent back to requester the next time step.
       readyQueue.add(request);
-      R--;//consumes one storage
+      R--;//Update R 
       //keeps updating until we get a request
       currentRemainTime = recipe.getLatency();
     }
