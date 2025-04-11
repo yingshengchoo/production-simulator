@@ -3,6 +3,7 @@ package productsimulation.model.road;
 import javafx.util.Pair;
 import productsimulation.Board;
 import productsimulation.Coordinate;
+import productsimulation.Log;
 import productsimulation.model.Building;
 
 import java.util.*;
@@ -30,10 +31,24 @@ public class Road {
         generateRoad(st, ed);
     }
 
-//    todo 等Building类中的static buildingList到位
-//    public void connectHandler(String srcName, String dstName) {
-//        Building.
-//    }
+    public static String connectHandler(String srcName, String dstName) {
+        List<Building> buildings = Building.buildings;
+        Building bsrc = null;
+        Building bdst = null;
+        for(Building b: buildings) {
+            if(b.getName().equals(srcName)) {
+                bsrc = b;
+            }
+            if(b.getName().equals(dstName)) {
+                bdst = b;
+            }
+        }
+        if(bsrc == null || bdst == null) {
+            return "Building does not exists. Check the building name.";
+        }
+        Road road = new Road(bsrc, bdst);
+        return "";
+    }
 
     // 此处不检查夹角，依靠shortestPath内的逻辑检查夹角
     private void setDirection(RoadTile lastTile, Coordinate lastPos, Coordinate c) {
