@@ -4,11 +4,11 @@ import java.util.*;
 import java.io.Serializable;
 
 
-public class FactoryType implements Serializable {
+public class BuildingType implements Serializable {
   private final String name;
   private Map<String, Recipe> recipes;
 
-  public FactoryType(String name, Map<String, Recipe> recipes){
+  public BuildingType(String name, Map<String, Recipe> recipes){
     this.name = name;
     this.recipes = recipes;
   }
@@ -52,7 +52,7 @@ public class FactoryType implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        FactoryType that = (FactoryType) o;
+        BuildingType that = (BuildingType) o;
         return Objects.equals(name, that.name) && Objects.equals(recipes, that.recipes);
     }
 

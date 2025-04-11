@@ -16,7 +16,7 @@ import java.util.*;
 public abstract class Building implements Serializable {
 
     protected final String name;
-    protected FactoryType type;
+    protected BuildingType type;
     protected Request currentRequest;
     protected int currentRemainTime;
     protected int totalRemainTime = 0;
@@ -33,9 +33,16 @@ public abstract class Building implements Serializable {
 
     static List<Building> buildings = new ArrayList<>();
 
-    public Building(String name, FactoryType type, List<Building> sources, SourcePolicy sourcePolicy, ServePolicy servePolicy, Coordinate coordinate) {
-        this(name, type, sources, sourcePolicy, servePolicy);
+    public Building(String name, BuildingType type, List<Building> sources, SourcePolicy sourcePolicy, ServePolicy servePolicy, Coordinate coordinate) {
+        this.name = name;
+        this.type = type;
+        this.sourcePolicy = sourcePolicy;
+        this.servePolicy = servePolicy;
+        requestQueue = new ArrayList<>();
+        storage = new HashMap<>();
+        this.sources = sources;
         this.coordinate = coordinate;
+        buildings.add(this);
     }
 
     /**
@@ -47,18 +54,12 @@ public abstract class Building implements Serializable {
      * @param sourcePolicy is the policy that the building uses to select between sources.
      * @param servePolicy  is the policy that the building uses to select between requests.
      */
-    public Building(String name, FactoryType type, List<Building> sources, SourcePolicy sourcePolicy, ServePolicy servePolicy) {
-        this.name = name;
-        this.type = type;
-        this.sourcePolicy = sourcePolicy;
-        this.servePolicy = servePolicy;
-        requestQueue = new ArrayList<>();
-        storage = new HashMap<>();
+    public Building(String name, BuildingType type, List<Building> sources, SourcePolicy sourcePolicy, ServePolicy servePolicy) {
+        this(name, type, sourcePolicy, servePolicy);
         this.sources = sources;
-        buildings.add(this);
     }
 
-    public Building(String name, FactoryType type, SourcePolicy sourcePolicy, ServePolicy servePolicy) {
+    public Building(String name, BuildingType type, SourcePolicy sourcePolicy, ServePolicy servePolicy) {
         this.name = name;
         this.type = type;
         this.sourcePolicy = sourcePolicy;

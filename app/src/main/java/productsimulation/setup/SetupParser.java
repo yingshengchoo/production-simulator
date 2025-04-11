@@ -14,7 +14,7 @@ public class SetupParser {
     InputRuleChecker inputRuleChecker;
 
     private final Map<String, Recipe> recipeMap;
-    private final Map<String, FactoryType> typeMap;
+    private final Map<String, BuildingType> typeMap;
     private final Map<String, Building> buildingMap;
 
     public SetupParser() {
@@ -93,7 +93,7 @@ public class SetupParser {
                 Recipe rcp = recipeMap.get(recipeName);
                 recipesForType.put(recipeName, rcp);
             }
-            FactoryType factoryType = new FactoryType(typeName, recipesForType);
+            BuildingType factoryType = new BuildingType(typeName, recipesForType);
             typeMap.put(typeName, factoryType);
         }
     }
@@ -110,13 +110,13 @@ public class SetupParser {
 
                 if (buildingNode.has("type")) {
                     String typeName = buildingNode.get("type").asText();
-                    FactoryType ft = typeMap.get(typeName);
+                    BuildingType ft = typeMap.get(typeName);
                     building = new Factory(buildingName, ft, null,null, null, coord);
                 } else if (buildingNode.has("mine")) {
                     String mineOutput = buildingNode.get("mine").asText();
                     Map<String, Recipe> recipes = new HashMap<>();
                     recipes.put(mineOutput, recipeMap.get(mineOutput));
-                    FactoryType dummyType = new FactoryType(mineOutput, recipes);
+                    BuildingType dummyType = new BuildingType(mineOutput, recipes);
                     building = new Mine(buildingName, dummyType, null,null, null, coord);
                 } else if (buildingNode.has("stores")) {
                     String storeItem = buildingNode.get("stores").asText();
@@ -140,13 +140,13 @@ public class SetupParser {
                 // For buildings without coordinates, use a constructor that auto-assigns a valid coordinate.
                 if (buildingNode.has("type")) {
                     String typeName = buildingNode.get("type").asText();
-                    FactoryType ft = typeMap.get(typeName);
+                    BuildingType ft = typeMap.get(typeName);
                     building = new Factory(buildingName, ft, null, null); // This constructor should auto-assign a coordinate.
                 } else if (buildingNode.has("mine")) {
                     String mineOutput = buildingNode.get("mine").asText();
                     Map<String, Recipe> recipes = new HashMap<>();
                     recipes.put(mineOutput, recipeMap.get(mineOutput));
-                    FactoryType dummyType = new FactoryType(mineOutput, recipes);
+                    BuildingType dummyType = new BuildingType(mineOutput, recipes);
                     building = new Mine(buildingName, dummyType, null, null);
                 } else if (buildingNode.has("stores")) {
                     String storeItem = buildingNode.get("stores").asText();
@@ -177,7 +177,7 @@ public class SetupParser {
         return Collections.unmodifiableMap(recipeMap);
     }
 
-    public Map<String, FactoryType> getTypeMap() {
+    public Map<String, BuildingType> getTypeMap() {
         return Collections.unmodifiableMap(typeMap);
     }
 

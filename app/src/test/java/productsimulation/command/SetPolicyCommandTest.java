@@ -16,11 +16,11 @@ import static org.junit.jupiter.api.Assertions.*;
 class SetPolicyCommandTest {
     void setUpEnvironment() {
         ArrayList<Building> buildings = new ArrayList<>();
-        Building mine = new Mine("G", new FactoryType("Gold", Collections.emptyMap()), new ArrayList<>(), null, null);
+        Building mine = new Mine("G", new BuildingType("Gold", Collections.emptyMap()), new ArrayList<>(), null, null);
         buildings.add(mine);
         ArrayList<Building> sources = new ArrayList<>();
         sources.add(mine);
-        Building factory = new Factory("GC", new FactoryType("GoldChain", Collections.emptyMap()), sources, null, null);
+        Building factory = new Factory("GC", new BuildingType("GoldChain", Collections.emptyMap()), sources, null, null);
         buildings.add(factory);
 
         Map<String, Recipe> recipes = new HashMap<>();
@@ -32,8 +32,8 @@ class SetPolicyCommandTest {
         ArrayList<Recipe> stateRecipes = new ArrayList<>();
         stateRecipes.add(eggroll);
 
-        ArrayList<FactoryType> types = new ArrayList<>();
-        types.add(new FactoryType("EggRoll", recipes));
+        ArrayList<BuildingType> types = new ArrayList<>();
+        types.add(new BuildingType("EggRoll", recipes));
 
         RequestBroadcaster requestBroadcaster = RequestBroadcaster.getInstance();
         requestBroadcaster.addRecipes(eggroll);
