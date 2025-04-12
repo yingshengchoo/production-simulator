@@ -45,7 +45,7 @@ public class ControlPanel extends VBox {
             ConnectWindow.show(state, () -> {
                 boardDisplay.refresh();
 //                setFeedback(Log.getLogText());
-                appendFeedback(Log.getLogText());
+                setFeedBack(Log.getLogText());
 //                appendFeedback("Buildings connected successfully.");
             });
         });
@@ -55,7 +55,7 @@ public class ControlPanel extends VBox {
             RequestWindow.show(state, () -> {
                 boardDisplay.refresh();
 //                setFeedback(Log.getLogText());
-                appendFeedback(Log.getLogText());
+                setFeedBack(Log.getLogText());
 //                appendFeedback("Request item succeeded.");
             });
         });
@@ -65,7 +65,7 @@ public class ControlPanel extends VBox {
             StepWindow.show(state, () -> {
                 boardDisplay.refresh();
 //                setFeedback(Log.getLogText());
-                appendFeedback(Log.getLogText());
+                setFeedBack(Log.getLogText());
 //                appendFeedback("Stepped the simulation.");
             });
         });
@@ -76,7 +76,7 @@ public class ControlPanel extends VBox {
             if (error == null) {
                 boardDisplay.refresh();
 //                setFeedback(Log.getLogText());
-                appendFeedback(Log.getLogText());
+                setFeedBack(Log.getLogText());
 //                appendFeedback("Finish: all requests completed.");
             } else {
                 showError("Finish error: " + error);
@@ -89,7 +89,7 @@ public class ControlPanel extends VBox {
             LoadWindow.show(() -> {
                 boardDisplay.refresh();
 //                setFeedback(Log.getLogText());
-                appendFeedback(Log.getLogText());
+                setFeedBack(Log.getLogText());
 //                appendFeedback("Loaded simulation successfully.");
             });
         });
@@ -98,7 +98,7 @@ public class ControlPanel extends VBox {
         saveBtn.setOnAction(e -> {
             SaveWindow.show(() -> {
 //                setFeedback(Log.getLogText());
-                appendFeedback(Log.getLogText());
+                setFeedBack(Log.getLogText());
 //                appendFeedback("Simulation saved successfully.");
             });
         });
@@ -110,7 +110,7 @@ public class ControlPanel extends VBox {
             VerbosityWindow.show(val -> {
                 new VerboseCommand(val).execute();
 //                setFeedback(Log.getLogText());
-                appendFeedback(Log.getLogText());
+                setFeedBack(Log.getLogText());
 //                appendFeedback("Verbosity set to " + val);
             });
         });
@@ -121,7 +121,7 @@ public class ControlPanel extends VBox {
             PolicyWindow.show(state, () -> {
                 boardDisplay.refresh();
 //                setFeedback(Log.getLogText());
-                appendFeedback(Log.getLogText());
+                setFeedBack(Log.getLogText());
 //                appendFeedback("Policy updated.");
             });
         });
@@ -146,32 +146,12 @@ public class ControlPanel extends VBox {
         if (error == null) {
             boardDisplay.refresh();
 //            setFeedback(Log.getLogText());
-            appendFeedback(Log.getLogText());
+            setFeedBack(Log.getLogText());
 //            appendFeedback("Loaded from " + file.getName());
         } else {
             showError(error);
         }
     }
-
-
-    // Implementation for save
-    private void handleSave() {
-//        javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
-//        fileChooser.setTitle("Save Simulation");
-//        File file = fileChooser.showSaveDialog(null);
-//        if (file == null) return;
-
-
-//        String error = new SaveCommand(file.getAbsolutePath()).execute();
-//        String error = new SaveCommand(file.getName()).execute();
-
-//        if (error == null) {
-//            appendFeedback("Saved to " + file.getName());
-//        } else {
-//            showError(error);
-//        }
-    }
-
 
     // Utility
     private void showError(String msg) {
@@ -179,11 +159,8 @@ public class ControlPanel extends VBox {
         a.showAndWait();
     }
 
-    private void appendFeedback(String text) {
+    private void setFeedBack(String text) {
+        feedbackArea.clear();
         feedbackArea.appendText(text + "\n");
-    }
-
-    private void setFeedback(String text) {
-        feedbackArea.setText(text + "\n");
     }
 }
