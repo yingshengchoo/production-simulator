@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import productsimulation.model.road.Road;
 import productsimulation.request.servePolicy.FIFOPolicy;
 import productsimulation.request.sourcePolicy.SourceQLen;
 import productsimulation.request.Request;
@@ -43,7 +44,6 @@ public class StorageTest {
   }
 
  @Test
- @Disabled("cannot finish before road connection, need to modify the test case")
  public void test_goOneStep(){
    //Setup: A Storage
    LogicTime t = LogicTime.getInstance();
@@ -56,14 +56,14 @@ public class StorageTest {
    rl.add(pair);
    Recipe.setRecipeList(rl);
    
-   Mine m1 = new Mine("SocksMine1", new BuildingType("SmellySocks", Map.of("socks", socks)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy());
-   Mine m2 = new Mine("SocksMine2", new BuildingType("SmellySocks", Map.of("socks", socks)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy());
+   Mine m1 = new Mine("SocksMine1", new BuildingType("SmellySocks", Map.of("socks", socks)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy(), new Coordinate(1, 2));
+   Mine m2 = new Mine("SocksMine2", new BuildingType("SmellySocks", Map.of("socks", socks)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy(), new Coordinate(2, 1));
    sources.add(m1);
    sources.add(m2);
-   Storage s1 = new Storage("Drawer", "socks", sources, 100, 102, new SourceQLen(), new FIFOPolicy(), new Coordinate(5,5));
+   Storage s1 = new Storage("Drawer", "socks", sources, 100, 102, new SourceQLen(), new FIFOPolicy(), new Coordinate(1,1));
    ArrayList<Building> sources2 = new ArrayList<>();
    sources2.add(s1);
-   Factory f = new Factory("SocksFactory", new BuildingType("PairOfSocks", Map.of("pairOfSocks", pair)), sources2, new SourceQLen(), new FIFOPolicy());
+   Factory f = new Factory("SocksFactory", new BuildingType("PairOfSocks", Map.of("pairOfSocks", pair)), sources2, new SourceQLen(), new FIFOPolicy(), new Coordinate(0, 1));
 
    assertEquals("socks", s1.getRecipeOutput());
    
@@ -80,7 +80,15 @@ public class StorageTest {
    rb.addRecipes(socks);
    rb.addRecipes(pair);
 
-   
+   // connect the buildings
+    Building.buildings.add(m1);
+    Building.buildings.add(m2);
+    Building.buildings.add(s1);
+    Building.buildings.add(f);
+   Road.connectHandler(m1.getName(), s1.getName());
+   Road.connectHandler(m2.getName(), s1.getName());
+   Road.connectHandler(s1.getName(), f.getName());
+
    //F = 100*100/(100*100) = 1
    //we expect the storage to request sock at t =0 and t =1;
 
@@ -90,7 +98,7 @@ public class StorageTest {
    assertEquals(0, t.getStep());
    rb.userRequestHandler(pair.getOutput(),f.getName()); 
 
-   //DFS propogates the requests down
+   //DFS propagates the requests down
    //Factory has 1 request, Storage: 2 request, M1: 1 request, M2: 1 request
    //M1 and M2 Makes the socks
    assertEquals(100, s1.getR());
@@ -110,7 +118,7 @@ public class StorageTest {
    assertEquals(99, s1.getR());
 
    //M1 and M2 finishes making the requests and sends ingredient to storage
-   //As Step 1 % frequenyc 1 = 0, storage sends a request to M1
+   //As Step 1 % frequency 1 = 0, storage sends a request to M1
    assertEquals(1, s1.getFrequency());
    assertTrue(LogicTime.getInstance().getStep() % s1.getFrequency() == 0); 
    assertEquals(socks, m1.type.getRecipeByProductName(socks.getOutput()));
