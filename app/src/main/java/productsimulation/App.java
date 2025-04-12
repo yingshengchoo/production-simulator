@@ -134,6 +134,7 @@ public class App {
     }
 
     public static void main(String[] args) {
+
         if (args.length < 1 || args.length > 2) {
             System.err.println("Usage: java App [-nw] <setup_json_file_path>");
             return;
@@ -141,7 +142,6 @@ public class App {
 
         boolean useGUI = true;
         String filePath;
-
         if (args[0].equals("-nw")) {
             useGUI = false;
             if (args.length < 2) {

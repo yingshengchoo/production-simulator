@@ -1,5 +1,6 @@
 package productsimulation.model;
 
+import productsimulation.Board;
 import productsimulation.Coordinate;
 import productsimulation.Log;
 import productsimulation.LogicTime;
@@ -8,7 +9,6 @@ import productsimulation.request.RequestStatus;
 import productsimulation.request.servePolicy.ServePolicy;
 import productsimulation.request.sourcePolicy.SourcePolicy;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Factory extends Building {
@@ -36,12 +36,9 @@ public class Factory extends Building {
 
     public static Factory addFactory(List<Building> sources, SourcePolicy sourcePolicy,
                                      ServePolicy servePolicy, Coordinate coordinate, BuildingType type) {
-        List<Coordinate> existingCoordinates = new ArrayList<>();
-        for (Building b : buildings) {
-            existingCoordinates.add(b.getCoordinate());
-        }
-
-        if (!Building.isValid(coordinate.x, coordinate.y, existingCoordinates)) {
+        Board board = Board.getBoard();
+        int weight = board.getBoardPosWeight(coordinate);
+        if (weight == 1 || weight == Integer.MAX_VALUE) {
             throw new RuntimeException("invalid coordinate!");
         }
 

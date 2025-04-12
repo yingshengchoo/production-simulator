@@ -1,10 +1,10 @@
 package productsimulation.model;
 
+import productsimulation.Board;
 import productsimulation.Coordinate;
 import productsimulation.Log;
 import productsimulation.LogicTime;
 import productsimulation.request.Request;
-import productsimulation.request.RequestStatus;
 import productsimulation.request.servePolicy.FIFOPolicy;
 import productsimulation.request.servePolicy.ServePolicy;
 import productsimulation.request.sourcePolicy.SourcePolicy;
@@ -26,7 +26,6 @@ public class Storage extends Building {
    * Constructs a Mine with the specified name, type, sources, and policies.
    *
    * @param name         is the name of the Mine.
-   * @param type         is the Building Type.
    * @param sources      is list of buildings that provides the ingredients to make the recipes.
    * @param sourcePolicy is the policy that the building uses to select between sources.
    * @param servePolicy  is the policy that the building uses to select between requests.
@@ -43,11 +42,9 @@ public class Storage extends Building {
 
   public static Storage addStorage(List<Building> sources, SourcePolicy sourcePolicy,
                                    ServePolicy servePolicy, Coordinate coordinate, StorageType type) {
-    List<Coordinate> existingCoordinates = new ArrayList<>();
-    for (Building b : buildings) {
-      existingCoordinates.add(b.getCoordinate());
-    }
-    if (!Building.isValid(coordinate.x, coordinate.y, existingCoordinates)) {
+    Board board = Board.getBoard();
+    int weight = board.getBoardPosWeight(coordinate);
+    if (weight == 1 || weight == Integer.MAX_VALUE) {
       throw new RuntimeException("invalid coordinate!");
     }
 
@@ -69,8 +66,6 @@ public class Storage extends Building {
    * Constructs a Mine with the specified name, type, sources, and policies.
    *
    * @param name         is the name of the Mine.
-   * @param type         is the Building Type.
-   * @param sources      is list of buildings that provides the ingredients to make the recipes.
    * @param sourcePolicy is the policy that the building uses to select between sources.
    * @param servePolicy  is the policy that the building uses to select between requests.
    */

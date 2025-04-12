@@ -1,5 +1,6 @@
 package productsimulation.model;
 
+import productsimulation.Board;
 import productsimulation.Coordinate;
 import productsimulation.Log;
 import productsimulation.request.Request;
@@ -20,6 +21,17 @@ public class Mine extends Building {
   public Mine(String name, BuildingType type, List<Building> sources, SourcePolicy sourcePolicy, ServePolicy servePolicy){
     super(name, type, sources, sourcePolicy, servePolicy);
   }
+
+    public static Mine addMine(List<Building> sources, SourcePolicy sourcePolicy,
+                                     ServePolicy servePolicy, Coordinate coordinate, BuildingType type) {
+        Board board = Board.getBoard();
+        int weight = board.getBoardPosWeight(coordinate);
+        if (weight == 1 || weight == Integer.MAX_VALUE) {
+            throw new RuntimeException("invalid coordinate!");
+        }
+
+        return new Mine(type.getName(), type, sources, sourcePolicy, servePolicy, coordinate);
+    }
 
     /**
    * Constructs a Mine with the specified name, type, and policies.

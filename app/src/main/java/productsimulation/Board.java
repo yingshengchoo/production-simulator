@@ -1,5 +1,7 @@
 package productsimulation;
 
+import productsimulation.model.Building;
+
 import java.util.HashMap;
 
 public class Board {
@@ -53,5 +55,9 @@ public class Board {
 //    不进行任何检查，直接覆盖写，caller自行负责安全调用
     public void setBoardPosWeight(Coordinate c, int weight) {
         boardPosWeight.put(c, weight);
+    }
+
+    public void addBuilding(Building b) {
+        this.boardPosWeight.put(b.getCoordinate(), Integer.MAX_VALUE);
     }
 }

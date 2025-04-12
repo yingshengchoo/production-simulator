@@ -44,6 +44,9 @@ public abstract class Building implements Serializable {
         this.sources = sources;
         this.coordinate = coordinate;
         buildings.add(this);
+
+        // add to board
+        Board.getBoard().addBuilding(this);
     }
 
     /**
@@ -69,6 +72,8 @@ public abstract class Building implements Serializable {
         storage = new HashMap<>();
         this.coordinate = getValidCoordinate();
         buildings.add(this);
+
+        Board.getBoard().addBuilding(this);
     }
 
     public static Coordinate getValidCoordinate() {
