@@ -4,12 +4,18 @@ import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import productsimulation.Coordinate;
 import productsimulation.State;
 import productsimulation.model.Building;
 import productsimulation.model.Factory;
 import productsimulation.model.Mine;
 import productsimulation.model.Storage;
+import productsimulation.model.road.Direction;
+import productsimulation.model.road.Road;
+import productsimulation.model.road.RoadTile;
+
 import java.util.List;
+import java.util.Map;
 
 public class BoardDisplay {
     private State state;
@@ -104,5 +110,37 @@ public class BoardDisplay {
 
         // If roads are stored in State, draw them here
         // e.g. for each Road, fillRect or strokeLine for each path tile
+        Map<Coordinate, RoadTile> roadTileMap = Road.existingRoadTiles;
+        for (RoadTile roadTile : roadTileMap.values()) {
+            // get coordinate
+            Coordinate coord = roadTile.getCoordinate();
+            int rx = coord.x;
+            int ry = coord.y;
+            double drawX = rx * scale + offsetX;
+            double drawY = ry * scale + offsetY;
+
+            // set fields
+            gc.setFill(Color.DARKGRAY);
+            gc.fillRect(drawX, drawY, scale, scale);
+
+            gc.setStroke(Color.WHITE);
+            gc.setLineWidth(2);
+
+            Direction d = roadTile.getDirection();
+
+            double centerX = drawX + scale / 2;
+            double centerY = drawY + scale / 2;
+
+            double margin = scale / 4;
+
+            // draw lines
+            if (d.hasDirection(Direction.LEFT) || d.hasDirection(Direction.RIGHT)) {
+                gc.strokeLine(drawX + margin, centerY, drawX + scale - margin, centerY);
+            }
+            if (d.hasDirection(Direction.UP) || d.hasDirection(Direction.DOWN)) {
+                gc.strokeLine(centerX, drawY + margin, centerX, drawY + scale - margin);
+            }
+            gc.setLineWidth(1);
+        }
     }
 }
