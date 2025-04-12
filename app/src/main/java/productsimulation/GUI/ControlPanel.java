@@ -17,9 +17,9 @@ public class ControlPanel extends VBox {
 
     private State state;
     private BoardDisplay boardDisplay;
-    private TextArea feedbackArea;
+    private FeedbackPane feedbackArea;
 
-    public ControlPanel(State state, BoardDisplay boardDisplay, TextArea feedbackArea) {
+    public ControlPanel(State state, BoardDisplay boardDisplay, FeedbackPane feedbackArea) {
         this.state = state;
         this.boardDisplay = boardDisplay;
         this.feedbackArea = feedbackArea;
@@ -160,7 +160,7 @@ public class ControlPanel extends VBox {
     }
 
     private void setFeedBack(String text) {
-        feedbackArea.clear();
+        feedbackArea.setText("");
         feedbackArea.appendText(text + "\n");
     }
 }
