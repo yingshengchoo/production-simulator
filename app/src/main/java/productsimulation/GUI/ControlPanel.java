@@ -1,329 +1,189 @@
 package productsimulation.GUI;
 
-import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
+import productsimulation.Log;
+import productsimulation.LogicTime;
 import productsimulation.State;
-import productsimulation.command.CommandParser;
-import productsimulation.model.Building;
+import productsimulation.command.FinishCommand;
+import productsimulation.command.LoadCommand;
+import productsimulation.command.SaveCommand;
+import productsimulation.command.VerboseCommand;
 
 import java.io.File;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class ControlPanel extends VBox {
 
-    private final CommandParser commandParser;
-    private final BoardDisplay boardDisplay;
-//    private final State simulationState;
+    private State state;
+    private BoardDisplay boardDisplay;
+    private TextArea feedbackArea;
 
-    public ControlPanel(CommandParser commandParser, BoardDisplay boardDisplay) {
-        this.commandParser = commandParser;
+    public ControlPanel(State state, BoardDisplay boardDisplay, TextArea feedbackArea) {
+        this.state = state;
         this.boardDisplay = boardDisplay;
-//        this.simulationState = simulationState;
+        this.feedbackArea = feedbackArea;
 
         setPadding(new Insets(10));
-        setSpacing(15);
+        setSpacing(10);
 
-        // --- Main Command Buttons ---
-        Button stepButton = new Button("Step");
-        Button finishButton = new Button("Finish");
-        Button requestButton = new Button("Request Item");
-        Button connectButton = new Button("Connect Buildings");
-        Button policyButton = new Button("Set Policy");
-        Button verbosityButton = new Button("Set Verbosity");
-        Button loadButton = new Button("Load Setup");
-        Button saveButton = new Button("Save Simulation");
-        Button addBuildingButton = new Button("Add Building");
+        // 1) Add Building
+//        Button addBuildingBtn = new Button("Add Building");
+//        addBuildingBtn.setOnAction(e -> {
+//            // Open the window that collects building name, type, coords
+//            AddBuildingWindow.show(state, () -> {
+//                // Refresh the board
+//                boardDisplay.refresh();
+//                // Show feedback
+//                appendFeedback("Building added successfully.");
+//            });
+//        });
 
-        // Event Handlers:
-        stepButton.setOnAction(e -> openStepWindow());
-
-        finishButton.setOnAction(e -> {
-            try {
-                commandParser.parseLine("finish");
-            } catch (Exception ex) {
-                showError("Finish error: " + ex.getMessage());
-            }
-            boardDisplay.refresh();
-        });
-
-        requestButton.setOnAction(e -> openRequestWindow());
-
-        connectButton.setOnAction(e -> openConnectWindow());
-
-        policyButton.setOnAction(e -> openPolicyWindow());
-
-        verbosityButton.setOnAction(e -> openVerbosityWindow());
-
-        loadButton.setOnAction(e -> {
-            File f = FileDialogs.showLoadDialog();
-            if (f != null) {
-                try {
-                    commandParser.parseLine("load " + f.getAbsolutePath());
-                } catch (Exception ex) {
-                    showError("Load error: " + ex.getMessage());
-                }
+        // 2) Connect Buildings
+        Button connectBtn = new Button("Connect Buildings");
+        connectBtn.setOnAction(e -> {
+            ConnectWindow.show(state, () -> {
                 boardDisplay.refresh();
-            }
+//                setFeedback(Log.getLogText());
+                appendFeedback(Log.getLogText());
+//                appendFeedback("Buildings connected successfully.");
+            });
         });
 
-        saveButton.setOnAction(e -> {
-            File f = FileDialogs.showSaveDialog();
-            if (f != null) {
-                try {
-                    commandParser.parseLine("save " + f.getAbsolutePath());
-                } catch (Exception ex) {
-                    showError("Save error: " + ex.getMessage());
-                }
-            }
-        });
-
-        addBuildingButton.setOnAction(e -> {
-            String cmd = AddBuildingDialog.showAddBuildingDialog();
-            if (cmd != null) {
-                try {
-                    commandParser.parseLine(cmd);
-                } catch (Exception ex) {
-                    showError("Add Building error: " + ex.getMessage());
-                }
+        Button requestBtn = new Button("Request Item");
+        requestBtn.setOnAction(e -> {
+            RequestWindow.show(state, () -> {
                 boardDisplay.refresh();
-            }
+//                setFeedback(Log.getLogText());
+                appendFeedback(Log.getLogText());
+//                appendFeedback("Request item succeeded.");
+            });
         });
 
-        getChildren().addAll(stepButton, finishButton, requestButton, connectButton,
-                policyButton, verbosityButton, loadButton, saveButton, addBuildingButton);
-    }
-
-    // --- Modal Dialog Windows for Commands ---
-
-    private void openStepWindow() {
-        Stage stepStage = new Stage();
-        stepStage.setTitle("Step Simulation");
-
-        GridPane grid = createDefaultGrid();
-        Label label = new Label("Enter number of steps:");
-        Spinner<Integer> stepSpinner = new Spinner<>(1, 100, 1);
-        Button submit = new Button("Submit");
-        submit.setOnAction(e -> {
-            int steps = stepSpinner.getValue();
-            try {
-                commandParser.parseLine("step " + steps);
-            } catch(Exception ex) {
-                showError("Step error: " + ex.getMessage());
-            }
-            boardDisplay.refresh();
-            stepStage.close();
+        Button stepBtn = new Button("Step");
+        stepBtn.setOnAction(e -> {
+            StepWindow.show(state, () -> {
+                boardDisplay.refresh();
+//                setFeedback(Log.getLogText());
+                appendFeedback(Log.getLogText());
+//                appendFeedback("Stepped the simulation.");
+            });
         });
 
-        grid.add(label, 0, 0);
-        grid.add(stepSpinner, 1, 0);
-        grid.add(submit, 0, 1, 2, 1);
-        showModalWindow(stepStage, grid);
-    }
-
-    private void openRequestWindow() {
-        Stage reqStage = new Stage();
-        reqStage.setTitle("Request Item");
-
-        GridPane grid = createDefaultGrid();
-        Label itemLabel = new Label("Item:");
-        ComboBox<String> itemCombo = new ComboBox<>(FXCollections.observableArrayList("door", "handle", "hinge"));
-        itemCombo.setPromptText("Select item");
-
-        Label buildingLabel = new Label("From Building:");
-        List<String> buildingNames = Building.buildings.stream()
-                .map(Building::getName)
-                .collect(Collectors.toList());
-        ComboBox<String> buildingCombo = new ComboBox<>(FXCollections.observableArrayList(buildingNames));
-        buildingCombo.setPromptText("Select building");
-
-        Button submit = new Button("Submit");
-        submit.setOnAction(e -> {
-            String item = itemCombo.getValue();
-            String building = buildingCombo.getValue();
-            if(item == null || building == null) {
-                showError("Please select both an item and a building.");
-                return;
-            }
-            String cmd = String.format("request '%s' from '%s'", item, building);
-            try {
-                commandParser.parseLine(cmd);
-            } catch(Exception ex) {
-                showError("Request error: " + ex.getMessage());
-            }
-            boardDisplay.refresh();
-            reqStage.close();
-        });
-
-        grid.add(itemLabel, 0, 0);
-        grid.add(itemCombo, 1, 0);
-        grid.add(buildingLabel, 0, 1);
-        grid.add(buildingCombo, 1, 1);
-        grid.add(submit, 0, 2, 2, 1);
-        showModalWindow(reqStage, grid);
-    }
-
-    private void openConnectWindow() {
-        Stage connStage = new Stage();
-        connStage.setTitle("Connect Buildings");
-
-        GridPane grid = createDefaultGrid();
-        Label sourceLabel = new Label("Source:");
-        List<String> buildingNames = Building.buildings.stream()
-                .map(Building::getName)
-                .collect(Collectors.toList());
-        ComboBox<String> sourceCombo = new ComboBox<>(FXCollections.observableArrayList(buildingNames));
-        sourceCombo.setPromptText("Select source");
-
-        Label destLabel = new Label("Destination:");
-        ComboBox<String> destCombo = new ComboBox<>(FXCollections.observableArrayList(buildingNames));
-        destCombo.setPromptText("Select destination");
-
-        Button submit = new Button("Submit");
-        submit.setOnAction(e -> {
-            String source = sourceCombo.getValue();
-            String dest = destCombo.getValue();
-            if(source == null || dest == null) {
-                showError("Please select both a source and a destination building.");
-                return;
-            }
-            String cmd = String.format("connect '%s' to '%s'", source, dest);
-            try {
-                commandParser.parseLine(cmd);
-            } catch(Exception ex) {
-                showError("Connect error: " + ex.getMessage());
-            }
-            boardDisplay.refresh();
-            connStage.close();
-        });
-
-        grid.add(sourceLabel, 0, 0);
-        grid.add(sourceCombo, 1, 0);
-        grid.add(destLabel, 0, 1);
-        grid.add(destCombo, 1, 1);
-        grid.add(submit, 0, 2, 2, 1);
-        showModalWindow(connStage, grid);
-    }
-
-    private void openPolicyWindow() {
-        Stage policyStage = new Stage();
-        policyStage.setTitle("Set Policy");
-
-        GridPane grid = createDefaultGrid();
-        Label typeLabel = new Label("Policy Type:");
-        ComboBox<String> typeCombo = new ComboBox<>(FXCollections.observableArrayList("request", "source"));
-        typeCombo.setPromptText("Select type");
-
-        Label valueLabel = new Label("Policy Value:");
-        ComboBox<String> valueCombo = new ComboBox<>();
-        typeCombo.setOnAction(e -> {
-            String type = typeCombo.getValue();
-            if ("request".equals(type)) {
-                valueCombo.setItems(FXCollections.observableArrayList("fifo", "sjf", "ready", "default"));
-            } else if ("source".equals(type)) {
-                valueCombo.setItems(FXCollections.observableArrayList("qlen", "simplelat", "recursivelat", "default"));
+        Button finishBtn = new Button("Finish");
+        finishBtn.setOnAction(e -> {
+            String error = new FinishCommand().execute();
+            if (error == null) {
+                boardDisplay.refresh();
+//                setFeedback(Log.getLogText());
+                appendFeedback(Log.getLogText());
+//                appendFeedback("Finish: all requests completed.");
             } else {
-                valueCombo.setItems(FXCollections.observableArrayList());
+                showError("Finish error: " + error);
             }
         });
-        valueCombo.setPromptText("Select value");
 
-        Label targetLabel = new Label("Policy Target:");
-        List<String> buildingNames = Building.buildings.stream()
-                .map(Building::getName)
-                .collect(Collectors.toList());
-        ComboBox<String> targetCombo = new ComboBox<>(FXCollections.observableArrayList(buildingNames));
-        // Include "*" and "default" as additional targets.
-        targetCombo.getItems().addAll("*", "default");
-        targetCombo.setPromptText("Select target");
+        // In ControlPanel.java
+        Button loadBtn = new Button("Load");
+        loadBtn.setOnAction(e -> {
+            LoadWindow.show(() -> {
+                boardDisplay.refresh();
+//                setFeedback(Log.getLogText());
+                appendFeedback(Log.getLogText());
+//                appendFeedback("Loaded simulation successfully.");
+            });
+        });
 
-        Button submit = new Button("Submit");
-        submit.setOnAction(e -> {
-            String type = typeCombo.getValue();
-            String value = valueCombo.getValue();
-            String target = targetCombo.getValue();
-            if (type == null || value == null || target == null) {
-                showError("Please select policy type, value, and target.");
-                return;
-            }
-            String cmd = String.format("set policy %s '%s' on %s", type, value, target);
-            try {
-                commandParser.parseLine(cmd);
-            } catch(Exception ex) {
-                showError("Policy error: " + ex.getMessage());
-            }
+        Button saveBtn = new Button("Save");
+        saveBtn.setOnAction(e -> {
+            SaveWindow.show(() -> {
+//                setFeedback(Log.getLogText());
+                appendFeedback(Log.getLogText());
+//                appendFeedback("Simulation saved successfully.");
+            });
+        });
+
+
+        // 8) Verbosity
+        Button verbosityBtn = new Button("Set Verbosity");
+        verbosityBtn.setOnAction(e -> {
+            VerbosityWindow.show(val -> {
+                new VerboseCommand(val).execute();
+//                setFeedback(Log.getLogText());
+                appendFeedback(Log.getLogText());
+//                appendFeedback("Verbosity set to " + val);
+            });
+        });
+
+        // 9) Policy
+        Button policyBtn = new Button("Set Policy");
+        policyBtn.setOnAction(e -> {
+            PolicyWindow.show(state, () -> {
+                boardDisplay.refresh();
+//                setFeedback(Log.getLogText());
+                appendFeedback(Log.getLogText());
+//                appendFeedback("Policy updated.");
+            });
+        });
+
+        getChildren().addAll(
+//                addBuildingBtn,
+                connectBtn, requestBtn, stepBtn, finishBtn,
+                loadBtn, saveBtn, verbosityBtn, policyBtn
+        );
+    }
+
+
+    // Implementation for load
+    private void handleLoad() {
+        javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
+        fileChooser.setTitle("Load Simulation");
+        File file = fileChooser.showOpenDialog(null);
+        if (file == null) return;
+
+        // Connect to the backend load logic
+        String error = new LoadCommand(file.getAbsolutePath()).execute();
+        if (error == null) {
             boardDisplay.refresh();
-            policyStage.close();
-        });
-
-        grid.add(typeLabel, 0, 0);
-        grid.add(typeCombo, 1, 0);
-        grid.add(valueLabel, 0, 1);
-        grid.add(valueCombo, 1, 1);
-        grid.add(targetLabel, 0, 2);
-        grid.add(targetCombo, 1, 2);
-        grid.add(submit, 0, 3, 2, 1);
-        showModalWindow(policyStage, grid);
+//            setFeedback(Log.getLogText());
+            appendFeedback(Log.getLogText());
+//            appendFeedback("Loaded from " + file.getName());
+        } else {
+            showError(error);
+        }
     }
 
-    private void openVerbosityWindow() {
-        Stage verbStage = new Stage();
-        verbStage.setTitle("Set Verbosity");
 
-        GridPane grid = createDefaultGrid();
-        Label verbLabel = new Label("Verbosity Level:");
-        ComboBox<Integer> verbCombo = new ComboBox<>(FXCollections.observableArrayList(0, 1, 2));
-        verbCombo.setPromptText("Select level");
+    // Implementation for save
+    private void handleSave() {
+//        javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
+//        fileChooser.setTitle("Save Simulation");
+//        File file = fileChooser.showSaveDialog(null);
+//        if (file == null) return;
 
-        Button submit = new Button("Submit");
-        submit.setOnAction(e -> {
-            Integer level = verbCombo.getValue();
-            if (level == null) {
-                showError("Please select a verbosity level.");
-                return;
-            }
-            try {
-                commandParser.parseLine("verbose " + level);
-            } catch(Exception ex) {
-                showError("Verbosity error: " + ex.getMessage());
-            }
-            boardDisplay.refresh();
-            verbStage.close();
-        });
 
-        grid.add(verbLabel, 0, 0);
-        grid.add(verbCombo, 1, 0);
-        grid.add(submit, 0, 1, 2, 1);
-        showModalWindow(verbStage, grid);
+//        String error = new SaveCommand(file.getAbsolutePath()).execute();
+//        String error = new SaveCommand(file.getName()).execute();
+
+//        if (error == null) {
+//            appendFeedback("Saved to " + file.getName());
+//        } else {
+//            showError(error);
+//        }
     }
 
-    // Helper method: create a default GridPane.
-    private GridPane createDefaultGrid() {
-        GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(20, 150, 10, 10));
-        return grid;
+
+    // Utility
+    private void showError(String msg) {
+        Alert a = new Alert(Alert.AlertType.ERROR, msg, ButtonType.OK);
+        a.showAndWait();
     }
 
-    // Helper method: show a modal window with the given content.
-    private void showModalWindow(Stage stage, GridPane content) {
-        Scene scene = new Scene(content);
-        stage.initModality(Modality.APPLICATION_MODAL);
-        stage.setScene(scene);
-        stage.showAndWait();
+    private void appendFeedback(String text) {
+        feedbackArea.appendText(text + "\n");
     }
 
-    // Helper method: show an error alert.
-    private void showError(String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR, message, ButtonType.OK);
-        alert.showAndWait();
+    private void setFeedback(String text) {
+        feedbackArea.setText(text + "\n");
     }
 }

@@ -1,11 +1,11 @@
 package productsimulation;
 
+import productsimulation.GUI.GUI;
 import productsimulation.command.Command;
 import productsimulation.command.CommandParser;
 import productsimulation.model.Building;
 import productsimulation.model.BuildingType;
 import productsimulation.model.Recipe;
-import productsimulation.GUI.GUI;
 import productsimulation.request.servePolicy.FIFOPolicy;
 import productsimulation.request.servePolicy.ServePolicy;
 import productsimulation.request.sourcePolicy.SourcePolicy;

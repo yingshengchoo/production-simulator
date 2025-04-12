@@ -12,8 +12,12 @@ public class SaveCommand extends Command {
     }
 
     @Override
-    public String execute() throws IOException {
-        State.getInstance().save(filename);
+    public String execute() {
+        try {
+            State.getInstance().save(filename);
+        } catch (Exception e) {
+            return e.getMessage();
+        }
         return null;
     }
 }
