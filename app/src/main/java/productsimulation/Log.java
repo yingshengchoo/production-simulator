@@ -45,7 +45,7 @@ public class Log implements Serializable {
 //    GUI会每隔一秒调用一次，返回全量Log，GUI默认将滚动条拉到最下
     public static String getLogText() {
         StringBuilder logContent = new StringBuilder();
-        File logFile = new File("main/resources/test.log");
+        File logFile = new File("test.log");
         try (BufferedReader reader = new BufferedReader(new FileReader(logFile))) {
             String line;
             while ((line = reader.readLine()) != null) {
