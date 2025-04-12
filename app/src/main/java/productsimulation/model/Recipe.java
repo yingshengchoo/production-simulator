@@ -1,12 +1,13 @@
 package productsimulation.model;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.io.Serializable;
 public class Recipe implements Serializable{
 
-  private static List<Recipe> recipeList;
+  private static List<Recipe> recipeList = new ArrayList<>();
   private String output;
   // ingredients应当为LinkedHashMap，或者其它能保留顺序的map。ingredients顺序会影响request传播顺序。
   private Map<String, Integer> ingredients;

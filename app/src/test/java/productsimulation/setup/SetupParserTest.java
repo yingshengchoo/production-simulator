@@ -9,6 +9,7 @@ import productsimulation.model.road.Road;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class SetupParserTest {
@@ -77,6 +78,39 @@ class SetupParserTest {
             assertNotNull(is, "Resource illegal not found on classpath");
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
                 assertEquals("Failed to parse JSON file.", parser.parse(reader));
+            }
+        }
+    }
+
+    @Test
+    void testIllegalStorageJson() throws IOException {
+        try (InputStream is = getClass().getResourceAsStream("/bad_storage.json")) {
+            assertNotNull(is, "Resource bad_storage.json not found on classpath");
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+                String error = parser.parse(reader);
+                assertNotNull( error);
+            }
+        }
+    }
+
+    @Test
+    void testStorageJson() throws IOException {
+        try (InputStream is = getClass().getResourceAsStream("/storage1.json")) {
+            assertNotNull(is, "Resource bad_storage.json not found on classpath");
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+                String error = parser.parse(reader);
+                assertNull( error);
+            }
+        }
+    }
+
+    @Test
+    void testComprehensive() throws IOException {
+        try (InputStream is = getClass().getResourceAsStream("/storage2.json")) {
+            assertNotNull(is, "Resource bad_storage.json not found on classpath");
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+//                String error = parser.parse(reader);
+//                assertNull( error);
             }
         }
     }
