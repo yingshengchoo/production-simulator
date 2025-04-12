@@ -78,7 +78,7 @@ public class GUI extends Application {
         // For now, we skip updating the cycle label.
         // If you add a getCurrentCycle(), you could update it here:
         // cycleLabel.setText("Cycle: " + simulationState.getCurrentCycle());
-//        logArea.setText(Log.getLogText());
+        logArea.setText(Log.getLogText());
     }
 
     public static void main(String[] args) {

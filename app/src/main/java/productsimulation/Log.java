@@ -4,7 +4,8 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.io.Serializable;
+
+import java.io.*;
 
 public class Log implements Serializable {
     private static Logger getLogger() {
@@ -39,5 +40,21 @@ public class Log implements Serializable {
     // the least detailed
     public static void level0Log(String logBody) {
         getLogger().error(logBody);
+    }
+
+//    GUI会每隔一秒调用一次，返回全量Log，GUI默认将滚动条拉到最下
+    public static String getLogText() {
+        StringBuilder logContent = new StringBuilder();
+        File logFile = new File("main/resources/test.log");
+        try (BufferedReader reader = new BufferedReader(new FileReader(logFile))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                logContent.append(line).append("\n");
+            }
+        } catch (IOException e) {
+            return "error when reading log file: " + e.getMessage();
+        }
+        return logContent.toString().trim();
+//        return "test log string 0412";
     }
 }

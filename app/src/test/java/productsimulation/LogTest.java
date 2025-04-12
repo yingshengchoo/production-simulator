@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 // >=3: debug
 public class LogTest {
 //    private String filePathStr = "src/test/resources/test.log";
-    private String filePathStr = "test.log";
+    private String filePathStr = "main/resources/test.log";
     private Path filePath = Paths.get(filePathStr);
 
     @AfterEach
