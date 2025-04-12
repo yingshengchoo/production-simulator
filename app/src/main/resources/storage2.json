@@ -1,0 +1,219 @@
+{
+  "recipes": [
+    {
+      "output": "door",
+      "ingredients": {
+        "wood": 1,
+        "handle": 1,
+        "hinge": 3
+      },
+      "latency": 10
+    },
+    {
+      "output": "handle",
+      "ingredients": {
+        "metal": 1
+      },
+      "latency": 5
+    },
+    {
+      "output": "hinge",
+      "ingredients": {
+        "metal": 1
+      },
+      "latency": 1
+    },
+    {
+      "output": "wood",
+      "ingredients": {},
+      "latency": 1
+    },
+    {
+      "output": "metal",
+      "ingredients": {},
+      "latency": 1
+    },
+    {
+      "output": "bolt",
+      "ingredients": {},
+      "latency": 1
+    },
+    {
+      "output": "car",
+      "ingredients": {
+        "door": 4,
+        "engine": 1,
+        "wheel": 4
+      },
+      "latency": 30
+    },
+    {
+      "output": "engine",
+      "ingredients": {
+        "metal": 5,
+        "circuit": 2
+      },
+      "latency": 15
+    },
+    {
+      "output": "wheel",
+      "ingredients": {
+        "rubber": 3,
+        "metal": 1
+      },
+      "latency": 8
+    },
+    {
+      "output": "circuit",
+      "ingredients": {
+        "metal": 2
+      },
+      "latency": 7
+    },
+    {
+      "output": "rubber",
+      "ingredients": {},
+      "latency": 1
+    }
+  ],
+  "types": [
+    {
+      "name": "Door Factory",
+      "recipes": [
+        "door"
+      ]
+    },
+    {
+      "name": "Component Factory",
+      "recipes": [
+        "handle",
+        "hinge"
+      ]
+    },
+    {
+      "name": "Car Factory",
+      "recipes": [
+        "car"
+      ]
+    },
+    {
+      "name": "Engine Factory",
+      "recipes": [
+        "engine",
+        "circuit"
+      ]
+    },
+    {
+      "name": "Wheel Factory",
+      "recipes": [
+        "wheel"
+      ]
+    },
+    {
+      "name": "Circuit Factory",
+      "recipes": [
+        "circuit"
+      ]
+    }
+  ],
+  "buildings": [
+    {
+      "name": "Factory A",
+      "type": "Door Factory",
+      "x": 10,
+      "y": 10,
+      "sources": [
+        "Wood Mine",
+        "Component Factory A"
+      ]
+    },
+    {
+      "name": "Component Factory A",
+      "type": "Component Factory",
+      "x": 8,
+      "y": 9,
+      "sources": [
+        "Metal Mine"
+      ]
+    },
+    {
+      "name": "Car Factory A",
+      "type": "Car Factory",
+      "x": 15,
+      "y": 12,
+      "sources": [
+        "Factory A",
+        "Engine Factory A",
+        "Wheel Factory A"
+      ]
+    },
+    {
+      "name": "Engine Factory A",
+      "type": "Engine Factory",
+      "x": 13,
+      "y": 14,
+      "sources": [
+        "Metal Mine",
+        "Circuit Factory A"
+      ]
+    },
+    {
+      "name": "Wheel Factory A",
+      "type": "Wheel Factory",
+      "x": 12,
+      "y": 15,
+      "sources": [
+        "Rubber Plantation",
+        "Metal Mine"
+      ]
+    },
+    {
+      "name": "Circuit Factory A",
+      "type": "Circuit Factory",
+      "x": 7,
+      "y": 13,
+      "sources": [
+        "Metal Mine"
+      ]
+    },
+    {
+      "name": "Wood Mine",
+      "mine": "wood",
+      "x": 5,
+      "y": 10,
+      "sources": []
+    },
+    {
+      "name": "Metal Mine",
+      "mine": "metal",
+      "x": 4,
+      "y": 11,
+      "sources": []
+    },
+    {
+      "name": "Rubber Plantation",
+      "mine": "rubber",
+      "x": 11,
+      "y": 17,
+      "sources": []
+    },
+    {
+      "name": "Bolt Mine",
+      "mine": "bolt",
+      "x": 3,
+      "y": 1,
+      "sources": []
+    },
+    {
+      "name": "Bolt Storage",
+      "stores": "bolt",
+      "capacity": 50,
+      "priority": 1.2,
+      "x": 16,
+      "y": 8,
+      "sources": [
+        "Bolt Mine"
+      ]
+    }
+  ]
+}
