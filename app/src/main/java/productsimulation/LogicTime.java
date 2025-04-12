@@ -8,6 +8,8 @@ import java.util.Set;
 import java.io.Serializable;
 
 public class LogicTime implements Serializable{
+//    EV2中，道路可能不通，请求可能无法顺利传达，故大幅下调MAX_STEP，以免误判为死循环
+    private final int MAX_STEP = 500;
     private static LogicTime instance = new LogicTime();
     private int currentStep;
     private final Set<Building> observers;
@@ -59,7 +61,7 @@ public class LogicTime implements Serializable{
                 boolean idle = b.notified();
                 finished = idle && finished;
             }
-            if(finished && timeDiff == Integer.MAX_VALUE) {
+            if(finished && timeDiff == MAX_STEP) {
                 break;
             }
             //確保 Storage 有先發給Sources request 
@@ -73,9 +75,9 @@ public class LogicTime implements Serializable{
             for(Building b: observers) {
                 b.updateNotified();
             }
-//            Log.level2Log("currentStep:" + (currentStep-1) + " to " + currentStep + "\n");
+            Log.level2Log("==========Step from " + (currentStep-1) + " to " + currentStep + " end==========\n");
         }
-        if(finished && timeDiff == Integer.MAX_VALUE) {
+        if(finished && timeDiff == MAX_STEP) {
             quitGame();
         }
     }
@@ -90,7 +92,7 @@ public class LogicTime implements Serializable{
     }
 
     public void finishHandler() {
-        notifyAll(Integer.MAX_VALUE);
+        notifyAll(MAX_STEP);
     }
 
     public boolean getExitFlag() {

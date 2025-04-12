@@ -169,16 +169,16 @@ public abstract class Building implements Serializable {
         for(String ingredient: ingredients.keySet()) {
             int num = ingredients.get(ingredient);
             for(int i = 0; i < num; i++) {
-//                [D:door:0] For ingredient wood
-                Log.level2Log("[" + name + ":" + request.getIngredient() + ":" + LogicTime.getInstance().getStep()
-                + "] For ingredient " + ingredient);
                 Building chosenSource = sourcePolicy.getSource(sources, ingredient);
+                //[D:door:0] For ingredient wood
+                Log.level2Log("[" + name + ":" + request.getIngredient() + ":" + LogicTime.getInstance().getStep()
+                        + "] For ingredient " + ingredient + " , transport latency=" + Road.getDistance(chosenSource, this));
                 Log.level2Log("    selecting " + chosenSource.getName());
                 Recipe childRecipe = chosenSource.type.getRecipeByProductName(ingredient);
                 Request req = new Request(ingredient, childRecipe,this);
 
                 // set transport latency!
-                req.setTransLatency(Road.getDistance(this, chosenSource));
+                req.setTransLatency(Road.getDistance(chosenSource, this) + 1);
 
                 chosenSource.addRequest(req);
             }

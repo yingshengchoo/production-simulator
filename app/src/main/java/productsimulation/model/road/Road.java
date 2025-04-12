@@ -52,6 +52,7 @@ public class Road {
             return "Building does not exists. Check the building name.";
         }
         Road road = new Road(bsrc, bdst);
+        Log.level0Log(srcName + " -> " + dstName + " connected");
         return "";
     }
 
@@ -126,7 +127,8 @@ public class Road {
         if(distance != -1) {
             placeRoad(path, ed.getCoordinate());
         }
-        distanceMap.put(new Pair<>(st, ed), distance);
+
+        distanceMap.put(new Pair<>(st, ed), path.size());
     }
 
     // 假定输入的dir是合法的，即{{-1, 0}, {1, 0}, {0, -1}, {0, 1}}中的一个

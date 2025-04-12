@@ -11,6 +11,7 @@ import productsimulation.model.*;
 import productsimulation.request.Request;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -19,6 +20,7 @@ import java.util.*;
 import org.junit.jupiter.api.Test;
 import productsimulation.request.servePolicy.ServePolicy;
 import productsimulation.request.sourcePolicy.SourcePolicy;
+import productsimulation.setup.SetupParser;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -162,11 +164,18 @@ class AppTest {
     }
 
     @Test
-    @Disabled("cannot finish before road connection, need to modify the test case")
+    @Disabled("only for ev1, now test_connect have the same function")
     public void normalMain() throws IOException {
         testHelper("json_inputs/doors1.json",
                 "e2e_user_inputs/input1.txt",
                 "e2e_log_outputs/output1.txt");
+    }
+
+    @Test
+    public void test_connect() throws IOException {
+        testHelper("json_inputs/doors1_connect.json",
+                "e2e_user_inputs/input_connect.txt",
+                "e2e_log_outputs/output_connect.txt");
     }
 
     @Test
@@ -214,7 +223,7 @@ class AppTest {
 //        Log.setLogLevel(3);
 //        demoHelper("json_inputs/doors2.json", "/user_inputs/input1.txt");
 //    }
-
+//
 //    @Test
 //    public void policyDemo() {
 //        Log.setLogLevel(1);

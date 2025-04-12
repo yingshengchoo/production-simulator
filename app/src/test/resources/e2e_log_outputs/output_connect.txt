@@ -1,0 +1,32 @@
+[Log] - initializing with json_inputs/doors1_connect.json
+[Log] - Checking recipe 'door': {"wood":1,"handle":1,"hinge":3}
+[Log] - Checking recipe 'handle': {"metal":1}
+[Log] - Checking recipe 'hinge': {"metal":1}
+[Log] - The setup json is valid!
+Welcome to product simulation, you can:
+request 'itemName' from 'buildingName'
+step 1
+verbose 1
+finish
+set policy request on target
+save saveFileName
+load loadFileName
+connect 'buildingName1' 'buildingName2'
+> > [Log] - Ha -> D connected
+> [Log] - Hi -> D connected
+> [Log] - W -> D connected
+> [Log] - M -> Hi connected
+> [Log] - M -> Ha connected
+> [Log] - [ingredient assignment]: door assigned to D to deliver to user
+[Log] - [ingredient assignment]: wood assigned to W to deliver to D
+[Log] - [ingredient assignment]: handle assigned to Ha to deliver to D
+[Log] - [ingredient assignment]: metal assigned to M to deliver to Ha
+[Log] - [ingredient assignment]: hinge assigned to Hi to deliver to D
+[Log] - [ingredient assignment]: metal assigned to M to deliver to Hi
+[Log] - [ingredient assignment]: hinge assigned to Hi to deliver to D
+[Log] - [ingredient assignment]: metal assigned to M to deliver to Hi
+[Log] - [ingredient assignment]: hinge assigned to Hi to deliver to D
+[Log] - [ingredient assignment]: metal assigned to M to deliver to Hi
+> [Log] - [order complete] Order 0 completed (door) at time 33
+[Log] - Simulation completed at time-step 33
+>

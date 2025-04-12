@@ -1,5 +1,7 @@
 package productsimulation.model.road;
 
+import productsimulation.Log;
+import productsimulation.LogicTime;
 import productsimulation.model.Building;
 import productsimulation.request.Request;
 
@@ -21,6 +23,8 @@ public class RequestQueue {
 
             // 运输延迟-1
             Request request = iterator.next();
+            Log.debugLog(request.getIngredient() + " decrease from " + request.transLatency +
+                    " at " + LogicTime.getInstance().getStep());
             request.decreaseTransLatency();
 
             if (request.isReadyToDeliver()) {

@@ -23,7 +23,7 @@ public class Request implements Serializable{
   private final Recipe recipe;
   private final Building requester;
   private RequestStatus status;
-  int transLatency = 0;
+  public int transLatency = 0;
 
   public Request(String ingredient, Recipe recipe, Building requester, int transLatency) {
     this(ingredient, recipe, requester);
@@ -120,6 +120,7 @@ public class Request implements Serializable{
 
   public void doneReportAndTransport() {
     if(requester != null) {
+      Log.debugLog(ingredient + " produce done at " + LogicTime.getInstance().getStep());
       if (transLatency <= 0) {
         requester.updateStorage(ingredient);
       } else {

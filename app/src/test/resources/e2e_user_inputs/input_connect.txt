@@ -1,0 +1,8 @@
+verbose 1
+connect 'Ha' to 'D'
+connect 'Hi' to 'D'
+connect 'W' to 'D'
+connect 'M' to 'Hi'
+connect 'M' to 'Ha'
+request 'door' from 'D'
+finish
