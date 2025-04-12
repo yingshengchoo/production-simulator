@@ -10,19 +10,19 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import productsimulation.command.LoadCommand;
+import productsimulation.command.SaveCommand;
 
 /**
  * A modal window that prompts the user to enter a file name (without extension)
- * to load a previously saved simulation state.
- * When the user clicks Submit, a LoadCommand is created and executed.
+ * to save the current simulation.
+ * When the user clicks Submit, a SaveCommand is created and executed.
  */
-public class LoadWindow {
+public class SaveWindow {
 
     public static void show(Runnable onSuccessRefresh) {
         Stage stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
-        stage.setTitle("Load Simulation");
+        stage.setTitle("Save Simulation");
 
         GridPane grid = createGrid();
         Label fileLabel = new Label("File name (no extension):");
@@ -32,24 +32,24 @@ public class LoadWindow {
         Button submit = new Button("Submit");
         Button cancel = new Button("Cancel");
 
-        // When the user clicks Submit, connect to backend LoadCommand.
+        // When submit is pressed, connect to backend SaveCommand.
         submit.setOnAction(e -> {
             String fileName = fileField.getText().trim();
             if (fileName.isEmpty()) {
                 showError("Please enter a file name.");
                 return;
             }
-            // BACKEND: Create and execute the LoadCommand here.
-            LoadCommand cmd = new LoadCommand(fileName);
+            // BACKEND: Create and execute the SaveCommand here.
+            SaveCommand cmd = new SaveCommand(fileName);
             String error = cmd.execute();
             if (error == null || error.trim().isEmpty()) {
-                showInfo("Simulation loaded from " + fileName + ".ser");
+                showInfo("Simulation saved to " + fileName + ".ser");
                 if (onSuccessRefresh != null) {
                     onSuccessRefresh.run();
                 }
                 stage.close();
             } else {
-                showError("Load error: " + error);
+                showError("Save error: " + error);
             }
         });
 
@@ -65,7 +65,7 @@ public class LoadWindow {
         stage.showAndWait();
     }
 
-    // Reuse grid creation logic.
+    // Helper to create a default GridPane with padding and gaps.
     private static GridPane createGrid() {
         GridPane grid = new GridPane();
         grid.setHgap(10);
@@ -76,14 +76,14 @@ public class LoadWindow {
 
     private static void showError(String msg) {
         Alert alert = new Alert(Alert.AlertType.ERROR, msg, ButtonType.OK);
-        alert.setTitle("Load Error");
+        alert.setTitle("Save Error");
         alert.setHeaderText(null);
         alert.showAndWait();
     }
 
     private static void showInfo(String msg) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION, msg, ButtonType.OK);
-        alert.setTitle("Load Successful");
+        alert.setTitle("Save Successful");
         alert.setHeaderText(null);
         alert.showAndWait();
     }

@@ -12,8 +12,12 @@ public class LoadCommand extends Command {
     }
 
     @Override
-    public String execute() throws IOException, ClassNotFoundException {
-        State.getInstance().load(filename);
+    public String execute() {
+        try {
+            State.getInstance().load(filename);
+        } catch (Exception e) {
+            return e.getMessage();
+        }
         return null;
     }
 
