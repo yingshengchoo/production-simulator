@@ -1,6 +1,7 @@
 package productsimulation.request;
 
 import productsimulation.model.*;
+import productsimulation.model.road.Road;
 import productsimulation.request.servePolicy.FIFOPolicy;
 import productsimulation.request.sourcePolicy.SourceQLen;
 
@@ -43,6 +44,13 @@ public class MockingEnv {
         Building f32 = new Factory("f32", ft3, List.of(b1, b2, b22, b23), qlen, fifo);
         Building f4 = new Factory("f4", ft4, List.of(b1, b2, b22, b23), qlen, fifo);
         buildings = List.of(b1, b2, f3, f32, f4, b22, b23);
+
+        Building.buildings.addAll(buildings);
+        for(Building bsrc: buildings) {
+            for(Building bdst: buildings) {
+                Road tmp = new Road(bsrc, bdst);
+            }
+        }
     }
 
     public List<Building> getBuildings() {

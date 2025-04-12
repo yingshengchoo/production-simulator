@@ -282,7 +282,6 @@ class RoadTest {
     }
 
     @Test
-//    @Disabled("waiting for Building debug")
 //    测对无关路线的复用
     void test_generateRoad_reuse8() {
         AtomBuilding b1 = new AtomBuilding(new Coordinate(1,1));

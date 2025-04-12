@@ -23,7 +23,6 @@ class SourceQLenTest {
     }
 
     @Test
-    @Disabled("cannot finish before road connection, need to modify the test case")
     void getSourceTest() {
         MockingEnv mockingEnv = new MockingEnv();
         Building f3 = mockingEnv.getBuildings().get(2);

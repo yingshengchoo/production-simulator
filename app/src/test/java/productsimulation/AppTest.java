@@ -8,6 +8,7 @@ import productsimulation.command.CommandParser;
 import productsimulation.command.RequestCommand;
 import productsimulation.command.StepCommand;
 import productsimulation.model.*;
+import productsimulation.model.road.Road;
 import productsimulation.request.Request;
 
 import java.io.*;
@@ -49,7 +50,6 @@ class AppTest {
     }
 
     @Test
-    @Disabled("cannot finish before road connection, need to modify the test case")
     public void minimalE2E() {
         // step 1: setup
         // skip parsing the recipe
@@ -69,11 +69,12 @@ class AppTest {
         ServePolicy oneTimeServePolicy = new OneTimeServePolicy();
         // skip parsing the building
         Mine woodMine = new Mine("FirstWoodMine", woodMineType,
-                new ArrayList<Building>(), soleSourcePolicy, oneTimeServePolicy);
+                new ArrayList<Building>(), soleSourcePolicy, oneTimeServePolicy, new Coordinate(1,1));
         List<Building> sources = new ArrayList<>();
         sources.add(woodMine);
         Factory woodSwordFactory = new Factory("FirstWoodenSwordFactory", woodSwordType,
-                sources, soleSourcePolicy, oneTimeServePolicy);
+                sources, soleSourcePolicy, oneTimeServePolicy, new Coordinate(1, 2));
+        Road.connectHandler(woodMine.getName(), woodSwordFactory.getName());
 
         // step 2: get user prompt and print results
         // skip parsing the command
@@ -164,15 +165,7 @@ class AppTest {
     }
 
     @Test
-    @Disabled("only for ev1, now test_connect have the same function")
     public void normalMain() throws IOException {
-        testHelper("json_inputs/doors1.json",
-                "e2e_user_inputs/input1.txt",
-                "e2e_log_outputs/output1.txt");
-    }
-
-    @Test
-    public void test_connect() throws IOException {
         testHelper("json_inputs/doors1_connect.json",
                 "e2e_user_inputs/input_connect.txt",
                 "e2e_log_outputs/output_connect.txt");

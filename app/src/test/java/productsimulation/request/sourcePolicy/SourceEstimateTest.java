@@ -19,10 +19,10 @@ class SourceEstimateTest {
         Building.buildings.clear();
         Road.cleanup();
     }
-    MockingEnv mockingEnv = new MockingEnv();
+
     @Test
-    @Disabled("cannot finish before road connection, need to modify the test case")
     void getSourceTest() {
+        MockingEnv mockingEnv = new MockingEnv();
         Building f3 = mockingEnv.getBuildings().get(2);
         Building f32 = mockingEnv.getBuildings().get(3);
 
@@ -38,8 +38,8 @@ class SourceEstimateTest {
     }
 
     @Test
-    @Disabled("cannot finish before road connection, need to modify the test case")
     void getSourceTest2() {
+        MockingEnv mockingEnv = new MockingEnv();
         SourceEstimate se = new SourceEstimate();
 
         Building f3 = mockingEnv.getBuildings().get(2);
