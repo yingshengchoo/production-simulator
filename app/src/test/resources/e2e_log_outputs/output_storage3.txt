@@ -1,0 +1,42 @@
+[Log] - initializing with json_inputs/storage3.json
+[Log] - Checking recipe 'door': {"wood":1,"handle":1,"hinge":3,"bolt":4}
+[Log] - Checking recipe 'handle': {"metal":1}
+[Log] - Checking recipe 'hinge': {"metal":1}
+[Log] - Checking recipe 'bolt': {"metal":1}
+[Log] - The setup json is valid!
+Welcome to product simulation, you can:
+request 'itemName' from 'buildingName'
+step 1
+verbose 1
+finish
+set policy request on target
+save saveFileName
+load loadFileName
+connect 'buildingName1' to 'buildingName2'
+> [Log] - verbosity change to: 1
+> [Log] - Bolt Factory A -> Factory A connected
+> [Log] - Metal Mine -> Bolt Factory A connected
+> [Log] - Wood Mine -> Factory A connected
+> [Log] - Metal Mine -> Component Factory A connected
+> [Log] - Component Factory A -> Factory A connected
+> [Log] - [ingredient assignment]: door assigned to Factory A to deliver to user
+[Log] - [ingredient assignment]: wood assigned to Wood Mine to deliver to Factory A
+[Log] - [ingredient assignment]: handle assigned to Component Factory A to deliver to Factory A
+[Log] - [ingredient assignment]: metal assigned to Metal Mine to deliver to Component Factory A
+[Log] - [ingredient assignment]: hinge assigned to Component Factory A to deliver to Factory A
+[Log] - [ingredient assignment]: metal assigned to Metal Mine to deliver to Component Factory A
+[Log] - [ingredient assignment]: hinge assigned to Component Factory A to deliver to Factory A
+[Log] - [ingredient assignment]: metal assigned to Metal Mine to deliver to Component Factory A
+[Log] - [ingredient assignment]: hinge assigned to Component Factory A to deliver to Factory A
+[Log] - [ingredient assignment]: metal assigned to Metal Mine to deliver to Component Factory A
+[Log] - [ingredient assignment]: bolt assigned to Bolt Factory A to deliver to Factory A
+[Log] - [ingredient assignment]: metal assigned to Metal Mine to deliver to Bolt Factory A
+[Log] - [ingredient assignment]: bolt assigned to Bolt Factory A to deliver to Factory A
+[Log] - [ingredient assignment]: metal assigned to Metal Mine to deliver to Bolt Factory A
+[Log] - [ingredient assignment]: bolt assigned to Bolt Factory A to deliver to Factory A
+[Log] - [ingredient assignment]: metal assigned to Metal Mine to deliver to Bolt Factory A
+[Log] - [ingredient assignment]: bolt assigned to Bolt Factory A to deliver to Factory A
+[Log] - [ingredient assignment]: metal assigned to Metal Mine to deliver to Bolt Factory A
+> [Log] - [order complete] Order 0 completed (door) at time 33
+[Log] - Simulation completed at time-step 33
+>

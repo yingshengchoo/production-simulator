@@ -1,0 +1,8 @@
+verbose 1
+connect 'Bolt Factory A' to 'Factory A'
+connect 'Metal Mine' to 'Bolt Factory A'
+connect 'Wood Mine' to 'Factory A'
+connect 'Metal Mine' to 'Component Factory A'
+connect 'Component Factory A' to 'Factory A'
+request 'door' from 'Factory A'
+finish

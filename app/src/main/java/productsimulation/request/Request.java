@@ -4,7 +4,7 @@ import productsimulation.Log;
 import productsimulation.LogicTime;
 import productsimulation.model.Building;
 import productsimulation.model.Recipe;
-import productsimulation.model.road.RequestQueue;
+import productsimulation.model.road.TransportQueue;
 
 import java.util.Map;
 
@@ -124,7 +124,7 @@ public class Request implements Serializable{
       if (transLatency <= 0) {
         requester.updateStorage(ingredient);
       } else {
-        RequestQueue.addRequest(this);
+        TransportQueue.addRequest(this);
       }
     } else {
 //      [order complete] Order 0 completed (door) at time 21

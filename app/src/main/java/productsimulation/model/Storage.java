@@ -224,6 +224,10 @@ public class Storage extends Building {
    * Sends request to sources  
    */
   public void sendRequest(){
+    if(sources == null || sources.isEmpty()){
+      return;
+    }
+    
     if (getFrequency() == -1){
       return;
     }
@@ -232,6 +236,9 @@ public class Storage extends Building {
       Log.level2Log("[" + name + ":" + recipe.getOutput() + ":" + LogicTime.getInstance().getStep()
                 + "] For Storage " + name);
       Building chosenSource = sourcePolicy.getSource(sources, recipe.getOutput());
+      if(chosenSource == null) {
+        return;
+      }
       Log.level2Log("    selecting " + chosenSource.getName());
       Recipe childRecipe = chosenSource.type.getRecipeByProductName(recipe.getOutput());
       Request req = new Request(recipe.getOutput(), childRecipe, this);

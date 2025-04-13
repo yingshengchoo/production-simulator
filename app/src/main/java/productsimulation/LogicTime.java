@@ -1,7 +1,7 @@
 package productsimulation;
 
 import productsimulation.model.*;
-import productsimulation.model.road.RequestQueue;
+import productsimulation.model.road.TransportQueue;
 
 import java.io.Serializable;
 
@@ -52,7 +52,7 @@ public class LogicTime implements Serializable{
         for(int i = 0; i < timeDiff; i++) {
             finished = true;
 
-            RequestQueue.goOneStep();
+            TransportQueue.goOneStep();
             
             // 新一步
 //            for(Building b: observers) {
