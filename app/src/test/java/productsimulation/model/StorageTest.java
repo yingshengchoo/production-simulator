@@ -302,10 +302,6 @@ public class StorageTest {
     ArrayList<Building> sources = new ArrayList<>();
     Recipe socks1 = new Recipe(10, Collections.emptyMap(), "socks");
     Recipe socks2 = new Recipe(2, Collections.emptyMap(), "socks");
-  
-    ArrayList<Building> sources = new ArrayList<>();
-    Recipe socks1 = new Recipe(10, Collections.emptyMap(), "socks");
-    Recipe socks2 = new Recipe(2, Collections.emptyMap(), "socks");
    
     Recipe pair = new Recipe(1,Map.of("socks", 2), "pairOfSocks");
     ArrayList<Recipe> rl = new ArrayList<>();
