@@ -4,6 +4,7 @@ import productsimulation.Board;
 import productsimulation.Coordinate;
 import productsimulation.Log;
 import productsimulation.LogicTime;
+import productsimulation.model.road.Road;
 import productsimulation.request.Request;
 import productsimulation.request.servePolicy.FIFOPolicy;
 import productsimulation.request.servePolicy.ServePolicy;
@@ -214,6 +215,10 @@ public class Storage extends Building {
       Log.level2Log("    selecting " + chosenSource.getName());
       Recipe childRecipe = chosenSource.type.getRecipeByProductName(recipe.getOutput());
       Request req = new Request(recipe.getOutput(), childRecipe, this);
+
+      // set transport latency!
+      req.setTransLatency(Road.getDistance(chosenSource, this) + 1);
+
       chosenSource.addRequest(req);
     }
   }
