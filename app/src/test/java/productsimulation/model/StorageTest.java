@@ -319,7 +319,6 @@ public class StorageTest {
     Storage s1 =new Storage("Drawer", "socks", null, 100, 100, null, null, new Coordinate(100, 100));
     assertDoesNotThrow(()->s1.sendRequest());
 
-    s2.initializeStorageType();
     assertDoesNotThrow(()->s2.sendRequest());
   }
 }
