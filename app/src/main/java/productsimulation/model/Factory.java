@@ -34,7 +34,7 @@ public class Factory extends Building {
     super(name, type, sources, sourcePolicy, servePolicy, coordinate);
   }
 
-    public static Factory addFactory(List<Building> sources, SourcePolicy sourcePolicy,
+    public static Factory addFactory(String name, List<String> srcStr, SourcePolicy sourcePolicy,
                                      ServePolicy servePolicy, Coordinate coordinate, BuildingType type) {
         Board board = Board.getBoard();
         int weight = board.getBoardPosWeight(coordinate);
@@ -42,7 +42,9 @@ public class Factory extends Building {
             throw new RuntimeException("invalid coordinate!");
         }
 
-        return new Factory(type.getName(), type, sources, sourcePolicy, servePolicy, coordinate);
+        List<Building> sources = Building.parseSrcList(srcStr);
+
+        return new Factory(name, type, sources, sourcePolicy, servePolicy, coordinate);
     }
 
   

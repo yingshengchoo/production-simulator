@@ -42,7 +42,7 @@ public class Storage extends Building {
     readyQueue = new ArrayList<>();
   }
  
-  public static Storage addStorage(List<Building> sources, SourcePolicy sourcePolicy,
+  public static Storage addStorage(String name, List<String> srcStr, SourcePolicy sourcePolicy,
                                    ServePolicy servePolicy, Coordinate coordinate, StorageType type) {
     Board board = Board.getBoard();
     int weight = board.getBoardPosWeight(coordinate);
@@ -50,7 +50,9 @@ public class Storage extends Building {
       throw new RuntimeException("invalid coordinate!");
     }
 
-    Storage newStorage = new Storage(type.getName(), type.getItemToStore(), sources, type.getCapacity(), type.getPriority(), sourcePolicy, servePolicy, coordinate);
+    List<Building> sources = Building.parseSrcList(srcStr);
+
+    Storage newStorage = new Storage(name, type.getItemToStore(), sources, type.getCapacity(), type.getPriority(), sourcePolicy, servePolicy, coordinate);
     newStorage.initializeStorageType();
     return newStorage;
   }

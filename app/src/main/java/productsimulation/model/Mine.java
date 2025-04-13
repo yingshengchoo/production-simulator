@@ -22,7 +22,7 @@ public class Mine extends Building {
     super(name, type, sources, sourcePolicy, servePolicy);
   }
 
-    public static Mine addMine(List<Building> sources, SourcePolicy sourcePolicy,
+    public static Mine addMine(String name, List<Building> sources, SourcePolicy sourcePolicy,
                                      ServePolicy servePolicy, Coordinate coordinate, BuildingType type) {
         Board board = Board.getBoard();
         int weight = board.getBoardPosWeight(coordinate);
@@ -30,7 +30,7 @@ public class Mine extends Building {
             throw new RuntimeException("invalid coordinate!");
         }
 
-        return new Mine(type.getName(), type, sources, sourcePolicy, servePolicy, coordinate);
+        return new Mine(name, type, sources, sourcePolicy, servePolicy, coordinate);
     }
 
     /**
