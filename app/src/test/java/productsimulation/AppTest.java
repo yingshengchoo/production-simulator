@@ -3,6 +3,7 @@ package productsimulation;
 import org.apache.logging.log4j.LogManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import productsimulation.command.CommandParser;
 import productsimulation.command.RequestCommand;
 import productsimulation.command.StepCommand;
@@ -167,6 +168,17 @@ class AppTest {
                 "e2e_user_inputs/input_connect.txt",
                 "e2e_log_outputs/output_connect.txt");
     }
+
+    @Test
+    // todo 改为一个带add Building的testcase，目前textCLI还不能add building
+    @Disabled("unknown problem...")
+    public void storageMain() throws IOException {
+        testHelper("json_inputs/storage3.json",
+                "e2e_user_inputs/input_storage3.txt",
+                "e2e_log_outputs/output_storage3.txt");
+    }
+
+
 
     @Test
     public void noParameterMain() {

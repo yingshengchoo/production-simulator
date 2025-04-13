@@ -31,7 +31,7 @@ public class App {
             "set policy request on target\n" +
             "save saveFileName\n" +
             "load loadFileName\n" +
-            "connect 'buildingName1' 'buildingName2'\n";
+            "connect 'buildingName1' to 'buildingName2'\n";
 
     /**
      * Reads and processes input commands.
@@ -98,11 +98,8 @@ public class App {
         }
         Building.buildingGlobalList = buildingList;
 
-        ArrayList<Recipe> recipeList = new ArrayList<>();
-        for(Recipe r: recipes.values()) {
-//            requestBroadcaster.addRecipes(r);
-            recipeList.add(r);
-        }
+        //            requestBroadcaster.addRecipes(r);
+        ArrayList<Recipe> recipeList = new ArrayList<>(recipes.values());
 
         for(Building b: buildings.values()){
           if(b instanceof Storage){

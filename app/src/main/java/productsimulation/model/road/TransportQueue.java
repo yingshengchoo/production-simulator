@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class RequestQueue {
+public class TransportQueue {
     private static List<Request> queue = new ArrayList<>();
 
     public static void addRequest(Request request) {
