@@ -55,7 +55,7 @@ public class Storage extends Building {
 
   // Constructor without coordinate input
   public Storage(String name, String itemToStore, List<Building> sources, int totalCapacity, double priority, SourcePolicy sourcePolicy, ServePolicy servePolicy){
-    super(name, new BuildingType(name, Map.of(itemToStore, new Recipe(Recipe.getRecipe(itemToStore).getLatency(), new HashMap<>(), itemToStore))), sources, sourcePolicy, new FIFOPolicy()); // Storage only supports FIFO!
+    super(name, null, sources, sourcePolicy, new FIFOPolicy()); // Storage only supports FIFO!
     this.recipe = null;
     this.itemToStore = itemToStore;
     this.totalCapacity = totalCapacity;
