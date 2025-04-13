@@ -11,23 +11,21 @@ public class GUI extends Application {
     private State state;
     private BoardDisplay boardDisplay;
     private ControlPanel controlPanel;
-    private FeedbackPane feedbackPane;  // Use our custom feedback pane
+    private FeedbackPane feedbackPane;
 
     @Override
     public void start(Stage primaryStage) {
         state = State.getInstance();
 
-        // Create the board display.
+        // Custom feedback pane for logs & info
+        feedbackPane = new FeedbackPane();
+        feedbackPane.setText("Ready.\n");
+
+        // Pass feedbackPane to the BoardDisplay constructor
         boardDisplay = new BoardDisplay(state);
 
-        // Create the custom feedback pane.
-        feedbackPane = new FeedbackPane();
-        feedbackPane.setText("Simulation ready. Please select a command.\n");
-
-        // Create the control panel, passing the feedbackPane for updates.
         controlPanel = new ControlPanel(state, boardDisplay, feedbackPane);
 
-        // Arrange everything in a BorderPane.
         BorderPane root = new BorderPane();
         root.setCenter(boardDisplay.getCanvasPane());
         root.setRight(controlPanel);
@@ -35,7 +33,7 @@ public class GUI extends Application {
 
         Scene scene = new Scene(root, 1200, 800);
         primaryStage.setScene(scene);
-        primaryStage.setTitle("Production Simulation GUI (Evolution 2)");
+        primaryStage.setTitle("Production Simulation GUI");
         primaryStage.show();
 
         boardDisplay.refresh();

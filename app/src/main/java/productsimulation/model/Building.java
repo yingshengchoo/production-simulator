@@ -480,4 +480,8 @@ public abstract class Building implements Serializable {
     public int getX() {return coordinate.x;}
 
     public int getY() {return coordinate.y;}
+
+    public BuildingType getBuildingType() {
+        return this.type;
+    }
 }
