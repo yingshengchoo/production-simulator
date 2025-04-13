@@ -16,7 +16,6 @@ import productsimulation.setup.TypeParser;
 import java.io.BufferedReader;
 import java.io.StringReader;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public class AddBuildingWindow {
@@ -31,66 +30,46 @@ public class AddBuildingWindow {
         grid.setVgap(10);
         grid.setPadding(new Insets(20, 150, 10, 10));
 
+        // Building name input
         Label nameLabel = new Label("Building Name:");
         TextField nameField = new TextField();
         nameField.setPromptText("Enter unique building name");
         grid.add(nameLabel, 0, 0);
         grid.add(nameField, 1, 0);
 
+        // Building type selection
         Label typeLabel = new Label("Building Type:");
         ComboBox<String> typeCombo = new ComboBox<>();
         typeCombo.setPromptText("Select building type");
         grid.add(typeLabel, 0, 1);
         grid.add(typeCombo, 1, 1);
 
-        Label xLabel = new Label("X Coordinate:");
+        // Coordinate inputs (optional)
+        Label xLabel = new Label("X Coordinate (optional):");
         TextField xField = new TextField();
         xField.setPromptText("Enter X coordinate");
         grid.add(xLabel, 0, 2);
         grid.add(xField, 1, 2);
 
-        Label yLabel = new Label("Y Coordinate:");
+        Label yLabel = new Label("Y Coordinate (optional):");
         TextField yField = new TextField();
         yField.setPromptText("Enter Y coordinate");
         grid.add(yLabel, 0, 3);
         grid.add(yField, 1, 3);
 
-        Label capacityLabel = new Label("Capacity:");
-        TextField capacityField = new TextField();
-        capacityField.setPromptText("Positive integer");
-        Label priorityLabel = new Label("Priority:");
-        TextField priorityField = new TextField();
-        priorityField.setPromptText("Positive float");
-        capacityLabel.setVisible(false);
-        capacityField.setVisible(false);
-        priorityLabel.setVisible(false);
-        priorityField.setVisible(false);
-        grid.add(capacityLabel, 0, 4);
-        grid.add(capacityField, 1, 4);
-        grid.add(priorityLabel, 0, 5);
-        grid.add(priorityField, 1, 5);
-
-        Label mineOutputLabel = new Label("Mine Output:");
-        TextField mineOutputField = new TextField();
-        mineOutputField.setPromptText("e.g. metal");
-        mineOutputLabel.setVisible(false);
-        mineOutputField.setVisible(false);
-        grid.add(mineOutputLabel, 0, 6);
-        grid.add(mineOutputField, 1, 6);
-
+        // Selection of existing buildings as sources
         Label sourcesLabel = new Label("Select sources:");
-        List<String> existingBuildings = state.getBuildings().stream()
+        List<String> existingBuildings = state.getBuildings()
+                .stream()
                 .map(Building::getName)
                 .collect(Collectors.toList());
         ListView<String> sourcesListView = new ListView<>();
         sourcesListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         sourcesListView.setItems(FXCollections.observableArrayList(existingBuildings));
-        grid.add(sourcesLabel, 0, 7);
-        grid.add(sourcesListView, 1, 7);
+        grid.add(sourcesLabel, 0, 4);
+        grid.add(sourcesListView, 1, 4);
 
-        Button submitBtn = new Button("Add Building");
-        Button cancelBtn = new Button("Cancel");
-
+        // The TypeParser uses JSON-defined building types.
         String json = "{\n" +
                 "  \"types\": [\n" +
                 "    {\n" +
@@ -115,44 +94,29 @@ public class AddBuildingWindow {
                 "  ]\n" +
                 "}";
         TypeParser typeParser = new TypeParser();
-        String parseError;
+        String typeParseError;
         try (BufferedReader br = new BufferedReader(new StringReader(json))) {
-            parseError = typeParser.parse(br);
-        } catch (Exception e) {
-            parseError = "Error reading in-memory JSON for building types: " + e.getMessage();
+            typeParseError = typeParser.parse(br);
+        } catch (Exception ex) {
+            typeParseError = "Error reading in-memory JSON: " + ex.getMessage();
         }
-        if (parseError != null) {
-            showError("TypeParser error: " + parseError);
+        if (typeParseError != null) {
+            showError("TypeParser error: " + typeParseError);
             stage.close();
             return;
         }
-
         List<BuildingType> availableTypes = typeParser.getTypeMap();
         List<String> typeNames = availableTypes.stream()
                 .map(BuildingType::getName)
                 .collect(Collectors.toList());
         typeCombo.setItems(FXCollections.observableArrayList(typeNames));
 
-        typeCombo.setOnAction(e -> {
-            String selectedTypeName = typeCombo.getValue();
-            BuildingType selectedType = availableTypes.stream()
-                    .filter(bt -> bt.getName().equals(selectedTypeName))
-                    .findFirst().orElse(null);
-            if (selectedType == null) {
-                return;
-            }
-            boolean isStorage = selectedType instanceof StorageType;
-            boolean isMine = selectedType.getName().toLowerCase().contains("mine");
+        // Removal of extra field inputs; the extra parameters are now taken from JSON.
+        // No additional fields for capacity, priority, or mine output are added.
 
-            capacityLabel.setVisible(isStorage);
-            capacityField.setVisible(isStorage);
-            priorityLabel.setVisible(isStorage);
-            priorityField.setVisible(isStorage);
-
-            mineOutputLabel.setVisible(isMine);
-            mineOutputField.setVisible(isMine);
-        });
-
+        // Submit and Cancel buttons
+        Button submitBtn = new Button("Add Building");
+        Button cancelBtn = new Button("Cancel");
         submitBtn.setOnAction(e -> {
             String bName = nameField.getText().trim();
             String tName = typeCombo.getValue();
@@ -161,6 +125,7 @@ public class AddBuildingWindow {
                 return;
             }
 
+            // Determine the coordinate; if absent or invalid, assign automatically.
             Coordinate coord;
             try {
                 if (!xField.getText().trim().isEmpty() && !yField.getText().trim().isEmpty()) {
@@ -174,15 +139,16 @@ public class AddBuildingWindow {
                 coord = Building.getValidCoordinate();
             }
 
+            // Get selected source buildings from the list view.
             ObservableList<String> selectedSourceNames = sourcesListView.getSelectionModel().getSelectedItems();
             List<Building> chosenSources = state.getBuildings().stream()
                     .filter(b -> selectedSourceNames.contains(b.getName()))
                     .collect(Collectors.toList());
 
+            // Find the BuildingType instance from the available types.
             BuildingType selectedType = availableTypes.stream()
                     .filter(bt -> bt.getName().equals(tName))
                     .findFirst().orElse(null);
-
             if (selectedType == null) {
                 showError("Selected building type not found.");
                 return;
@@ -190,14 +156,8 @@ public class AddBuildingWindow {
 
             Building newBuilding;
             try {
-                if (selectedType instanceof StorageType) {
-                    if (capacityField.getText().trim().isEmpty() || priorityField.getText().trim().isEmpty()) {
-                        showError("Please enter capacity and priority for Storage type.");
-                        return;
-                    }
-                    int capacity = Integer.parseInt(capacityField.getText().trim());
-                    double priority = Double.parseDouble(priorityField.getText().trim());
-
+                // Creation based on type; extra building parameters come from the JSON.
+                if (tName.toLowerCase().contains("storage")) {
                     newBuilding = Storage.addStorage(
                             bName,
                             chosenSources,
@@ -206,29 +166,14 @@ public class AddBuildingWindow {
                             coord,
                             (StorageType) selectedType
                     );
-                    newBuilding.changePolicy(state.getDefaultSourcePolicy());
-                    newBuilding.changePolicy(state.getDefaultServePolicy());
                 } else if (tName.toLowerCase().contains("mine")) {
-                    if (mineOutputField.getText().trim().isEmpty()) {
-                        showError("Please enter the mine output (e.g. metal).");
-                        return;
-                    }
-                    String mineOutput = mineOutputField.getText().trim();
-                    BuildingType mineType = new BuildingType(
-                            tName,
-                            Map.of(mineOutput,
-                                    new Recipe(Recipe.getRecipe(mineOutput).getLatency(),
-                                            Map.of(),
-                                            mineOutput))
-                    );
-
                     newBuilding = Mine.addMine(
                             bName,
                             chosenSources,
                             state.getDefaultSourcePolicy(),
                             state.getDefaultServePolicy(),
                             coord,
-                            mineType
+                            selectedType
                     );
                 } else {
                     newBuilding = Factory.addFactory(
@@ -245,37 +190,37 @@ public class AddBuildingWindow {
                 return;
             }
 
-            showInfo("Successfully added building: " + newBuilding.getName()
-                    + " at (" + newBuilding.getX() + ", " + newBuilding.getY() + ")"
-                    + "\nSources: " + chosenSources.stream().map(Building::getName).collect(Collectors.joining(", ")));
-
+            showInfo("Successfully added building: " + newBuilding.getName() +
+                    " at (" + newBuilding.getX() + ", " + newBuilding.getY() + ")" +
+                    "\nSources: " + chosenSources.stream()
+                    .map(Building::getName)
+                    .collect(Collectors.joining(", ")));
             if (onSuccess != null) {
                 onSuccess.run();
             }
             stage.close();
         });
-
         cancelBtn.setOnAction(e -> stage.close());
 
-        grid.add(submitBtn, 0, 8);
-        grid.add(cancelBtn, 1, 8);
+        grid.add(submitBtn, 0, 5);
+        grid.add(cancelBtn, 1, 5);
 
-        Scene scene = new Scene(grid, 560, 600);
+        Scene scene = new Scene(grid, 560, 400);
         stage.setScene(scene);
         stage.showAndWait();
     }
 
     private static void showError(String msg) {
-        Alert a = new Alert(Alert.AlertType.ERROR, msg, ButtonType.OK);
-        a.setTitle("Error");
-        a.setHeaderText(null);
-        a.showAndWait();
+        Alert alert = new Alert(Alert.AlertType.ERROR, msg, ButtonType.OK);
+        alert.setTitle("Error");
+        alert.setHeaderText(null);
+        alert.showAndWait();
     }
 
     private static void showInfo(String msg) {
-        Alert a = new Alert(Alert.AlertType.INFORMATION, msg, ButtonType.OK);
-        a.setTitle("Success");
-        a.setHeaderText(null);
-        a.showAndWait();
+        Alert alert = new Alert(Alert.AlertType.INFORMATION, msg, ButtonType.OK);
+        alert.setTitle("Success");
+        alert.setHeaderText(null);
+        alert.showAndWait();
     }
 }
