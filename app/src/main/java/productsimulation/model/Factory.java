@@ -12,29 +12,29 @@ import productsimulation.request.sourcePolicy.SourcePolicy;
 import java.util.List;
 
 public class Factory extends Building {
-  
-  /**
-   * Constructs a Factory with the specified name, type, sources, and policies.
-   *
-   * @param name         is the coordinate of the top left of the ship.
-   * @param type         is the Building Type.
-   * @param sources      is list of buildings that provides the ingredients to make the recipes.
-   * @param sourcePolicy is the policy that the building uses to select between sources.
-   * @param servePolicy  is the policy that the building uses to select between requests.
-   */
-  public Factory(String name, BuildingType type, List<Building> sources, SourcePolicy sourcePolicy, ServePolicy servePolicy){
-    super(name, type, sources, sourcePolicy, servePolicy);
-  }
 
-  public Factory(String name, BuildingType type, SourcePolicy sourcePolicy, ServePolicy servePolicy){
-    super(name, type, sourcePolicy, servePolicy);
-  }
+    /**
+     * Constructs a Factory with the specified name, type, sources, and policies.
+     *
+     * @param name         is the coordinate of the top left of the ship.
+     * @param type         is the Building Type.
+     * @param sources      is list of buildings that provides the ingredients to make the recipes.
+     * @param sourcePolicy is the policy that the building uses to select between sources.
+     * @param servePolicy  is the policy that the building uses to select between requests.
+     */
+    public Factory(String name, BuildingType type, List<Building> sources, SourcePolicy sourcePolicy, ServePolicy servePolicy){
+        super(name, type, sources, sourcePolicy, servePolicy);
+    }
 
-  public Factory(String name, BuildingType type, List<Building> sources, SourcePolicy sourcePolicy, ServePolicy servePolicy, Coordinate coordinate){
-    super(name, type, sources, sourcePolicy, servePolicy, coordinate);
-  }
+    public Factory(String name, BuildingType type, SourcePolicy sourcePolicy, ServePolicy servePolicy){
+        super(name, type, sourcePolicy, servePolicy);
+    }
 
-    public static Factory addFactory(String name, List<String> srcStr, SourcePolicy sourcePolicy,
+    public Factory(String name, BuildingType type, List<Building> sources, SourcePolicy sourcePolicy, ServePolicy servePolicy, Coordinate coordinate){
+        super(name, type, sources, sourcePolicy, servePolicy, coordinate);
+    }
+
+    public static Factory addFactory(String name, List<Building> sources, SourcePolicy sourcePolicy,
                                      ServePolicy servePolicy, Coordinate coordinate, BuildingType type) {
         Board board = Board.getBoard();
         int weight = board.getBoardPosWeight(coordinate);
@@ -42,19 +42,17 @@ public class Factory extends Building {
             throw new RuntimeException("invalid coordinate!");
         }
 
-        List<Building> sources = Building.parseSrcList(srcStr);
-
         return new Factory(name, type, sources, sourcePolicy, servePolicy, coordinate);
     }
 
-  
+
     public boolean goOneStep() {
 
         if(currentRequest == null) {
             if(!requestQueue.isEmpty()) {
 //                [recipe selection]: Hw2 has fifo on cycle 8
                 Log.level2Log("[request selection]: " + name + " has serve policy '" + servePolicy.getName()
-                + "' on cycle " + LogicTime.getInstance().getStep());
+                        + "' on cycle " + LogicTime.getInstance().getStep());
                 for(Request request: requestQueue) {
                     // 库存中request原料齐备才可以开工
                     request.updateStatus(name, newIngredientsArrived, storage);
@@ -93,16 +91,15 @@ public class Factory extends Building {
         return false;
     }
 
-  // Returns the String representation of Factory.
-  @Override
-  public String toString() {
-    return "Factory\n{name='" + super.name + 
-           "',\n type='" + super.type.getName() + 
-           "',\n sources=" + printSources() + 
-           // ",\n sourcePolicy=" + super.sourcePolicy.toString() + 
-           // "',\n servePolicy=" + super.servePolicy.toString() + "'" +
-      ",\n" + printStorageAndRequest()+
-      "\n}";
-  }
+    // Returns the String representation of Factory.
+    @Override
+    public String toString() {
+        return "Factory\n{name='" + super.name +
+                "',\n type='" + super.type.getName() +
+                "',\n sources=" + printSources() +
+                // ",\n sourcePolicy=" + super.sourcePolicy.toString() +
+                // "',\n servePolicy=" + super.servePolicy.toString() + "'" +
+                ",\n" + printStorageAndRequest()+
+                "\n}";
+    }
 }
-

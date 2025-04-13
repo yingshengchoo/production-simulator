@@ -41,16 +41,14 @@ public class Storage extends Building {
     super.storage.put(itemToStore, 0);
     readyQueue = new ArrayList<>();
   }
- 
-  public static Storage addStorage(String name, List<String> srcStr, SourcePolicy sourcePolicy,
+
+  public static Storage addStorage(String name, List<Building> sources, SourcePolicy sourcePolicy,
                                    ServePolicy servePolicy, Coordinate coordinate, StorageType type) {
     Board board = Board.getBoard();
     int weight = board.getBoardPosWeight(coordinate);
     if (weight == 1 || weight == Integer.MAX_VALUE) {
       throw new RuntimeException("invalid coordinate!");
     }
-
-    List<Building> sources = Building.parseSrcList(srcStr);
 
     Storage newStorage = new Storage(name, type.getItemToStore(), sources, type.getCapacity(), type.getPriority(), sourcePolicy, servePolicy, coordinate);
     newStorage.initializeStorageType();
@@ -68,7 +66,7 @@ public class Storage extends Building {
     super.storage.put(itemToStore, 0);
     readyQueue = new ArrayList<>();
   }
-  
+
   /**
    * Constructs a Mine with the specified name, type, sources, and policies.
    *
@@ -95,7 +93,7 @@ public class Storage extends Building {
       //FIFO POLICY HERE: Directly writing it without calling the pre written funciton :P
       Request request = requestQueue.get(0);
       storage.put(recipe.getOutput(), storage.get(recipe.getOutput())-1);
-      requestQueue.remove(request); 
+      requestQueue.remove(request);
       //Adds request to ready queue which will be sent back to requester the next time step.
       readyQueue.add(request);
       R--;//Update R 
@@ -113,7 +111,7 @@ public class Storage extends Building {
       return 1; //needs update here, not sure if it matches the logic for recursive lat.
     }
   }
-  
+
   @Override
   public int getRequestCount() {
     if(hasStock()){
@@ -152,17 +150,17 @@ public class Storage extends Building {
     //No need here R--; I believe...
     //source increases storage (R++) and outstanding request -1 (R--) which cancels out
   }
-  
+
   @Override
   protected void update(){
     for(Request request: readyQueue){
       Log.level2Log("[ingredient delivered]: " + request.getIngredient()
-                    + " to " + request.getRequesterName()
-            + " from " + name + " on cycle " + LogicTime.getInstance().getStep());
+              + " to " + request.getRequesterName()
+              + " from " + name + " on cycle " + LogicTime.getInstance().getStep());
       request.doneReportAndTransport();
       currentRequest = null;//should always be null
     }
-    
+
     readyQueue.clear();
   }
 
@@ -190,36 +188,36 @@ public class Storage extends Building {
     super.type = new BuildingType(name, Map.of(itemToStore, new Recipe(Recipe.getRecipe(itemToStore).getLatency(), new HashMap<>(), itemToStore)));
     this.recipe = new Recipe(Recipe.getRecipe(itemToStore).getLatency(), new HashMap<>(), itemToStore);
   }
-  
+
   @Override
   public void addRequest(Request request){
-      //[ingredient assignment]: wood assigned to W to deliver to D
-      Log.level1Log("[ingredient assignment]: " + request.getIngredient() + " assigned to " + name +
-                    " to deliver to " + request.getRequesterName());
+    //[ingredient assignment]: wood assigned to W to deliver to D
+    Log.level1Log("[ingredient assignment]: " + request.getIngredient() + " assigned to " + name +
+            " to deliver to " + request.getRequesterName());
 //    [source selection]: D (qlen) has request for door on 0
-      Log.level2Log("[source selection]: " + name + " (" + sourcePolicy.getName() + ") has request for "
-                   + request.getIngredient() + " on " + LogicTime.getInstance().getStep());
+    Log.level2Log("[source selection]: " + name + " (" + sourcePolicy.getName() + ") has request for "
+            + request.getIngredient() + " on " + LogicTime.getInstance().getStep());
 
-      //有貨不用往下椽
-      if(getStockCount() > 0){
-        readyQueue.add(request);
-        R--;
-      } else {
-        //沒貨繼續往下傳
-        requestQueue.add(request);
-        //Storage only sends request to sources periodically.
-        //so sends request to sources in goOneStep()
-        Log.level2Log("[" + name + ":" + recipe.getOutput() + ":" + LogicTime.getInstance().getStep()
-                + "] For Storage " + name);
-        //only do this if storage == 0, otherwise return the request.
-        Building chosenSource = sourcePolicy.getSource(sources, recipe.getOutput());
-        Log.level2Log("    selecting " + chosenSource.getName());
-        Recipe childRecipe = chosenSource.type.getRecipeByProductName(recipe.getOutput());
-        Request req = new Request(recipe.getOutput(), childRecipe, this);
-        chosenSource.addRequest(req);
-      }
+    //有貨不用往下椽
+    if(getStockCount() > 0){
+      readyQueue.add(request);
+      R--;
+    } else {
+      //沒貨繼續往下傳
+      requestQueue.add(request);
+      //Storage only sends request to sources periodically.
+      //so sends request to sources in goOneStep()
+      Log.level2Log("[" + name + ":" + recipe.getOutput() + ":" + LogicTime.getInstance().getStep()
+              + "] For Storage " + name);
+      //only do this if storage == 0, otherwise return the request.
+      Building chosenSource = sourcePolicy.getSource(sources, recipe.getOutput());
+      Log.level2Log("    selecting " + chosenSource.getName());
+      Recipe childRecipe = chosenSource.type.getRecipeByProductName(recipe.getOutput());
+      Request req = new Request(recipe.getOutput(), childRecipe, this);
+      chosenSource.addRequest(req);
+    }
   }
-  
+
   /**
    * Sends request to sources  
    */
@@ -227,14 +225,14 @@ public class Storage extends Building {
     if(sources == null || sources.isEmpty()){
       return;
     }
-    
+
     if (getFrequency() == -1){
       return;
     }
     boolean isOnFrequency = (LogicTime.getInstance().getStep() % getFrequency() == 0);
     if(isOnFrequency){
       Log.level2Log("[" + name + ":" + recipe.getOutput() + ":" + LogicTime.getInstance().getStep()
-                + "] For Storage " + name);
+              + "] For Storage " + name);
       Building chosenSource = sourcePolicy.getSource(sources, recipe.getOutput());
       if(chosenSource == null) {
         return;
@@ -255,16 +253,16 @@ public class Storage extends Building {
       return (int)Math.ceil((double)(totalCapacity * totalCapacity) / (double)(R * priority));
     }
   }
-  
+
   @Override
   public String toString() {
-    return "Storage\n{name='" + super.name +   
-           "',\n stores='" + recipe.getOutput() + 
-           "',\n sources=" + printSources() + 
-           ",\n capacity=" + totalCapacity +
-      // ",\n sourcePolicy=" + super.sourcePolicy.toString() + 
-           // "',\n servePolicy=" + super.servePolicy.toString() + "'" +
-           ",\n" + printStorageAndRequest()+
-           "\n}";
+    return "Storage\n{name='" + super.name +
+            "',\n stores='" + recipe.getOutput() +
+            "',\n sources=" + printSources() +
+            ",\n capacity=" + totalCapacity +
+            // ",\n sourcePolicy=" + super.sourcePolicy.toString() +
+            // "',\n servePolicy=" + super.servePolicy.toString() + "'" +
+            ",\n" + printStorageAndRequest()+
+            "\n}";
   }
 }

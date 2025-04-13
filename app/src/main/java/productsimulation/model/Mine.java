@@ -9,21 +9,21 @@ import productsimulation.request.sourcePolicy.SourcePolicy;
 import java.util.List;
 
 public class Mine extends Building {
-  /**
-   * Constructs a Mine with the specified name, type, sources, and policies.
-   *
-   * @param name         is the name of the Mine.
-   * @param type         is the Building Type.
-   * @param sources      is list of buildings that provides the ingredients to make the recipes.
-   * @param sourcePolicy is the policy that the building uses to select between sources.
-   * @param servePolicy  is the policy that the building uses to select between requests.
-   */
-  public Mine(String name, BuildingType type, List<Building> sources, SourcePolicy sourcePolicy, ServePolicy servePolicy){
-    super(name, type, sources, sourcePolicy, servePolicy);
-  }
+    /**
+     * Constructs a Mine with the specified name, type, sources, and policies.
+     *
+     * @param name         is the name of the Mine.
+     * @param type         is the Building Type.
+     * @param sources      is list of buildings that provides the ingredients to make the recipes.
+     * @param sourcePolicy is the policy that the building uses to select between sources.
+     * @param servePolicy  is the policy that the building uses to select between requests.
+     */
+    public Mine(String name, BuildingType type, List<Building> sources, SourcePolicy sourcePolicy, ServePolicy servePolicy){
+        super(name, type, sources, sourcePolicy, servePolicy);
+    }
 
     public static Mine addMine(String name, List<Building> sources, SourcePolicy sourcePolicy,
-                                     ServePolicy servePolicy, Coordinate coordinate, BuildingType type) {
+                               ServePolicy servePolicy, Coordinate coordinate, BuildingType type) {
         Board board = Board.getBoard();
         int weight = board.getBoardPosWeight(coordinate);
         if (weight == 1 || weight == Integer.MAX_VALUE) {
@@ -34,22 +34,22 @@ public class Mine extends Building {
     }
 
     /**
-   * Constructs a Mine with the specified name, type, and policies.
-   *
-   * @param name         is the name of the Mine.
-   * @param type         is the Building Type.
-   * @param sourcePolicy is the policy that the building uses to select between sources.
-   * @param servePolicy  is the policy that the building uses to select between requests.
-   */
+     * Constructs a Mine with the specified name, type, and policies.
+     *
+     * @param name         is the name of the Mine.
+     * @param type         is the Building Type.
+     * @param sourcePolicy is the policy that the building uses to select between sources.
+     * @param servePolicy  is the policy that the building uses to select between requests.
+     */
 
     public Mine(String name, BuildingType type, SourcePolicy sourcePolicy, ServePolicy servePolicy){
         super(name, type, sourcePolicy, servePolicy);
     }
 
-  public Mine(String name, BuildingType type, List<Building> sources, SourcePolicy sourcePolicy, ServePolicy servePolicy, Coordinate coordinate){
-    super(name, type, sources, sourcePolicy, servePolicy, coordinate);
-   }
-  
+    public Mine(String name, BuildingType type, List<Building> sources, SourcePolicy sourcePolicy, ServePolicy servePolicy, Coordinate coordinate){
+        super(name, type, sources, sourcePolicy, servePolicy, coordinate);
+    }
+
     public boolean goOneStep() {
         if(currentRequest == null) {
             if(!requestQueue.isEmpty()) {
@@ -73,17 +73,17 @@ public class Mine extends Building {
         return false;
     }
 
-  // Returns the String representation of Mine.
-  @Override
-  public String toString() {
-    return "Mine\n{name='" + super.name + 
-      "',\n mine='" + super.type.getName() + 
-           "',\n sources=" + printSources() + 
-           // ",\n sourcePolicy=" + super.sourcePolicy.toString() + 
-           // ",\n servePolicy=" + super.servePolicy.toString() + "'" + 
-      ",\n" + printStorageAndRequest() +
-      "\n}";
-  }
+    // Returns the String representation of Mine.
+    @Override
+    public String toString() {
+        return "Mine\n{name='" + super.name +
+                "',\n mine='" + super.type.getName() +
+                "',\n sources=" + printSources() +
+                // ",\n sourcePolicy=" + super.sourcePolicy.toString() +
+                // ",\n servePolicy=" + super.servePolicy.toString() + "'" +
+                ",\n" + printStorageAndRequest() +
+                "\n}";
+    }
 
- 
+
 }
