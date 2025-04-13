@@ -53,7 +53,7 @@ public class Road {
         }
         Road road = new Road(bsrc, bdst);
         Log.level0Log(srcName + " -> " + dstName + " connected");
-        return "";
+        return null;
     }
 
     // 此处不检查夹角，依靠shortestPath内的逻辑检查夹角

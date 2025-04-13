@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import productsimulation.Board;
+import productsimulation.Coordinate;
 import productsimulation.SoleSourcePolicy;
 import productsimulation.request.servePolicy.*;
 import productsimulation.request.sourcePolicy.*;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Collections;
 import java.util.ArrayList;
 import java.util.HashMap;
+
 
 public class BuildingTest {
   @BeforeEach
@@ -70,4 +72,11 @@ public class BuildingTest {
     assertEquals(expected, f.printStorageAndRequest());
   }
 
+  @Test
+  public void test_buildingCoordinates(){
+    BuildingType t1 = new BuildingType("type1", Collections.emptyMap());
+    Factory f1 =  new Factory("factory1", t1, Collections.emptyList(), null, null, new Coordinate(10,11));
+    assertEquals(10,f1.getX());
+    assertEquals(11,f1.getY());
+  }
 }

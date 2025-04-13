@@ -1,4 +1,4 @@
-package productsimulation.model;
+package productsimulation.model.road;
 
 import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.BeforeEach;
@@ -367,5 +367,19 @@ class RoadTest {
         Board.getBoard().setBoardPosWeight(new Coordinate(0, 3), Integer.MAX_VALUE);
         ArrayList<Coordinate> p3 = new ArrayList<>();
         assertEquals(-1, Road.shortestPath(c1, c2, p3));
+    }
+
+    @Test
+    void test_connectHandler_illegal() {
+        assertNotNull(Road.connectHandler(null, "name"));
+        assertNotNull(Road.connectHandler("name", null));
+        assertNotNull(Road.connectHandler("name1", "name2"));
+    }
+
+    @Test
+    void test_getDistance_illegal() {
+        AtomBuilding b1 = new AtomBuilding(new Coordinate(1,1));
+        AtomBuilding b2 = new AtomBuilding(new Coordinate(2,2));
+        assertThrows(IllegalArgumentException.class, ()->Road.getDistance(b1, b2));
     }
 }

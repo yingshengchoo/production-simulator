@@ -178,8 +178,6 @@ class AppTest {
                 "e2e_log_outputs/output_storage3.txt");
     }
 
-
-
     @Test
     public void noParameterMain() {
         App.main(new String[]{});
