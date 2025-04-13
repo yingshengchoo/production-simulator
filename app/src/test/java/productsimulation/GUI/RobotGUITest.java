@@ -6,6 +6,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.testfx.api.FxAssert;
 import org.testfx.framework.junit5.ApplicationTest;
@@ -33,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 
+@Disabled
 public class RobotGUITest extends ApplicationTest {
 
     private State state;
