@@ -25,29 +25,29 @@ import java.util.stream.Collectors;
 
 public class AddBuildingWindow {
 
-    private static final String BUILDING_TYPES_JSON = "{\n" +
-            "  \"types\": [\n" +
-            "    {\n" +
-            "      \"name\": \"Bolt Storage (100)\",\n" +
-            "      \"type\": \"storage\",\n" +
-            "      \"info\": {\n" +
-            "        \"stores\": \"bolt\",\n" +
-            "        \"capacity\": 100,\n" +
-            "        \"priority\": 1.7\n" +
-            "      }\n" +
-            "    },\n" +
-            "    {\n" +
-            "      \"name\": \"Door Factory\",\n" +
-            "      \"type\": \"factory\",\n" +
-            "      \"info\": {\n" +
-            "        \"recipes\": [\n" +
-            "          \"door\",\n" +
-            "          \"bolt\"\n" +
-            "        ]\n" +
-            "      }\n" +
-            "    }\n" +
-            "  ]\n" +
-            "}";
+//    private static final String BUILDING_TYPES_JSON = "{\n" +
+//            "  \"types\": [\n" +
+//            "    {\n" +
+//            "      \"name\": \"Bolt Storage (100)\",\n" +
+//            "      \"type\": \"storage\",\n" +
+//            "      \"info\": {\n" +
+//            "        \"stores\": \"bolt\",\n" +
+//            "        \"capacity\": 100,\n" +
+//            "        \"priority\": 1.7\n" +
+//            "      }\n" +
+//            "    },\n" +
+//            "    {\n" +
+//            "      \"name\": \"Door Factory\",\n" +
+//            "      \"type\": \"factory\",\n" +
+//            "      \"info\": {\n" +
+//            "        \"recipes\": [\n" +
+//            "          \"door\",\n" +
+//            "          \"bolt\"\n" +
+//            "        ]\n" +
+//            "      }\n" +
+//            "    }\n" +
+//            "  ]\n" +
+//            "}";
 
     public static void show(final State state, final Runnable onSuccess) {
         final Stage stage = new Stage();
@@ -101,16 +101,16 @@ public class AddBuildingWindow {
         // Parse the building types from the JSON using the TypeParser.
         final TypeParser typeParser = new TypeParser();
         String typeParseError;
-        try (BufferedReader br = new BufferedReader(new StringReader(BUILDING_TYPES_JSON))) {
-            typeParseError = typeParser.parse(br);
-        } catch (Exception ex) {
-            typeParseError = "Error reading in-memory JSON: " + ex.getMessage();
-        }
-        if (typeParseError != null) {
-            showError("TypeParser error: " + typeParseError);
-            stage.close();
-            return;
-        }
+//        try (BufferedReader br = new BufferedReader(new StringReader(BUILDING_TYPES_JSON))) {
+//            typeParseError = typeParser.parse(br);
+//        } catch (Exception ex) {
+//            typeParseError = "Error reading in-memory JSON: " + ex.getMessage();
+//        }
+//        if (typeParseError != null) {
+//            showError("TypeParser error: " + typeParseError);
+//            stage.close();
+//            return;
+//        }
         final List<BuildingType> availableTypes = typeParser.getTypeMap();
         final List<String> typeNames = availableTypes.stream()
                 .map(BuildingType::getName)
