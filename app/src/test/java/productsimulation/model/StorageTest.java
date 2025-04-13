@@ -297,8 +297,26 @@ public class StorageTest {
   @Test
   public void test_emptySource(){
     Storage s1 =new Storage("Drawer", "socks", null, 100, 100, null, null, new Coordinate(100, 100));
-    s1.goOneStep();
-    Storage s2 =new Storage("Drawer", "socks", new ArrayList<>(), 100, 100, null, null, new Coordinate(100, 100));
-    s2.goOneStep();
+    assertDoesNotThrow(()->s1.sendRequest());
+
+ArrayList<Building> sources = new ArrayList<>();
+    Recipe socks1 = new Recipe(10, Collections.emptyMap(), "socks");
+    Recipe socks2 = new Recipe(2, Collections.emptyMap(), "socks");
+   
+    Recipe pair = new Recipe(1,Map.of("socks", 2), "pairOfSocks");
+    ArrayList<Recipe> rl = new ArrayList<>();
+    rl.add(socks1);
+    rl.add(socks2);
+    rl.add(pair);
+    Recipe.setRecipeGlobalList(rl);
+   
+    Mine m1 = new Mine("SocksMine1", new BuildingType("SockED", Map.of("socks", socks1)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy());
+    Mine m2 = new Mine("SocksMine2", new BuildingType("SockET", Map.of("socks", socks2)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy());
+    sources.add(m1);
+    sources.add(m2);
+    Storage s2 = new Storage("Drawer", "pairs", sources, 100, 102, new SourceQLen(), new FIFOPolicy(), new Coordinate(7,7));
+
+    s2.initializeStorageType();
+    assertDoesNotThrow(()->s2.sendRequest());
   }
 }
