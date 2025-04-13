@@ -21,6 +21,7 @@ public class Storage extends Building {
   private int totalCapacity;
   private List<Request> readyQueue;
   private Recipe recipe;
+  private String itemToStore;
   private int R;
   /**
    * Constructs a Mine with the specified name, type, sources, and policies.
@@ -31,15 +32,16 @@ public class Storage extends Building {
    * @param servePolicy  is the policy that the building uses to select between requests.
    */
   public Storage(String name, String itemToStore, List<Building> sources, int totalCapacity, double priority, SourcePolicy sourcePolicy, ServePolicy servePolicy, Coordinate coordinate){
-    super(name, new BuildingType(name, Map.of(itemToStore, new Recipe(Recipe.getRecipe(itemToStore).getLatency(), new HashMap<>(), itemToStore))), sources, sourcePolicy, new FIFOPolicy(), coordinate); // Storage only supports FIFO!
-    this.recipe = new Recipe(Recipe.getRecipe(itemToStore).getLatency(), new HashMap<>(), itemToStore);
+    super(name, null, sources, sourcePolicy, new FIFOPolicy(), coordinate); // Storage only supports FIFO!
+    this.recipe = null;
+    this.itemToStore = itemToStore;
     this.totalCapacity = totalCapacity;
     this.priority = priority;
     this.R = totalCapacity;
     super.storage.put(itemToStore, 0);
     readyQueue = new ArrayList<>();
   }
-
+ 
   public static Storage addStorage(List<Building> sources, SourcePolicy sourcePolicy,
                                    ServePolicy servePolicy, Coordinate coordinate, StorageType type) {
     Board board = Board.getBoard();
@@ -54,7 +56,8 @@ public class Storage extends Building {
   // Constructor without coordinate input
   public Storage(String name, String itemToStore, List<Building> sources, int totalCapacity, double priority, SourcePolicy sourcePolicy, ServePolicy servePolicy){
     super(name, new BuildingType(name, Map.of(itemToStore, new Recipe(Recipe.getRecipe(itemToStore).getLatency(), new HashMap<>(), itemToStore))), sources, sourcePolicy, new FIFOPolicy()); // Storage only supports FIFO!
-    this.recipe = new Recipe(Recipe.getRecipe(itemToStore).getLatency(), new HashMap<>(), itemToStore);
+    this.recipe = null;
+    this.itemToStore = itemToStore;
     this.totalCapacity = totalCapacity;
     this.priority = priority;
     this.R = totalCapacity;
@@ -177,6 +180,13 @@ public class Storage extends Building {
 
   public String getRecipeOutput(){
     return recipe.getOutput();
+  }
+
+  public void initializeStorageType(){
+    if(type == null){
+      super.type = new BuildingType(name, Map.of(itemToStore, new Recipe(Recipe.getRecipe(itemToStore).getLatency(), new HashMap<>(), itemToStore)));
+      this.recipe = new Recipe(Recipe.getRecipe(itemToStore).getLatency(), new HashMap<>(), itemToStore);
+    }
   }
   
   @Override

@@ -5,6 +5,7 @@ import productsimulation.command.Command;
 import productsimulation.command.CommandParser;
 import productsimulation.model.Building;
 import productsimulation.model.BuildingType;
+import productsimulation.model.Storage;
 import productsimulation.model.Recipe;
 import productsimulation.request.servePolicy.FIFOPolicy;
 import productsimulation.request.servePolicy.ServePolicy;
@@ -97,6 +98,14 @@ public class App {
             requestBroadcaster.addRecipes(r);
             recipeList.add(r);
         }
+
+        for(Building b: buildings.values()){
+          if(b instanceof Storage){
+            Storage s = (Storage) b;
+            s.initializeStorageType();
+          }
+        }
+        
         Recipe.setRecipeList(recipeList);
     }
 
