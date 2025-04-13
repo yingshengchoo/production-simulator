@@ -32,7 +32,7 @@ public class RecipeTest {
     list.add(r3);
     list.add(r4);
     
-    Recipe.setRecipeList(list);
+    Recipe.setRecipeGlobalList(list);
     assertEquals(r1, Recipe.getRecipe("recipe1"));
     assertEquals(r4, Recipe.getRecipe("output_placeholder"));
     assertNull(Recipe.getRecipe("Not in Recipe List"));

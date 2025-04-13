@@ -2,7 +2,6 @@ package productsimulation.model;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import productsimulation.model.road.Road;
@@ -23,7 +22,7 @@ public class StorageTest {
     LogicTime.getInstance().reset();
     RequestBroadcaster.getInstance().reset();
     Board.getBoard().cleanup();
-    Building.buildings.clear();
+    Building.buildingGlobalList.clear();
   }
   
   @Test
@@ -32,7 +31,7 @@ public class StorageTest {
     ArrayList<Recipe> recipeList = new ArrayList<>();
     recipeList.add(new Recipe(3, Collections.emptyMap(), "a"));
     recipeList.add(new Recipe(2, Collections.emptyMap(), "socks"));
-    Recipe.setRecipeList(recipeList);
+    Recipe.setRecipeGlobalList(recipeList);
     sources.add(new Storage("Closet", "a" , Collections.emptyList(), 100, 3, null,null));
     sources.add(new Factory("DoorInc", new BuildingType("Door", Collections.emptyMap()), Collections.emptyList(), null, null));
     sources.add(new Mine("DiamondMine", new BuildingType("Diamond", Collections.emptyMap()), Collections.emptyList(), null, null));
@@ -55,7 +54,7 @@ public class StorageTest {
    ArrayList<Recipe> rl = new ArrayList<>();
    rl.add(socks);
    rl.add(pair);
-   Recipe.setRecipeList(rl);
+   Recipe.setRecipeGlobalList(rl);
    
    Mine m1 = new Mine("SocksMine1", new BuildingType("SmellySocks", Map.of("socks", socks)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy(), new Coordinate(1, 2));
    Mine m2 = new Mine("SocksMine2", new BuildingType("SmellySocks", Map.of("socks", socks)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy(), new Coordinate(2, 1));
@@ -72,12 +71,12 @@ public class StorageTest {
    assertEquals("socks", s1.getRecipeOutput());
 
    RequestBroadcaster rb = RequestBroadcaster.getInstance();
-   rb.addBuildings(m1);
-   rb.addBuildings(m2);
-   rb.addBuildings(s1);
-   rb.addBuildings(f);
-   rb.addRecipes(socks);
-   rb.addRecipes(pair);
+//   rb.addBuildings(m1);
+//   rb.addBuildings(m2);
+//   rb.addBuildings(s1);
+//   rb.addBuildings(f);
+//   rb.addRecipes(socks);
+//   rb.addRecipes(pair);
 
    // connect the buildings
    Road.connectHandler(m1.getName(), s1.getName());
@@ -189,7 +188,7 @@ public class StorageTest {
     ArrayList<Recipe> recipeList = new ArrayList<>();
     recipeList.add(new Recipe(3, Collections.emptyMap(), "a"));
     recipeList.add(new Recipe(2, Collections.emptyMap(), "socks"));
-    Recipe.setRecipeList(recipeList);
+    Recipe.setRecipeGlobalList(recipeList);
     Storage s1 = new Storage("Drawer", "socks", 150, 10, null, null, new Coordinate(4,2));
     s1.initializeStorageType();
     assertEquals((int)Math.ceil((double)(s1.getTotalCapacity() * s1.getTotalCapacity()) / (double)(s1.getR() * s1.getPriority())), s1.getFrequency());
@@ -211,7 +210,7 @@ public class StorageTest {
    ArrayList<Recipe> rl = new ArrayList<>();
    rl.add(socks);
    rl.add(pair);
-   Recipe.setRecipeList(rl);
+   Recipe.setRecipeGlobalList(rl);
    
    Mine m1 = new Mine("SocksMine1", new BuildingType("SmellySocks", Map.of("socks", socks)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy());
    Mine m2 = new Mine("SocksMine2", new BuildingType("SmellySocks", Map.of("socks", socks)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy());
@@ -240,7 +239,7 @@ public class StorageTest {
    ArrayList<Recipe> rl = new ArrayList<>();
    rl.add(socks);
    rl.add(pair);
-   Recipe.setRecipeList(rl);
+   Recipe.setRecipeGlobalList(rl);
    
    Mine m1 = new Mine("SocksMine1", new BuildingType("SockTree", Map.of("socks", socks)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy());
    Mine m2 = new Mine("SocksMine2", new BuildingType("SockOre", Map.of("socks", socks)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy());
@@ -278,7 +277,7 @@ public class StorageTest {
    rl.add(socks1);
    rl.add(socks2);
    rl.add(pair);
-   Recipe.setRecipeList(rl);
+   Recipe.setRecipeGlobalList(rl);
    
    Mine m1 = new Mine("SocksMine1", new BuildingType("SockED", Map.of("socks", socks1)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy());
    Mine m2 = new Mine("SocksMine2", new BuildingType("SockET", Map.of("socks", socks2)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy());

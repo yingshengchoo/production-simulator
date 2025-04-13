@@ -14,7 +14,6 @@ import productsimulation.request.sourcePolicy.SourceQLen;
 import productsimulation.setup.SetupParser;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -94,14 +93,14 @@ public class App {
             b.changeServePolicy(servePolicy);
 
 //            logicTime.addObservers(b);
-            requestBroadcaster.addBuildings(b);
+//            requestBroadcaster.addBuildings(b);
             buildingList.add(b);
         }
-        Building.buildings = buildingList;
+        Building.buildingGlobalList = buildingList;
 
         ArrayList<Recipe> recipeList = new ArrayList<>();
         for(Recipe r: recipes.values()) {
-            requestBroadcaster.addRecipes(r);
+//            requestBroadcaster.addRecipes(r);
             recipeList.add(r);
         }
 
@@ -111,8 +110,8 @@ public class App {
             s.initializeStorageType();
           }
         }
-        
-        Recipe.setRecipeList(recipeList);
+
+        Recipe.setRecipeGlobalList(recipeList);
     }
 
     private static boolean initialize(String setupFilePath) {

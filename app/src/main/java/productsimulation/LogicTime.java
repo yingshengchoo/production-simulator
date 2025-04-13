@@ -3,8 +3,6 @@ package productsimulation;
 import productsimulation.model.*;
 import productsimulation.model.road.RequestQueue;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.io.Serializable;
 
 public class LogicTime implements Serializable{
@@ -58,7 +56,7 @@ public class LogicTime implements Serializable{
             
             // 新一步
 //            for(Building b: observers) {
-            for(Building b: Building.buildings) {
+            for(Building b: Building.buildingGlobalList) {
                 boolean idle = b.notified();
                 finished = idle && finished;
             }
@@ -67,7 +65,7 @@ public class LogicTime implements Serializable{
             }
             //確保 Storage 有先發給Sources request 
 //            for(Building b: observers){
-            for(Building b: Building.buildings){
+            for(Building b: Building.buildingGlobalList){
               if(b instanceof Storage){
                 Storage s = (Storage) b;
                 s.sendRequest();
@@ -75,7 +73,7 @@ public class LogicTime implements Serializable{
             }
             currentStep += 1;
 //            for(Building b: observers) {
-            for(Building b: Building.buildings) {
+            for(Building b: Building.buildingGlobalList) {
                 b.updateNotified();
             }
             Log.level2Log("==========Step from " + (currentStep-1) + " to " + currentStep + " end==========\n");

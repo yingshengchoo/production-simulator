@@ -16,7 +16,7 @@ public class BuildingTest {
   @BeforeEach
   public void cleanUpBefore() {
     Board.getBoard().cleanup();
-    Building.buildings.clear();
+    Building.buildingGlobalList.clear();
   }
 
   @Test

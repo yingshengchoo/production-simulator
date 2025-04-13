@@ -37,7 +37,7 @@ public class Road {
     }
 
     public static String connectHandler(String srcName, String dstName) {
-        List<Building> buildings = Building.buildings;
+        List<Building> buildings = Building.buildingGlobalList;
         Building bsrc = null;
         Building bdst = null;
         for(Building b: buildings) {

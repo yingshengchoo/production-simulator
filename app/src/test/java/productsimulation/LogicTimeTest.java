@@ -17,7 +17,7 @@ class LogicTimeTest {
     @BeforeEach
     void setUp() {
         LogicTime.getInstance().reset();
-        Building.buildings.clear();
+        Building.buildingGlobalList.clear();
     }
 
     @Test
@@ -44,14 +44,14 @@ class LogicTimeTest {
 
 //        t.addObservers(woodMine);
 //        assertEquals(t.getObserversSize(), 1);
-        assertEquals(Building.buildings.size(), 1);
+        assertEquals(Building.buildingGlobalList.size(), 1);
 
         Mine woodMine2 = new Mine("SecondWoodMine", woodMineType,
                 new ArrayList<Building>(), soleSourcePolicy, oneTimeServePolicy);
 
 //        t.addObservers(woodMine2);
 //        assertEquals(t.getObserversSize(), 2);
-        assertEquals(Building.buildings.size(), 2);
+        assertEquals(Building.buildingGlobalList.size(), 2);
 
 //        t.removeObservers(woodMine);
 //        assertEquals(t.getObserversSize(), 1);

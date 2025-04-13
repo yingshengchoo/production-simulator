@@ -19,7 +19,7 @@ class SetPolicyCommandTest {
     @BeforeEach
     public void cleanUpBefore() {
         Board.getBoard().cleanup();
-        Building.buildings.clear();
+        Building.buildingGlobalList.clear();
         State.getInstance().setInstanceToNull();
     }
 
@@ -45,9 +45,9 @@ class SetPolicyCommandTest {
         types.add(new BuildingType("EggRoll", recipes));
 
         RequestBroadcaster requestBroadcaster = RequestBroadcaster.getInstance();
-        requestBroadcaster.addRecipes(eggroll);
-        requestBroadcaster.addBuildings(mine);
-        requestBroadcaster.addBuildings(factory);
+//        requestBroadcaster.addRecipes(eggroll);
+//        requestBroadcaster.addBuildings(mine);
+//        requestBroadcaster.addBuildings(factory);
 
         LogicTime logicTime = LogicTime.getInstance();
 //        logicTime.addObservers(mine);

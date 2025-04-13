@@ -29,7 +29,7 @@ public class MockingEnv {
         Recipe r3 = new Recipe(10, i1, "r3");
         Recipe r4 = new Recipe(10, i2, "r4");
 
-        Recipe.setRecipeList(List.of(r1, r2, r3, r4));
+        Recipe.setRecipeGlobalList(List.of(r1, r2, r3, r4));
 
         // init Buildings
         BuildingType ft1 = new BuildingType("t1", Map.of("r1", r1));
@@ -45,7 +45,7 @@ public class MockingEnv {
         Building f4 = new Factory("f4", ft4, List.of(b1, b2, b22, b23), qlen, fifo);
         buildings = List.of(b1, b2, f3, f32, f4, b22, b23);
 
-        Building.buildings.addAll(buildings);
+        Building.buildingGlobalList.addAll(buildings);
         for(Building bsrc: buildings) {
             for(Building bdst: buildings) {
                 Road tmp = new Road(bsrc, bdst);

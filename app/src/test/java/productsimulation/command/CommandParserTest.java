@@ -3,7 +3,6 @@ package productsimulation.command;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import productsimulation.Board;
-import productsimulation.State;
 import productsimulation.model.Building;
 
 import java.io.IOException;
@@ -14,7 +13,7 @@ public  class CommandParserTest {
     @BeforeEach
     public void cleanUpBefore() {
         Board.getBoard().cleanup();
-        Building.buildings.clear();
+        Building.buildingGlobalList.clear();
     }
     @Test
     public void test_null_line() {

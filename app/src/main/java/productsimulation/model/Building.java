@@ -32,7 +32,15 @@ public abstract class Building implements Serializable {
     protected Coordinate coordinate;
 
 
-    public static List<Building> buildings = new ArrayList<>();
+    public static List<Building> buildingGlobalList = new ArrayList<>();
+    public static Building getBuilding(String item) {
+        for (Building b : buildingGlobalList) {
+            if (b.getName().equals(item)) {
+                return b;
+            }
+        }
+        return null;
+    }
 
     public Building(String name, BuildingType type, List<Building> sources, SourcePolicy sourcePolicy, ServePolicy servePolicy, Coordinate coordinate) {
         this.name = name;
@@ -43,7 +51,7 @@ public abstract class Building implements Serializable {
         storage = new HashMap<>();
         this.sources = sources;
         this.coordinate = coordinate;
-        buildings.add(this);
+        buildingGlobalList.add(this);
 
         // add to board
         Board.getBoard().addBuilding(this);
@@ -71,14 +79,14 @@ public abstract class Building implements Serializable {
         requestQueue = new ArrayList<>();
         storage = new HashMap<>();
         this.coordinate = getValidCoordinate();
-        buildings.add(this);
+        buildingGlobalList.add(this);
 
         Board.getBoard().addBuilding(this);
     }
 
     public static Coordinate getValidCoordinate() {
         List<Coordinate> existingCoordinates = new ArrayList<>();
-        for (Building b : buildings) {
+        for (Building b : buildingGlobalList) {
             existingCoordinates.add(b.getCoordinate());
         }
 

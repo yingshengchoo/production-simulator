@@ -9,13 +9,11 @@ import productsimulation.model.Building;
 import productsimulation.model.road.Road;
 import productsimulation.request.MockingEnv;
 
-import java.util.HashMap;
-
 class SegmentTest {
     @BeforeEach
     public void cleanUpBefore() {
         Board.getBoard().cleanup();
-        Building.buildings.clear();
+        Building.buildingGlobalList.clear();
         Road.cleanup();
     }
 

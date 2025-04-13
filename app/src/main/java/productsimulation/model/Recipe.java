@@ -7,7 +7,7 @@ import java.util.Map;
 import java.io.Serializable;
 public class Recipe implements Serializable{
 
-  private static List<Recipe> recipeList = new ArrayList<>();
+  public static List<Recipe> recipeGlobalList = new ArrayList<>();
   private String output;
   // ingredients应当为LinkedHashMap，或者其它能保留顺序的map。ingredients顺序会影响request传播顺序。
   private Map<String, Integer> ingredients;
@@ -15,7 +15,7 @@ public class Recipe implements Serializable{
 
   
   public static Recipe getRecipe(String item) {
-    for (Recipe recipe : recipeList) {
+    for (Recipe recipe : recipeGlobalList) {
       if (recipe.output.equals(item)) {
         return recipe;
       }
@@ -50,10 +50,10 @@ public class Recipe implements Serializable{
     /**
      * Sets the list of all the recipe in the simulation.
      *
-     * @param recipeList     is the list of Recipes.
+     * @param recipeGlobalList     is the list of Recipes.
      */
-  public static void setRecipeList(List<Recipe> recipeList) {
-    Recipe.recipeList = recipeList;
+  public static void setRecipeGlobalList(List<Recipe> recipeGlobalList) {
+    Recipe.recipeGlobalList = recipeGlobalList;
   }
 
   /**

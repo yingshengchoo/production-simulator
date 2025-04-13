@@ -1,7 +1,6 @@
 package productsimulation.request.sourcePolicy;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import productsimulation.Board;
 import productsimulation.model.Building;
@@ -16,7 +15,7 @@ class SourceSimplelatTest {
     @BeforeEach
     public void cleanUpBefore() {
         Board.getBoard().cleanup();
-        Building.buildings.clear();
+        Building.buildingGlobalList.clear();
         Road.cleanup();
     }
 

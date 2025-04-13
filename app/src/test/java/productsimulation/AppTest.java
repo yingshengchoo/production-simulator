@@ -3,7 +3,6 @@ package productsimulation;
 import org.apache.logging.log4j.LogManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import productsimulation.command.CommandParser;
 import productsimulation.command.RequestCommand;
 import productsimulation.command.StepCommand;
@@ -12,7 +11,6 @@ import productsimulation.model.road.Road;
 import productsimulation.request.Request;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -21,7 +19,6 @@ import java.util.*;
 import org.junit.jupiter.api.Test;
 import productsimulation.request.servePolicy.ServePolicy;
 import productsimulation.request.sourcePolicy.SourcePolicy;
-import productsimulation.setup.SetupParser;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -38,7 +35,7 @@ class AppTest {
     void setUp() throws IOException {
         LogicTime.getInstance().reset();
         Board.getBoard().cleanup();
-        Building.buildings.clear();
+        Building.buildingGlobalList.clear();
         Request.clearIds();
         cleanUpLogFile(filePath);
     }
@@ -84,10 +81,10 @@ class AppTest {
 //        logicTime.addObservers(woodMine);
 //        logicTime.addObservers(woodSwordFactory);
         RequestBroadcaster requestBroadcaster = RequestBroadcaster.getInstance();
-        requestBroadcaster.addRecipes(woodMineRecipe);
-        requestBroadcaster.addRecipes(woodSwordRecipe);
-        requestBroadcaster.addBuildings(woodMine);
-        requestBroadcaster.addBuildings(woodSwordFactory);
+//        requestBroadcaster.addRecipes(woodMineRecipe);
+//        requestBroadcaster.addRecipes(woodSwordRecipe);
+//        requestBroadcaster.addBuildings(woodMine);
+//        requestBroadcaster.addBuildings(woodSwordFactory);
 
         RequestCommand requestCommand = new RequestCommand("wooden_sword", "FirstWoodenSwordFactory");
         requestCommand.execute();

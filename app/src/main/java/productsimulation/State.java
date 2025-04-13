@@ -194,7 +194,7 @@ public class State implements Serializable{
   public Building getBuildings(String name) {
     // use Building.buildings instead for uniform management
 //    for (Building b : buildings) {
-    for (Building b : Building.buildings) {
+    for (Building b : Building.buildingGlobalList) {
       if (b.getName().equals(name)) {
         return b;
       }
@@ -204,7 +204,7 @@ public class State implements Serializable{
 
   public List<Building> getBuildings() {
 // use Building.buildings instead for uniform management
-    return Building.buildings;
+    return Building.buildingGlobalList;
 //    return buildings;
   }
 
