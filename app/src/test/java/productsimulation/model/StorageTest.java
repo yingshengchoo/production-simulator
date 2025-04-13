@@ -180,6 +180,9 @@ public class StorageTest {
     assertEquals(0, m2.getRequestCount());
     assertEquals(1, s1.getStorage().size());
 
+    rb.userRequestHandler(pair.getOutput(),f.getName()); 
+    t.stepNHandler(3);
+
   }
 
   @Test
@@ -296,10 +299,11 @@ public class StorageTest {
   
   @Test
   public void test_emptySource(){
-    Storage s1 =new Storage("Drawer", "socks", null, 100, 100, null, null, new Coordinate(100, 100));
-    assertDoesNotThrow(()->s1.sendRequest());
-
-ArrayList<Building> sources = new ArrayList<>();
+    ArrayList<Building> sources = new ArrayList<>();
+    Recipe socks1 = new Recipe(10, Collections.emptyMap(), "socks");
+    Recipe socks2 = new Recipe(2, Collections.emptyMap(), "socks");
+  
+    ArrayList<Building> sources = new ArrayList<>();
     Recipe socks1 = new Recipe(10, Collections.emptyMap(), "socks");
     Recipe socks2 = new Recipe(2, Collections.emptyMap(), "socks");
    
@@ -315,6 +319,9 @@ ArrayList<Building> sources = new ArrayList<>();
     sources.add(m1);
     sources.add(m2);
     Storage s2 = new Storage("Drawer", "pairs", sources, 100, 102, new SourceQLen(), new FIFOPolicy(), new Coordinate(7,7));
+
+    Storage s1 =new Storage("Drawer", "socks", null, 100, 100, null, null, new Coordinate(100, 100));
+    assertDoesNotThrow(()->s1.sendRequest());
 
     s2.initializeStorageType();
     assertDoesNotThrow(()->s2.sendRequest());
