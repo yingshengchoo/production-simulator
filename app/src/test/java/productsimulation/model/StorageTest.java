@@ -36,7 +36,8 @@ public class StorageTest {
     sources.add(new Storage("Closet", "a" , Collections.emptyList(), 100, 3, null,null));
     sources.add(new Factory("DoorInc", new BuildingType("Door", Collections.emptyMap()), Collections.emptyList(), null, null));
     sources.add(new Mine("DiamondMine", new BuildingType("Diamond", Collections.emptyMap()), Collections.emptyList(), null, null));
-                Storage s1 = new Storage("Drawer", "socks", sources, 150, 10, null, null, new Coordinate(1,1));
+    Storage s1 = new Storage("Drawer", "socks", sources, 150, 10, null, null, new Coordinate(1,1));
+    s1.initializeStorageType();
     String expected = "Storage\n{name='Drawer',\n stores='socks',\n sources=[Closet, DoorInc, DiamondMine],\n capacity=150,\n storage=[socks: 0],\n request queue size=0\n}";
 
     assertEquals(expected, s1.toString());
@@ -61,9 +62,13 @@ public class StorageTest {
    sources.add(m1);
    sources.add(m2);
    Storage s1 = new Storage("Drawer", "socks", sources, 100, 102, new SourceQLen(), new FIFOPolicy(), new Coordinate(1,1));
+
+   s1.initializeStorageType();
+
    ArrayList<Building> sources2 = new ArrayList<>();
    sources2.add(s1);
    Factory f = new Factory("SocksFactory", new BuildingType("PairOfSocks", Map.of("pairOfSocks", pair)), sources2, new SourceQLen(), new FIFOPolicy(), new Coordinate(0, 1));
+
 
    assertEquals("socks", s1.getRecipeOutput());
    
@@ -81,10 +86,10 @@ public class StorageTest {
    rb.addRecipes(pair);
 
    // connect the buildings
-    Building.buildings.add(m1);
-    Building.buildings.add(m2);
-    Building.buildings.add(s1);
-    Building.buildings.add(f);
+   Building.buildings.add(m1);
+   Building.buildings.add(m2);
+   Building.buildings.add(s1);
+   Building.buildings.add(f);
    Road.connectHandler(m1.getName(), s1.getName());
    Road.connectHandler(m2.getName(), s1.getName());
    Road.connectHandler(s1.getName(), f.getName());
@@ -196,11 +201,12 @@ public class StorageTest {
     recipeList.add(new Recipe(2, Collections.emptyMap(), "socks"));
     Recipe.setRecipeList(recipeList);
     Storage s1 = new Storage("Drawer", "socks", 150, 10, null, null, new Coordinate(4,2));
-
+    s1.initializeStorageType();
     assertEquals((int)Math.ceil((double)(s1.getTotalCapacity() * s1.getTotalCapacity()) / (double)(s1.getR() * s1.getPriority())), s1.getFrequency());
 
 
     Storage s2 = new Storage("closet", "socks", 0, 10, null, null, new Coordinate(1,2));
+    s2.initializeStorageType();
     assertEquals(0, s2.getR());
     assertEquals(-1, s2.getFrequency());
   }
@@ -222,7 +228,7 @@ public class StorageTest {
    sources.add(m1);
    sources.add(m2);
    Storage s1 = new Storage("Drawer", "socks", sources, 0, 102, new SourceQLen(), new FIFOPolicy(), new Coordinate(3,3));
-
+   s1.initializeStorageType();
    assertEquals("socks", s1.getRecipeOutput());
 
    //frequency is -1, so no requests should be sent to sources
@@ -250,6 +256,8 @@ public class StorageTest {
    sources.add(m2);
    Storage s1 = new Storage("Drawer", "socks", sources, 100, 102, new SourceQLen(), new FIFOPolicy(), new Coordinate(1,0));
 
+   s1.initializeStorageType();
+   
    assertEquals(0, s1.getTotalRemainTime());
    s1.addRequest(Request.getDummyRequest("socks", s1));
    assertEquals(2, s1.getTotalRemainTime());
@@ -257,6 +265,9 @@ public class StorageTest {
    assertEquals(4, s1.getTotalRemainTime());
 
    Storage s2 = new Storage("Drawer", "socks", sources, 100, 102, new SourceQLen(), new FIFOPolicy(), new Coordinate(5,4));
+
+   s2.initializeStorageType();
+   
    assertEquals(0, s2.getTotalRemainTime());
    s2.updateStorage("socks");
    assertEquals(-2, s2.getTotalRemainTime());
@@ -282,6 +293,8 @@ public class StorageTest {
    sources.add(m1);
    sources.add(m2);
    Storage s1 = new Storage("Drawer", "socks", sources, 100, 102, new SourceQLen(), new FIFOPolicy(), new Coordinate(7,7));
+
+   s1.initializeStorageType();
 
    assertEquals(1, s1.getCurrentRemainTime());
    
