@@ -21,16 +21,14 @@ import java.util.Map;
 public class BoardDisplay {
     private State state;
     private Canvas canvas;
-
-    // Base scale (size of one cell in pixels; will be recomputed dynamically).
+    // Base scale, in pixels per grid unit; recalculated dynamically.
     private double scale = 40;
-    // Offsets to translate coordinates to canvas pixels.
+    // Offsets for translating board coordinates to canvas coordinates.
     private double offsetX = 0;
     private double offsetY = 0;
-
-    // Margin added in grid units.
+    // Margin (in grid units) added around the bounding box.
     private static final int MARGIN = 2;
-    // Fixed pixel paddings to ensure that the grid does not touch the canvas edges.
+    // Fixed pixel paddings to keep the grid from touching the canvas edges.
     private static final double TOP_PADDING = 50;
     private static final double LEFT_PADDING = 50;
 
@@ -46,12 +44,11 @@ public class BoardDisplay {
     /**
      * Refreshes the board display.
      * <p>
-     * Steps:
-     * 1. Compute a bounding box from the building coordinates (with added MARGIN), but clamp the minimums to zero.
-     * 2. Calculate a scale factor that fits the effective area (canvas width & height minus fixed paddings) and then center the drawing.
-     * 3. Draw grid lines along with column and row numbers (the column numbers appear along the top and row numbers along the left).
-     * 4. Draw road cells by iterating over Road.existingRoadTiles (cells with road weight, i.e. weight==1).
-     * 5. Draw the buildings on top.
+     * This method computes the bounding box of building coordinates (with margin),
+     * calculates an appropriate scale factor for the canvas, draws grid lines with labels,
+     * renders road tiles from Road.existingRoadTiles, and finally draws buildings.
+     * The building names are drawn inside the cell; if the name is too long it is split into
+     * two lines to avoid overlap.
      */
     public void refresh() {
         GraphicsContext gc = canvas.getGraphicsContext2D();
@@ -60,7 +57,7 @@ public class BoardDisplay {
         List<Building> buildings = state.getBuildings();
         if (buildings.isEmpty()) return;
 
-        // 1) Compute bounding box over building coordinates.
+        // 1. Compute the bounding box over building coordinates.
         int minX = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE;
         int minY = Integer.MAX_VALUE, maxY = Integer.MIN_VALUE;
         for (Building b : buildings) {
@@ -71,36 +68,32 @@ public class BoardDisplay {
             if (by < minY) minY = by;
             if (by > maxY) maxY = by;
         }
-        // Add margin; clamp minimum to 0 so grid labels are always nonnegative.
+        // Add margin and ensure minimum is zero.
         minX = Math.max(minX - MARGIN, 0);
         minY = Math.max(minY - MARGIN, 0);
         maxX += MARGIN;
         maxY += MARGIN;
-
         int boxWidthUnits = maxX - minX + 1;
         int boxHeightUnits = maxY - minY + 1;
 
-        // 2) Compute effective drawing area by subtracting fixed paddings.
+        // 2. Compute effective drawing area and determine scale.
         double effectiveWidth = canvas.getWidth() - LEFT_PADDING;
         double effectiveHeight = canvas.getHeight() - TOP_PADDING;
         double scaleX = effectiveWidth / boxWidthUnits;
         double scaleY = effectiveHeight / boxHeightUnits;
         scale = Math.min(scaleX, scaleY);
-
-        // Compute extra space remaining after drawing the grid.
         double extraX = effectiveWidth - boxWidthUnits * scale;
         double extraY = effectiveHeight - boxHeightUnits * scale;
-        // Offsets: add fixed paddings and distribute extra space evenly.
         offsetX = LEFT_PADDING - minX * scale + extraX / 2;
         offsetY = TOP_PADDING - minY * scale + extraY / 2;
 
-        // 3) Draw grid lines with column and row numbers.
+        // 3. Draw grid lines and labels.
         gc.setStroke(Color.DARKGRAY);
         gc.setLineWidth(1.0);
         for (int i = minX; i <= maxX + 1; i++) {
             double xLine = i * scale + offsetX;
             gc.strokeLine(xLine, offsetY, xLine, offsetY + boxHeightUnits * scale);
-            if (i <= maxX) {  // Draw column numbers at the top of each cell.
+            if (i <= maxX) {
                 gc.setFill(Color.BLACK);
                 gc.fillText(String.valueOf(i), xLine + scale / 2 - 5, offsetY - 10);
             }
@@ -108,13 +101,13 @@ public class BoardDisplay {
         for (int j = minY; j <= maxY + 1; j++) {
             double yLine = j * scale + offsetY;
             gc.strokeLine(offsetX, yLine, offsetX + boxWidthUnits * scale, yLine);
-            if (j <= maxY) {  // Draw row numbers at the left of each cell.
+            if (j <= maxY) {
                 gc.setFill(Color.BLACK);
                 gc.fillText(String.valueOf(j), offsetX - 30, yLine + scale / 2 + 5);
             }
         }
 
-        // 4) Draw roads from Road.existingRoadTiles.
+        // 4. Draw roads from Road.existingRoadTiles.
         Map<Coordinate, RoadTile> roadTileMap = Road.existingRoadTiles;
         gc.setFill(Color.GRAY);
         for (RoadTile roadTile : roadTileMap.values()) {
@@ -123,7 +116,6 @@ public class BoardDisplay {
                 double rx = coord.x * scale + offsetX;
                 double ry = coord.y * scale + offsetY;
                 gc.fillRect(rx, ry, scale, scale);
-
                 // Draw directional indicators.
                 gc.setStroke(Color.WHITE);
                 gc.setLineWidth(2);
@@ -141,13 +133,12 @@ public class BoardDisplay {
             }
         }
 
-        // 5) Draw buildings on top of the grid.
+        // 5. Draw buildings.
         for (Building b : buildings) {
             int bx = b.getX();
             int by = b.getY();
             double drawX = bx * scale + offsetX;
             double drawY = by * scale + offsetY;
-
             if (b instanceof Mine) {
                 gc.setFill(Color.LIGHTBLUE);
             } else if (b instanceof Factory) {
@@ -160,18 +151,26 @@ public class BoardDisplay {
             gc.fillRect(drawX, drawY, scale, scale);
             gc.setStroke(Color.BLACK);
             gc.strokeRect(drawX, drawY, scale, scale);
-
-            // Highlight nonviable buildings (those that aren't mines and have no sources).
+            // Highlight nonviable buildings (those that are not mines and have no sources).
             if (!(b instanceof Mine) && (b.getSources() == null || b.getSources().isEmpty())) {
                 gc.setStroke(Color.RED);
                 gc.setLineWidth(3);
                 gc.strokeRect(drawX, drawY, scale, scale);
                 gc.setLineWidth(1);
             }
-
-            // Draw the building's name inside the cell.
+            // Draw the building's name.
             gc.setFill(Color.BLACK);
-            gc.fillText(b.getName(), drawX + 3, drawY + scale / 2);
+            String name = b.getName();
+            // If the name is longer than 8 characters, split into two lines.
+            if (name.length() > 8) {
+                int mid = name.length() / 2;
+                String firstLine = name.substring(0, mid);
+                String secondLine = name.substring(mid);
+                gc.fillText(firstLine, drawX + 3, drawY + scale / 2 - 5);
+                gc.fillText(secondLine, drawX + 3, drawY + scale / 2 + 10);
+            } else {
+                gc.fillText(name, drawX + 3, drawY + scale / 2);
+            }
         }
     }
 }
