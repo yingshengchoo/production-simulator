@@ -3,40 +3,74 @@ package productsimulation.GUI;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import productsimulation.State;
 
+/**
+ * GUI initializes the graphical user interface.
+ * The main content is placed in a BorderPane that is wrapped by a StackPane.
+ * The StackPane is used to display overlays (such as the interactive connect overlay).
+ */
 public class GUI extends Application {
 
+    private static BoardDisplay boardDisplayInstance;
+    private static StackPane rootStackPane;
+    private static FeedbackPane feedbackPane;
     private State state;
-    private BoardDisplay boardDisplay;
     private ControlPanel controlPanel;
-    private FeedbackPane feedbackPane;
 
     @Override
     public void start(Stage primaryStage) {
         state = State.getInstance();
 
-        // Custom feedback pane for logs & info
         feedbackPane = new FeedbackPane();
-        feedbackPane.setText("Ready.\n");
+        feedbackPane.setText("Simulation ready.\n");
 
-        // Pass feedbackPane to the BoardDisplay constructor
-        boardDisplay = new BoardDisplay(state);
+        boardDisplayInstance = new BoardDisplay(state, feedbackPane);
+        controlPanel = new ControlPanel(state, boardDisplayInstance, feedbackPane);
 
-        controlPanel = new ControlPanel(state, boardDisplay, feedbackPane);
+        BorderPane mainPane = new BorderPane();
+        mainPane.setCenter(boardDisplayInstance.getCanvasPane());
+        mainPane.setRight(controlPanel);
+        mainPane.setBottom(feedbackPane);
 
-        BorderPane root = new BorderPane();
-        root.setCenter(boardDisplay.getCanvasPane());
-        root.setRight(controlPanel);
-        root.setBottom(feedbackPane);
+        rootStackPane = new StackPane();
+        rootStackPane.getChildren().add(mainPane);
 
-        Scene scene = new Scene(root, 1200, 800);
+        Scene scene = new Scene(rootStackPane, 1200, 800);
         primaryStage.setScene(scene);
         primaryStage.setTitle("Production Simulation GUI");
         primaryStage.show();
 
-        boardDisplay.refresh();
+        boardDisplayInstance.refresh();
+    }
+
+    /**
+     * Returns the active BoardDisplay instance.
+     *
+     * @return the BoardDisplay used in the GUI.
+     */
+    public static BoardDisplay getBoardDisplay() {
+        return boardDisplayInstance;
+    }
+
+    /**
+     * Returns the root pane (a StackPane) for overlays.
+     *
+     * @return the root StackPane.
+     */
+    public static StackPane getRootPane() {
+        return rootStackPane;
+    }
+
+    /**
+     * Returns the FeedbackPane for displaying log text.
+     *
+     * @return the current FeedbackPane.
+     */
+    public static FeedbackPane getFeedbackPane() {
+        return feedbackPane;
     }
 
     public static void main(String[] args) {

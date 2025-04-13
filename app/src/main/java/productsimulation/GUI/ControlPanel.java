@@ -11,14 +11,18 @@ import productsimulation.command.FinishCommand;
 import productsimulation.command.LoadCommand;
 import productsimulation.command.SaveCommand;
 import productsimulation.command.VerboseCommand;
+import productsimulation.GUI.ConnectWindow;
+import productsimulation.GUI.RequestWindow;
+import productsimulation.GUI.StepWindow;
+import productsimulation.GUI.PolicyWindow;
+import productsimulation.GUI.VerbosityWindow;
 
 /**
- * ControlPanel is the right-side pane in the GUI that contains all the command buttons.
- * It includes buttons for connecting buildings, requesting items, stepping, finishing,
- * loading, saving, setting verbosity, setting policy, and now adding a building.
- *
- * When the "Finish" command is executed successfully, all buttons are disabled so that no further
- * actions are permitted.
+ * ControlPanel displays command buttons on the GUI.
+ * Buttons include functionalities such as adding a building,
+ * connecting buildings, requesting items, stepping, finishing,
+ * loading, saving, changing verbosity, setting policies, and a new "Show Log" button.
+ * When "Show Log" is pressed, the log text is retrieved and updated in the FeedbackPane.
  */
 public class ControlPanel extends VBox {
 
@@ -26,7 +30,7 @@ public class ControlPanel extends VBox {
     private BoardDisplay boardDisplay;
     private FeedbackPane feedbackArea;
 
-    // Store all command buttons as instance variables
+    // Command buttons.
     private Button addBuildingBtn;
     private Button connectBtn;
     private Button requestBtn;
@@ -36,7 +40,15 @@ public class ControlPanel extends VBox {
     private Button saveBtn;
     private Button verbosityBtn;
     private Button policyBtn;
+    private Button showLogBtn;  // New "Show Log" button
 
+    /**
+     * Constructs the ControlPanel with all command buttons.
+     *
+     * @param state         the current simulation state
+     * @param boardDisplay  the board display component
+     * @param feedbackArea  the pane for displaying logs and feedback
+     */
     public ControlPanel(State state, BoardDisplay boardDisplay, FeedbackPane feedbackArea) {
         this.state = state;
         this.boardDisplay = boardDisplay;
@@ -45,102 +57,102 @@ public class ControlPanel extends VBox {
         setPadding(new Insets(10));
         setSpacing(10);
 
-        // 1) Add Building button (new)
         addBuildingBtn = new Button("Add Building");
         addBuildingBtn.setOnAction(e -> {
-            // BACKEND LOGIC:
-            // Here we pass the current state and a callback to refresh the board and update feedback.
             AddBuildingWindow.show(state, () -> {
                 boardDisplay.refresh();
-                setFeedBack(Log.getLogText());
+                feedbackArea.setText(Log.getLogText());
             });
         });
 
-        // 2) Connect Buildings button
         connectBtn = new Button("Connect Buildings");
         connectBtn.setOnAction(e -> {
             ConnectWindow.show(state, () -> {
                 boardDisplay.refresh();
-                setFeedBack(Log.getLogText());
+                feedbackArea.setText(Log.getLogText());
             });
         });
 
-        // 3) Request Item button
         requestBtn = new Button("Request Item");
         requestBtn.setOnAction(e -> {
             RequestWindow.show(state, () -> {
                 boardDisplay.refresh();
-                setFeedBack(Log.getLogText());
+                feedbackArea.setText(Log.getLogText());
             });
         });
 
-        // 4) Step button
         stepBtn = new Button("Step");
         stepBtn.setOnAction(e -> {
             StepWindow.show(state, () -> {
                 boardDisplay.refresh();
-                setFeedBack(Log.getLogText());
+                feedbackArea.setText(Log.getLogText());
             });
         });
 
-        // 5) Finish button
         finishBtn = new Button("Finish");
         finishBtn.setOnAction(e -> {
             String error = new FinishCommand().execute();
             if (error == null) {
                 boardDisplay.refresh();
-                setFeedBack(Log.getLogText());
-                disableAllButtons();  // Disable all buttons when finish is executed.
+                feedbackArea.setText(Log.getLogText());
+                disableAllButtons();
             } else {
                 showError("Finish error: " + error);
             }
         });
 
-        // 6) Load button
         loadBtn = new Button("Load");
         loadBtn.setOnAction(e -> {
             LoadWindow.show(() -> {
                 boardDisplay.refresh();
-                setFeedBack(Log.getLogText());
+                feedbackArea.setText(Log.getLogText());
             });
         });
 
-        // 7) Save button
         saveBtn = new Button("Save");
         saveBtn.setOnAction(e -> {
             SaveWindow.show(() -> {
-                setFeedBack(Log.getLogText());
+                feedbackArea.setText(Log.getLogText());
             });
         });
 
-        // 8) Verbosity button
         verbosityBtn = new Button("Set Verbosity");
         verbosityBtn.setOnAction(e -> {
             VerbosityWindow.show(val -> {
                 new VerboseCommand(val).execute();
-                setFeedBack(Log.getLogText());
+                feedbackArea.setText(Log.getLogText());
             });
         });
 
-        // 9) Policy button
         policyBtn = new Button("Set Policy");
         policyBtn.setOnAction(e -> {
             PolicyWindow.show(state, () -> {
                 boardDisplay.refresh();
-                setFeedBack(Log.getLogText());
+                feedbackArea.setText(Log.getLogText());
             });
         });
 
-        // Add all buttons to the ControlPanel VBox (order can be adjusted as needed)
+        // New "Show Log" button logic:
+        showLogBtn = new Button("Show Log");
+        showLogBtn.setOnAction(e -> {
+            // Retrieve the log text and display it in the FeedbackPane.
+            feedbackArea.setText(Log.getLogText());
+        });
+
         getChildren().addAll(
-                addBuildingBtn, connectBtn, requestBtn, stepBtn, finishBtn,
-                loadBtn, saveBtn, verbosityBtn, policyBtn
+                addBuildingBtn,
+                connectBtn,
+                requestBtn,
+                stepBtn,
+                finishBtn,
+                loadBtn,
+                saveBtn,
+                verbosityBtn,
+                policyBtn,
+                showLogBtn
         );
     }
 
-    /**
-     * Disables all command buttons after finish command has completed.
-     */
     private void disableAllButtons() {
         addBuildingBtn.setDisable(true);
         connectBtn.setDisable(true);
@@ -151,17 +163,11 @@ public class ControlPanel extends VBox {
         saveBtn.setDisable(true);
         verbosityBtn.setDisable(true);
         policyBtn.setDisable(true);
+        showLogBtn.setDisable(true);
     }
 
-    // Utility method to show an error alert.
     private void showError(String msg) {
-        Alert a = new Alert(Alert.AlertType.ERROR, msg, ButtonType.OK);
-        a.showAndWait();
-    }
-
-    // Utility method to update feedback in the feedback area.
-    private void setFeedBack(String text) {
-        feedbackArea.setText("");
-        feedbackArea.appendText(text + "\n");
+        Alert alert = new Alert(Alert.AlertType.ERROR, msg, ButtonType.OK);
+        alert.showAndWait();
     }
 }

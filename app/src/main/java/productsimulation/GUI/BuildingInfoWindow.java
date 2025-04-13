@@ -2,19 +2,35 @@ package productsimulation.GUI;
 
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import productsimulation.LogicTime;
-import productsimulation.model.*;
+import productsimulation.Log;
+import productsimulation.State;
+import productsimulation.model.Building;
+import productsimulation.model.Factory;
+import productsimulation.model.Mine;
+import productsimulation.model.Storage;
+import productsimulation.model.BuildingType;
 import productsimulation.request.Request;
 
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * BuildingInfoWindow displays details for a building in a pop-up window.
+ * It includes a "Connect" button that activates interactive connect mode.
+ */
 public class BuildingInfoWindow {
 
+    /**
+     * Displays a modal window with building information.
+     *
+     * @param b the building whose details are shown.
+     */
     public static void show(Building b) {
         Stage popup = new Stage();
         popup.initModality(Modality.APPLICATION_MODAL);
@@ -24,7 +40,6 @@ public class BuildingInfoWindow {
         layout.setSpacing(10);
         layout.setPadding(new Insets(15));
 
-        // Basic information
         String stepInfo = "Current Step: " + LogicTime.getInstance().getStep();
         String nameInfo = "Name: " + b.getName();
         String coordInfo = "Coordinate: (" + b.getX() + ", " + b.getY() + ")";
@@ -37,21 +52,27 @@ public class BuildingInfoWindow {
                 new Label(queueInfo)
         );
 
-        // Subtype-specific details
         if (b instanceof Mine) {
             layout.getChildren().addAll(mineLabels((Mine) b));
-        }
-        else if (b instanceof Storage) {
+        } else if (b instanceof Storage) {
             layout.getChildren().addAll(storageLabels((Storage) b));
-        }
-        else if (b instanceof Factory) {
+        } else if (b instanceof Factory) {
             layout.getChildren().addAll(factoryLabels((Factory) b));
-        }
-        else {
+        } else {
             layout.getChildren().add(new Label("Type: Unknown"));
         }
 
-        Scene scene = new Scene(layout, 300, 250);
+        Button connectBtn = new Button("Connect");
+        connectBtn.setOnAction(e -> {
+            popup.close();
+            // Activate interactive connection mode, and provide a callback that updates the log text in the feedback panel.
+            InteractiveConnectMode.activate(b.getName(), State.getInstance(), GUI.getBoardDisplay(), GUI.getRootPane(), () -> {
+                GUI.getFeedbackPane().setText(Log.getLogText());
+            });
+        });
+        layout.getChildren().add(connectBtn);
+
+        Scene scene = new Scene(layout, 300, 280);
         popup.setScene(scene);
         popup.showAndWait();
     }
@@ -80,10 +101,9 @@ public class BuildingInfoWindow {
         VBox vb = new VBox(5);
         vb.getChildren().add(new Label("Type: Factory"));
 
-        // Gather recipe info
         BuildingType bt = factory.getBuildingType();
         if (bt != null) {
-            Map<String, Recipe> recipeMap = bt.getAllRecipes();
+            Map<String, ?> recipeMap = bt.getAllRecipes();
             int recipeCount = recipeMap.size();
             vb.getChildren().add(new Label("Number of recipes: " + recipeCount));
             if (!recipeMap.isEmpty()) {
@@ -95,8 +115,8 @@ public class BuildingInfoWindow {
 
         Request currentReq = factory.getCurrentRequest();
         if (currentReq != null) {
-            vb.getChildren().add(new Label("In progress: " + currentReq.getIngredient()
-                    + " (" + factory.getCurrentRemainTime() + " steps remain)"));
+            vb.getChildren().add(new Label("In progress: " + currentReq.getIngredient() +
+                    " (" + factory.getCurrentRemainTime() + " steps remain)"));
         } else {
             vb.getChildren().add(new Label("Currently idle"));
         }
