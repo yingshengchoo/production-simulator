@@ -215,7 +215,7 @@ public class AddBuildingWindow {
                     int capacity = Integer.parseInt(capacityField.getText().trim());
                     double priority = Double.parseDouble(priorityField.getText().trim());
                     // Here assume no sources initially.
-                    newBuilding = Storage.addStorage(
+                    newBuilding = Storage.addStorage("", // todo
                             List.of(), // empty sources list
                             state.getDefaultSourcePolicy(),
                             state.getDefaultServePolicy(),
@@ -230,7 +230,7 @@ public class AddBuildingWindow {
                     String mineOutput = mineOutputField.getText().trim();
                     // We create a dummy BuildingType for mine
                     BuildingType mineType = new BuildingType(tName, Map.of(mineOutput, new Recipe(Recipe.getRecipe(mineOutput).getLatency(), Map.of(), mineOutput)));
-                    newBuilding = Mine.addMine(
+                    newBuilding = Mine.addMine("", //todo
                             List.of(), // no sources initially
                             state.getDefaultSourcePolicy(),
                             state.getDefaultServePolicy(),
@@ -238,7 +238,7 @@ public class AddBuildingWindow {
                             mineType);
                 } else {
                     // Default: factory
-                    newBuilding = Factory.addFactory(
+                    newBuilding = Factory.addFactory(" ", // todo
                             List.of(), // no sources initially; user can later connect buildings
                             state.getDefaultSourcePolicy(),
                             state.getDefaultServePolicy(),

@@ -450,6 +450,25 @@ public abstract class Building implements Serializable {
         return result;
     }
 
+    public static List<Building> parseSrcList(List<String> srcStr) {
+        List<Building> sources = new java.util.ArrayList<>();
+        for (String src : srcStr) {
+            boolean found = false;
+            for (Building b : Building.buildingGlobalList) {
+                if (b.getName().equals(src)) {
+                    sources.add(b);
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                throw new IllegalArgumentException("invalid building name :(");
+            }
+        }
+
+        return sources;
+    }
+
     public List<Request> getRequestQueue() {
         return requestQueue;
     }
