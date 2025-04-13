@@ -72,10 +72,6 @@ public class App {
         scanner.close();
     }
 
-    // todo 目前，全局的recipes，types，buildings在setupParser中首次解析完毕之后，
-    // todo 分散到了LogicTime，RequestBroadcaster，Recipe，State各个地方。
-    // todo 值得注意的是，目前的setupParser所返回的，是unmodifiable map
-    // todo 为了支持编辑功能，重构时直接将setupParser的get方法改为set ModelManager，上述四个类删除相应field
     public static void modelSetup(SetupParser parser) {
         Map<String, Recipe> recipes = parser.getRecipeMap();
         Map<String, BuildingType> types = parser.getTypeMap();
