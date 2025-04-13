@@ -98,20 +98,7 @@ public class AddBuildingWindow {
         grid.add(sourcesLabel, 0, 4);
         grid.add(sourcesListView, 1, 4);
 
-        // Parse the building types from the JSON using the TypeParser.
-        final TypeParser typeParser = new TypeParser();
-        String typeParseError;
-//        try (BufferedReader br = new BufferedReader(new StringReader(BUILDING_TYPES_JSON))) {
-//            typeParseError = typeParser.parse(br);
-//        } catch (Exception ex) {
-//            typeParseError = "Error reading in-memory JSON: " + ex.getMessage();
-//        }
-//        if (typeParseError != null) {
-//            showError("TypeParser error: " + typeParseError);
-//            stage.close();
-//            return;
-//        }
-        final List<BuildingType> availableTypes = typeParser.getTypeMap();
+        final List<BuildingType> availableTypes = BuildingType.getBuildingTypeList();
         final List<String> typeNames = availableTypes.stream()
                 .map(BuildingType::getName)
                 .collect(Collectors.toList());

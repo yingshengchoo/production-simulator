@@ -143,9 +143,10 @@ public class App {
     }
 
     //If GUI is True, open GUI
-    private static void play(String setupFilePath, boolean useGUI) {
+    private static void play(String setupFilePath, String addBuildingFilePath, boolean useGUI) {
         //setup
         boolean ret = initialize(setupFilePath);
+        initBuildingTypes(addBuildingFilePath);
         if(!ret) {
             return;
         }
@@ -183,15 +184,17 @@ public class App {
             filePath = args[0];
         }
 
+        String addBuildingFilePath = "";
         // init buildingType List
         if (args.length == 3 ) {
-            initBuildingTypes(args[2]);
+//            initBuildingTypes(args[2]);
+            addBuildingFilePath = args[2];
         }
-
         else if (!args[0].equals("-nw") && args.length == 2){
-            initBuildingTypes(args[1]);
+//            initBuildingTypes(args[1]);
+            addBuildingFilePath = args[1];
         }
 
-        play(filePath, useGUI);
+        play(filePath, addBuildingFilePath, useGUI);
     }
 }

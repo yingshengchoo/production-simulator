@@ -179,6 +179,11 @@ class AppTest {
     }
 
     @Test
+    public void threeParameterMain() {
+        App.main(new String[]{"-nw","storage3.json", "building_types.json"});
+    }
+
+    @Test
     public void noParameterMain() {
         App.main(new String[]{});
     }
