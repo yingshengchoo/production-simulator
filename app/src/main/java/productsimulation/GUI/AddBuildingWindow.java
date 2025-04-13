@@ -1,6 +1,7 @@
 package productsimulation.GUI;
 
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -9,17 +10,11 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import productsimulation.Coordinate;
 import productsimulation.State;
-import productsimulation.model.Building;
-import productsimulation.model.BuildingType;
-import productsimulation.model.Factory;
-import productsimulation.model.Mine;
-import productsimulation.model.Recipe;
-import productsimulation.model.Storage;
-import productsimulation.model.StorageType;
+import productsimulation.model.*;
 import productsimulation.setup.TypeParser;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
+import java.io.BufferedReader;
+import java.io.StringReader;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -45,8 +40,56 @@ public class AddBuildingWindow {
         Label typeLabel = new Label("Building Type:");
         ComboBox<String> typeCombo = new ComboBox<>();
         typeCombo.setPromptText("Select building type");
-        TypeParser typeParser = new TypeParser();
-        String typeParseError;
+        grid.add(typeLabel, 0, 1);
+        grid.add(typeCombo, 1, 1);
+
+        Label xLabel = new Label("X Coordinate:");
+        TextField xField = new TextField();
+        xField.setPromptText("Enter X coordinate");
+        grid.add(xLabel, 0, 2);
+        grid.add(xField, 1, 2);
+
+        Label yLabel = new Label("Y Coordinate:");
+        TextField yField = new TextField();
+        yField.setPromptText("Enter Y coordinate");
+        grid.add(yLabel, 0, 3);
+        grid.add(yField, 1, 3);
+
+        Label capacityLabel = new Label("Capacity:");
+        TextField capacityField = new TextField();
+        capacityField.setPromptText("Positive integer");
+        Label priorityLabel = new Label("Priority:");
+        TextField priorityField = new TextField();
+        priorityField.setPromptText("Positive float");
+        capacityLabel.setVisible(false);
+        capacityField.setVisible(false);
+        priorityLabel.setVisible(false);
+        priorityField.setVisible(false);
+        grid.add(capacityLabel, 0, 4);
+        grid.add(capacityField, 1, 4);
+        grid.add(priorityLabel, 0, 5);
+        grid.add(priorityField, 1, 5);
+
+        Label mineOutputLabel = new Label("Mine Output:");
+        TextField mineOutputField = new TextField();
+        mineOutputField.setPromptText("e.g. metal");
+        mineOutputLabel.setVisible(false);
+        mineOutputField.setVisible(false);
+        grid.add(mineOutputLabel, 0, 6);
+        grid.add(mineOutputField, 1, 6);
+
+        Label sourcesLabel = new Label("Select sources:");
+        List<String> existingBuildings = state.getBuildings().stream()
+                .map(Building::getName)
+                .collect(Collectors.toList());
+        ListView<String> sourcesListView = new ListView<>();
+        sourcesListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        sourcesListView.setItems(FXCollections.observableArrayList(existingBuildings));
+        grid.add(sourcesLabel, 0, 7);
+        grid.add(sourcesListView, 1, 7);
+
+        Button submitBtn = new Button("Add Building");
+        Button cancelBtn = new Button("Cancel");
 
         String json = "{\n" +
                 "  \"types\": [\n" +
@@ -71,107 +114,44 @@ public class AddBuildingWindow {
                 "    }\n" +
                 "  ]\n" +
                 "}";
-//        try (BufferedReader br = new BufferedReader(new FileReader("/building_types.json"))) {
+        TypeParser typeParser = new TypeParser();
+        String parseError;
         try (BufferedReader br = new BufferedReader(new StringReader(json))) {
-
-            typeParseError = typeParser.parse(br);
-            if (typeParseError != null) {
-                showError("Type parsing error: " + typeParseError);
-                stage.close();
-                return;
-            }
-        } catch (Exception ex) {
-            showError("Error reading building types: " + ex.getMessage());
+            parseError = typeParser.parse(br);
+        } catch (Exception e) {
+            parseError = "Error reading in-memory JSON for building types: " + e.getMessage();
+        }
+        if (parseError != null) {
+            showError("TypeParser error: " + parseError);
             stage.close();
             return;
         }
-        // Retrieve the list of available building types.
+
         List<BuildingType> availableTypes = typeParser.getTypeMap();
-        // Populate the drop down with type names.
         List<String> typeNames = availableTypes.stream()
                 .map(BuildingType::getName)
                 .collect(Collectors.toList());
         typeCombo.setItems(FXCollections.observableArrayList(typeNames));
-        grid.add(typeLabel, 0, 1);
-        grid.add(typeCombo, 1, 1);
 
-        // Coordinate Fields
-        Label xLabel = new Label("X Coordinate (optional):");
-        TextField xField = new TextField();
-        xField.setPromptText("Enter X coordinate");
-        grid.add(xLabel, 0, 2);
-        grid.add(xField, 1, 2);
-        Label yLabel = new Label("Y Coordinate (optional):");
-        TextField yField = new TextField();
-        yField.setPromptText("Enter Y coordinate");
-        grid.add(yLabel, 0, 3);
-        grid.add(yField, 1, 3);
-
-        // --- Extra fields for Storage or Mine types ---
-        // For Storage, show capacity and priority.
-        Label capacityLabel = new Label("Capacity:");
-        TextField capacityField = new TextField();
-        capacityField.setPromptText("Positive integer");
-        Label priorityLabel = new Label("Priority:");
-        TextField priorityField = new TextField();
-        priorityField.setPromptText("Positive float");
-        capacityLabel.setVisible(false);
-        capacityField.setVisible(false);
-        priorityLabel.setVisible(false);
-        priorityField.setVisible(false);
-        grid.add(capacityLabel, 0, 4);
-        grid.add(capacityField, 1, 4);
-        grid.add(priorityLabel, 0, 5);
-        grid.add(priorityField, 1, 5);
-        // For Mine types, for example show a field for the mine output (if needed).
-        Label mineOutputLabel = new Label("Mine Output:");
-        TextField mineOutputField = new TextField();
-        mineOutputField.setPromptText("e.g., metal");
-        mineOutputLabel.setVisible(false);
-        mineOutputField.setVisible(false);
-        grid.add(mineOutputLabel, 0, 6);
-        grid.add(mineOutputField, 1, 6);
-
-        // --- Update extra fields based on selected type ---
         typeCombo.setOnAction(e -> {
             String selectedTypeName = typeCombo.getValue();
-            // Find the BuildingType instance corresponding to the selected name.
             BuildingType selectedType = availableTypes.stream()
                     .filter(bt -> bt.getName().equals(selectedTypeName))
                     .findFirst().orElse(null);
-            if (selectedType == null) return;
-            // Check the category.
-            // Assume that if the instance is of StorageType, its category is "storage".
-            // Otherwise, define a method getCategory() in BuildingType.
-            if (selectedType instanceof StorageType) {
-                capacityLabel.setVisible(true);
-                capacityField.setVisible(true);
-                priorityLabel.setVisible(true);
-                priorityField.setVisible(true);
-                mineOutputLabel.setVisible(false);
-                mineOutputField.setVisible(false);
-            } else if (selectedType.getName().toLowerCase().contains("mine")) {
-                // For mine type, show the mine output field (and hide storage fields).
-                mineOutputLabel.setVisible(true);
-                mineOutputField.setVisible(true);
-                capacityLabel.setVisible(false);
-                capacityField.setVisible(false);
-                priorityLabel.setVisible(false);
-                priorityField.setVisible(false);
-            } else {
-                // For factory types.
-                capacityLabel.setVisible(false);
-                capacityField.setVisible(false);
-                priorityLabel.setVisible(false);
-                priorityField.setVisible(false);
-                mineOutputLabel.setVisible(false);
-                mineOutputField.setVisible(false);
+            if (selectedType == null) {
+                return;
             }
-        });
+            boolean isStorage = selectedType instanceof StorageType;
+            boolean isMine = selectedType.getName().toLowerCase().contains("mine");
 
-        // --- Submit and Cancel Buttons ---
-        Button submitBtn = new Button("Add Building");
-        Button cancelBtn = new Button("Cancel");
+            capacityLabel.setVisible(isStorage);
+            capacityField.setVisible(isStorage);
+            priorityLabel.setVisible(isStorage);
+            priorityField.setVisible(isStorage);
+
+            mineOutputLabel.setVisible(isMine);
+            mineOutputField.setVisible(isMine);
+        });
 
         submitBtn.setOnAction(e -> {
             String bName = nameField.getText().trim();
@@ -181,7 +161,6 @@ public class AddBuildingWindow {
                 return;
             }
 
-            // Determine coordinates. If not provided or invalid, auto-assign a valid coordinate.
             Coordinate coord;
             try {
                 if (!xField.getText().trim().isEmpty() && !yField.getText().trim().isEmpty()) {
@@ -189,71 +168,87 @@ public class AddBuildingWindow {
                     int y = Integer.parseInt(yField.getText().trim());
                     coord = new Coordinate(x, y);
                 } else {
-                    coord = Building.getValidCoordinate();  // auto-assign using static method in Building.
+                    coord = Building.getValidCoordinate();
                 }
             } catch (NumberFormatException ex) {
                 coord = Building.getValidCoordinate();
             }
 
-            // Find the corresponding type.
+            ObservableList<String> selectedSourceNames = sourcesListView.getSelectionModel().getSelectedItems();
+            List<Building> chosenSources = state.getBuildings().stream()
+                    .filter(b -> selectedSourceNames.contains(b.getName()))
+                    .collect(Collectors.toList());
+
             BuildingType selectedType = availableTypes.stream()
                     .filter(bt -> bt.getName().equals(tName))
                     .findFirst().orElse(null);
+
             if (selectedType == null) {
                 showError("Selected building type not found.");
                 return;
             }
 
-            Building newBuilding = null;
+            Building newBuilding;
             try {
                 if (selectedType instanceof StorageType) {
-                    // Expect capacity and priority
                     if (capacityField.getText().trim().isEmpty() || priorityField.getText().trim().isEmpty()) {
-                        showError("Please enter capacity and priority for storage type.");
+                        showError("Please enter capacity and priority for Storage type.");
                         return;
                     }
                     int capacity = Integer.parseInt(capacityField.getText().trim());
                     double priority = Double.parseDouble(priorityField.getText().trim());
-                    // Here assume no sources initially.
-                    newBuilding = Storage.addStorage(bName,
-                            List.of(), // empty sources list
+
+                    newBuilding = Storage.addStorage(
+                            bName,
+                            chosenSources,
                             state.getDefaultSourcePolicy(),
                             state.getDefaultServePolicy(),
                             coord,
-                            (StorageType) selectedType);
+                            (StorageType) selectedType
+                    );
+                    newBuilding.changePolicy(state.getDefaultSourcePolicy());
+                    newBuilding.changePolicy(state.getDefaultServePolicy());
                 } else if (tName.toLowerCase().contains("mine")) {
-                    // For mine, optionally allow the user to enter the mine output.
                     if (mineOutputField.getText().trim().isEmpty()) {
-                        showError("Please enter the mine output (e.g., metal).");
+                        showError("Please enter the mine output (e.g. metal).");
                         return;
                     }
                     String mineOutput = mineOutputField.getText().trim();
-                    // We create a dummy BuildingType for mine
-                    BuildingType mineType = new BuildingType(tName, Map.of(mineOutput, new Recipe(Recipe.getRecipe(mineOutput).getLatency(), Map.of(), mineOutput)));
-                    newBuilding = Mine.addMine(bName,
-                            List.of(), // no sources initially
+                    BuildingType mineType = new BuildingType(
+                            tName,
+                            Map.of(mineOutput,
+                                    new Recipe(Recipe.getRecipe(mineOutput).getLatency(),
+                                            Map.of(),
+                                            mineOutput))
+                    );
+
+                    newBuilding = Mine.addMine(
+                            bName,
+                            chosenSources,
                             state.getDefaultSourcePolicy(),
                             state.getDefaultServePolicy(),
                             coord,
-                            mineType);
+                            mineType
+                    );
                 } else {
-                    // Default: factory
-                    newBuilding = Factory.addFactory(bName, // todo
-                            List.of(), // no sources initially; user can later connect buildings
+                    newBuilding = Factory.addFactory(
+                            bName,
+                            chosenSources,
                             state.getDefaultSourcePolicy(),
                             state.getDefaultServePolicy(),
                             coord,
-                            selectedType);
+                            selectedType
+                    );
                 }
             } catch (Exception ex) {
                 showError("Error creating building: " + ex.getMessage());
                 return;
             }
 
-            // After creation, add the building to state.
-            // Also, update feedback: we show a success message with the building details.
-            showInfo("Successfully added building: " + newBuilding.getName() +
-                    " at (" + newBuilding.getX() + ", " + newBuilding.getY() + ")");
+            showInfo("Successfully added building: " + newBuilding.getName()
+                    + " at (" + newBuilding.getX() + ", " + newBuilding.getY() + ")"
+                    + "\nSources: " + chosenSources.stream().map(Building::getName).collect(Collectors.joining(", ")));
+
             if (onSuccess != null) {
                 onSuccess.run();
             }
@@ -262,10 +257,10 @@ public class AddBuildingWindow {
 
         cancelBtn.setOnAction(e -> stage.close());
 
-        grid.add(submitBtn, 0, 7);
-        grid.add(cancelBtn, 1, 7);
+        grid.add(submitBtn, 0, 8);
+        grid.add(cancelBtn, 1, 8);
 
-        Scene scene = new Scene(grid, 500, 380);
+        Scene scene = new Scene(grid, 560, 600);
         stage.setScene(scene);
         stage.showAndWait();
     }

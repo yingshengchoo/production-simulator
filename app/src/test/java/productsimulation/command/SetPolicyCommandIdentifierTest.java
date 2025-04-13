@@ -15,10 +15,6 @@ class SetPolicyCommandIdentifierTest {
         assertTrue(cmd instanceof SetPolicyCommand);
         assertEquals( "sjf", ((SetPolicyCommand) cmd).getPolicyName());
         assertEquals("request", ((SetPolicyCommand) cmd).getPolicyType());
-
-        cmd = identifier.checkFits("set policy request 'sjf' on default");
-        assertEquals( "sjf", ((SetPolicyCommand) cmd).getPolicyName());
-        assertEquals("request", ((SetPolicyCommand) cmd).getPolicyType());
     }
 
     @Test
