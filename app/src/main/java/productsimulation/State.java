@@ -206,6 +206,18 @@ public class State implements Serializable{
     instance = null;
   }
 
+  public Building getBuildings(String name) {
+    // use Building.buildings instead for uniform management
+//    for (Building b : buildings) {
+    for (Building b : Building.buildingGlobalList) {
+      if (b.getName().equals(name)) {
+        return b;
+      }
+    }
+    return null;
+  }
+
+
   public List<Building> getBuildings() {
 // use Building.buildings instead for uniform management
     return Building.buildingGlobalList;
