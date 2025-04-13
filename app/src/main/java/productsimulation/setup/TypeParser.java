@@ -40,7 +40,7 @@ import java.util.Map;
  * For factory types, a BuildingType is created by mapping the listed recipe names to Recipe instances.
  * This parser only verifies that the minimal required parameters exist.
  */
-public class TypeParser {
+public class  TypeParser {
     // Map to store parsed building types keyed by their names.
     private final Map<String, BuildingType> typeMap;
 

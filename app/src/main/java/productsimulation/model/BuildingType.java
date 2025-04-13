@@ -8,6 +8,7 @@ public class BuildingType implements Serializable {
   private final String name;
   private Map<String, Recipe> recipes;
 
+
   public BuildingType(String name, Map<String, Recipe> recipes){
     this.name = name;
     this.recipes = recipes;
@@ -15,6 +16,16 @@ public class BuildingType implements Serializable {
 
   public Recipe getRecipeByProductName(String productName) {
     return recipes.get(productName);
+  }
+
+  public static List<BuildingType> buildingTypeList;
+
+  public static void setBuildingTypeList(List<BuildingType> buildingTypeList) {
+    BuildingType.buildingTypeList = buildingTypeList;
+  }
+
+  public static List<BuildingType> getBuildingTypeList() {
+    return buildingTypeList;
   }
   
   @Override

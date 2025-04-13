@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Scanner;
 
 import javafx.application.Application;
+import productsimulation.setup.TypeParser;
 
 public class App {
     private static final String beginPrompt = "Welcome to product simulation, you can:\n" +
@@ -125,7 +126,24 @@ public class App {
         }
 
         modelSetup(parser);
+
         return true;
+    }
+
+    private static void initBuildingTypes(String setupFilePath) {
+        TypeParser parser = new TypeParser();
+        InputStream inputStream = App.class.getClassLoader().getResourceAsStream(setupFilePath);
+        if (inputStream== null) {
+            throw new IllegalArgumentException("The setup json file path is invalid!");
+        }
+        String error = parser.parse(new BufferedReader(new InputStreamReader(inputStream)));
+        if(error == null) {
+            Log.debugLog("The setup json is valid!");
+        } else {
+            Log.level0Log(error);
+            throw  new IllegalArgumentException("The setup json is invalid!");
+        }
+        BuildingType.setBuildingTypeList(parser.getTypeMap());
     }
 
     //If GUI is True, open GUI
@@ -151,7 +169,7 @@ public class App {
             System.err.println("Error when clean up log file");
         }
 
-        if (args.length < 1 || args.length > 2) {
+        if (args.length < 1 || args.length > 3) {
             System.err.println("Usage: java App [-nw] <setup_json_file_path>");
             return;
         }
@@ -167,6 +185,15 @@ public class App {
             filePath = args[1];
         } else {
             filePath = args[0];
+        }
+
+        // init buildingType List
+        if (args.length == 3 ) {
+            initBuildingTypes(args[2]);
+        }
+
+        else if (!args[0].equals("-nw") && args.length == 2){
+            initBuildingTypes(args[1]);
         }
 
         play(filePath, useGUI);
