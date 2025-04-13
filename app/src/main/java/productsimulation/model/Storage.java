@@ -183,10 +183,8 @@ public class Storage extends Building {
   }
 
   public void initializeStorageType(){
-    //if(type == null){
-      super.type = new BuildingType(name, Map.of(itemToStore, new Recipe(Recipe.getRecipe(itemToStore).getLatency(), new HashMap<>(), itemToStore)));
-      this.recipe = new Recipe(Recipe.getRecipe(itemToStore).getLatency(), new HashMap<>(), itemToStore);
-      //}
+    super.type = new BuildingType(name, Map.of(itemToStore, new Recipe(Recipe.getRecipe(itemToStore).getLatency(), new HashMap<>(), itemToStore)));
+    this.recipe = new Recipe(Recipe.getRecipe(itemToStore).getLatency(), new HashMap<>(), itemToStore);
   }
   
   @Override
