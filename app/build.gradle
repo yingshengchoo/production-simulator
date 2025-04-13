@@ -70,7 +70,7 @@ test{
     }
 
     systemProperty 'testfx.headless', 'true'
-    systemProperty 'testfx.robot', 'lass'
+    systemProperty 'testfx.robot', 'glass'
 
 }
 clover{
