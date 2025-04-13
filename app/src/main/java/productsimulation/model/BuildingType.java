@@ -71,4 +71,8 @@ public class BuildingType implements Serializable {
     public int hashCode() {
         return Objects.hash(name, recipes);
     }
+
+    public Map<String, Recipe> getAllRecipes() {
+        return this.recipes;
+    }
 }
