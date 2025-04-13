@@ -3,6 +3,7 @@
 [Log] - Checking recipe 'handle': {"metal":1}
 [Log] - Checking recipe 'hinge': {"metal":1}
 [Log] - The setup json is valid!
+[Log] - The simulation will go on without building type json
 Welcome to product simulation, you can:
 request 'itemName' from 'buildingName'
 step 1

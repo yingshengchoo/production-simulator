@@ -126,27 +126,32 @@ public class App {
         return true;
     }
 
-    private static void initBuildingTypes(String setupFilePath) {
+    private static boolean initBuildingTypes(String setupFilePath) {
+        if(setupFilePath.isEmpty()) {
+            Log.debugLog("The simulation will go on without building type json");
+            return true;
+        }
         TypeParser parser = new TypeParser();
         InputStream inputStream = App.class.getClassLoader().getResourceAsStream(setupFilePath);
         if (inputStream== null) {
-            throw new IllegalArgumentException("The setup json file path is invalid!");
+            Log.debugLog("Error when reading building type json file");
+            return false;
         }
         String error = parser.parse(new BufferedReader(new InputStreamReader(inputStream)));
         if(error == null) {
             Log.debugLog("The setup json is valid!");
         } else {
             Log.level0Log(error);
-            throw  new IllegalArgumentException("The setup json is invalid!");
+            return false;
         }
         BuildingType.setBuildingTypeList(parser.getTypeMap());
+        return true;
     }
 
     //If GUI is True, open GUI
     private static void play(String setupFilePath, String addBuildingFilePath, boolean useGUI) {
         //setup
-        boolean ret = initialize(setupFilePath);
-        initBuildingTypes(addBuildingFilePath);
+        boolean ret = initialize(setupFilePath) && initBuildingTypes(addBuildingFilePath);
         if(!ret) {
             return;
         }
