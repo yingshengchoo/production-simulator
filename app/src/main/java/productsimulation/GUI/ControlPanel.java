@@ -1,8 +1,9 @@
 package productsimulation.GUI;
 
 import javafx.geometry.Insets;
-import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.layout.VBox;
 import productsimulation.Log;
 import productsimulation.State;
@@ -11,8 +12,14 @@ import productsimulation.command.LoadCommand;
 import productsimulation.command.SaveCommand;
 import productsimulation.command.VerboseCommand;
 
-import java.io.File;
-
+/**
+ * ControlPanel is the right-side pane in the GUI that contains all the command buttons.
+ * It includes buttons for connecting buildings, requesting items, stepping, finishing,
+ * loading, saving, setting verbosity, setting policy, and now adding a building.
+ *
+ * When the "Finish" command is executed successfully, all buttons are disabled so that no further
+ * actions are permitted.
+ */
 public class ControlPanel extends VBox {
 
     private State state;
@@ -20,6 +27,7 @@ public class ControlPanel extends VBox {
     private FeedbackPane feedbackArea;
 
     // Store all command buttons as instance variables
+    private Button addBuildingBtn;
     private Button connectBtn;
     private Button requestBtn;
     private Button stepBtn;
@@ -37,9 +45,18 @@ public class ControlPanel extends VBox {
         setPadding(new Insets(10));
         setSpacing(10);
 
-        // Initialize command buttons
+        // 1) Add Building button (new)
+        addBuildingBtn = new Button("Add Building");
+        addBuildingBtn.setOnAction(e -> {
+            // BACKEND LOGIC:
+            // Here we pass the current state and a callback to refresh the board and update feedback.
+            AddBuildingWindow.show(state, () -> {
+                boardDisplay.refresh();
+                setFeedBack(Log.getLogText());
+            });
+        });
 
-        // 1) Connect Buildings button
+        // 2) Connect Buildings button
         connectBtn = new Button("Connect Buildings");
         connectBtn.setOnAction(e -> {
             ConnectWindow.show(state, () -> {
@@ -48,7 +65,7 @@ public class ControlPanel extends VBox {
             });
         });
 
-        // 2) Request Item button
+        // 3) Request Item button
         requestBtn = new Button("Request Item");
         requestBtn.setOnAction(e -> {
             RequestWindow.show(state, () -> {
@@ -57,7 +74,7 @@ public class ControlPanel extends VBox {
             });
         });
 
-        // 3) Step button
+        // 4) Step button
         stepBtn = new Button("Step");
         stepBtn.setOnAction(e -> {
             StepWindow.show(state, () -> {
@@ -66,21 +83,20 @@ public class ControlPanel extends VBox {
             });
         });
 
-        // 4) Finish button
+        // 5) Finish button
         finishBtn = new Button("Finish");
         finishBtn.setOnAction(e -> {
-            // Call backend finish command; if finish completes successfully then disable buttons.
             String error = new FinishCommand().execute();
             if (error == null) {
                 boardDisplay.refresh();
                 setFeedBack(Log.getLogText());
-                disableAllButtons();
+                disableAllButtons();  // Disable all buttons when finish is executed.
             } else {
                 showError("Finish error: " + error);
             }
         });
 
-        // 5) Load button
+        // 6) Load button
         loadBtn = new Button("Load");
         loadBtn.setOnAction(e -> {
             LoadWindow.show(() -> {
@@ -89,7 +105,7 @@ public class ControlPanel extends VBox {
             });
         });
 
-        // 6) Save button
+        // 7) Save button
         saveBtn = new Button("Save");
         saveBtn.setOnAction(e -> {
             SaveWindow.show(() -> {
@@ -97,7 +113,7 @@ public class ControlPanel extends VBox {
             });
         });
 
-        // 7) Verbosity button
+        // 8) Verbosity button
         verbosityBtn = new Button("Set Verbosity");
         verbosityBtn.setOnAction(e -> {
             VerbosityWindow.show(val -> {
@@ -106,7 +122,7 @@ public class ControlPanel extends VBox {
             });
         });
 
-        // 8) Policy button
+        // 9) Policy button
         policyBtn = new Button("Set Policy");
         policyBtn.setOnAction(e -> {
             PolicyWindow.show(state, () -> {
@@ -115,33 +131,35 @@ public class ControlPanel extends VBox {
             });
         });
 
-        // Add all buttons to the ControlPanel VBox
-        getChildren().addAll(connectBtn, requestBtn, stepBtn, finishBtn,
-                loadBtn, saveBtn, verbosityBtn, policyBtn);
+        // Add all buttons to the ControlPanel VBox (order can be adjusted as needed)
+        getChildren().addAll(
+                addBuildingBtn, connectBtn, requestBtn, stepBtn, finishBtn,
+                loadBtn, saveBtn, verbosityBtn, policyBtn
+        );
     }
 
     /**
-     * Disable all command buttons after finish command has completed.
+     * Disables all command buttons after finish command has completed.
      */
     private void disableAllButtons() {
-        // Disables each button so that no further actions can be performed.
+        addBuildingBtn.setDisable(true);
         connectBtn.setDisable(true);
         requestBtn.setDisable(true);
         stepBtn.setDisable(true);
+        finishBtn.setDisable(true);
         loadBtn.setDisable(true);
         saveBtn.setDisable(true);
         verbosityBtn.setDisable(true);
         policyBtn.setDisable(true);
-        finishBtn.setDisable(true);
     }
 
-    // Utility method to display errors in an alert.
+    // Utility method to show an error alert.
     private void showError(String msg) {
         Alert a = new Alert(Alert.AlertType.ERROR, msg, ButtonType.OK);
         a.showAndWait();
     }
 
-    // Utility method to update the feedback area (here encapsulated in a custom FeedbackPane).
+    // Utility method to update feedback in the feedback area.
     private void setFeedBack(String text) {
         feedbackArea.setText("");
         feedbackArea.appendText(text + "\n");
