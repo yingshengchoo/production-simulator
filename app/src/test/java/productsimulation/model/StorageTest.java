@@ -314,11 +314,12 @@ public class StorageTest {
     Mine m2 = new Mine("SocksMine2", new BuildingType("SockET", Map.of("socks", socks2)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy());
     sources.add(m1);
     sources.add(m2);
-    Storage s2 = new Storage("Drawer", "pairsOfSocks", sources, 100, 102, new SourceQLen(), new FIFOPolicy(), new Coordinate(7,7));
+    Storage s2 = new Storage("Drawer", "pairOfSocks", sources, 100, 102, new SourceQLen(), new FIFOPolicy(), new Coordinate(7,7));
 
     Storage s1 =new Storage("Drawer", "socks", null, 100, 100, null, null, new Coordinate(100, 100));
     assertDoesNotThrow(()->s1.sendRequest());
 
+    s2.initializeStorageType();
     assertDoesNotThrow(()->s2.sendRequest());
   }
 }
