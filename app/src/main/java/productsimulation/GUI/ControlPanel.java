@@ -1,10 +1,10 @@
 package productsimulation.GUI;
 
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import productsimulation.Log;
-import productsimulation.LogicTime;
 import productsimulation.State;
 import productsimulation.command.FinishCommand;
 import productsimulation.command.LoadCommand;
@@ -17,9 +17,19 @@ public class ControlPanel extends VBox {
 
     private State state;
     private BoardDisplay boardDisplay;
-    private TextArea feedbackArea;
+    private FeedbackPane feedbackArea;
 
-    public ControlPanel(State state, BoardDisplay boardDisplay, TextArea feedbackArea) {
+    // Store all command buttons as instance variables
+    private Button connectBtn;
+    private Button requestBtn;
+    private Button stepBtn;
+    private Button finishBtn;
+    private Button loadBtn;
+    private Button saveBtn;
+    private Button verbosityBtn;
+    private Button policyBtn;
+
+    public ControlPanel(State state, BoardDisplay boardDisplay, FeedbackPane feedbackArea) {
         this.state = state;
         this.boardDisplay = boardDisplay;
         this.feedbackArea = feedbackArea;
@@ -27,163 +37,113 @@ public class ControlPanel extends VBox {
         setPadding(new Insets(10));
         setSpacing(10);
 
-        // 1) Add Building
-//        Button addBuildingBtn = new Button("Add Building");
-//        addBuildingBtn.setOnAction(e -> {
-//            // Open the window that collects building name, type, coords
-//            AddBuildingWindow.show(state, () -> {
-//                // Refresh the board
-//                boardDisplay.refresh();
-//                // Show feedback
-//                appendFeedback("Building added successfully.");
-//            });
-//        });
+        // Initialize command buttons
 
-        // 2) Connect Buildings
-        Button connectBtn = new Button("Connect Buildings");
+        // 1) Connect Buildings button
+        connectBtn = new Button("Connect Buildings");
         connectBtn.setOnAction(e -> {
             ConnectWindow.show(state, () -> {
                 boardDisplay.refresh();
-//                setFeedback(Log.getLogText());
-                appendFeedback(Log.getLogText());
-//                appendFeedback("Buildings connected successfully.");
+                setFeedBack(Log.getLogText());
             });
         });
 
-        Button requestBtn = new Button("Request Item");
+        // 2) Request Item button
+        requestBtn = new Button("Request Item");
         requestBtn.setOnAction(e -> {
             RequestWindow.show(state, () -> {
                 boardDisplay.refresh();
-//                setFeedback(Log.getLogText());
-                appendFeedback(Log.getLogText());
-//                appendFeedback("Request item succeeded.");
+                setFeedBack(Log.getLogText());
             });
         });
 
-        Button stepBtn = new Button("Step");
+        // 3) Step button
+        stepBtn = new Button("Step");
         stepBtn.setOnAction(e -> {
             StepWindow.show(state, () -> {
                 boardDisplay.refresh();
-//                setFeedback(Log.getLogText());
-                appendFeedback(Log.getLogText());
-//                appendFeedback("Stepped the simulation.");
+                setFeedBack(Log.getLogText());
             });
         });
 
-        Button finishBtn = new Button("Finish");
+        // 4) Finish button
+        finishBtn = new Button("Finish");
         finishBtn.setOnAction(e -> {
+            // Call backend finish command; if finish completes successfully then disable buttons.
             String error = new FinishCommand().execute();
             if (error == null) {
                 boardDisplay.refresh();
-//                setFeedback(Log.getLogText());
-                appendFeedback(Log.getLogText());
-//                appendFeedback("Finish: all requests completed.");
+                setFeedBack(Log.getLogText());
+                disableAllButtons();
             } else {
                 showError("Finish error: " + error);
             }
         });
 
-        // In ControlPanel.java
-        Button loadBtn = new Button("Load");
+        // 5) Load button
+        loadBtn = new Button("Load");
         loadBtn.setOnAction(e -> {
             LoadWindow.show(() -> {
                 boardDisplay.refresh();
-//                setFeedback(Log.getLogText());
-                appendFeedback(Log.getLogText());
-//                appendFeedback("Loaded simulation successfully.");
+                setFeedBack(Log.getLogText());
             });
         });
 
-        Button saveBtn = new Button("Save");
+        // 6) Save button
+        saveBtn = new Button("Save");
         saveBtn.setOnAction(e -> {
             SaveWindow.show(() -> {
-//                setFeedback(Log.getLogText());
-                appendFeedback(Log.getLogText());
-//                appendFeedback("Simulation saved successfully.");
+                setFeedBack(Log.getLogText());
             });
         });
 
-
-        // 8) Verbosity
-        Button verbosityBtn = new Button("Set Verbosity");
+        // 7) Verbosity button
+        verbosityBtn = new Button("Set Verbosity");
         verbosityBtn.setOnAction(e -> {
             VerbosityWindow.show(val -> {
                 new VerboseCommand(val).execute();
-//                setFeedback(Log.getLogText());
-                appendFeedback(Log.getLogText());
-//                appendFeedback("Verbosity set to " + val);
+                setFeedBack(Log.getLogText());
             });
         });
 
-        // 9) Policy
-        Button policyBtn = new Button("Set Policy");
+        // 8) Policy button
+        policyBtn = new Button("Set Policy");
         policyBtn.setOnAction(e -> {
             PolicyWindow.show(state, () -> {
                 boardDisplay.refresh();
-//                setFeedback(Log.getLogText());
-                appendFeedback(Log.getLogText());
-//                appendFeedback("Policy updated.");
+                setFeedBack(Log.getLogText());
             });
         });
 
-        getChildren().addAll(
-//                addBuildingBtn,
-                connectBtn, requestBtn, stepBtn, finishBtn,
-                loadBtn, saveBtn, verbosityBtn, policyBtn
-        );
+        // Add all buttons to the ControlPanel VBox
+        getChildren().addAll(connectBtn, requestBtn, stepBtn, finishBtn,
+                loadBtn, saveBtn, verbosityBtn, policyBtn);
     }
 
-
-    // Implementation for load
-    private void handleLoad() {
-        javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
-        fileChooser.setTitle("Load Simulation");
-        File file = fileChooser.showOpenDialog(null);
-        if (file == null) return;
-
-        // Connect to the backend load logic
-        String error = new LoadCommand(file.getAbsolutePath()).execute();
-        if (error == null) {
-            boardDisplay.refresh();
-//            setFeedback(Log.getLogText());
-            appendFeedback(Log.getLogText());
-//            appendFeedback("Loaded from " + file.getName());
-        } else {
-            showError(error);
-        }
+    /**
+     * Disable all command buttons after finish command has completed.
+     */
+    private void disableAllButtons() {
+        // Disables each button so that no further actions can be performed.
+        connectBtn.setDisable(true);
+        requestBtn.setDisable(true);
+        stepBtn.setDisable(true);
+        loadBtn.setDisable(true);
+        saveBtn.setDisable(true);
+        verbosityBtn.setDisable(true);
+        policyBtn.setDisable(true);
+        finishBtn.setDisable(true);
     }
 
-
-    // Implementation for save
-    private void handleSave() {
-//        javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
-//        fileChooser.setTitle("Save Simulation");
-//        File file = fileChooser.showSaveDialog(null);
-//        if (file == null) return;
-
-
-//        String error = new SaveCommand(file.getAbsolutePath()).execute();
-//        String error = new SaveCommand(file.getName()).execute();
-
-//        if (error == null) {
-//            appendFeedback("Saved to " + file.getName());
-//        } else {
-//            showError(error);
-//        }
-    }
-
-
-    // Utility
+    // Utility method to display errors in an alert.
     private void showError(String msg) {
         Alert a = new Alert(Alert.AlertType.ERROR, msg, ButtonType.OK);
         a.showAndWait();
     }
 
-    private void appendFeedback(String text) {
+    // Utility method to update the feedback area (here encapsulated in a custom FeedbackPane).
+    private void setFeedBack(String text) {
+        feedbackArea.setText("");
         feedbackArea.appendText(text + "\n");
-    }
-
-    private void setFeedback(String text) {
-        feedbackArea.setText(text + "\n");
     }
 }

@@ -14,12 +14,16 @@ public class Log implements Serializable {
 
     public static void setLogLevel(int level) {
         if(level >= 3) {
+            level0Log("verbosity change to: debug");
             Configurator.setRootLevel(Level.DEBUG);
         } else if(level == 2) {
+            level0Log("verbosity change to: 2");
             Configurator.setRootLevel(Level.INFO);
         } else if(level == 1) {
+            level0Log("verbosity change to: 1");
             Configurator.setRootLevel(Level.WARN);
         } else if(level == 0) {
+            level0Log("verbosity change to: 1");
             Configurator.setRootLevel(Level.ERROR);
         }
     }
@@ -45,7 +49,7 @@ public class Log implements Serializable {
 //    GUI会每隔一秒调用一次，返回全量Log，GUI默认将滚动条拉到最下
     public static String getLogText() {
         StringBuilder logContent = new StringBuilder();
-        File logFile = new File("main/resources/test.log");
+        File logFile = new File("test.log");
         try (BufferedReader reader = new BufferedReader(new FileReader(logFile))) {
             String line;
             while ((line = reader.readLine()) != null) {

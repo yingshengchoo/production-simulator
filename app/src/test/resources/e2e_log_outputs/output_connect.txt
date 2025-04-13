@@ -12,7 +12,8 @@ set policy request on target
 save saveFileName
 load loadFileName
 connect 'buildingName1' 'buildingName2'
-> > [Log] - Ha -> D connected
+> [Log] - verbosity change to: 1
+> [Log] - Ha -> D connected
 > [Log] - Hi -> D connected
 > [Log] - W -> D connected
 > [Log] - M -> Hi connected

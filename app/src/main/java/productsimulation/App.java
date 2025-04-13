@@ -14,6 +14,9 @@ import productsimulation.request.sourcePolicy.SourceQLen;
 import productsimulation.setup.SetupParser;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Scanner;
@@ -85,13 +88,16 @@ public class App {
         State.initialize(new ArrayList<>(buildings.values()), new ArrayList<>(types.values()),
                 new ArrayList<>(recipes.values()), requestBroadcaster, logicTime);
 
+        ArrayList<Building> buildingList = new ArrayList<>();
         for(Building b: buildings.values()) {
             b.changeSourcePolicy(sourcePolicy);
             b.changeServePolicy(servePolicy);
 
-            logicTime.addObservers(b);
+//            logicTime.addObservers(b);
             requestBroadcaster.addBuildings(b);
+            buildingList.add(b);
         }
+        Building.buildings = buildingList;
 
         ArrayList<Recipe> recipeList = new ArrayList<>();
         for(Recipe r: recipes.values()) {
@@ -143,6 +149,11 @@ public class App {
     }
 
     public static void main(String[] args) {
+        try {
+            Files.writeString(Paths.get("test.log"), "");
+        } catch(IOException e) {
+            System.err.println("Error when clean up log file");
+        }
 
         if (args.length < 1 || args.length > 2) {
             System.err.println("Usage: java App [-nw] <setup_json_file_path>");

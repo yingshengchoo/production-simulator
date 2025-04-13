@@ -64,18 +64,12 @@ public class StorageTest {
    Storage s1 = new Storage("Drawer", "socks", sources, 100, 102, new SourceQLen(), new FIFOPolicy(), new Coordinate(1,1));
 
    s1.initializeStorageType();
-
+   
    ArrayList<Building> sources2 = new ArrayList<>();
    sources2.add(s1);
    Factory f = new Factory("SocksFactory", new BuildingType("PairOfSocks", Map.of("pairOfSocks", pair)), sources2, new SourceQLen(), new FIFOPolicy(), new Coordinate(0, 1));
 
-
    assertEquals("socks", s1.getRecipeOutput());
-   
-   t.addObservers(m1);
-   t.addObservers(m2);
-   t.addObservers(s1);
-   t.addObservers(f);
 
    RequestBroadcaster rb = RequestBroadcaster.getInstance();
    rb.addBuildings(m1);
@@ -86,10 +80,6 @@ public class StorageTest {
    rb.addRecipes(pair);
 
    // connect the buildings
-   Building.buildings.add(m1);
-   Building.buildings.add(m2);
-   Building.buildings.add(s1);
-   Building.buildings.add(f);
    Road.connectHandler(m1.getName(), s1.getName());
    Road.connectHandler(m2.getName(), s1.getName());
    Road.connectHandler(s1.getName(), f.getName());
@@ -228,7 +218,9 @@ public class StorageTest {
    sources.add(m1);
    sources.add(m2);
    Storage s1 = new Storage("Drawer", "socks", sources, 0, 102, new SourceQLen(), new FIFOPolicy(), new Coordinate(3,3));
+
    s1.initializeStorageType();
+   
    assertEquals("socks", s1.getRecipeOutput());
 
    //frequency is -1, so no requests should be sent to sources
@@ -295,7 +287,7 @@ public class StorageTest {
    Storage s1 = new Storage("Drawer", "socks", sources, 100, 102, new SourceQLen(), new FIFOPolicy(), new Coordinate(7,7));
 
    s1.initializeStorageType();
-
+   
    assertEquals(1, s1.getCurrentRemainTime());
    
    s1.updateStorage("socks");

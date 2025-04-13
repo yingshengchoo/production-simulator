@@ -17,6 +17,7 @@ class LogicTimeTest {
     @BeforeEach
     void setUp() {
         LogicTime.getInstance().reset();
+        Building.buildings.clear();
     }
 
     @Test
@@ -41,23 +42,25 @@ class LogicTimeTest {
         Mine woodMine = new Mine("FirstWoodMine", woodMineType,
                 new ArrayList<Building>(), soleSourcePolicy, oneTimeServePolicy);
 
-        t.addObservers(woodMine);
-        assertEquals(t.getObserversSize(), 1);
+//        t.addObservers(woodMine);
+//        assertEquals(t.getObserversSize(), 1);
+        assertEquals(Building.buildings.size(), 1);
 
         Mine woodMine2 = new Mine("SecondWoodMine", woodMineType,
                 new ArrayList<Building>(), soleSourcePolicy, oneTimeServePolicy);
 
-        t.addObservers(woodMine2);
-        assertEquals(t.getObserversSize(), 2);
+//        t.addObservers(woodMine2);
+//        assertEquals(t.getObserversSize(), 2);
+        assertEquals(Building.buildings.size(), 2);
 
-        t.removeObservers(woodMine);
-        assertEquals(t.getObserversSize(), 1);
+//        t.removeObservers(woodMine);
+//        assertEquals(t.getObserversSize(), 1);
 
-        Mine woodMine3 = new Mine("ThirdWoodMine", woodMineType,
-                new ArrayList<Building>(), soleSourcePolicy, oneTimeServePolicy);
+//        Mine woodMine3 = new Mine("ThirdWoodMine", woodMineType,
+//                new ArrayList<Building>(), soleSourcePolicy, oneTimeServePolicy);
 
-        t.removeObservers(woodMine3);
-        assertEquals(t.getObserversSize(), 1);
+//        t.removeObservers(woodMine3);
+//        assertEquals(t.getObserversSize(), 1);
 
         t.stepNHandler(5);
         assertEquals(t.getStep(), 5);

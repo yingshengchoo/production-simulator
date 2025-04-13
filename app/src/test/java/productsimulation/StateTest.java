@@ -69,8 +69,8 @@ class StateTest {
     requestBroadcaster.addBuildings(factory);
 
     LogicTime logicTime = LogicTime.getInstance();
-    logicTime.addObservers(mine);
-    logicTime.addObservers(factory);
+//    logicTime.addObservers(mine);
+//    logicTime.addObservers(factory);
     
     State.initialize(buildings, types, stateRecipes, requestBroadcaster, logicTime);
 
@@ -205,8 +205,8 @@ class StateTest {
     requestBroadcaster.addBuildings(factory);
 
     LogicTime logicTime = LogicTime.getInstance();
-    logicTime.addObservers(mine);
-    logicTime.addObservers(factory);
+//    logicTime.addObservers(mine);
+//    logicTime.addObservers(factory);
     
     State.initialize(buildings, types, stateRecipes, requestBroadcaster, logicTime);
 
