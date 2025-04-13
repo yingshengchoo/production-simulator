@@ -222,6 +222,10 @@ public class Storage extends Building {
    * Sends request to sources  
    */
   public void sendRequest(){
+    if(sources == null || sources.isEmpty()){
+      return;
+    }
+    
     if (getFrequency() == -1){
       return;
     }
