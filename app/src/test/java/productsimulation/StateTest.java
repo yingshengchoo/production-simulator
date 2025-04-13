@@ -213,7 +213,7 @@ class StateTest {
     State state = State.getInstance();
 
     assertEquals(state.getBuildings(), buildings);
-    assertEquals(factory, state.getBuildings("GC"));
-    assertNull(state.getBuildings("DNE"));
+    assertEquals(factory, Building.getBuilding("GC"));
+    assertNull(Building.getBuilding("DNE"));
   }
 }

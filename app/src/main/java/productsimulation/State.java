@@ -104,11 +104,12 @@ public class State implements Serializable{
     if(!checkFilename(filename)){
       throw new IllegalArgumentException("Invalid Filename. Filename must not contain any special characters");
     }
-
     File dir = new File("SavedStates");
     if (!dir.exists()) {
        dir.mkdirs();
     }
+
+    updateState();
     
     try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("SavedStates/" + filename + ".ser"))) {
       out.writeObject(this);
@@ -116,6 +117,12 @@ public class State implements Serializable{
     } 
   }
 
+  private void updateState(){
+    this.buildings = Building.buildingGlobalList;
+    this.recipes = Recipe.recipeGlobalList;
+    this.types = BuildingType.buildingTypeList;
+  }
+  
   /**
    * Loads a previously saved state from a file with the given filename.
    *
@@ -134,16 +141,24 @@ public class State implements Serializable{
       this.requestbroadcaster = loadedState.requestbroadcaster;
       this.logictime = loadedState.logictime;
 
-      StateLoadVisitor visitor = new StateLoadVisitor();
-      loadedState.logictime.accept(visitor);
-      loadedState.requestbroadcaster.accept(visitor);
-
+      updateWorld(loadedState);
       
       System.out.println("State loaded from SavedStates/" + filename + ".ser");
       showState(System.out);
     } 
   } 
 
+  //.updates the global state of the program
+  private void updateWorld(State loadedState){
+      Building.buildingGlobalList = buildings;
+      Recipe.recipeGlobalList = recipes;
+      BuildingType.buildingTypeList = types;
+
+      StateLoadVisitor visitor = new StateLoadVisitor();
+      loadedState.logictime.accept(visitor);
+      loadedState.requestbroadcaster.accept(visitor);
+  }
+  
   /**
    * Displays the current state of the simulation
    *
@@ -152,9 +167,9 @@ public class State implements Serializable{
   public void showState(PrintStream o){
     o.println("Current State Information:");
     printLogicTime(o);
-    printList("Recipes:", recipes, o);
-    printList("Factory Types:", types, o);
-    printList("Buildings:", buildings, o);
+    printList("Recipes:", Recipe.recipeGlobalList, o);
+    printList("Factory Types:", BuildingType.getBuildingTypeList(), o);
+    printList("Buildings:", Building.buildingGlobalList, o);
   }
 
   /**
@@ -189,17 +204,6 @@ public class State implements Serializable{
 
   public void setInstanceToNull(){
     instance = null;
-  }
-
-  public Building getBuildings(String name) {
-    // use Building.buildings instead for uniform management
-//    for (Building b : buildings) {
-    for (Building b : Building.buildingGlobalList) {
-      if (b.getName().equals(name)) {
-        return b;
-      }
-    }
-    return null;
   }
 
   public List<Building> getBuildings() {
