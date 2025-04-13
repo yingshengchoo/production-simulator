@@ -41,6 +41,10 @@ public class State implements Serializable{
     this.defaultSourcePolicy = new SourceQLen();
     this.defaultServePolicy = new FIFOPolicy();
 
+    Building.buildingGlobalList = buildings;
+    Recipe.recipeGlobalList = recipes;
+    BuildingType.buildingTypeList = types;
+    
     for(Building b: buildings) {
       b.changeSourcePolicy(defaultSourcePolicy);
       b.changeServePolicy(defaultServePolicy);
@@ -150,9 +154,9 @@ public class State implements Serializable{
 
   //.updates the global state of the program
   private void updateWorld(State loadedState){
-      Building.buildingGlobalList = buildings;
-      Recipe.recipeGlobalList = recipes;
-      BuildingType.buildingTypeList = types;
+      Building.buildingGlobalList = loadedState.buildings;
+      Recipe.recipeGlobalList = loadedState.recipes;
+      BuildingType.buildingTypeList = loadedState.types;
 
       StateLoadVisitor visitor = new StateLoadVisitor();
       loadedState.logictime.accept(visitor);
