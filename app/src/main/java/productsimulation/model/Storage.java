@@ -50,7 +50,9 @@ public class Storage extends Building {
       throw new RuntimeException("invalid coordinate!");
     }
 
-    return new Storage(type.getName(), type.getItemToStore(), sources, type.getCapacity(), type.getPriority(), sourcePolicy, servePolicy, coordinate);
+    Storage newStorage = new Storage(type.getName(), type.getItemToStore(), sources, type.getCapacity(), type.getPriority(), sourcePolicy, servePolicy, coordinate);
+    newStorage.initializeStorageType();
+    return newStorage;
   }
 
   // Constructor without coordinate input
