@@ -66,11 +66,6 @@ public class StorageTest {
    Factory f = new Factory("SocksFactory", new BuildingType("PairOfSocks", Map.of("pairOfSocks", pair)), sources2, new SourceQLen(), new FIFOPolicy(), new Coordinate(0, 1));
 
    assertEquals("socks", s1.getRecipeOutput());
-   
-   t.addObservers(m1);
-   t.addObservers(m2);
-   t.addObservers(s1);
-   t.addObservers(f);
 
    RequestBroadcaster rb = RequestBroadcaster.getInstance();
    rb.addBuildings(m1);
@@ -81,10 +76,6 @@ public class StorageTest {
    rb.addRecipes(pair);
 
    // connect the buildings
-    Building.buildings.add(m1);
-    Building.buildings.add(m2);
-    Building.buildings.add(s1);
-    Building.buildings.add(f);
    Road.connectHandler(m1.getName(), s1.getName());
    Road.connectHandler(m2.getName(), s1.getName());
    Road.connectHandler(s1.getName(), f.getName());

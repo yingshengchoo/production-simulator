@@ -12,7 +12,7 @@ public class LogicTime implements Serializable{
     private final int MAX_STEP = 500;
     private static LogicTime instance = new LogicTime();
     private int currentStep;
-    private final Set<Building> observers;
+//    private final Set<Building> observers;
     private boolean exitFlag;
 
 
@@ -21,7 +21,7 @@ public class LogicTime implements Serializable{
      */
     private LogicTime() {
         this.currentStep = 0;
-        this.observers = new HashSet<>();
+//        this.observers = new HashSet<>();
         this.exitFlag = false;
     }
 
@@ -32,18 +32,18 @@ public class LogicTime implements Serializable{
         return instance;
     }
 
-    public void addObservers(Building b) {
-        observers.add(b);
-    }
-
-    public void removeObservers(Building b) {
-        observers.remove(b);
-    }
-
-    // only for test
-    public int getObserversSize() {
-        return observers.size();
-    }
+//    public void addObservers(Building b) {
+//        observers.add(b);
+//    }
+//
+//    public void removeObservers(Building b) {
+//        observers.remove(b);
+//    }
+//
+//    // only for test
+//    public int getObserversSize() {
+//        return observers.size();
+//    }
 
     public int getStep() {
         return currentStep;
@@ -57,7 +57,8 @@ public class LogicTime implements Serializable{
             RequestQueue.goOneStep();
             
             // 新一步
-            for(Building b: observers) {
+//            for(Building b: observers) {
+            for(Building b: Building.buildings) {
                 boolean idle = b.notified();
                 finished = idle && finished;
             }
@@ -65,14 +66,16 @@ public class LogicTime implements Serializable{
                 break;
             }
             //確保 Storage 有先發給Sources request 
-            for(Building b: observers){
+//            for(Building b: observers){
+            for(Building b: Building.buildings){
               if(b instanceof Storage){
                 Storage s = (Storage) b;
                 s.sendRequest();
               }
             }
             currentStep += 1;
-            for(Building b: observers) {
+//            for(Building b: observers) {
+            for(Building b: Building.buildings) {
                 b.updateNotified();
             }
             Log.level2Log("==========Step from " + (currentStep-1) + " to " + currentStep + " end==========\n");
@@ -101,7 +104,7 @@ public class LogicTime implements Serializable{
 
     // only for test
     public void reset() {
-        observers.clear();
+//        observers.clear();
         currentStep = 0;
     }
 

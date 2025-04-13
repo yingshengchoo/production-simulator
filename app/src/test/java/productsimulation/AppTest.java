@@ -80,9 +80,9 @@ class AppTest {
         // skip parsing the command
         // skip save/load
         // skip finish command
-        LogicTime logicTime = LogicTime.getInstance();
-        logicTime.addObservers(woodMine);
-        logicTime.addObservers(woodSwordFactory);
+//        LogicTime logicTime = LogicTime.getInstance();
+//        logicTime.addObservers(woodMine);
+//        logicTime.addObservers(woodSwordFactory);
         RequestBroadcaster requestBroadcaster = RequestBroadcaster.getInstance();
         requestBroadcaster.addRecipes(woodMineRecipe);
         requestBroadcaster.addRecipes(woodSwordRecipe);

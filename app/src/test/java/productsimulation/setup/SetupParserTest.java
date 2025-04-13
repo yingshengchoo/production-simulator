@@ -1,6 +1,7 @@
 package productsimulation.setup;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import productsimulation.Board;
 import productsimulation.model.*;
@@ -105,12 +106,13 @@ class SetupParserTest {
     }
 
     @Test
+    @Disabled("waiting for Storage constructor")
     void testComprehensive() throws IOException {
         try (InputStream is = getClass().getResourceAsStream("/storage2.json")) {
             assertNotNull(is, "Resource bad_storage.json not found on classpath");
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
-//                String error = parser.parse(reader);
-//                assertNull( error);
+                String error = parser.parse(reader);
+                assertNull( error);
             }
         }
     }

@@ -87,13 +87,16 @@ public class App {
         State.initialize(new ArrayList<>(buildings.values()), new ArrayList<>(types.values()),
                 new ArrayList<>(recipes.values()), requestBroadcaster, logicTime);
 
+        ArrayList<Building> buildingList = new ArrayList<>();
         for(Building b: buildings.values()) {
             b.changeSourcePolicy(sourcePolicy);
             b.changeServePolicy(servePolicy);
 
-            logicTime.addObservers(b);
+//            logicTime.addObservers(b);
             requestBroadcaster.addBuildings(b);
+            buildingList.add(b);
         }
+        Building.buildings = buildingList;
 
         ArrayList<Recipe> recipeList = new ArrayList<>();
         for(Recipe r: recipes.values()) {
