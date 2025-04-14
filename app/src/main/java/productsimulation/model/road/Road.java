@@ -10,30 +10,41 @@ import java.util.*;
 
 // road容积无限，但不模拟运输过程。由request完成时的hook函数在latency回合后直接传送到目标仓库。
 // GUI上点击road，只显示方向信息。road上也不准备做“有个货物在动”的动画。
-// todo：如果建筑直接相邻，也要注册一条特殊的road，保证可达性判断无误
 public class Road {
     // key: (source,destination), value: distance
     // 如果存在，返回最短路程；如果不存在，说明不可达
-    public static HashMap<Pair<Building, Building>, Integer> distanceMap = new HashMap<>();
+    public static HashMap<Pair<Building, Building>, Road> roadMap = new HashMap<>();
     // 虽然已经有board，但让board存带方向信息的roadtile并不合适
     public static HashMap<Coordinate, RoadTile> existingRoadTiles = new HashMap<>();
+    // 相邻或自己到自己的特殊road，类似传送门，也类似ev1中的设定
+    public static Road PORTAL = new Road(null, null, 0);
 
     public static void cleanup() {
-        distanceMap.clear();
+        roadMap.clear();
         existingRoadTiles.clear();
     }
 
 //    road的起点建筑和终点建筑
-    private Building st;
-    private Building ed;
+    private final Building st;
+    private final Building ed;
 
-    public ArrayList<RoadTile> roadTiles = new ArrayList<>();
+    //    road的长度
+    private int roadLength = 0;
 
-    public Road() {}
-    public Road(Building st, Building ed) {
+    private final ArrayList<RoadTile> roadTiles = new ArrayList<>();
+
+    private Road(Building st, Building ed, int length) {
         this.st = st;
         this.ed = ed;
-        generateRoad(st, ed);
+        this.roadLength = length;
+    }
+
+    public int getRoadLength() {
+        return roadLength;
+    }
+
+    public List<RoadTile> getRoadTiles() {
+        return roadTiles;
     }
 
     public static String connectHandler(String srcName, String dstName) {
@@ -51,8 +62,8 @@ public class Road {
         if(bsrc == null || bdst == null) {
             return "Building does not exists. Check the building name.";
         }
-        Road road = new Road(bsrc, bdst);
         Log.level0Log(srcName + " -> " + dstName + " connected");
+        generateRoad(bsrc, bdst);
         return null;
     }
 
@@ -113,22 +124,24 @@ public class Road {
         setDirection(lastTile, lastPos, exit);
     }
 
-    public void generateRoad(Building st, Building ed) {
-        if(st == ed || distanceMap.containsKey(new Pair<>(st, ed))) {
-            return;
+    public static Road generateRoad(Building st, Building ed) {
+        if(roadMap.containsKey(new Pair<>(st, ed))) {
+            return roadMap.get(new Pair<>(st, ed));
         }
-         if(st.isNeighbourBuilding(ed)) {
-              distanceMap.put(new Pair<>(st, ed), 0);
-              return;
+         if(st == ed || st.isNeighbourBuilding(ed)) {
+              return PORTAL;
          }
 
         ArrayList<Coordinate> path = new ArrayList<>();
         int distance = shortestPath(st.getCoordinate(), ed.getCoordinate(), path);
         if(distance != -1) {
-            placeRoad(path, ed.getCoordinate());
+            Road newRoad = new Road(st, ed, path.size());
+            newRoad.placeRoad(path, ed.getCoordinate());
+            roadMap.put(new Pair<>(st, ed), newRoad);
+            return newRoad;
         }
 
-        distanceMap.put(new Pair<>(st, ed), path.size());
+        return null;
     }
 
     // 假定输入的dir是合法的，即{{-1, 0}, {1, 0}, {0, -1}, {0, 1}}中的一个
@@ -245,8 +258,11 @@ public class Road {
     }
 
     public static int getDistance(Building a, Building b) {
-        if(distanceMap.containsKey(new Pair<>(a, b))) {
-            return distanceMap.get(new Pair<>(a, b));
+        if(a == b || a.isNeighbourBuilding(b)) {
+            return 0;
+        }
+        if(roadMap.containsKey(new Pair<>(a, b))) {
+            return roadMap.get(new Pair<>(a, b)).getRoadLength();
         } else {
             throw new IllegalArgumentException("road not connected!");
         }

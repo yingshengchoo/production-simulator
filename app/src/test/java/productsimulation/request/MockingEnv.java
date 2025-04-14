@@ -48,7 +48,7 @@ public class MockingEnv {
         Building.buildingGlobalList.addAll(buildings);
         for(Building bsrc: buildings) {
             for(Building bdst: buildings) {
-                Road tmp = new Road(bsrc, bdst);
+                Road tmp = Road.generateRoad(bsrc, bdst);
             }
         }
     }
