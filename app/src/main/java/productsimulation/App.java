@@ -144,7 +144,7 @@ public class App {
             Log.level0Log(error);
             return false;
         }
-        BuildingType.setBuildingTypeList(parser.getTypeMap());
+        BuildingType.setBuildingTypeGlobalList(parser.getTypeMap());
         return true;
     }
 

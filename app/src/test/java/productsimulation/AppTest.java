@@ -188,6 +188,12 @@ class AppTest {
     }
 
     @Test
+    @Disabled("only for local test")
+    public void test_GUI() {
+        App.main(new String[]{"storage3.json", "building_types.json"});
+    }
+
+    @Test
     @Disabled("waiting for debug")
     public void threeParameterMain() {
         App.main(new String[]{"-nw","storage3.json", "building_types.json"});

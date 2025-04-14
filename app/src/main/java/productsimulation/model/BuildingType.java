@@ -18,14 +18,14 @@ public class BuildingType implements Serializable {
     return recipes.get(productName);
   }
 
-  public static List<BuildingType> buildingTypeList;
+  public static List<BuildingType> buildingTypeGlobalList;
 
-  public static void setBuildingTypeList(List<BuildingType> buildingTypeList) {
-    BuildingType.buildingTypeList = buildingTypeList;
+  public static void setBuildingTypeGlobalList(List<BuildingType> buildingTypeGlobalList) {
+    BuildingType.buildingTypeGlobalList = buildingTypeGlobalList;
   }
 
-  public static List<BuildingType> getBuildingTypeList() {
-    return buildingTypeList;
+  public static List<BuildingType> getBuildingTypeGlobalList() {
+    return buildingTypeGlobalList;
   }
   
   @Override

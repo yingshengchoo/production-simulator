@@ -93,7 +93,7 @@ class StateTest {
     " ingredients={Egg=2},\n" +
     " latency=3\n" + 
     "}\n" +
-    "Factory Types:\n" + 
+    "Building Types:\n" +
     "Factory Type\n" +  
     "{name='EggRoll',\n" + 
     " recipes=[EggRoll]\n" +

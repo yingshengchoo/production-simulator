@@ -43,7 +43,7 @@ public class State implements Serializable{
 
     Building.buildingGlobalList = buildings;
     Recipe.recipeGlobalList = recipes;
-    BuildingType.buildingTypeList = types;
+    BuildingType.buildingTypeGlobalList = types;
     
     for(Building b: buildings) {
       b.changeSourcePolicy(defaultSourcePolicy);
@@ -124,7 +124,7 @@ public class State implements Serializable{
   private void updateState(){
     this.buildings = Building.buildingGlobalList;
     this.recipes = Recipe.recipeGlobalList;
-    this.types = BuildingType.buildingTypeList;
+    this.types = BuildingType.buildingTypeGlobalList;
   }
   
   /**
@@ -156,7 +156,7 @@ public class State implements Serializable{
   private void updateWorld(State loadedState){
       Building.buildingGlobalList = loadedState.buildings;
       Recipe.recipeGlobalList = loadedState.recipes;
-      BuildingType.buildingTypeList = loadedState.types;
+      BuildingType.buildingTypeGlobalList = loadedState.types;
 
       StateLoadVisitor visitor = new StateLoadVisitor();
       loadedState.logictime.accept(visitor);
@@ -172,7 +172,7 @@ public class State implements Serializable{
     o.println("Current State Information:");
     printLogicTime(o);
     printList("Recipes:", Recipe.recipeGlobalList, o);
-    printList("Factory Types:", BuildingType.getBuildingTypeList(), o);
+    printList("Building Types:", BuildingType.getBuildingTypeGlobalList(), o);
     printList("Buildings:", Building.buildingGlobalList, o);
   }
 
