@@ -10,6 +10,7 @@ import productsimulation.model.Recipe;
 import productsimulation.model.StorageType;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -125,5 +126,86 @@ public class TypeParserTest {
         assertEquals(1, types.size(), "There should be exactly one building type parsed.");
         BuildingType bt = types.get(0);
         assertFalse(bt instanceof StorageType, "The building type should not be a StorageType for a factory.");
+    }
+
+    /**
+     * Test case for an unknown building type category.
+     * Expects the parser to return an error message indicating an unknown category.
+     */
+    @Test
+    public void testUnknownCategory() {
+        String json = "{\n" +
+                "  \"types\": [\n" +
+                "    { \"name\": \"InvalidType\", \"type\": \"invalid\", \"info\": {} }\n" +
+                "  ]\n" +
+                "}";
+        BufferedReader reader = new BufferedReader(new StringReader(json));
+        TypeParser parser = new TypeParser();
+        String error = parser.parse(reader);
+        assertEquals("Error: Unknown building type category 'invalid' for type 'InvalidType'.", error);
+    }
+
+    /**
+     * Test case for a factory type missing the required 'recipes' array.
+     * Expects an error message about the missing recipes array.
+     */
+    @Test
+    public void testFactoryMissingRecipes() {
+        String json = "{\n" +
+                "  \"types\": [\n" +
+                "    { \"name\": \"Door Factory\", \"type\": \"factory\", \"info\": { \"something\": \"value\" } }\n" +
+                "  ]\n" +
+                "}";
+        BufferedReader reader = new BufferedReader(new StringReader(json));
+        TypeParser parser = new TypeParser();
+        String error = parser.parse(reader);
+        assertEquals("Error: Factory type 'Door Factory' must have a 'recipes' array in its 'info' field.", error);
+    }
+
+    /**
+     * Custom BufferedReader that simulates an IOException.
+     */
+    private static class FailingReader extends BufferedReader {
+        public FailingReader() {
+            super(new StringReader("dummy"));
+        }
+
+        @Override
+        public String readLine() throws IOException {
+            throw new IOException("Forced failure.");
+        }
+    }
+
+    /**
+     * Test case for forcing an IOException during JSON parsing.
+     * Expects an error message with the IOException message.
+     */
+    @Test
+    public void testIOException() {
+        BufferedReader reader = new FailingReader();
+        TypeParser parser = new TypeParser();
+        String error = parser.parse(reader);
+        assertNotNull( error);
+    }
+
+    /**
+     * Test case for a factory type that references an unknown recipe.
+     * Expects an error message indicating that the factory references a recipe that does not exist.
+     */
+    @Test
+    public void testUnknownRecipeReference() {
+        String json = "{\n" +
+                "  \"types\": [\n" +
+                "    { \n" +
+                "      \"name\": \"Some Factory\", \n" +
+                "      \"type\": \"factory\", \n" +
+                "      \"info\": { \"recipes\": [ \"nonExistentRecipe\" ] } \n" +
+                "    }\n" +
+                "  ]\n" +
+                "}";
+        BufferedReader reader = new BufferedReader(new StringReader(json));
+        TypeParser parser = new TypeParser();
+        String error = parser.parse(reader);
+        assertEquals("Error: Factory type 'Some Factory' references an unknown recipe 'nonExistentRecipe'.", error);
     }
 }

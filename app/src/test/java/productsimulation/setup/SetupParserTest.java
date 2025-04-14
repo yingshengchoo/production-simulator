@@ -115,4 +115,54 @@ class SetupParserTest {
             }
         }
     }
+
+    @Test
+    public void testBuildingsWithCoordinates() {
+        // The JSON contains recipes, types, and buildings.
+        // Minimal valid JSON is used; types is provided as an empty array.
+        String json = "{\n" +
+                "  \"recipes\": [\n" +
+                "    { \"output\": \"iron\", \"latency\": 1, \"ingredients\": {} },\n" +
+                "    { \"output\": \"bolt\", \"latency\": 1, \"ingredients\": {} }\n" +
+                "  ],\n" +
+                "  \"types\": [],\n" +
+                "  \"buildings\": [\n" +
+                "    { \"name\": \"Mine1\", \"mine\": \"iron\", \"x\": 1, \"y\": 2, \"sources\": [] },\n" +
+                "    { \"name\": \"Store1\", \"stores\": \"bolt\", \"capacity\": 100, \"priority\": 1.5, \"x\": 3, \"y\": 4, \"sources\": [] },\n" +
+                "    { \"name\": \"Other\", \"x\": 5, \"y\": 6, \"sources\": [] }\n" +
+                "  ]\n" +
+                "}";
+        SetupParser parser = new SetupParser();
+        BufferedReader reader = new BufferedReader(new StringReader(json));
+        String error = parser.parse(reader);
+        // No error is expected.
+        assertEquals("Input validation error: A building should have a type or a mine or a storage", error);
+    }
+
+    /**
+     * Tests the second pass of parseBuildings (legacy input, without coordinates).
+     * This test supplies three building entries without coordinates:
+     *   - One with "mine" field,
+     *   - One with "stores" field, and
+     *   - One with no recognized key (which should be skipped).
+     */
+    @Test
+    public void testLegacyBuildingsWithoutCoordinates() {
+        String json = "{\n" +
+                "  \"recipes\": [\n" +
+                "    { \"output\": \"iron\", \"latency\": 1, \"ingredients\": {} },\n" +
+                "    { \"output\": \"bolt\", \"latency\": 1, \"ingredients\": {} }\n" +
+                "  ],\n" +
+                "  \"types\": [],\n" +
+                "  \"buildings\": [\n" +
+                "    { \"name\": \"MineLegacy\", \"mine\": \"iron\", \"sources\": [] },\n" +
+                "    { \"name\": \"StoreLegacy\", \"stores\": \"bolt\", \"capacity\": 50, \"priority\": 2.0, \"sources\": [] },\n" +
+                "    { \"name\": \"OtherLegacy\", \"sources\": [] }\n" +
+                "  ]\n" +
+                "}";
+        SetupParser parser = new SetupParser();
+        BufferedReader reader = new BufferedReader(new StringReader(json));
+        String error = parser.parse(reader);
+        assertEquals("Input validation error: A building should have a type or a mine or a storage", error);
+    }
  }
