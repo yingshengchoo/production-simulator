@@ -157,7 +157,7 @@ public class State implements Serializable{
       this.queue = loadedState.queue;
       this.distanceMap = loadedState.distanceMap;
       this.existingRoadTiles = loadedState.existingRoadTiles;
-
+      
       updateWorld(loadedState);      
       
       System.out.println("State loaded from SavedStates/" + filename + ".ser");
@@ -220,9 +220,7 @@ public class State implements Serializable{
     this.recipes = null;
     this.requestbroadcaster = null;
     this.logictime = null;
-    this.queue = null;
-    this.distanceMap = null;
-    this.existingRoadTiles = null;
+
   }
 
   public void setInstanceToNull(){
