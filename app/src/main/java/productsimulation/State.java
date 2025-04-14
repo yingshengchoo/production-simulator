@@ -6,9 +6,12 @@ import productsimulation.request.servePolicy.FIFOPolicy;
 import productsimulation.request.servePolicy.ServePolicy;
 import productsimulation.request.sourcePolicy.SourcePolicy;
 import productsimulation.request.sourcePolicy.SourceQLen;
-
+import productsimulation.model.road.*;
+import productsimulation.request.Request;
 import java.io.*;
-import java.util.List; 
+import java.util.List;
+import java.util.HashMap;
+import javafx.util.Pair;
 
 public class State implements Serializable{
 
@@ -17,11 +20,15 @@ public class State implements Serializable{
   private List<Building> buildings;
   private List<Recipe> recipes;
   private List<BuildingType> types;
+  private HashMap<Pair<Building, Building>, Integer> distanceMap;
+  private HashMap<Coordinate, RoadTile> existingRoadTiles;
+  private List<Request> queue;
+
   private RequestBroadcaster requestbroadcaster;
   private LogicTime logictime;
   private SourcePolicy defaultSourcePolicy;
   private ServePolicy defaultServePolicy;
-
+  
 
   /**
    * Constructs a State object class which represents the current state of the simulation.
@@ -40,10 +47,13 @@ public class State implements Serializable{
     this.logictime = logictime;
     this.defaultSourcePolicy = new SourceQLen();
     this.defaultServePolicy = new FIFOPolicy();
-
+    
     Building.buildingGlobalList = buildings;
     Recipe.recipeGlobalList = recipes;
     BuildingType.buildingTypeList = types;
+    distanceMap = null;
+    existingRoadTiles = null;
+    queue =  null;
     
     for(Building b: buildings) {
       b.changeSourcePolicy(defaultSourcePolicy);
@@ -144,8 +154,11 @@ public class State implements Serializable{
       this.types = loadedState.types;
       this.requestbroadcaster = loadedState.requestbroadcaster;
       this.logictime = loadedState.logictime;
+      this.queue = loadedState.queue;
+      this.distanceMap = loadedState.distanceMap;
+      this.existingRoadTiles = loadedState.existingRoadTiles;
 
-      updateWorld(loadedState);
+      updateWorld(loadedState);      
       
       System.out.println("State loaded from SavedStates/" + filename + ".ser");
       showState(System.out);
@@ -157,7 +170,10 @@ public class State implements Serializable{
       Building.buildingGlobalList = loadedState.buildings;
       Recipe.recipeGlobalList = loadedState.recipes;
       BuildingType.buildingTypeList = loadedState.types;
-
+      TransportQueue.queue = loadedState.queue;
+      Road.distanceMap = loadedState.distanceMap;
+      Road.existingRoadTiles = loadedState.existingRoadTiles;
+      
       StateLoadVisitor visitor = new StateLoadVisitor();
       loadedState.logictime.accept(visitor);
       loadedState.requestbroadcaster.accept(visitor);
@@ -204,6 +220,9 @@ public class State implements Serializable{
     this.recipes = null;
     this.requestbroadcaster = null;
     this.logictime = null;
+    this.queue = null;
+    this.distanceMap = null;
+    this.existingRoadTiles = null;
   }
 
   public void setInstanceToNull(){

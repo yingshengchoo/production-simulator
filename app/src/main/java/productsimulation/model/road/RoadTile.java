@@ -1,8 +1,10 @@
 package productsimulation.model.road;
 
 import productsimulation.Coordinate;
+import java.io.Serializable;
 
-public class RoadTile {
+
+public class RoadTile implements Serializable {
     private final Coordinate c;
     private final Direction direction;
 

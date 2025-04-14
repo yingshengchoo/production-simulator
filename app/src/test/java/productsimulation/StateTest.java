@@ -115,6 +115,8 @@ class StateTest {
     "}\n";
     
     assertEquals(expected, originalOutput.toString());
+
+
     
     state.reset();
 

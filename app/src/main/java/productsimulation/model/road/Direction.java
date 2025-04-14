@@ -1,7 +1,9 @@
 package productsimulation.model.road;
 
+import java.io.Serializable;
+
 //      道路交汇处可以有两个方向，用掩码来表示
-public class Direction {
+public class Direction implements Serializable {
     public static final int UNDEFINED = 0;
     public static final int UP = 1 << 0;
     public static final int RIGHT = 1 << 1;

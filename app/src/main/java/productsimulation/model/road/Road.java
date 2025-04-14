@@ -5,13 +5,14 @@ import productsimulation.Board;
 import productsimulation.Coordinate;
 import productsimulation.Log;
 import productsimulation.model.Building;
+import java.io.Serializable;
 
 import java.util.*;
 
 // road容积无限，但不模拟运输过程。由request完成时的hook函数在latency回合后直接传送到目标仓库。
 // GUI上点击road，只显示方向信息。road上也不准备做“有个货物在动”的动画。
 // todo：如果建筑直接相邻，也要注册一条特殊的road，保证可达性判断无误
-public class Road {
+public class Road implements Serializable {
     // key: (source,destination), value: distance
     // 如果存在，返回最短路程；如果不存在，说明不可达
     public static HashMap<Pair<Building, Building>, Integer> distanceMap = new HashMap<>();

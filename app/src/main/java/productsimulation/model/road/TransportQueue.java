@@ -9,8 +9,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class TransportQueue {
-    private static List<Request> queue = new ArrayList<>();
+import java.io.Serializable;
+
+public class TransportQueue implements Serializable {
+    public static List<Request> queue = new ArrayList<>();
 
     public static void addRequest(Request request) {
         queue.add(request);
