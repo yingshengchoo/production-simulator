@@ -51,9 +51,9 @@ public class State implements Serializable{
     Building.buildingGlobalList = buildings;
     Recipe.recipeGlobalList = recipes;
     BuildingType.buildingTypeList = types;
-    distanceMap = null;
-    existingRoadTiles = null;
-    queue =  null;
+    distanceMap = Road.distanceMap;
+    existingRoadTiles = Road.existingRoadTiles;
+    queue = TransportQueue.queue;
     
     for(Building b: buildings) {
       b.changeSourcePolicy(defaultSourcePolicy);
