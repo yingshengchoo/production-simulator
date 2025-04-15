@@ -10,6 +10,8 @@ import productsimulation.model.road.*;
 import productsimulation.request.Request;
 import java.io.*;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashMap;
 import javafx.util.Pair;
 
@@ -20,9 +22,9 @@ public class State implements Serializable{
   private List<Building> buildings;
   private List<Recipe> recipes;
   private List<BuildingType> types;
-  private HashMap<Pair<Building, Building>, Road> distanceMap;
-  private HashMap<Coordinate, RoadTile> existingRoadTiles;
-  private List<Request> queue;
+  private HashMap<Pair<Building, Building>, Road> distanceMap = new HashMap<>(); 
+  private HashMap<Coordinate, RoadTile> existingRoadTiles = new HashMap<>();
+  private List<Request> queue = new ArrayList<>();
   private LogicTime logictime;
   private SourcePolicy defaultSourcePolicy;
   private ServePolicy defaultServePolicy;
