@@ -29,13 +29,13 @@ class StateTest {
 
   @Test
   public void test_state_singleton(){
-    State.initialize(new ArrayList<>(),new ArrayList<>(),new ArrayList<>(), null, null);
+    State.initialize(new ArrayList<>(),new ArrayList<>(),new ArrayList<>(), null);
     State s1 = State.getInstance();
     s1.reset();
     State s2 = State.getInstance();
     assertEquals(s1, s2);
     ArrayList<Building> buildings = new ArrayList<>();
-    State.initialize(buildings, new ArrayList<>(), new ArrayList<>(), null, null);
+    State.initialize(buildings, new ArrayList<>(), new ArrayList<>(), null);
     State s3 = State.getInstance();
     assertEquals(s1,s3);
 
@@ -63,7 +63,7 @@ class StateTest {
     ArrayList<BuildingType> types = new ArrayList<>();
     types.add(new BuildingType("EggRoll", recipes));
 
-    RequestBroadcaster requestBroadcaster = RequestBroadcaster.getInstance();
+//    RequestBroadcaster requestBroadcaster = RequestBroadcaster.getInstance();
 //    requestBroadcaster.addRecipes(eggroll);
 //    requestBroadcaster.addBuildings(mine);
 //    requestBroadcaster.addBuildings(factory);
@@ -72,7 +72,7 @@ class StateTest {
 //    logicTime.addObservers(mine);
 //    logicTime.addObservers(factory);
     
-    State.initialize(buildings, types, stateRecipes, requestBroadcaster, logicTime);
+    State.initialize(buildings, types, stateRecipes, logicTime);
 
     State state = State.getInstance();
     
@@ -129,7 +129,7 @@ class StateTest {
 
   @Test
   public void test_checkFilename(){
-    State.initialize(new ArrayList<>(),new ArrayList<>(),new ArrayList<>(), null, null);
+    State.initialize(new ArrayList<>(),new ArrayList<>(),new ArrayList<>(), null);
     State state = State.getInstance();
     assertTrue(state.checkFilename("normalfilename"));
     assertFalse(state.checkFilename("illegal:name"));
@@ -139,14 +139,14 @@ class StateTest {
 
   @Test
   public void testSave_InvalidFilename() {
-    State.initialize(new ArrayList<>(),new ArrayList<>(),new ArrayList<>(), null, null);
+    State.initialize(new ArrayList<>(),new ArrayList<>(),new ArrayList<>(), null);
     assertThrows(IllegalArgumentException.class, () -> State.getInstance().save("invalid/file"));
   }
 
   
   @Test
   public void testSavePrintsStackTraceOnIOException() throws IOException {
-    State.initialize(new ArrayList<>(),new ArrayList<>(),new ArrayList<>(), null, null);
+    State.initialize(new ArrayList<>(),new ArrayList<>(),new ArrayList<>(), null);
     State state = State.getInstance();
     ByteArrayOutputStream errContent = new ByteArrayOutputStream();
     System.setErr(new PrintStream(errContent));
@@ -164,7 +164,7 @@ class StateTest {
 
   @Test
   public void test_load_non_existent_file() throws IOException{
-    State.initialize(new ArrayList<>(),new ArrayList<>(),new ArrayList<>(), null, null);
+    State.initialize(new ArrayList<>(),new ArrayList<>(),new ArrayList<>(), null);
 
     State state = State.getInstance();
 
@@ -199,7 +199,7 @@ class StateTest {
     ArrayList<BuildingType> types = new ArrayList<>();
     types.add(new BuildingType("EggRoll", recipes));
 
-    RequestBroadcaster requestBroadcaster = RequestBroadcaster.getInstance();
+//    RequestBroadcaster requestBroadcaster = RequestBroadcaster.getInstance();
 //    requestBroadcaster.addRecipes(eggroll);
 //    requestBroadcaster.addBuildings(mine);
 //    requestBroadcaster.addBuildings(factory);
@@ -208,7 +208,7 @@ class StateTest {
 //    logicTime.addObservers(mine);
 //    logicTime.addObservers(factory);
     
-    State.initialize(buildings, types, stateRecipes, requestBroadcaster, logicTime);
+    State.initialize(buildings, types, stateRecipes, logicTime);
 
     State state = State.getInstance();
 

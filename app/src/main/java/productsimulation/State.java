@@ -17,7 +17,7 @@ public class State implements Serializable{
   private List<Building> buildings;
   private List<Recipe> recipes;
   private List<BuildingType> types;
-  private RequestBroadcaster requestbroadcaster;
+//  private RequestBroadcaster requestbroadcaster;
   private LogicTime logictime;
   private SourcePolicy defaultSourcePolicy;
   private ServePolicy defaultServePolicy;
@@ -29,14 +29,13 @@ public class State implements Serializable{
    * @param buildings          is the list of buildings in the simulation. 
    * @param types              is the list types of Factory in the simulation.
    * @param recipes            is the list of recipes in the simulation.
-   * @param requestbroadcaster is the requestbroadcaster used in the simulation
    * @param logictime          is the logictime used in the simulation. 
    */
-  private State(List<Building> buildings, List<BuildingType> types, List<Recipe> recipes, RequestBroadcaster requestbroadcaster, LogicTime logictime) {
+  private State(List<Building> buildings, List<BuildingType> types, List<Recipe> recipes, LogicTime logictime) {
     this.buildings = buildings;
     this.types = types;
     this.recipes = recipes;
-    this.requestbroadcaster = requestbroadcaster;
+//    this.requestbroadcaster = requestbroadcaster;
     this.logictime = logictime;
     this.defaultSourcePolicy = new SourceQLen();
     this.defaultServePolicy = new FIFOPolicy();
@@ -58,9 +57,9 @@ public class State implements Serializable{
    * @param types         is the list types of Factory in the simulation.
    * @param recipes       is the list of recipes in the simulation.
    */
-  public static void initialize(List<Building> buildings, List<BuildingType> types, List<Recipe> recipes, RequestBroadcaster requestbroadcaster, LogicTime logictime) {
+  public static void initialize(List<Building> buildings, List<BuildingType> types, List<Recipe> recipes, LogicTime logictime) {
     if (instance == null) {
-      instance = new State(buildings, types, recipes, requestbroadcaster, logictime);
+      instance = new State(buildings, types, recipes, logictime);
     }
   }
   
@@ -142,7 +141,7 @@ public class State implements Serializable{
       this.buildings = loadedState.buildings;
       this.recipes = loadedState.recipes;
       this.types = loadedState.types;
-      this.requestbroadcaster = loadedState.requestbroadcaster;
+//      this.requestbroadcaster = loadedState.requestbroadcaster;
       this.logictime = loadedState.logictime;
 
       updateWorld(loadedState);
@@ -160,7 +159,6 @@ public class State implements Serializable{
 
       StateLoadVisitor visitor = new StateLoadVisitor();
       loadedState.logictime.accept(visitor);
-      loadedState.requestbroadcaster.accept(visitor);
   }
   
   /**
@@ -202,7 +200,7 @@ public class State implements Serializable{
     this.buildings = null;
     this.types = null;
     this.recipes = null;
-    this.requestbroadcaster = null;
+//    this.requestbroadcaster = null;
     this.logictime = null;
   }
 

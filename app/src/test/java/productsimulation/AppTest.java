@@ -81,7 +81,7 @@ class AppTest {
 //        LogicTime logicTime = LogicTime.getInstance();
 //        logicTime.addObservers(woodMine);
 //        logicTime.addObservers(woodSwordFactory);
-        RequestBroadcaster requestBroadcaster = RequestBroadcaster.getInstance();
+//        RequestBroadcaster requestBroadcaster = RequestBroadcaster.getInstance();
 //        requestBroadcaster.addRecipes(woodMineRecipe);
 //        requestBroadcaster.addRecipes(woodSwordRecipe);
 //        requestBroadcaster.addBuildings(woodMine);

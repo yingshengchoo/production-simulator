@@ -4,7 +4,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import productsimulation.Board;
 import productsimulation.LogicTime;
-import productsimulation.RequestBroadcaster;
 import productsimulation.State;
 import productsimulation.model.*;
 import productsimulation.request.servePolicy.ReadyPolicy;
@@ -44,7 +43,7 @@ class SetPolicyCommandTest {
         ArrayList<BuildingType> types = new ArrayList<>();
         types.add(new BuildingType("EggRoll", recipes));
 
-        RequestBroadcaster requestBroadcaster = RequestBroadcaster.getInstance();
+//        RequestBroadcaster requestBroadcaster = RequestBroadcaster.getInstance();
 //        requestBroadcaster.addRecipes(eggroll);
 //        requestBroadcaster.addBuildings(mine);
 //        requestBroadcaster.addBuildings(factory);
@@ -53,7 +52,7 @@ class SetPolicyCommandTest {
 //        logicTime.addObservers(mine);
 //        logicTime.addObservers(factory);
 
-        State.initialize(buildings, types, stateRecipes, requestBroadcaster, logicTime);
+        State.initialize(buildings, types, stateRecipes, logicTime);
     }
     @Test
     void test_execute_specific_building() {
