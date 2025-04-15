@@ -1,6 +1,6 @@
 package productsimulation.command;
 
-import productsimulation.RequestBroadcaster;
+import productsimulation.request.Request;
 
 public class RequestCommand extends Command{
     private String itemName;
@@ -13,7 +13,7 @@ public class RequestCommand extends Command{
 
     @Override
     public String execute() {
-        RequestBroadcaster.getInstance().userRequestHandler(itemName, buildingName);
+        Request.userRequestHandler(itemName, buildingName);
         return null;
     }
 

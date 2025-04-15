@@ -21,7 +21,6 @@ public class StorageTest {
   @BeforeEach
   public void setup(){
     LogicTime.getInstance().reset();
-    RequestBroadcaster.getInstance().reset();
     Board.getBoard().cleanup();
     Building.buildingGlobalList.clear();
   }
@@ -70,8 +69,6 @@ public class StorageTest {
 
     assertEquals("socks", s1.getRecipeOutput());
 
-    RequestBroadcaster rb = RequestBroadcaster.getInstance();
-
     // connect the buildings
     Road.connectHandler(m1.getName(), s1.getName());
     Road.connectHandler(m2.getName(), s1.getName());
@@ -84,7 +81,7 @@ public class StorageTest {
     assertEquals(1, s1.getFrequency());
    
     assertEquals(0, t.getStep());
-    rb.userRequestHandler(pair.getOutput(),f.getName()); 
+    Request.userRequestHandler(pair.getOutput(),f.getName());
 
     //DFS propagates the requests down
     //Factory has 1 request, Storage: 2 request, M1: 1 request, M2: 1 request
@@ -175,7 +172,7 @@ public class StorageTest {
     assertEquals(0, m2.getRequestCount());
     assertEquals(1, s1.getStorage().size());
 
-    rb.userRequestHandler(pair.getOutput(),f.getName()); 
+    Request.userRequestHandler(pair.getOutput(),f.getName());
     t.stepNHandler(3);
 
   }

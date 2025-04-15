@@ -20,11 +20,11 @@ public class State implements Serializable{
   private List<Building> buildings;
   private List<Recipe> recipes;
   private List<BuildingType> types;
-  private HashMap<Pair<Building, Building>, Integer> distanceMap;
+  private HashMap<Pair<Building, Building>, Road> distanceMap;
   private HashMap<Coordinate, RoadTile> existingRoadTiles;
   private List<Request> queue;
 
-  private RequestBroadcaster requestbroadcaster;
+//  private RequestBroadcaster requestbroadcaster;
   private LogicTime logictime;
   private SourcePolicy defaultSourcePolicy;
   private ServePolicy defaultServePolicy;
@@ -36,22 +36,21 @@ public class State implements Serializable{
    * @param buildings          is the list of buildings in the simulation. 
    * @param types              is the list types of Factory in the simulation.
    * @param recipes            is the list of recipes in the simulation.
-   * @param requestbroadcaster is the requestbroadcaster used in the simulation
    * @param logictime          is the logictime used in the simulation. 
    */
-  private State(List<Building> buildings, List<BuildingType> types, List<Recipe> recipes, RequestBroadcaster requestbroadcaster, LogicTime logictime) {
+  private State(List<Building> buildings, List<BuildingType> types, List<Recipe> recipes, LogicTime logictime) {
     this.buildings = buildings;
     this.types = types;
     this.recipes = recipes;
-    this.requestbroadcaster = requestbroadcaster;
+//    this.requestbroadcaster = requestbroadcaster;
     this.logictime = logictime;
     this.defaultSourcePolicy = new SourceQLen();
     this.defaultServePolicy = new FIFOPolicy();
     
     Building.buildingGlobalList = buildings;
     Recipe.recipeGlobalList = recipes;
-    BuildingType.buildingTypeList = types;
-    distanceMap = Road.distanceMap;
+    BuildingType.buildingTypeGlobalList = types;
+    distanceMap = Road.roadMap;
     existingRoadTiles = Road.existingRoadTiles;
     queue = TransportQueue.queue;
     
@@ -68,9 +67,9 @@ public class State implements Serializable{
    * @param types         is the list types of Factory in the simulation.
    * @param recipes       is the list of recipes in the simulation.
    */
-  public static void initialize(List<Building> buildings, List<BuildingType> types, List<Recipe> recipes, RequestBroadcaster requestbroadcaster, LogicTime logictime) {
+  public static void initialize(List<Building> buildings, List<BuildingType> types, List<Recipe> recipes, LogicTime logictime) {
     if (instance == null) {
-      instance = new State(buildings, types, recipes, requestbroadcaster, logictime);
+      instance = new State(buildings, types, recipes, logictime);
     }
   }
   
@@ -134,7 +133,7 @@ public class State implements Serializable{
   private void updateState(){
     this.buildings = Building.buildingGlobalList;
     this.recipes = Recipe.recipeGlobalList;
-    this.types = BuildingType.buildingTypeList;
+    this.types = BuildingType.buildingTypeGlobalList;
   }
   
   /**
@@ -152,7 +151,7 @@ public class State implements Serializable{
       this.buildings = loadedState.buildings;
       this.recipes = loadedState.recipes;
       this.types = loadedState.types;
-      this.requestbroadcaster = loadedState.requestbroadcaster;
+//      this.requestbroadcaster = loadedState.requestbroadcaster;
       this.logictime = loadedState.logictime;
       this.queue = loadedState.queue;
       this.distanceMap = loadedState.distanceMap;
@@ -169,14 +168,18 @@ public class State implements Serializable{
   private void updateWorld(State loadedState){
       Building.buildingGlobalList = loadedState.buildings;
       Recipe.recipeGlobalList = loadedState.recipes;
+<<<<<<< HEAD
       BuildingType.buildingTypeList = loadedState.types;
       TransportQueue.queue = loadedState.queue;
       Road.distanceMap = loadedState.distanceMap;
       Road.existingRoadTiles = loadedState.existingRoadTiles;
       
+=======
+      BuildingType.buildingTypeGlobalList = loadedState.types;
+
+>>>>>>> master
       StateLoadVisitor visitor = new StateLoadVisitor();
       loadedState.logictime.accept(visitor);
-      loadedState.requestbroadcaster.accept(visitor);
   }
   
   /**
@@ -188,7 +191,7 @@ public class State implements Serializable{
     o.println("Current State Information:");
     printLogicTime(o);
     printList("Recipes:", Recipe.recipeGlobalList, o);
-    printList("Factory Types:", BuildingType.getBuildingTypeList(), o);
+    printList("Building Types:", BuildingType.getBuildingTypeGlobalList(), o);
     printList("Buildings:", Building.buildingGlobalList, o);
   }
 
@@ -218,7 +221,7 @@ public class State implements Serializable{
     this.buildings = null;
     this.types = null;
     this.recipes = null;
-    this.requestbroadcaster = null;
+//    this.requestbroadcaster = null;
     this.logictime = null;
 
   }

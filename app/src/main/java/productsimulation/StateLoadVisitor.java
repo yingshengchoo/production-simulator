@@ -6,9 +6,4 @@ public class StateLoadVisitor implements StateVisitor {
     public void visit(LogicTime logicTime) {
         LogicTime.getInstance().loadLogicTime(logicTime); 
     }
-
-    @Override
-    public void visit(RequestBroadcaster requestBroadcaster) {
-        RequestBroadcaster.getInstance().loadRequestBroadcaster(requestBroadcaster); 
-    }
 }

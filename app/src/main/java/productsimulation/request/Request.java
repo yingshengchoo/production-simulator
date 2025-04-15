@@ -166,4 +166,13 @@ public class Request implements Serializable{
   public void setTransLatency(int transLatency) {
     this.transLatency = transLatency;
   }
+
+  public static void userRequestHandler(String itemName, String buildingName) {
+    Recipe r = Recipe.getRecipe(itemName);
+    Building b = Building.getBuilding(buildingName);
+    if(r != null && b != null) {
+      Request request = new Request(itemName, r, null);
+      b.addRequest(request);
+    }
+  }
 }

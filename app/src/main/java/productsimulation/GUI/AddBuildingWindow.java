@@ -16,10 +16,7 @@ import productsimulation.model.Factory;
 import productsimulation.model.Mine;
 import productsimulation.model.Storage;
 import productsimulation.model.StorageType;
-import productsimulation.setup.TypeParser;
 
-import java.io.BufferedReader;
-import java.io.StringReader;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -98,7 +95,7 @@ public class AddBuildingWindow {
         grid.add(sourcesLabel, 0, 4);
         grid.add(sourcesListView, 1, 4);
 
-        final List<BuildingType> availableTypes = BuildingType.getBuildingTypeList();
+        final List<BuildingType> availableTypes = BuildingType.getBuildingTypeGlobalList();
         final List<String> typeNames = availableTypes.stream()
                 .map(BuildingType::getName)
                 .collect(Collectors.toList());

@@ -133,24 +133,54 @@ public class BoardDisplay {
         // Draw roads.
         Map<Coordinate, RoadTile> roadTileMap = Road.existingRoadTiles;
         gc.setFill(Color.GRAY);
+        gc.setStroke(Color.WHITE);
+
         for (RoadTile roadTile : roadTileMap.values()) {
             Coordinate c = roadTile.getCoordinate();
             if (c.x >= minX && c.x <= maxX && c.y >= minY && c.y <= maxY) {
                 double rx = c.x * scale + offsetX;
                 double ry = c.y * scale + offsetY;
                 gc.fillRect(rx, ry, scale, scale);
-                gc.setStroke(Color.WHITE);
-                gc.setLineWidth(2);
                 double centerX = rx + scale / 2;
                 double centerY = ry + scale / 2;
                 double margin = scale / 4;
-                if (roadTile.getDirection().hasDirection(Direction.LEFT) || roadTile.getDirection().hasDirection(Direction.RIGHT)) {
-                    gc.strokeLine(rx + margin, centerY, rx + scale - margin, centerY);
+                double arrowSize = scale / 6; // 箭头大小
+
+                // from 方向的水平连接
+                if (roadTile.getFromDirection().hasDirection(Direction.LEFT)) {
+                    gc.strokeLine(rx + margin, centerY, centerX, centerY); // 只画左半边
                 }
-                if (roadTile.getDirection().hasDirection(Direction.UP) || roadTile.getDirection().hasDirection(Direction.DOWN)) {
-                    gc.strokeLine(centerX, ry + margin, centerX, ry + scale - margin);
+                if (roadTile.getFromDirection().hasDirection(Direction.RIGHT)) {
+                    gc.strokeLine(centerX, centerY, rx + scale - margin, centerY); // 只画右半边
                 }
-                gc.setLineWidth(1);
+                // from 方向的垂直连接
+                if (roadTile.getFromDirection().hasDirection(Direction.UP)) {
+                    gc.strokeLine(centerX, ry + margin, centerX, centerY); // 只画上半边
+                }
+                if (roadTile.getFromDirection().hasDirection(Direction.DOWN)) {
+                    gc.strokeLine(centerX, centerY, centerX, ry + scale - margin); // 只画下半边
+                }
+
+                // to 方向的水平连接（添加箭头）
+                if (roadTile.getToDirection().hasDirection(Direction.LEFT)) {
+                    // 从中心到左边界，并添加箭头
+                    strokeArrow(gc, centerX, centerY, rx + margin, centerY, arrowSize);
+                }
+                if (roadTile.getToDirection().hasDirection(Direction.RIGHT)) {
+                    // 从中心到右边界，并添加箭头
+                    strokeArrow(gc, centerX, centerY, rx + scale - margin, centerY, arrowSize);
+                }
+                // to 方向的垂直连接（添加箭头）
+                if (roadTile.getToDirection().hasDirection(Direction.UP)) {
+                    // 从中心到上边界，并添加箭头
+                    strokeArrow(gc, centerX, centerY, centerX, ry + margin, arrowSize);
+                }
+                if (roadTile.getToDirection().hasDirection(Direction.DOWN)) {
+                    // 从中心到下边界，并添加箭头
+                    strokeArrow(gc, centerX, centerY, centerX, ry + scale - margin, arrowSize);
+                }
+
+                gc.setLineWidth(2);
             }
         }
 
@@ -199,6 +229,32 @@ public class BoardDisplay {
         }
     }
 
+    private void strokeArrow(GraphicsContext gc, double startX, double startY, double endX, double endY, double arrowSize) {
+        // 绘制主线
+        gc.strokeLine(startX, startY, endX, endY);
+
+        // 计算方向向量
+        double dx = endX - startX;
+        double dy = endY - startY;
+        double length = Math.sqrt(dx * dx + dy * dy);
+
+        // 归一化方向向量
+        if (length > 0) {
+            dx /= length;
+            dy /= length;
+
+            // 计算箭头的两个点
+            double x1 = endX - arrowSize * dx - arrowSize * dy * 0.5;
+            double y1 = endY - arrowSize * dy + arrowSize * dx * 0.5;
+            double x2 = endX - arrowSize * dx + arrowSize * dy * 0.5;
+            double y2 = endY - arrowSize * dy - arrowSize * dx * 0.5;
+
+            // 绘制箭头
+            gc.strokeLine(endX, endY, x1, y1);
+            gc.strokeLine(endX, endY, x2, y2);
+        }
+    }
+
     /**
      * Handles canvas click events; if a building is clicked, its info window is shown.
      *
@@ -209,6 +265,10 @@ public class BoardDisplay {
         Building b = findBuilding(pixelX, pixelY);
         if (b != null) {
             BuildingInfoWindow.show(b);
+        }
+        RoadTile tile = findRoadTile(pixelX, pixelY);
+        if (tile != null) {
+            BuildingInfoWindow.show(tile);
         }
     }
 
@@ -240,6 +300,19 @@ public class BoardDisplay {
         for (Building b : state.getBuildings()) {
             if (b.getX() == gridX && b.getY() == gridY) {
                 return b;
+            }
+        }
+        return null;
+    }
+
+    public RoadTile findRoadTile(double pixelX, double pixelY) {
+        int gridX = (int) Math.floor((pixelX - offsetX) / scale);
+        int gridY = (int) Math.floor((pixelY - offsetY) / scale);
+        for(Map.Entry<Coordinate, RoadTile> entry: Road.existingRoadTiles.entrySet()) {
+            Coordinate coordinate = entry.getKey();
+            RoadTile roadTile = entry.getValue();
+            if(coordinate.x == gridX && coordinate.y == gridY) {
+                return roadTile;
             }
         }
         return null;

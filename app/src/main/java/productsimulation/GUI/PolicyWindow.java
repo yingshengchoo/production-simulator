@@ -77,7 +77,7 @@ public class PolicyWindow {
                 return;
             }
 
-            SetPolicyCommand cmd = new SetPolicyCommand(pType, pValue, pTarget);
+            SetPolicyCommand cmd = new SetPolicyCommand(pType, pTarget, pValue);
             String error = cmd.execute();
             if (error == null) {
                 showInfo("Policy set: " + pType + " -> " + pValue + " on " + pTarget);

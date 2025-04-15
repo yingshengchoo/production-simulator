@@ -1,9 +1,7 @@
 package productsimulation.command;
 
 import org.junit.jupiter.api.Test;
-import productsimulation.App;
 import productsimulation.LogicTime;
-import productsimulation.RequestBroadcaster;
 import productsimulation.State;
 
 import java.io.File;
@@ -15,7 +13,7 @@ class LoadCommandTest {
 
     @Test
     void execute() {
-        State.initialize(new ArrayList<>(),new ArrayList<>(),new ArrayList<>(), RequestBroadcaster.getInstance(), LogicTime.getInstance());
+        State.initialize(new ArrayList<>(),new ArrayList<>(),new ArrayList<>(), LogicTime.getInstance());
         String filename = "testSave";
         File file = new File("SavedStates/" + filename + ".ser");
         assertTrue(file.exists(), "File should exist after saving state.");

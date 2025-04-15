@@ -78,11 +78,11 @@ public class App {
         Map<String, Building> buildings = parser.getBuildingMap();
 
         LogicTime logicTime = LogicTime.getInstance();
-        RequestBroadcaster requestBroadcaster = RequestBroadcaster.getInstance();
+//        RequestBroadcaster requestBroadcaster = RequestBroadcaster.getInstance();
         SourcePolicy sourcePolicy = new SourceQLen();
         ServePolicy servePolicy = new FIFOPolicy();
         State.initialize(new ArrayList<>(buildings.values()), new ArrayList<>(types.values()),
-                new ArrayList<>(recipes.values()), requestBroadcaster, logicTime);
+                new ArrayList<>(recipes.values()), logicTime);
 
         ArrayList<Building> buildingList = new ArrayList<>();
         for(Building b: buildings.values()) {
@@ -144,7 +144,7 @@ public class App {
             Log.level0Log(error);
             return false;
         }
-        BuildingType.setBuildingTypeList(parser.getTypeMap());
+        BuildingType.setBuildingTypeGlobalList(parser.getTypeMap());
         return true;
     }
 

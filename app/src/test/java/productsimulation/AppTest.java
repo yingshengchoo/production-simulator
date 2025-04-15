@@ -81,7 +81,7 @@ class AppTest {
 //        LogicTime logicTime = LogicTime.getInstance();
 //        logicTime.addObservers(woodMine);
 //        logicTime.addObservers(woodSwordFactory);
-        RequestBroadcaster requestBroadcaster = RequestBroadcaster.getInstance();
+//        RequestBroadcaster requestBroadcaster = RequestBroadcaster.getInstance();
 //        requestBroadcaster.addRecipes(woodMineRecipe);
 //        requestBroadcaster.addRecipes(woodSwordRecipe);
 //        requestBroadcaster.addBuildings(woodMine);
@@ -185,6 +185,12 @@ class AppTest {
                 "json_inputs/building_types.json",
                 "e2e_user_inputs/input_storage3.txt",
                 "e2e_log_outputs/output_storage3.txt");
+    }
+
+    @Test
+    @Disabled("only for local test")
+    public void test_GUI() {
+        App.main(new String[]{"storage3.json", "building_types.json"});
     }
 
     @Test
