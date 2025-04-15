@@ -15,6 +15,7 @@ import productsimulation.model.Factory;
 import productsimulation.model.Mine;
 import productsimulation.model.Storage;
 import productsimulation.model.BuildingType;
+import productsimulation.model.road.RoadTile;
 import productsimulation.request.Request;
 
 import java.util.Map;
@@ -71,6 +72,25 @@ public class BuildingInfoWindow {
             });
         });
         layout.getChildren().add(connectBtn);
+
+        Scene scene = new Scene(layout, 300, 280);
+        popup.setScene(scene);
+        popup.showAndWait();
+    }
+
+    public static void show(RoadTile tile) {
+        Stage popup = new Stage();
+        popup.initModality(Modality.APPLICATION_MODAL);
+        popup.setTitle("Road Info");
+
+        VBox layout = new VBox();
+        layout.setSpacing(10);
+        layout.setPadding(new Insets(15));
+
+        layout.getChildren().addAll(
+                new Label("From: " + tile.getFromDirection().getDirections()),
+                new Label("To: " + tile.getToDirection().getDirections())
+        );
 
         Scene scene = new Scene(layout, 300, 280);
         popup.setScene(scene);

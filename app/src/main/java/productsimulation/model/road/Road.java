@@ -67,61 +67,49 @@ public class Road {
         return null;
     }
 
-    // 此处不检查夹角，依靠shortestPath内的逻辑检查夹角
-    private void setDirection(RoadTile lastTile, Coordinate lastPos, Coordinate c) {
-        if(lastPos.x + 1 == c.x) {
-            lastTile.getDirection().addDirection(Direction.RIGHT);
-        } else if(lastPos.y + 1 == c.y) {
-            lastTile.getDirection().addDirection(Direction.UP);
-        } else if(lastPos.x - 1 == c.x) {
-            lastTile.getDirection().addDirection(Direction.LEFT);
-        } else {
-            lastTile.getDirection().addDirection(Direction.DOWN);
-        }
-    }
-
 //    不检查指定位置是否合法，由caller保证安全调用，故设为private
-    // coordinates中都是要建的，exit是不用建的，仅用作判断最后一个roadTile的方向
-    private void placeRoad(ArrayList<Coordinate> coordinates, Coordinate exit) {
-        if(exit == null) {
-            throw new IllegalArgumentException("must have an exit");
+    // coordinates中都是要建的，entrance和exit是不用建的，仅用作判断方向
+    private void placeRoad(ArrayList<Coordinate> coordinates, Coordinate entrance, Coordinate exit) {
+        if(entrance == null || exit == null) {
+            throw new IllegalArgumentException("must have an exit and an entrance");
         }
         if(coordinates == null || coordinates.isEmpty()) {
             throw new IllegalArgumentException("no road tiles to place");
         }
-        Coordinate lastPos = null;
-        RoadTile lastTile = null;
-        for(Coordinate c: coordinates) {
+        Coordinate lastPos, nextPos;
+        for(int i = 0; i < coordinates.size(); i++) {
+            if(i == 0) {
+                lastPos = entrance;
+            } else {
+                lastPos = coordinates.get(i - 1);
+            }
+            if(i == coordinates.size() - 1) {
+                nextPos = exit;
+            } else {
+                nextPos = coordinates.get(i + 1);
+            }
+            Coordinate curPos = coordinates.get(i);
+            if(!Coordinate.isNeighbor(lastPos, curPos) || !Coordinate.isNeighbor(curPos, nextPos)) {
+                throw new IllegalArgumentException("road should be continuous");
+            }
 //            未必每次迭代都会建新路
             RoadTile tile;
-            int weight = Board.getBoard().getBoardPosWeight(c);
+            int weight = Board.getBoard().getBoardPosWeight(curPos);
             if(weight == 2) {
-                Board.getBoard().setBoardPosWeight(c, 1);
-//            原来没路，建新路。初始化时均未定义方向，下一轮迭代时才会赋实际值
-                tile = new RoadTile(c, Direction.UNDEFINED());
-                existingRoadTiles.put(c, tile);
+                Board.getBoard().setBoardPosWeight(curPos, 1);
+//            原来没路，建新路
+                tile = new RoadTile(curPos);
+                existingRoadTiles.put(curPos, tile);
             } else if (weight == 1) {
 //            原来有路，复用之前的tile
-                tile = existingRoadTiles.get(c);
+                tile = existingRoadTiles.get(curPos);
             } else {
                 throw new IllegalArgumentException("cannot place road here");
             }
-
+            tile.setDirection(lastPos, curPos, nextPos);
 //            同一个tile可以在多条road里，此处不管是否新建tile，都应当在当前road中添加这个tile
             roadTiles.add(tile);
-            if(lastPos != null) {
-                if(!Coordinate.isNeighbor(lastPos, c)) {
-                    throw new IllegalArgumentException("invalid road");
-                }
-                setDirection(lastTile, lastPos, c);
-            }
-            lastPos = c;
-            lastTile = tile;
         }
-        if(!Coordinate.isNeighbor(lastPos, exit)) {
-            throw new IllegalArgumentException("invalid road");
-        }
-        setDirection(lastTile, lastPos, exit);
     }
 
     public static Road generateRoad(Building st, Building ed) {
@@ -136,12 +124,34 @@ public class Road {
         int distance = shortestPath(st.getCoordinate(), ed.getCoordinate(), path);
         if(distance != -1) {
             Road newRoad = new Road(st, ed, path.size());
-            newRoad.placeRoad(path, ed.getCoordinate());
+            newRoad.placeRoad(path, st.getCoordinate(), ed.getCoordinate());
             roadMap.put(new Pair<>(st, ed), newRoad);
             return newRoad;
         }
 
         return null;
+    }
+
+//    判断一个坐标是否邻近建筑
+    private static boolean isPort(Coordinate c) {
+        Coordinate left = new Coordinate(c.x - 1, c.y);
+        Coordinate right = new Coordinate(c.x + 1, c.y);
+        Coordinate up = new Coordinate(c.x, c.y - 1);
+        Coordinate down = new Coordinate(c.x, c.y + 1);
+        Board b = Board.getBoard();
+        if(!b.isOutOfBound(left) && Board.getBoard().getBoardPosWeight(left) == Integer.MAX_VALUE) {
+            return true;
+        }
+        if(!b.isOutOfBound(right) && Board.getBoard().getBoardPosWeight(right) == Integer.MAX_VALUE) {
+            return true;
+        }
+        if(!b.isOutOfBound(up) && Board.getBoard().getBoardPosWeight(up) == Integer.MAX_VALUE) {
+            return true;
+        }
+        if(!b.isOutOfBound(down) && Board.getBoard().getBoardPosWeight(down) == Integer.MAX_VALUE) {
+            return true;
+        }
+        return false;
     }
 
     // 假定输入的dir是合法的，即{{-1, 0}, {1, 0}, {0, -1}, {0, 1}}中的一个
@@ -150,30 +160,56 @@ public class Road {
         if(!existingRoadTiles.containsKey(coordinate)) {
             return false;
         }
+        // 如果路邻近建筑，则为port，方向限制较少
+        boolean isPort = isPort(coordinate);
 
         RoadTile tile = existingRoadTiles.get(coordinate);
         // 左
         if(dir[0] == -1 && dir[1] == 0) {
-            if(tile.getDirection().hasDirection(Direction.RIGHT)) {
+            if(tile.getToDirection().hasDirection(Direction.RIGHT)
+            && tile.getFromDirection().hasDirection(Direction.LEFT)) {
                 return true;
+            } else if(
+                tile.getToDirection().hasDirection(Direction.RIGHT)
+                || tile.getFromDirection().hasDirection(Direction.LEFT)
+            ) {
+                return !isPort;
             }
         }
         // 右
         else if(dir[0] == 1 && dir[1] == 0) {
-            if(tile.getDirection().hasDirection(Direction.LEFT)) {
+            if(tile.getToDirection().hasDirection(Direction.LEFT)
+            && tile.getFromDirection().hasDirection(Direction.RIGHT)) {
                 return true;
-            }
-        }
-        // 下
-        else if(dir[0] == 0 && dir[1] == -1) {
-            if(tile.getDirection().hasDirection(Direction.UP)) {
-                return true;
+            } else if(
+                tile.getToDirection().hasDirection(Direction.LEFT)
+                || tile.getFromDirection().hasDirection(Direction.RIGHT)
+            ) {
+                return !isPort;
             }
         }
         // 上
-        else{
-            if(tile.getDirection().hasDirection(Direction.DOWN)) {
+        else if(dir[0] == 0 && dir[1] == -1) {
+            if(tile.getToDirection().hasDirection(Direction.DOWN)
+            && tile.getFromDirection().hasDirection(Direction.UP)) {
                 return true;
+            } else if(
+                tile.getToDirection().hasDirection(Direction.DOWN)
+                || tile.getFromDirection().hasDirection(Direction.UP)
+            ) {
+                return !isPort;
+            }
+        }
+        // 下
+        else{
+            if(tile.getToDirection().hasDirection(Direction.UP)
+            && tile.getFromDirection().hasDirection(Direction.DOWN)) {
+                return true;
+            } else if(
+                tile.getToDirection().hasDirection(Direction.UP)
+                || tile.getFromDirection().hasDirection(Direction.DOWN)
+            ) {
+                return !isPort;
             }
         }
 

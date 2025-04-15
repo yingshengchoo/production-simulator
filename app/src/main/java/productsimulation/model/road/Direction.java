@@ -30,8 +30,4 @@ public class Direction {
         if (hasDirection(RIGHT)) sb.append("RIGHT ");
         return sb.toString().trim();
     }
-
-    public static Direction UNDEFINED() {
-        return new Direction(UNDEFINED);
-    }
 }

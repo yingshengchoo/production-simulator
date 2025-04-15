@@ -9,7 +9,7 @@ class RoadTileTest {
 
     @Test
     void getCoordinate() {
-        RoadTile tile = new RoadTile(new Coordinate(1, 1), new Direction(Direction.UP));
+        RoadTile tile = new RoadTile(new Coordinate(1, 1));
         assertEquals(tile.getCoordinate(), new Coordinate(1, 1));
     }
 }

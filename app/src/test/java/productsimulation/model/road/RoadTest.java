@@ -29,10 +29,12 @@ class RoadTest {
         coordinates.add(new Coordinate(0, 1));
         coordinates.add(new Coordinate(0, 2));
         coordinates.add(new Coordinate(0, 3));
+
         coordinates.add(new Coordinate(1, 3));
         coordinates.add(new Coordinate(2, 3));
         coordinates.add(new Coordinate(3, 3));
         coordinates.add(new Coordinate(4, 3));
+
         coordinates.add(new Coordinate(4, 2));
         coordinates.add(new Coordinate(4, 1));
         coordinates.add(new Coordinate(3, 1));
@@ -43,35 +45,53 @@ class RoadTest {
         Object instance = constructor.newInstance(new AtomBuilding(new Coordinate(1, 0)), new AtomBuilding(new Coordinate(2, 1)), 11);
         Road road = (Road)instance;
 
-        Method placeRoadMethod = Road.class.getDeclaredMethod("placeRoad", ArrayList.class, Coordinate.class);
+        Method placeRoadMethod = Road.class.getDeclaredMethod("placeRoad", ArrayList.class, Coordinate.class, Coordinate.class);
         placeRoadMethod.setAccessible(true);
-        placeRoadMethod.invoke(instance, coordinates, new Coordinate(2, 1));
+        placeRoadMethod.invoke(instance, coordinates,  new Coordinate(1, 0), new Coordinate(2, 1));
 
         List<RoadTile> roadTiles = road.getRoadTiles();
         assertEquals(11, roadTiles.size());
-//        assertEquals(roadTiles.get(0).getDirection().getDirections(), "UP");
-//        assertTrue(roadTiles.get(1).getDirection().hasDirection(Direction.UP));
-//        assertEquals(roadTiles.get(2).getDirection().getDirections(), "RIGHT");
-//        assertTrue(roadTiles.get(3).getDirection().hasDirection(Direction.RIGHT));
-//        assertEquals(roadTiles.get(4).getDirection().getDirections(), "DOWN");
-//        assertTrue(roadTiles.get(5).getDirection().hasDirection(Direction.DOWN));
-//        assertTrue(roadTiles.get(6).getDirection().hasDirection(Direction.LEFT));
-//        assertEquals(roadTiles.get(6).getDirection().getDirections(), "LEFT");
+
+        assertEquals(roadTiles.get(0).getFromDirection().getDirections(), "RIGHT");
+        assertTrue(roadTiles.get(0).getToDirection().hasDirection(Direction.DOWN));
+        assertEquals(roadTiles.get(1).getFromDirection().getDirections(), "UP");
+        assertTrue(roadTiles.get(1).getToDirection().hasDirection(Direction.DOWN));
+        assertEquals(roadTiles.get(2).getFromDirection().getDirections(), "UP");
+        assertTrue(roadTiles.get(2).getToDirection().hasDirection(Direction.DOWN));
+        assertEquals(roadTiles.get(3).getFromDirection().getDirections(), "UP");
+        assertTrue(roadTiles.get(3).getToDirection().hasDirection(Direction.RIGHT));
+
+        assertEquals(roadTiles.get(4).getFromDirection().getDirections(), "LEFT");
+        assertTrue(roadTiles.get(4).getToDirection().hasDirection(Direction.RIGHT));
+        assertEquals(roadTiles.get(5).getFromDirection().getDirections(), "LEFT");
+        assertTrue(roadTiles.get(5).getToDirection().hasDirection(Direction.RIGHT));
+        assertEquals(roadTiles.get(6).getFromDirection().getDirections(), "LEFT");
+        assertTrue(roadTiles.get(6).getToDirection().hasDirection(Direction.RIGHT));
+        assertEquals(roadTiles.get(7).getFromDirection().getDirections(), "LEFT");
+        assertTrue(roadTiles.get(7).getToDirection().hasDirection(Direction.UP));
+
+        assertEquals(roadTiles.get(8).getFromDirection().getDirections(), "DOWN");
+        assertTrue(roadTiles.get(8).getToDirection().hasDirection(Direction.UP));
+        assertEquals(roadTiles.get(9).getFromDirection().getDirections(), "DOWN");
+        assertTrue(roadTiles.get(9).getToDirection().hasDirection(Direction.LEFT));
+        assertEquals(roadTiles.get(10).getFromDirection().getDirections(), "RIGHT");
+        assertTrue(roadTiles.get(10).getToDirection().hasDirection(Direction.LEFT));
 
         // coordinate is null
-        assertThrows(InvocationTargetException.class, ()->placeRoadMethod.invoke(road, null, new Coordinate(0, 0)));
+        assertThrows(InvocationTargetException.class, ()->placeRoadMethod.invoke(road, null, new Coordinate(1, 0), new Coordinate(2, 1)));
         // exit is null
-        assertThrows(InvocationTargetException.class, ()->placeRoadMethod.invoke(road, coordinates, null));
+        assertThrows(InvocationTargetException.class, ()->placeRoadMethod.invoke(road, coordinates, new Coordinate(1, 0), null));
+        assertThrows(InvocationTargetException.class, ()->placeRoadMethod.invoke(road, coordinates, null, new Coordinate(2, 1)));
         // add a building on the road path
-        AtomBuilding b1 = new AtomBuilding(new Coordinate(1, 0));
-        assertThrows(InvocationTargetException.class, ()->placeRoadMethod.invoke(road, coordinates, new Coordinate(0, 0)));
+        AtomBuilding b1 = new AtomBuilding(new Coordinate(0, 1));
+        assertThrows(InvocationTargetException.class, ()->placeRoadMethod.invoke(road, coordinates, new Coordinate(1, 0), new Coordinate(2, 1)));
 
         // make the path not continuous
         coordinates.clear();
         coordinates.add(new Coordinate(1, 3));
-        assertThrows(InvocationTargetException.class, ()->placeRoadMethod.invoke(road, coordinates, new Coordinate(0, 0)));
+        assertThrows(InvocationTargetException.class, ()->placeRoadMethod.invoke(road, coordinates, new Coordinate(1, 0), new Coordinate(2, 1)));
         coordinates.add(new Coordinate(2, 5));
-        assertThrows(InvocationTargetException.class, ()->placeRoadMethod.invoke(road, coordinates, new Coordinate(0, 0)));
+        assertThrows(InvocationTargetException.class, ()->placeRoadMethod.invoke(road, coordinates, new Coordinate(1, 0), new Coordinate(2, 1)));
     }
 
     @Test
@@ -113,7 +133,7 @@ class RoadTest {
         Road road5 = Road.generateRoad(b2, b1);
         assertNotEquals(road2, road5);
         assertEquals(2, Road.roadMap.size());
-        assertEquals(31, Road.existingRoadTiles.size());
+        assertEquals(32, Road.existingRoadTiles.size());
     }
 
     @Test
