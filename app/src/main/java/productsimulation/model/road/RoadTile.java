@@ -45,12 +45,7 @@ public class RoadTile implements Serializable {
         return c;
     }
 
-<<<<<<< HEAD
-    public Direction getDirection() { return direction; }
-}
-=======
     public Direction getFromDirection() { return from; }
 
     public Direction getToDirection() { return to; }
 }
->>>>>>> master

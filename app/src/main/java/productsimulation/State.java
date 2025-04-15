@@ -168,16 +168,11 @@ public class State implements Serializable{
   private void updateWorld(State loadedState){
       Building.buildingGlobalList = loadedState.buildings;
       Recipe.recipeGlobalList = loadedState.recipes;
-<<<<<<< HEAD
-      BuildingType.buildingTypeList = loadedState.types;
+      BuildingType.buildingTypeGlobalList = loadedState.types;
       TransportQueue.queue = loadedState.queue;
-      Road.distanceMap = loadedState.distanceMap;
+      Road.roadMap = loadedState.distanceMap;
       Road.existingRoadTiles = loadedState.existingRoadTiles;
       
-=======
-      BuildingType.buildingTypeGlobalList = loadedState.types;
-
->>>>>>> master
       StateLoadVisitor visitor = new StateLoadVisitor();
       loadedState.logictime.accept(visitor);
   }
