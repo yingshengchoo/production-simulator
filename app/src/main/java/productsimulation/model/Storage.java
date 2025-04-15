@@ -43,6 +43,13 @@ public class Storage extends Building {
     readyQueue = new ArrayList<>();
   }
 
+  public Storage register() {
+    initializeStorageType();
+    buildingGlobalList.add(this);
+    Board.getBoard().addBuilding(this);
+    return this;
+  }
+
   public static Storage addStorage(String name, List<Building> sources, SourcePolicy sourcePolicy,
                                    ServePolicy servePolicy, Coordinate coordinate, StorageType type) {
     Board board = Board.getBoard();

@@ -14,11 +14,16 @@ public class BuildingType implements Serializable {
     this.recipes = recipes;
   }
 
+  public BuildingType register() {
+      buildingTypeGlobalList.add(this);
+      return this;
+  }
+
   public Recipe getRecipeByProductName(String productName) {
     return recipes.get(productName);
   }
 
-  public static List<BuildingType> buildingTypeGlobalList;
+  public static List<BuildingType> buildingTypeGlobalList = new ArrayList<>();
 
   public static void setBuildingTypeGlobalList(List<BuildingType> buildingTypeGlobalList) {
     BuildingType.buildingTypeGlobalList = buildingTypeGlobalList;

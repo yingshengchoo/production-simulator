@@ -50,6 +50,12 @@ public class Mine extends Building {
         super(name, type, sources, sourcePolicy, servePolicy, coordinate);
     }
 
+    public Mine register() {
+        buildingGlobalList.add(this);
+        Board.getBoard().addBuilding(this);
+        return this;
+    }
+
     public boolean goOneStep() {
         if(currentRequest == null) {
             if(!requestQueue.isEmpty()) {

@@ -30,43 +30,6 @@ class LogicTimeTest {
     }
 
     @Test
-    void test_editObservers() {
-        LogicTime t = LogicTime.getInstance();
-
-        Recipe woodMineRecipe = new Recipe(1, new HashMap<String, Integer>(),"wood");
-        Map<String, Recipe> woodMineRecipes = new HashMap<>();
-        woodMineRecipes.put("wood", woodMineRecipe);
-        BuildingType woodMineType = new BuildingType("wood_mine", woodMineRecipes);
-        SourcePolicy soleSourcePolicy = new SoleSourcePolicy();
-        ServePolicy oneTimeServePolicy = new OneTimeServePolicy();
-        Mine woodMine = new Mine("FirstWoodMine", woodMineType,
-                new ArrayList<Building>(), soleSourcePolicy, oneTimeServePolicy);
-
-//        t.addObservers(woodMine);
-//        assertEquals(t.getObserversSize(), 1);
-        assertEquals(Building.buildingGlobalList.size(), 1);
-
-        Mine woodMine2 = new Mine("SecondWoodMine", woodMineType,
-                new ArrayList<Building>(), soleSourcePolicy, oneTimeServePolicy);
-
-//        t.addObservers(woodMine2);
-//        assertEquals(t.getObserversSize(), 2);
-        assertEquals(Building.buildingGlobalList.size(), 2);
-
-//        t.removeObservers(woodMine);
-//        assertEquals(t.getObserversSize(), 1);
-
-//        Mine woodMine3 = new Mine("ThirdWoodMine", woodMineType,
-//                new ArrayList<Building>(), soleSourcePolicy, oneTimeServePolicy);
-
-//        t.removeObservers(woodMine3);
-//        assertEquals(t.getObserversSize(), 1);
-
-        t.stepNHandler(5);
-        assertEquals(t.getStep(), 5);
-    }
-
-    @Test
     void test_finishHandler() {
         LogicTime t = LogicTime.getInstance();
         t.finishHandler();

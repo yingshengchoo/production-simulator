@@ -23,15 +23,14 @@ public class StorageTest {
     LogicTime.getInstance().reset();
     Board.getBoard().cleanup();
     Building.buildingGlobalList.clear();
+    Recipe.recipeGlobalList.clear();
   }
   
   @Test
   public void test_toString() {
     ArrayList<Building> sources = new ArrayList<>();
-    ArrayList<Recipe> recipeList = new ArrayList<>();
-    recipeList.add(new Recipe(3, Collections.emptyMap(), "a"));
-    recipeList.add(new Recipe(2, Collections.emptyMap(), "socks"));
-    Recipe.setRecipeGlobalList(recipeList);
+    Recipe r1 = new Recipe(3, Collections.emptyMap(), "a").register();
+    Recipe r2 = new Recipe(2, Collections.emptyMap(), "socks").register();
     sources.add(new Storage("Closet", "a" , Collections.emptyList(), 100, 3, null,null));
     sources.add(new Factory("DoorInc", new BuildingType("Door", Collections.emptyMap()), Collections.emptyList(), null, null));
     sources.add(new Mine("DiamondMine", new BuildingType("Diamond", Collections.emptyMap()), Collections.emptyList(), null, null));
@@ -48,24 +47,18 @@ public class StorageTest {
     LogicTime t = LogicTime.getInstance();
    
     ArrayList<Building> sources = new ArrayList<>();
-    Recipe socks = new Recipe(1, Collections.emptyMap(), "socks");
-    Recipe pair = new Recipe(1,Map.of("socks", 2), "pairOfSocks");
-    ArrayList<Recipe> rl = new ArrayList<>();
-    rl.add(socks);
-    rl.add(pair);
-    Recipe.setRecipeGlobalList(rl);
+    Recipe socks = new Recipe(1, Collections.emptyMap(), "socks").register();
+    Recipe pair = new Recipe(1,Map.of("socks", 2), "pairOfSocks").register();
    
-    Mine m1 = new Mine("SocksMine1", new BuildingType("SmellySocks", Map.of("socks", socks)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy(), new Coordinate(1, 2));
-    Mine m2 = new Mine("SocksMine2", new BuildingType("SmellySocks", Map.of("socks", socks)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy(), new Coordinate(2, 1));
+    Mine m1 = new Mine("SocksMine1", new BuildingType("SmellySocks", Map.of("socks", socks)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy(), new Coordinate(1, 2)).register();
+    Mine m2 = new Mine("SocksMine2", new BuildingType("SmellySocks", Map.of("socks", socks)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy(), new Coordinate(2, 1)).register();
     sources.add(m1);
     sources.add(m2);
-    Storage s1 = new Storage("Drawer", "socks", sources, 100, 102, new SourceQLen(), new FIFOPolicy(), new Coordinate(1,1));
-
-    s1.initializeStorageType();
+    Storage s1 = new Storage("Drawer", "socks", sources, 100, 102, new SourceQLen(), new FIFOPolicy(), new Coordinate(1,1)).register();
    
     ArrayList<Building> sources2 = new ArrayList<>();
     sources2.add(s1);
-    Factory f = new Factory("SocksFactory", new BuildingType("PairOfSocks", Map.of("pairOfSocks", pair)), sources2, new SourceQLen(), new FIFOPolicy(), new Coordinate(0, 1));
+    Factory f = new Factory("SocksFactory", new BuildingType("PairOfSocks", Map.of("pairOfSocks", pair)), sources2, new SourceQLen(), new FIFOPolicy(), new Coordinate(0, 1)).register();
 
     assertEquals("socks", s1.getRecipeOutput());
 
@@ -179,10 +172,9 @@ public class StorageTest {
 
   @Test
   public void test_updateFrequency(){
-    ArrayList<Recipe> recipeList = new ArrayList<>();
-    recipeList.add(new Recipe(3, Collections.emptyMap(), "a"));
-    recipeList.add(new Recipe(2, Collections.emptyMap(), "socks"));
-    Recipe.setRecipeGlobalList(recipeList);
+    Recipe r1 = new Recipe(3, Collections.emptyMap(), "a").register();
+    Recipe r2 = new Recipe(2, Collections.emptyMap(), "socks").register();
+
     Storage s1 = new Storage("Drawer", "socks", 150, 10, null, null, new Coordinate(4,2));
     s1.initializeStorageType();
     assertEquals((int)Math.ceil((double)(s1.getTotalCapacity() * s1.getTotalCapacity()) / (double)(s1.getR() * s1.getPriority())), s1.getFrequency());
@@ -199,12 +191,8 @@ public class StorageTest {
     //Setup: A Storage
    
     ArrayList<Building> sources = new ArrayList<>();
-    Recipe socks = new Recipe(100, Collections.emptyMap(), "socks");
-    Recipe pair = new Recipe(1,Map.of("socks", 2), "pairOfSocks");
-    ArrayList<Recipe> rl = new ArrayList<>();
-    rl.add(socks);
-    rl.add(pair);
-    Recipe.setRecipeGlobalList(rl);
+    Recipe socks = new Recipe(100, Collections.emptyMap(), "socks").register();
+    Recipe pair = new Recipe(1,Map.of("socks", 2), "pairOfSocks").register();
    
     Mine m1 = new Mine("SocksMine1", new BuildingType("SmellySocks", Map.of("socks", socks)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy());
     Mine m2 = new Mine("SocksMine2", new BuildingType("SmellySocks", Map.of("socks", socks)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy());
@@ -228,20 +216,15 @@ public class StorageTest {
   @Test
   public void test_getTotalLatency(){
     ArrayList<Building> sources = new ArrayList<>();
-    Recipe socks = new Recipe(2, Collections.emptyMap(), "socks");
-    Recipe pair = new Recipe(1,Map.of("socks", 2), "pairOfSocks");
-    ArrayList<Recipe> rl = new ArrayList<>();
-    rl.add(socks);
-    rl.add(pair);
-    Recipe.setRecipeGlobalList(rl);
+    Recipe socks = new Recipe(2, Collections.emptyMap(), "socks").register();
+    Recipe pair = new Recipe(1,Map.of("socks", 2), "pairOfSocks").register();
    
-    Mine m1 = new Mine("SocksMine1", new BuildingType("SockTree", Map.of("socks", socks)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy());
-    Mine m2 = new Mine("SocksMine2", new BuildingType("SockOre", Map.of("socks", socks)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy());
+    Mine m1 = new Mine("SocksMine1", new BuildingType("SockTree", Map.of("socks", socks)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy()).register();
+    Mine m2 = new Mine("SocksMine2", new BuildingType("SockOre", Map.of("socks", socks)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy()).register();
     sources.add(m1);
     sources.add(m2);
-    Storage s1 = new Storage("Drawer", "socks", sources, 100, 102, new SourceQLen(), new FIFOPolicy(), new Coordinate(1,0));
+    Storage s1 = new Storage("Drawer", "socks", sources, 100, 102, new SourceQLen(), new FIFOPolicy(), new Coordinate(1,0)).register();
 
-    s1.initializeStorageType();
     Road.connectHandler(m1.getName(), s1.getName());
     Road.connectHandler(m2.getName(), s1.getName());
 
@@ -251,9 +234,7 @@ public class StorageTest {
     s1.addRequest(Request.getDummyRequest("socks", s1));
     assertEquals(4, s1.getTotalRemainTime());
 
-    Storage s2 = new Storage("Drawer", "socks", sources, 100, 102, new SourceQLen(), new FIFOPolicy(), new Coordinate(5,4));
-
-    s2.initializeStorageType();
+    Storage s2 = new Storage("Drawer", "socks", sources, 100, 102, new SourceQLen(), new FIFOPolicy(), new Coordinate(5,4)).register();
    
     assertEquals(0, s2.getTotalRemainTime());
     s2.updateStorage("socks");
@@ -265,15 +246,10 @@ public class StorageTest {
   @Test
   public void test_getCurrentRemainTime(){
     ArrayList<Building> sources = new ArrayList<>();
-    Recipe socks1 = new Recipe(10, Collections.emptyMap(), "socks");
-    Recipe socks2 = new Recipe(2, Collections.emptyMap(), "socks");
+    Recipe socks1 = new Recipe(10, Collections.emptyMap(), "socks").register();
+    Recipe socks2 = new Recipe(2, Collections.emptyMap(), "socks").register();
    
-    Recipe pair = new Recipe(1,Map.of("socks", 2), "pairOfSocks");
-    ArrayList<Recipe> rl = new ArrayList<>();
-    rl.add(socks1);
-    rl.add(socks2);
-    rl.add(pair);
-    Recipe.setRecipeGlobalList(rl);
+    Recipe pair = new Recipe(1,Map.of("socks", 2), "pairOfSocks").register();
    
     Mine m1 = new Mine("SocksMine1", new BuildingType("SockED", Map.of("socks", socks1)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy());
     Mine m2 = new Mine("SocksMine2", new BuildingType("SockET", Map.of("socks", socks2)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy());
@@ -294,15 +270,10 @@ public class StorageTest {
   @Test
   public void test_emptySource(){
     ArrayList<Building> sources = new ArrayList<>();
-    Recipe socks1 = new Recipe(10, Collections.emptyMap(), "socks");
-    Recipe socks2 = new Recipe(2, Collections.emptyMap(), "socks");
+    Recipe socks1 = new Recipe(10, Collections.emptyMap(), "socks").register();
+    Recipe socks2 = new Recipe(2, Collections.emptyMap(), "socks").register();
    
-    Recipe pair = new Recipe(1,Map.of("socks", 2), "pairOfSocks");
-    ArrayList<Recipe> rl = new ArrayList<>();
-    rl.add(socks1);
-    rl.add(socks2);
-    rl.add(pair);
-    Recipe.setRecipeGlobalList(rl);
+    Recipe pair = new Recipe(1,Map.of("socks", 2), "pairOfSocks").register();
    
     Mine m1 = new Mine("SocksMine1", new BuildingType("SockED", Map.of("socks", socks1)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy());
     Mine m2 = new Mine("SocksMine2", new BuildingType("SockET", Map.of("socks", socks2)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy());

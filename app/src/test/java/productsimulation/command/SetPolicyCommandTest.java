@@ -6,8 +6,10 @@ import productsimulation.Board;
 import productsimulation.LogicTime;
 import productsimulation.State;
 import productsimulation.model.*;
+import productsimulation.request.servePolicy.FIFOPolicy;
 import productsimulation.request.servePolicy.ReadyPolicy;
 import productsimulation.request.servePolicy.SjfPolicy;
+import productsimulation.request.sourcePolicy.SourceQLen;
 import productsimulation.request.sourcePolicy.SourceSimplelat;
 
 import java.util.*;
@@ -24,11 +26,13 @@ class SetPolicyCommandTest {
 
     void setUpEnvironment() {
         ArrayList<Building> buildings = new ArrayList<>();
-        Building mine = new Mine("G", new BuildingType("Gold", Collections.emptyMap()), new ArrayList<>(), null, null);
+//        Building mine = new Mine("G", new BuildingType("Gold", Collections.emptyMap()), new ArrayList<>(), null, null);
+        Building mine = new Mine("G", new BuildingType("Gold", Collections.emptyMap()), new ArrayList<>(), new SourceQLen(), new FIFOPolicy());
         buildings.add(mine);
         ArrayList<Building> sources = new ArrayList<>();
         sources.add(mine);
-        Building factory = new Factory("GC", new BuildingType("GoldChain", Collections.emptyMap()), sources, null, null);
+//        Building factory = new Factory("GC", new BuildingType("GoldChain", Collections.emptyMap()), sources, null, null);
+        Building factory = new Factory("GC", new BuildingType("GoldChain", Collections.emptyMap()), sources, new SourceQLen(), new FIFOPolicy());
         buildings.add(factory);
 
         Map<String, Recipe> recipes = new HashMap<>();
@@ -43,14 +47,7 @@ class SetPolicyCommandTest {
         ArrayList<BuildingType> types = new ArrayList<>();
         types.add(new BuildingType("EggRoll", recipes));
 
-//        RequestBroadcaster requestBroadcaster = RequestBroadcaster.getInstance();
-//        requestBroadcaster.addRecipes(eggroll);
-//        requestBroadcaster.addBuildings(mine);
-//        requestBroadcaster.addBuildings(factory);
-
         LogicTime logicTime = LogicTime.getInstance();
-//        logicTime.addObservers(mine);
-//        logicTime.addObservers(factory);
 
         State.initialize(buildings, types, stateRecipes, logicTime);
     }

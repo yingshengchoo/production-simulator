@@ -23,8 +23,6 @@ public class State implements Serializable{
   private HashMap<Pair<Building, Building>, Road> distanceMap;
   private HashMap<Coordinate, RoadTile> existingRoadTiles;
   private List<Request> queue;
-
-//  private RequestBroadcaster requestbroadcaster;
   private LogicTime logictime;
   private SourcePolicy defaultSourcePolicy;
   private ServePolicy defaultServePolicy;
@@ -42,28 +40,25 @@ public class State implements Serializable{
     this.buildings = buildings;
     this.types = types;
     this.recipes = recipes;
-//    this.requestbroadcaster = requestbroadcaster;
     this.logictime = logictime;
     this.defaultSourcePolicy = new SourceQLen();
     this.defaultServePolicy = new FIFOPolicy();
-    
-    Building.buildingGlobalList = buildings;
-    Recipe.recipeGlobalList = recipes;
-    BuildingType.buildingTypeGlobalList = types;
-    distanceMap = Road.roadMap;
-    existingRoadTiles = Road.existingRoadTiles;
-    queue = TransportQueue.queue;
-    
-    for(Building b: buildings) {
-      b.changeSourcePolicy(defaultSourcePolicy);
-      b.changeServePolicy(defaultServePolicy);
-    }
+
+//    这段逻辑目前在app中，不适合在构造函数里。
+//    Building.buildingGlobalList = buildings;
+//    Recipe.recipeGlobalList = recipes;
+//    BuildingType.buildingTypeGlobalList = types;
+//
+//    for(Building b: buildings) {
+//      b.changeSourcePolicy(defaultSourcePolicy);
+//      b.changeServePolicy(defaultServePolicy);
+//    }
   }
 
   /**
    * Initializes the State instance.
    *
-   * @param buildings     is the list of buildings in the simulation. 
+   * @param buildings     is the list of buildings in the simulation.
    * @param types         is the list types of Factory in the simulation.
    * @param recipes       is the list of recipes in the simulation.
    */
@@ -121,8 +116,8 @@ public class State implements Serializable{
     if (!dir.exists()) {
        dir.mkdirs();
     }
-
-    updateState();
+//  目前会在logicTime中每步更新，因此此处update与否均可。此处注释掉是方便state类单元测试。
+//    updateState();
     
     try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("SavedStates/" + filename + ".ser"))) {
       out.writeObject(this);
@@ -130,7 +125,7 @@ public class State implements Serializable{
     } 
   }
 
-  private void updateState(){
+  public void updateState(){
     this.buildings = Building.buildingGlobalList;
     this.recipes = Recipe.recipeGlobalList;
     this.types = BuildingType.buildingTypeGlobalList;
@@ -151,7 +146,6 @@ public class State implements Serializable{
       this.buildings = loadedState.buildings;
       this.recipes = loadedState.recipes;
       this.types = loadedState.types;
-//      this.requestbroadcaster = loadedState.requestbroadcaster;
       this.logictime = loadedState.logictime;
       this.queue = loadedState.queue;
       this.distanceMap = loadedState.distanceMap;
@@ -185,9 +179,9 @@ public class State implements Serializable{
   public void showState(PrintStream o){
     o.println("Current State Information:");
     printLogicTime(o);
-    printList("Recipes:", Recipe.recipeGlobalList, o);
-    printList("Building Types:", BuildingType.getBuildingTypeGlobalList(), o);
-    printList("Buildings:", Building.buildingGlobalList, o);
+    printList("Recipes:", recipes, o);
+    printList("Building Types:", types, o);
+    printList("Buildings:", buildings, o);
   }
 
   /**
@@ -216,7 +210,6 @@ public class State implements Serializable{
     this.buildings = null;
     this.types = null;
     this.recipes = null;
-//    this.requestbroadcaster = null;
     this.logictime = null;
 
   }
@@ -226,9 +219,7 @@ public class State implements Serializable{
   }
 
   public Building getBuildings(String name) {
-    // use Building.buildings instead for uniform management
-//    for (Building b : buildings) {
-    for (Building b : Building.buildingGlobalList) {
+    for (Building b : buildings) {
       if (b.getName().equals(name)) {
         return b;
       }
@@ -238,9 +229,7 @@ public class State implements Serializable{
 
 
   public List<Building> getBuildings() {
-// use Building.buildings instead for uniform management
-    return Building.buildingGlobalList;
-//    return buildings;
+    return buildings;
   }
 
   public ServePolicy getDefaultServePolicy() {

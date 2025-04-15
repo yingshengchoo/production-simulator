@@ -29,6 +29,7 @@ public class Recipe implements Serializable{
      * @param latency             is the time it takes to complete the recipe.
      * @param ingredients         is the map of ingredients needed to make the recipe.
      */
+//    only for some unit test
   public Recipe(int latency, Map<String, Integer> ingredients) {
     this(latency, ingredients, "output_placeholder");
   }
@@ -47,13 +48,9 @@ public class Recipe implements Serializable{
     this.output = output;
   }
 
-    /**
-     * Sets the list of all the recipe in the simulation.
-     *
-     * @param recipeGlobalList     is the list of Recipes.
-     */
-  public static void setRecipeGlobalList(List<Recipe> recipeGlobalList) {
-    Recipe.recipeGlobalList = recipeGlobalList;
+  public Recipe register() {
+    recipeGlobalList.add(this);
+    return this;
   }
 
   /**

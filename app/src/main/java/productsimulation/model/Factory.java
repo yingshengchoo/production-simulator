@@ -34,6 +34,12 @@ public class Factory extends Building {
         super(name, type, sources, sourcePolicy, servePolicy, coordinate);
     }
 
+    public Factory register() {
+        buildingGlobalList.add(this);
+        Board.getBoard().addBuilding(this);
+        return this;
+    }
+
     public static Factory addFactory(String name, List<Building> sources, SourcePolicy sourcePolicy,
                                      ServePolicy servePolicy, Coordinate coordinate, BuildingType type) {
         Board board = Board.getBoard();

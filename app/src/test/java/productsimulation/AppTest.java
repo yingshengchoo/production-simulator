@@ -37,6 +37,7 @@ class AppTest {
         LogicTime.getInstance().reset();
         Board.getBoard().cleanup();
         Building.buildingGlobalList.clear();
+        Recipe.recipeGlobalList.clear();
         Request.clearIds();
         cleanUpLogFile(filePath);
     }
@@ -51,10 +52,10 @@ class AppTest {
     public void minimalE2E() {
         // step 1: setup
         // skip parsing the recipe
-        Recipe woodMineRecipe = new Recipe(1, new LinkedHashMap<String, Integer>(), "wood");
+        Recipe woodMineRecipe = new Recipe(1, new LinkedHashMap<String, Integer>(), "wood").register();
         LinkedHashMap<String, Integer> woodenSwordIngredients = new LinkedHashMap<>();
         woodenSwordIngredients.put("wood", 2);
-        Recipe woodSwordRecipe = new Recipe(1, woodenSwordIngredients, "wooden_sword");
+        Recipe woodSwordRecipe = new Recipe(1, woodenSwordIngredients, "wooden_sword").register();
         // skip parsing the type
         Map<String, Recipe> woodMineRecipes = new HashMap<>();
         woodMineRecipes.put("wood", woodMineRecipe);
@@ -67,26 +68,17 @@ class AppTest {
         ServePolicy oneTimeServePolicy = new OneTimeServePolicy();
         // skip parsing the building
         Mine woodMine = new Mine("FirstWoodMine", woodMineType,
-                new ArrayList<Building>(), soleSourcePolicy, oneTimeServePolicy, new Coordinate(1,1));
+                new ArrayList<Building>(), soleSourcePolicy, oneTimeServePolicy, new Coordinate(1,1)).register();
         List<Building> sources = new ArrayList<>();
         sources.add(woodMine);
         Factory woodSwordFactory = new Factory("FirstWoodenSwordFactory", woodSwordType,
-                sources, soleSourcePolicy, oneTimeServePolicy, new Coordinate(1, 2));
+                sources, soleSourcePolicy, oneTimeServePolicy, new Coordinate(1, 2)).register();
         Road.connectHandler(woodMine.getName(), woodSwordFactory.getName());
 
         // step 2: get user prompt and print results
         // skip parsing the command
         // skip save/load
         // skip finish command
-//        LogicTime logicTime = LogicTime.getInstance();
-//        logicTime.addObservers(woodMine);
-//        logicTime.addObservers(woodSwordFactory);
-//        RequestBroadcaster requestBroadcaster = RequestBroadcaster.getInstance();
-//        requestBroadcaster.addRecipes(woodMineRecipe);
-//        requestBroadcaster.addRecipes(woodSwordRecipe);
-//        requestBroadcaster.addBuildings(woodMine);
-//        requestBroadcaster.addBuildings(woodSwordFactory);
-
         RequestCommand requestCommand = new RequestCommand("wooden_sword", "FirstWoodenSwordFactory");
         requestCommand.execute();
         StepCommand stepCommand = new StepCommand(1);

@@ -74,38 +74,23 @@ public class App {
 
     public static void modelSetup(SetupParser parser) {
         Map<String, Recipe> recipes = parser.getRecipeMap();
-        Map<String, BuildingType> types = parser.getTypeMap();
         Map<String, Building> buildings = parser.getBuildingMap();
 
-        LogicTime logicTime = LogicTime.getInstance();
-//        RequestBroadcaster requestBroadcaster = RequestBroadcaster.getInstance();
+        for(Recipe r: recipes.values()) {
+            r.register();
+        }
+
         SourcePolicy sourcePolicy = new SourceQLen();
         ServePolicy servePolicy = new FIFOPolicy();
-        State.initialize(new ArrayList<>(buildings.values()), new ArrayList<>(types.values()),
-                new ArrayList<>(recipes.values()), logicTime);
 
-        ArrayList<Building> buildingList = new ArrayList<>();
         for(Building b: buildings.values()) {
             b.changeSourcePolicy(sourcePolicy);
             b.changeServePolicy(servePolicy);
-
-//            logicTime.addObservers(b);
-//            requestBroadcaster.addBuildings(b);
-            buildingList.add(b);
-        }
-        Building.buildingGlobalList = buildingList;
-
-        //            requestBroadcaster.addRecipes(r);
-        ArrayList<Recipe> recipeList = new ArrayList<>(recipes.values());
-
-        for(Building b: buildings.values()){
-          if(b instanceof Storage){
-            Storage s = (Storage) b;
-            s.initializeStorageType();
-          }
+            b.register();
         }
 
-        Recipe.setRecipeGlobalList(recipeList);
+        State.initialize(Building.buildingGlobalList, BuildingType.buildingTypeGlobalList,
+                Recipe.recipeGlobalList, LogicTime.getInstance());
     }
 
     private static boolean initialize(String setupFilePath) {

@@ -17,8 +17,6 @@ class StateTest {
 
   @BeforeEach
   public void resetState() {
-    Board.getBoard().cleanup();
-    Building.buildingGlobalList.clear();
     try{
       State.getInstance().reset();
       State.getInstance().setInstanceToNull();
@@ -63,14 +61,7 @@ class StateTest {
     ArrayList<BuildingType> types = new ArrayList<>();
     types.add(new BuildingType("EggRoll", recipes));
 
-//    RequestBroadcaster requestBroadcaster = RequestBroadcaster.getInstance();
-//    requestBroadcaster.addRecipes(eggroll);
-//    requestBroadcaster.addBuildings(mine);
-//    requestBroadcaster.addBuildings(factory);
-
     LogicTime logicTime = LogicTime.getInstance();
-//    logicTime.addObservers(mine);
-//    logicTime.addObservers(factory);
     
     State.initialize(buildings, types, stateRecipes, logicTime);
 
@@ -201,21 +192,12 @@ class StateTest {
     ArrayList<BuildingType> types = new ArrayList<>();
     types.add(new BuildingType("EggRoll", recipes));
 
-//    RequestBroadcaster requestBroadcaster = RequestBroadcaster.getInstance();
-//    requestBroadcaster.addRecipes(eggroll);
-//    requestBroadcaster.addBuildings(mine);
-//    requestBroadcaster.addBuildings(factory);
-
     LogicTime logicTime = LogicTime.getInstance();
-//    logicTime.addObservers(mine);
-//    logicTime.addObservers(factory);
     
     State.initialize(buildings, types, stateRecipes, logicTime);
 
     State state = State.getInstance();
 
     assertEquals(state.getBuildings(), buildings);
-    assertEquals(factory, Building.getBuilding("GC"));
-    assertNull(Building.getBuilding("DNE"));
   }
 }

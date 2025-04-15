@@ -25,10 +25,8 @@ public class TypeParserTest {
     @BeforeEach
     public void setUp() {
         mapper = new ObjectMapper();
-        List<Recipe> recipes = new ArrayList<>();
-        recipes.add(new Recipe(10,
-                java.util.Map.of("wood", 1, "handle", 1, "hinge", 3), "door"));
-        Recipe.setRecipeGlobalList(recipes);
+        Recipe recipe = new Recipe(10,
+                java.util.Map.of("wood", 1, "handle", 1, "hinge", 3), "door").register();
     }
 
     @AfterEach

@@ -51,11 +51,11 @@ public abstract class Building implements Serializable {
         storage = new HashMap<>();
         this.sources = sources;
         this.coordinate = coordinate;
-        buildingGlobalList.add(this);
-
-        // add to board
-        Board.getBoard().addBuilding(this);
     }
+
+//    子类的实现中，至少要将实例加进全局列表，也可以做其它在确保状态合法之后才做的事情
+//    返回值是building，是为了避免new完之后还要再额外加一行register()调用，仅用于减少代码行数
+    public abstract Building register();
 
     /**
      * Constructs a Building with the specified name, type, sources, and policies.
@@ -79,9 +79,6 @@ public abstract class Building implements Serializable {
         requestQueue = new ArrayList<>();
         storage = new HashMap<>();
         this.coordinate = getValidCoordinate();
-        buildingGlobalList.add(this);
-
-        Board.getBoard().addBuilding(this);
     }
 
     public static Coordinate getValidCoordinate() {

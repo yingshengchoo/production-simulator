@@ -4,6 +4,7 @@ import productsimulation.Board;
 import productsimulation.Coordinate;
 import productsimulation.model.Building;
 import productsimulation.model.BuildingType;
+import productsimulation.model.Factory;
 import productsimulation.request.servePolicy.FIFOPolicy;
 import productsimulation.request.sourcePolicy.SourceQLen;
 
@@ -19,6 +20,12 @@ public class AtomBuilding extends Building {
         super("noname", new BuildingType("typename", new HashMap<>()), new ArrayList<>(), new SourceQLen(), new FIFOPolicy(), c);
         this.position = c;
         Board.getBoard().setBoardPosWeight(c, Integer.MAX_VALUE);
+    }
+
+    public AtomBuilding register() {
+        buildingGlobalList.add(this);
+        Board.getBoard().addBuilding(this);
+        return this;
     }
 
     @Override
