@@ -255,22 +255,31 @@ public class BoardDisplay {
         }
     }
 
-    /**
-     * Handles canvas click events; if a building is clicked, its info window is shown.
-     *
-     * @param pixelX the x-coordinate of the click
-     * @param pixelY the y-coordinate of the click
-     */
     private void handleCanvasClick(double pixelX, double pixelY) {
+        // Check if a building was clicked.
         Building b = findBuilding(pixelX, pixelY);
         if (b != null) {
             BuildingInfoWindow.show(b);
+            return;
         }
+        // Check if a road tile was clicked.
         RoadTile tile = findRoadTile(pixelX, pixelY);
         if (tile != null) {
             BuildingInfoWindow.show(tile);
+            return;
         }
+
+        // Neither a building nor a road tile was clicked.
+        // Determine the grid coordinate for the click.
+        int gridX = (int) Math.floor((pixelX - offsetX) / scale);
+        int gridY = (int) Math.floor((pixelY - offsetY) / scale);
+
+        // Open the add building window with the fixed coordinate.
+        AddBuildingAtCellWindow.show(state, new Coordinate(gridX, gridY), () -> {
+            refresh();
+        });
     }
+
 
     /**
      * Handles mouse movement events and updates the hovered building.
