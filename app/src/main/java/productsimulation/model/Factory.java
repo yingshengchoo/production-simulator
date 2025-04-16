@@ -48,7 +48,7 @@ public class Factory extends Building {
             throw new RuntimeException("invalid coordinate!");
         }
 
-        return new Factory(name, type, sources, sourcePolicy, servePolicy, coordinate);
+        return new Factory(name, type, sources, sourcePolicy, servePolicy, coordinate).register();
     }
 
 

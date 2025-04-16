@@ -58,8 +58,8 @@ public class Storage extends Building {
       throw new RuntimeException("invalid coordinate!");
     }
 
-    Storage newStorage = new Storage(name, type.getItemToStore(), sources, type.getCapacity(), type.getPriority(), sourcePolicy, servePolicy, coordinate);
-    newStorage.initializeStorageType();
+    Storage newStorage = new Storage(name, type.getItemToStore(), sources, type.getCapacity(),
+            type.getPriority(), sourcePolicy, servePolicy, coordinate).register();
     return newStorage;
   }
 

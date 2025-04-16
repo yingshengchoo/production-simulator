@@ -30,7 +30,7 @@ public class Mine extends Building {
             throw new RuntimeException("invalid coordinate!");
         }
 
-        return new Mine(name, type, sources, sourcePolicy, servePolicy, coordinate);
+        return new Mine(name, type, sources, sourcePolicy, servePolicy, coordinate).register();
     }
 
     /**
