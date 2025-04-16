@@ -1,11 +1,12 @@
 package productsimulation.GUI;
 
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import productsimulation.Coordinate;
@@ -13,175 +14,169 @@ import productsimulation.State;
 import productsimulation.model.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
 /**
- * A simplified window for adding a building at a known (x,y) coordinate
- * that the user clicked on. No user input for coordinate is required.
+ * Dialog for adding a building at a fixed grid coordinate.
+ * <p>
+ * Uses a ComboBox of BuildingType and a ListView of Building for sources,
+ * avoiding string lookups and ensuring type safety. Disables the Add button
+ * until required fields (name and type) are provided.
+ *<p>
+ * Usage:
+ * <pre>
+ *   AddBuildingAtCellWindow.show(state, coord, () -> board.refresh());
+ * </pre>
+ *
+ * @author Taiyan Liu
+ * @version 1.0
  */
-public class AddBuildingAtCellWindow {
+public final class AddBuildingAtCellWindow {
+
+    private AddBuildingAtCellWindow() {
+        // prevent instantiation
+    }
 
     /**
-     * Displays a modal window for creating a new building at the given (grid) coordinate.
-     *
-     * @param state       The current simulation state.
-     * @param fixedCoord  The coordinate for the building (already determined from BoardDisplay).
-     * @param onSuccess   Callback to run if building creation is successful.
+     * Shows the modal form.
+     * @param state simulation state (not null)
+     * @param coord fixed grid coordinate (not null)
+     * @param onSuccess callback on successful creation
      */
-    public static void show(State state, Coordinate fixedCoord, Runnable onSuccess) {
+    public static void show(State state,
+                            Coordinate coord,
+                            Runnable onSuccess) {
+        Objects.requireNonNull(state, "state");
+        Objects.requireNonNull(coord, "coord");
+
         Stage stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
-        stage.setTitle("Add Building at (" + fixedCoord.x + ", " + fixedCoord.y + ")");
+        stage.setTitle(String.format("Add Building at (%d, %d)", coord.x, coord.y));
 
         GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(20));
+        ColumnConstraints c1 = new ColumnConstraints(); c1.setHgrow(Priority.NEVER);
+        ColumnConstraints c2 = new ColumnConstraints(); c2.setHgrow(Priority.ALWAYS);
+        grid.getColumnConstraints().addAll(c1, c2);
 
-        // 1) Building Name
-        Label nameLabel = new Label("Building Name:");
+        // Name field
         TextField nameField = new TextField();
-        nameField.setPromptText("Enter unique building name");
-        grid.add(nameLabel, 0, 0);
+        nameField.setPromptText("Enter unique name");
+        grid.add(new Label("Name:"), 0, 0);
         grid.add(nameField, 1, 0);
 
-        // 2) Building Type
-        Label typeLabel = new Label("Building Type:");
-        ComboBox<String> typeCombo = new ComboBox<>();
-        typeCombo.setPromptText("Select building type");
-        grid.add(typeLabel, 0, 1);
-        grid.add(typeCombo, 1, 1);
-
-        // 3) Sources (let user select existing buildings as sources)
-        Label sourcesLabel = new Label("Select sources:");
-        List<String> existingBuildings = state.getBuildings().stream()
-                .map(Building::getName)
-                .collect(Collectors.toList());
-        ListView<String> sourcesListView = new ListView<>();
-        sourcesListView.setItems(FXCollections.observableArrayList(existingBuildings));
-        sourcesListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        grid.add(sourcesLabel, 0, 2);
-        grid.add(sourcesListView, 1, 2);
-
-        // 4) Populate typeCombo from the global BuildingType list
-        List<BuildingType> allTypes = BuildingType.getBuildingTypeGlobalList();
-        List<String> typeNames = allTypes.stream()
-                .map(BuildingType::getName)
-                .collect(Collectors.toList());
-        typeCombo.setItems(FXCollections.observableArrayList(typeNames));
-
-        // 5) Submit & Cancel
-        Button submitBtn = new Button("Add Building");
-        Button cancelBtn = new Button("Cancel");
-
-        submitBtn.setOnAction(e -> {
-            String buildingName = nameField.getText().trim();
-            String buildingTypeName = typeCombo.getValue();
-
-            if (buildingName.isEmpty() || buildingTypeName == null || buildingTypeName.isEmpty()) {
-                showError("Building name and type are required.");
-                return;
-            }
-            // Disallow duplicates
-            boolean duplicateName = state.getBuildings().stream()
-                    .anyMatch(b -> b.getName().equalsIgnoreCase(buildingName));
-            if (duplicateName) {
-                showError("A building named \"" + buildingName + "\" already exists.");
-                return;
-            }
-
-            // Build source list
-            ObservableList<String> selectedSources = sourcesListView.getSelectionModel().getSelectedItems();
-            List<Building> chosenSources = state.getBuildings().stream()
-                    .filter(b -> selectedSources.contains(b.getName()))
-                    .collect(Collectors.toList());
-
-            // Find the BuildingType
-            BuildingType selectedType = allTypes.stream()
-                    .filter(bt -> bt.getName().equals(buildingTypeName))
-                    .findFirst()
-                    .orElse(null);
-            if (selectedType == null) {
-                showError("Selected building type not found.");
-                return;
-            }
-
-            // Attempt to create the building
-            try {
-                Building newBuilding = createBuilding(buildingName, chosenSources, state, fixedCoord, buildingTypeName, selectedType);
-                showInfo("Successfully added building: " + newBuilding.getName() +
-                        " at (" + newBuilding.getX() + ", " + newBuilding.getY() + ")" +
-                        "\nSources: " + chosenSources.stream()
-                        .map(Building::getName)
-                        .collect(Collectors.joining(", ")));
-                if (onSuccess != null) {
-                    onSuccess.run();
-                }
-                stage.close();
-            } catch (Exception ex) {
-                showError("Error creating building: " + ex.getMessage());
+        // Type selector
+        ComboBox<BuildingType> typeCombo = new ComboBox<>(
+                FXCollections.observableArrayList(BuildingType.getBuildingTypeGlobalList())
+        );
+        typeCombo.setPromptText("Select type");
+        typeCombo.setCellFactory(cb -> new ListCell<>() {
+            @Override public void updateItem(BuildingType item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? null : item.getName());
             }
         });
+        typeCombo.setButtonCell(typeCombo.getCellFactory().call(null));
+        grid.add(new Label("Type:"), 0, 1);
+        grid.add(typeCombo, 1, 1);
 
-        cancelBtn.setOnAction(e -> stage.close());
+        // Sources list
+        ListView<Building> sourcesView = new ListView<>(
+                FXCollections.observableArrayList(state.getBuildings())
+        );
+        sourcesView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        sourcesView.setCellFactory(lv -> new ListCell<>() {
+            @Override public void updateItem(Building b, boolean empty) {
+                super.updateItem(b, empty);
+                setText(empty || b == null ? null : b.getName());
+            }
+        });
+        grid.add(new Label("Sources:"), 0, 2);
+        grid.add(sourcesView, 1, 2);
 
-        grid.add(submitBtn, 0, 3);
+        // Buttons
+        Button addBtn = new Button("Add");
+        Button cancelBtn = new Button("Cancel");
+        addBtn.setDefaultButton(true);
+        cancelBtn.setCancelButton(true);
+        grid.add(addBtn, 0, 3);
         grid.add(cancelBtn, 1, 3);
 
-        Scene scene = new Scene(grid, 460, 350);
-        stage.setScene(scene);
+        // Disable Add until name and type are provided
+        addBtn.disableProperty().bind(
+                nameField.textProperty().isEmpty()
+                        .or(typeCombo.valueProperty().isNull())
+        );
+
+        addBtn.setOnAction(e -> handleAdd(state, coord,
+                nameField.getText().trim(),
+                typeCombo.getValue(),
+                sourcesView.getSelectionModel().getSelectedItems(),
+                onSuccess,
+                stage
+        ));
+        cancelBtn.setOnAction(e -> stage.close());
+
+        stage.setScene(new Scene(grid));
         stage.showAndWait();
     }
 
-    // Helper to create the building
-    private static Building createBuilding(String buildingName,
-                                           List<Building> sources,
-                                           State state,
-                                           Coordinate coord,
-                                           String buildingTypeName,
-                                           BuildingType selectedType) throws Exception {
-
-        if (buildingTypeName.toLowerCase().contains("storage")) {
-            return Storage.addStorage(
-                    buildingName,
-                    sources,
-                    state.getDefaultSourcePolicy(),
-                    state.getDefaultServePolicy(),
-                    coord,
-                    (StorageType) selectedType
+    private static void handleAdd(State state,
+                                  Coordinate coord,
+                                  String name,
+                                  BuildingType type,
+                                  List<Building> sources,
+                                  Runnable onSuccess,
+                                  Stage stage) {
+        if (name.isEmpty() || type == null) {
+            showAlert(Alert.AlertType.ERROR, "Name and type are required.");
+            return;
+        }
+        if (state.getBuildings().stream().anyMatch(b ->
+                b.getName().equalsIgnoreCase(name))) {
+            showAlert(Alert.AlertType.ERROR, "Name already exists.");
+            return;
+        }
+        try {
+            Building created = createBuilding(state, coord, name, type, sources);
+            showAlert(Alert.AlertType.INFORMATION,
+                    String.format("Added %s at (%d,%d)",
+                            created.getName(), created.getX(), created.getY())
             );
-        } else if (buildingTypeName.toLowerCase().contains("mine")) {
-            return Mine.addMine(
-                    buildingName,
-                    sources,
-                    state.getDefaultSourcePolicy(),
-                    state.getDefaultServePolicy(),
-                    coord,
-                    selectedType
-            );
-        } else {
-            return Factory.addFactory(
-                    buildingName,
-                    sources,
-                    state.getDefaultSourcePolicy(),
-                    state.getDefaultServePolicy(),
-                    coord,
-                    selectedType
-            );
+            if (onSuccess != null) onSuccess.run();
+            stage.close();
+        } catch (Exception ex) {
+            showAlert(Alert.AlertType.ERROR, "Creation failed: " + ex.getMessage());
         }
     }
 
-    private static void showError(String msg) {
-        Alert alert = new Alert(Alert.AlertType.ERROR, msg, ButtonType.OK);
-        alert.setTitle("Error");
-        alert.setHeaderText(null);
-        alert.showAndWait();
+    private static Building createBuilding(State state,
+                                           Coordinate coord,
+                                           String name,
+                                           BuildingType type,
+                                           List<Building> sources) {
+        if (type instanceof StorageType) {
+            return Storage.addStorage(name, sources,
+                    state.getDefaultSourcePolicy(),
+                    state.getDefaultServePolicy(),
+                    coord, (StorageType) type);
+        } else if (type.getName().toLowerCase().contains("mine")) {
+            return Mine.addMine(name, sources,
+                    state.getDefaultSourcePolicy(),
+                    state.getDefaultServePolicy(),
+                    coord, type);
+        }
+        return Factory.addFactory(name, sources,
+                state.getDefaultSourcePolicy(),
+                state.getDefaultServePolicy(),
+                coord, type);
     }
 
-    private static void showInfo(String msg) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION, msg, ButtonType.OK);
-        alert.setTitle("Success");
-        alert.setHeaderText(null);
-        alert.showAndWait();
+    private static void showAlert(Alert.AlertType type, String msg) {
+        Alert a = new Alert(type, msg, ButtonType.OK);
+        a.setHeaderText(null);
+        a.showAndWait();
     }
 }

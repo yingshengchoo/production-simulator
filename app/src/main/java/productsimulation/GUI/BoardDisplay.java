@@ -17,76 +17,113 @@ import productsimulation.model.road.Road;
 import productsimulation.model.road.RoadTile;
 
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 
 /**
- * BoardDisplay renders the board grid, roads, and buildings on a canvas.
- * It highlights a building on mouse hover and provides a public method to
- * locate a building from canvas coordinates.
+ * Visualizes the production simulation world on a JavaFX Canvas.
+ * <p>
+ * Responsibilities:
+ * <ul>
+ *   <li>Compute an appropriate scale and translation to fit all buildings with padding.</li>
+ *   <li>Render a coordinate grid with labels.</li>
+ *   <li>Draw one-way road segments with directional arrows.</li>
+ *   <li>Render buildings with color coding and error highlighting.</li>
+ *   <li>Highlight the grid cell under the mouse, distinguishing buildings vs. empty cells.</li>
+ * </ul>
+ * <p>
+ * Usage example:
+ * <pre>
+ *   BoardDisplay board = new BoardDisplay(state, feedbackPane);
+ *   rootPane.setCenter(board.getCanvasPane());
+ *   board.refresh();
+ * </pre>
+ *
+ * @author Taiyan Liu
+ * @version 1.0
+ * @since 1.0
  */
-public class BoardDisplay {
+public final class BoardDisplay {
+
+    // Canvas dimensions
+    private static final double CANVAS_WIDTH  = 800;
+    private static final double CANVAS_HEIGHT = 600;
+
+    // Padding around the content
+    private static final double TOP_PADDING  = 50;
+    private static final double LEFT_PADDING = 50;
+
+    // Extra grid cells margin
+    private static final int GRID_MARGIN = 2;
+
+    // Colors for various elements
+    private static final Color GRID_COLOR       = Color.DARKGRAY;
+    private static final Color BUILDING_OUTLINE = Color.BLACK;
+    private static final Color BUILDING_NO_SRC  = Color.RED;
+    private static final Color ROAD_FILL        = Color.GREY;
+    private static final Color ROAD_STROKE      = Color.WHITE;
+    private static final Color HIGHLIGHT_BUILD  = Color.ORANGE;
+    private static final Color HIGHLIGHT_EMPTY  = Color.CORAL;
+
     private final State state;
     private final Canvas canvas;
+
+    // Current scale (pixels per grid cell) and translation offsets
     private double scale = 40.0;
-    private double offsetX = 0;
-    private double offsetY = 0;
-    private static final int MARGIN = 2;
-    private static final double TOP_PADDING = 50;
-    private static final double LEFT_PADDING = 50;
-    private Building hoveredBuilding = null;
-    private Coordinate hoveredCoord = null;
+    private double offX  = 0;
+    private double offY  = 0;
 
+    // Bounds of the grid currently rendered
+    private int visMinX, visMaxX, visMinY, visMaxY;
 
-    public BoardDisplay(State state, FeedbackPane feedbackPane) {
-        this.state = state;
-        this.canvas = new Canvas(800, 600);
+    // Hover state: which building and cell are under the mouse
+    private Building  hoveredBuilding;
+    private Coordinate hoveredCoord;
 
-        canvas.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> handleCanvasClick(e.getX(), e.getY()));
-        canvas.addEventHandler(MouseEvent.MOUSE_MOVED, e -> handleCanvasMove(e.getX(), e.getY()));
-        canvas.addEventHandler(MouseEvent.MOUSE_EXITED, e -> {
-            hoveredBuilding = null;
-            canvas.setCursor(Cursor.DEFAULT);
-            refresh();
-        });
+    public BoardDisplay(State state) {
+        this.state  = Objects.requireNonNull(state, "state cannot be null");
+        this.canvas = new Canvas(CANVAS_WIDTH, CANVAS_HEIGHT);
+
+        canvas.addEventHandler(MouseEvent.MOUSE_MOVED, this::onMouseMove);
+        canvas.addEventHandler(MouseEvent.MOUSE_CLICKED, this::onMouseClick);
+        canvas.addEventHandler(MouseEvent.MOUSE_EXITED, e -> clearHover());
     }
 
     public Node getCanvasPane() {
         return canvas;
     }
 
-    /**
-     * Returns the current scale (pixels per grid unit).
-     */
-    public double getScale() {
-        return scale;
-    }
-
-    /**
-     * Returns the current horizontal offset.
-     */
-    public double getOffsetX() {
-        return offsetX;
-    }
-
-    /**
-     * Returns the current vertical offset.
-     */
-    public double getOffsetY() {
-        return offsetY;
-    }
-
-    /**
-     * Redraws the grid, roads, and buildings on the canvas.
-     */
     public void refresh() {
-        GraphicsContext gc = canvas.getGraphicsContext2D();
-        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        GraphicsContext g = canvas.getGraphicsContext2D();
+        g.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
         List<Building> buildings = state.getBuildings();
-        if (buildings.isEmpty()) {
-            return;
-        }
+        if (buildings.isEmpty()) return;
 
+        computeTransform(buildings);
+        drawGrid(g);
+        drawRoads(g);
+        drawBuildings(g, buildings);
+        drawHighlight(g);
+    }
+
+    public Coordinate screenToGrid(double px, double py) {
+        int gx = (int) Math.floor((px - offX) / scale);
+        int gy = (int) Math.floor((py - offY) / scale);
+        return new Coordinate(gx, gy);
+    }
+
+    public Building findBuilding(double px, double py) {
+        Coordinate c = screenToGrid(px, py);
+        return state.getBuildings().stream()
+                .filter(b -> b.getX() == c.x && b.getY() == c.y)
+                .findFirst().orElse(null);
+    }
+
+    public RoadTile findRoadTile(double px, double py) {
+        return Road.existingRoadTiles.get(screenToGrid(px, py));
+    }
+
+    private void computeTransform(List<Building> buildings) {
         int minX = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE;
         int minY = Integer.MAX_VALUE, maxY = Integer.MIN_VALUE;
         for (Building b : buildings) {
@@ -95,264 +132,180 @@ public class BoardDisplay {
             minY = Math.min(minY, b.getY());
             maxY = Math.max(maxY, b.getY());
         }
-        minX = Math.max(minX - MARGIN, 0);
-        minY = Math.max(minY - MARGIN, 0);
-        maxX += MARGIN;
-        maxY += MARGIN;
-        int boxWidthUnits = maxX - minX + 1;
-        int boxHeightUnits = maxY - minY + 1;
+        minX = Math.max(minX - GRID_MARGIN, 0);
+        minY = Math.max(minY - GRID_MARGIN, 0);
+        maxX += GRID_MARGIN;
+        maxY += GRID_MARGIN;
 
-        double effectiveWidth = canvas.getWidth() - LEFT_PADDING;
-        double effectiveHeight = canvas.getHeight() - TOP_PADDING;
-        double scaleX = effectiveWidth / boxWidthUnits;
-        double scaleY = effectiveHeight / boxHeightUnits;
-        scale = Math.min(scaleX, scaleY);
-        double extraX = effectiveWidth - boxWidthUnits * scale;
-        double extraY = effectiveHeight - boxHeightUnits * scale;
-        offsetX = LEFT_PADDING - minX * scale + extraX / 2;
-        offsetY = TOP_PADDING - minY * scale + extraY / 2;
+        visMinX = minX; visMaxX = maxX;
+        visMinY = minY; visMaxY = maxY;
 
-        // Draw grid.
-        gc.setStroke(Color.DARKGRAY);
-        gc.setLineWidth(1.0);
-        for (int i = minX; i <= maxX + 1; i++) {
-            double xLine = i * scale + offsetX;
-            gc.strokeLine(xLine, offsetY, xLine, offsetY + boxHeightUnits * scale);
-            if (i <= maxX) {
-                gc.setFill(Color.BLACK);
-                gc.fillText(String.valueOf(i), xLine + scale / 2 - 5, offsetY - 10);
+        int wUnits = maxX - minX + 1;
+        int hUnits = maxY - minY + 1;
+        double wAvail = canvas.getWidth()  - LEFT_PADDING;
+        double hAvail = canvas.getHeight() - TOP_PADDING;
+        scale = Math.min(wAvail / wUnits, hAvail / hUnits);
+
+        offX = LEFT_PADDING - minX * scale + (wAvail - wUnits * scale) / 2;
+        offY = TOP_PADDING  - minY * scale + (hAvail - hUnits * scale) / 2;
+    }
+
+    private void drawGrid(GraphicsContext g) {
+        g.setStroke(GRID_COLOR);
+        g.setLineWidth(1);
+        int wUnits = visMaxX - visMinX + 1;
+        int hUnits = visMaxY - visMinY + 1;
+        for (int i = visMinX; i <= visMaxX + 1; i++) {
+            double x = i * scale + offX;
+            g.strokeLine(x, offY, x, offY + hUnits * scale);
+            if (i <= visMaxX) {
+                g.fillText(String.valueOf(i), x + scale / 2 - 5, offY - 10);
             }
         }
-        for (int j = minY; j <= maxY + 1; j++) {
-            double yLine = j * scale + offsetY;
-            gc.strokeLine(offsetX, yLine, offsetX + boxWidthUnits * scale, yLine);
-            if (j <= maxY) {
-                gc.setFill(Color.BLACK);
-                gc.fillText(String.valueOf(j), offsetX - 30, yLine + scale / 2 + 5);
+        for (int j = visMinY; j <= visMaxY + 1; j++) {
+            double y = j * scale + offY;
+            g.strokeLine(offX, y, offX + wUnits * scale, y);
+            if (j <= visMaxY) {
+                g.fillText(String.valueOf(j), offX - 30, y + scale / 2 + 5);
             }
         }
+    }
 
-        // Draw roads.
-        Map<Coordinate, RoadTile> roadTileMap = Road.existingRoadTiles;
-        gc.setFill(Color.GRAY);
-        gc.setStroke(Color.WHITE);
-
-        for (RoadTile roadTile : roadTileMap.values()) {
-            Coordinate c = roadTile.getCoordinate();
-            if (c.x >= minX && c.x <= maxX && c.y >= minY && c.y <= maxY) {
-                double rx = c.x * scale + offsetX;
-                double ry = c.y * scale + offsetY;
-                gc.fillRect(rx, ry, scale, scale);
-                double centerX = rx + scale / 2;
-                double centerY = ry + scale / 2;
-                double margin = scale / 4;
-                double arrowSize = scale / 6; // 箭头大小
-
-                // from 方向的水平连接
-                if (roadTile.getFromDirection().hasDirection(Direction.LEFT)) {
-                    gc.strokeLine(rx + margin, centerY, centerX, centerY); // 只画左半边
-                }
-                if (roadTile.getFromDirection().hasDirection(Direction.RIGHT)) {
-                    gc.strokeLine(centerX, centerY, rx + scale - margin, centerY); // 只画右半边
-                }
-                // from 方向的垂直连接
-                if (roadTile.getFromDirection().hasDirection(Direction.UP)) {
-                    gc.strokeLine(centerX, ry + margin, centerX, centerY); // 只画上半边
-                }
-                if (roadTile.getFromDirection().hasDirection(Direction.DOWN)) {
-                    gc.strokeLine(centerX, centerY, centerX, ry + scale - margin); // 只画下半边
-                }
-
-                // to 方向的水平连接（添加箭头）
-                if (roadTile.getToDirection().hasDirection(Direction.LEFT)) {
-                    // 从中心到左边界，并添加箭头
-                    strokeArrow(gc, centerX, centerY, rx + margin, centerY, arrowSize);
-                }
-                if (roadTile.getToDirection().hasDirection(Direction.RIGHT)) {
-                    // 从中心到右边界，并添加箭头
-                    strokeArrow(gc, centerX, centerY, rx + scale - margin, centerY, arrowSize);
-                }
-                // to 方向的垂直连接（添加箭头）
-                if (roadTile.getToDirection().hasDirection(Direction.UP)) {
-                    // 从中心到上边界，并添加箭头
-                    strokeArrow(gc, centerX, centerY, centerX, ry + margin, arrowSize);
-                }
-                if (roadTile.getToDirection().hasDirection(Direction.DOWN)) {
-                    // 从中心到下边界，并添加箭头
-                    strokeArrow(gc, centerX, centerY, centerX, ry + scale - margin, arrowSize);
-                }
-
-                gc.setLineWidth(2);
-            }
+    private void drawRoads(GraphicsContext g) {
+        g.setFill(ROAD_FILL);
+        g.setStroke(ROAD_STROKE);
+        g.setLineWidth(2);
+        for (RoadTile t : Road.existingRoadTiles.values()) {
+            var c = t.getCoordinate();
+            if (c.x < visMinX || c.x > visMaxX || c.y < visMinY || c.y > visMaxY) continue;
+            double x = c.x * scale + offX;
+            double y = c.y * scale + offY;
+            g.fillRect(x, y, scale, scale);
+            drawRoadConnections(g, t, x, y);
         }
+    }
 
-        // Draw buildings.
-        for (Building b : buildings) {
-            double drawX = b.getX() * scale + offsetX;
-            double drawY = b.getY() * scale + offsetY;
-            if (b instanceof Mine) {
-                gc.setFill(Color.LIGHTBLUE);
-            } else if (b instanceof Factory) {
-                gc.setFill(Color.LIGHTGREEN);
-            } else if (b instanceof Storage) {
-                gc.setFill(Color.LIGHTYELLOW);
-            } else {
-                gc.setFill(Color.BEIGE);
-            }
-            gc.fillRect(drawX, drawY, scale, scale);
-            gc.setStroke(Color.BLACK);
-            gc.strokeRect(drawX, drawY, scale, scale);
+    private void drawRoadConnections(GraphicsContext g, RoadTile t, double x, double y) {
+        double cx = x + scale / 2;
+        double cy = y + scale / 2;
+        double m  = scale / 4;
+        double a  = scale / 6;
+        if (t.getFromDirection().hasDirection(Direction.LEFT))  g.strokeLine(x + m, cy, cx, cy);
+        if (t.getFromDirection().hasDirection(Direction.RIGHT)) g.strokeLine(cx, cy, x + scale - m, cy);
+        if (t.getFromDirection().hasDirection(Direction.UP))    g.strokeLine(cx, y + m, cx, cy);
+        if (t.getFromDirection().hasDirection(Direction.DOWN))  g.strokeLine(cx, cy, cx, y + scale - m);
+        if (t.getToDirection().hasDirection(Direction.LEFT))  strokeArrow(g, cx, cy, x + m, cy, a);
+        if (t.getToDirection().hasDirection(Direction.RIGHT)) strokeArrow(g, cx, cy, x + scale - m, cy, a);
+        if (t.getToDirection().hasDirection(Direction.UP))    strokeArrow(g, cx, cy, cx, y + m, a);
+        if (t.getToDirection().hasDirection(Direction.DOWN))  strokeArrow(g, cx, cy, cx, y + scale - m, a);
+    }
+
+    private void drawBuildings(GraphicsContext g, List<Building> bs) {
+        for (Building b : bs) {
+            double x = b.getX() * scale + offX;
+            double y = b.getY() * scale + offY;
+            g.setFill(buildingFill(b));
+            g.fillRect(x, y, scale, scale);
+            g.setStroke(BUILDING_OUTLINE);
+            g.strokeRect(x, y, scale, scale);
             if (!(b instanceof Mine) && (b.getSources() == null || b.getSources().isEmpty())) {
-                gc.setStroke(Color.RED);
-                gc.setLineWidth(3);
-                gc.strokeRect(drawX, drawY, scale, scale);
-                gc.setLineWidth(1);
+                g.setStroke(BUILDING_NO_SRC);
+                g.setLineWidth(3);
+                g.strokeRect(x, y, scale, scale);
+                g.setLineWidth(1);
             }
-            gc.setFill(Color.BLACK);
-            String name = b.getName();
-            if (name.length() > 8) {
-                int mid = name.length() / 2;
-                String line1 = name.substring(0, mid);
-                String line2 = name.substring(mid);
-                gc.fillText(line1, drawX + 3, drawY + scale / 2 - 5);
-                gc.fillText(line2, drawX + 3, drawY + scale / 2 + 10);
-            } else {
-                gc.fillText(name, drawX + 3, drawY + scale / 2);
-            }
-        }
-
-        // Draw a highlight over the hovered building or empty cell, if any.
-        if (hoveredCoord != null && !Road.existingRoadTiles.containsKey(hoveredCoord)) {
-            double hx = hoveredCoord.x * scale + offsetX;
-            double hy = hoveredCoord.y * scale + offsetY;
-
-            if (hoveredBuilding != null) {
-                // For building
-                gc.setStroke(Color.ORANGE);
-                gc.setLineWidth(5);
-            } else {
-                // For empty cell
-                gc.setStroke(Color.CORAL);
-                gc.setLineWidth(3);
-            }
-            gc.strokeRect(hx, hy, scale, scale);
-            gc.setLineWidth(1);
+            drawName(g, b.getName(), x, y);
         }
     }
 
-    private void strokeArrow(GraphicsContext gc, double startX, double startY, double endX, double endY, double arrowSize) {
-        // 绘制主线
-        gc.strokeLine(startX, startY, endX, endY);
-
-        // 计算方向向量
-        double dx = endX - startX;
-        double dy = endY - startY;
-        double length = Math.sqrt(dx * dx + dy * dy);
-
-        // 归一化方向向量
-        if (length > 0) {
-            dx /= length;
-            dy /= length;
-
-            // 计算箭头的两个点
-            double x1 = endX - arrowSize * dx - arrowSize * dy * 0.5;
-            double y1 = endY - arrowSize * dy + arrowSize * dx * 0.5;
-            double x2 = endX - arrowSize * dx + arrowSize * dy * 0.5;
-            double y2 = endY - arrowSize * dy - arrowSize * dx * 0.5;
-
-            // 绘制箭头
-            gc.strokeLine(endX, endY, x1, y1);
-            gc.strokeLine(endX, endY, x2, y2);
-        }
+    private void drawHighlight(GraphicsContext g) {
+        if (hoveredCoord == null) return;
+        int gx = hoveredCoord.x, gy = hoveredCoord.y;
+        if (gx < visMinX || gx > visMaxX || gy < visMinY || gy > visMaxY) return;
+        if (Road.existingRoadTiles.containsKey(hoveredCoord)) return;
+        double x = gx * scale + offX;
+        double y = gy * scale + offY;
+        g.setStroke(hoveredBuilding != null ? HIGHLIGHT_BUILD : HIGHLIGHT_EMPTY);
+        g.setLineWidth(hoveredBuilding != null ? 5 : 3);
+        g.strokeRect(x, y, scale, scale);
+        g.setLineWidth(1);
     }
 
-    private void handleCanvasClick(double pixelX, double pixelY) {
-        // Check if a building was clicked.
-        Building b = findBuilding(pixelX, pixelY);
+    private void onMouseMove(MouseEvent e) {
+        var grid = screenToGrid(e.getX(), e.getY());
+        if (grid.x < visMinX || grid.x > visMaxX || grid.y < visMinY || grid.y > visMaxY) {
+            clearHover();
+            return;
+        }
+        var b = findBuilding(e.getX(), e.getY());
+        if (!Objects.equals(b, hoveredBuilding) || !grid.equals(hoveredCoord)) {
+            hoveredBuilding = b;
+            hoveredCoord    = grid;
+            refresh();
+        }
+        canvas.setCursor(b != null ? Cursor.HAND : Cursor.DEFAULT);
+    }
+
+    private void onMouseClick(MouseEvent e) {
+        Coordinate grid = screenToGrid(e.getX(), e.getY());
+        if (grid.x < visMinX || grid.x > visMaxX || grid.y < visMinY || grid.y > visMaxY) {
+            return;
+        }
+        Building b  = findBuilding(e.getX(), e.getY());
         if (b != null) {
             BuildingInfoWindow.show(b);
             return;
         }
-        // Check if a road tile was clicked.
-        RoadTile tile = findRoadTile(pixelX, pixelY);
-        if (tile != null) {
-            BuildingInfoWindow.show(tile);
+        RoadTile rt = findRoadTile(e.getX(), e.getY());
+        if (rt != null) {
+            BuildingInfoWindow.show(rt);
             return;
         }
-
-        // Neither a building nor a road tile was clicked.
-        // Determine the grid coordinate for the click.
-        int gridX = (int) Math.floor((pixelX - offsetX) / scale);
-        int gridY = (int) Math.floor((pixelY - offsetY) / scale);
-
-        // Open the add building window with the fixed coordinate.
-        AddBuildingAtCellWindow.show(state, new Coordinate(gridX, gridY), () -> {
-            refresh();
-        });
+        AddBuildingAtCellWindow.show(state, screenToGrid(e.getX(), e.getY()), this::refresh);
     }
 
-
-    /**
-     * Handles mouse movement events and updates the hovered building.
-     *
-     * @param pixelX the x-coordinate of the mouse
-     * @param pixelY the y-coordinate of the mouse
-     */
-    private void handleCanvasMove(double pixelX, double pixelY) {
-        // Calculate gridX, gridY from mouse coords.
-        int gridX = (int) Math.floor((pixelX - offsetX) / scale);
-        int gridY = (int) Math.floor((pixelY - offsetY) / scale);
-
-        // Always update hoveredCoord to the cell under the mouse.
-        Coordinate newCoord = new Coordinate(gridX, gridY);
-
-        // Check if there's a building in that cell.
-        Building b = findBuilding(pixelX, pixelY);
-
-        // If building changed or hoveredCoord changed, refresh.
-        if ((b != hoveredBuilding) || !newCoord.equals(hoveredCoord)) {
-            hoveredBuilding = b;
-            hoveredCoord = newCoord;
-            refresh();
-        }
-
-        // Show a hand only if there's a building:
-        if (hoveredBuilding != null) {
-            canvas.setCursor(Cursor.HAND);
-        } else {
+    private void clearHover() {
+        if (hoveredCoord != null || hoveredBuilding != null) {
+            hoveredCoord    = null;
+            hoveredBuilding = null;
             canvas.setCursor(Cursor.DEFAULT);
+            refresh();
         }
     }
 
-
-    /**
-     * Returns the building at the given canvas coordinates.
-     *
-     * @param pixelX the x-coordinate on the canvas
-     * @param pixelY the y-coordinate on the canvas
-     * @return the building at the corresponding grid cell, or null if none exists
-     */
-    public Building findBuilding(double pixelX, double pixelY) {
-        int gridX = (int) Math.floor((pixelX - offsetX) / scale);
-        int gridY = (int) Math.floor((pixelY - offsetY) / scale);
-        for (Building b : state.getBuildings()) {
-            if (b.getX() == gridX && b.getY() == gridY) {
-                return b;
-            }
-        }
-        return null;
+    private static Color buildingFill(Building b) {
+        if (b instanceof Mine)    return Color.LIGHTBLUE;
+        if (b instanceof Factory) return Color.LIGHTGREEN;
+        if (b instanceof Storage) return Color.LIGHTYELLOW;
+        return Color.BEIGE;
     }
 
-    public RoadTile findRoadTile(double pixelX, double pixelY) {
-        int gridX = (int) Math.floor((pixelX - offsetX) / scale);
-        int gridY = (int) Math.floor((pixelY - offsetY) / scale);
-        for(Map.Entry<Coordinate, RoadTile> entry: Road.existingRoadTiles.entrySet()) {
-            Coordinate coordinate = entry.getKey();
-            RoadTile roadTile = entry.getValue();
-            if(coordinate.x == gridX && coordinate.y == gridY) {
-                return roadTile;
-            }
+    private void drawName(GraphicsContext g, String name, double x, double y) {
+        g.setFill(Color.BLACK);
+        double baseY = y + scale * 0.5;
+        if (name.length() <= 8) {
+            g.fillText(name, x + 3, baseY);
+        } else {
+            int mid = name.length() / 2;
+            g.fillText(name.substring(0, mid), x + 3, baseY - scale * 0.15);
+            g.fillText(name.substring(mid),     x + 3, baseY + scale * 0.15);
         }
-        return null;
+    }
+
+    private static void strokeArrow(GraphicsContext g,
+                                    double sx, double sy,
+                                    double ex, double ey,
+                                    double size) {
+        g.strokeLine(sx, sy, ex, ey);
+        double dx = ex - sx, dy = ey - sy;
+        double len = Math.hypot(dx, dy);
+        if (len == 0) return;
+        dx /= len; dy /= len;
+        double x1 = ex - size * dx - size * dy * 0.5;
+        double y1 = ey - size * dy + size * dx * 0.5;
+        double x2 = ex - size * dx + size * dy * 0.5;
+        double y2 = ey - size * dy - size * dx * 0.5;
+        g.strokeLine(ex, ey, x1, y1);
+        g.strokeLine(ex, ey, x2, y2);
     }
 }

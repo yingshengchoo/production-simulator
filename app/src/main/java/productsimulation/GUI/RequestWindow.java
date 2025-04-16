@@ -1,15 +1,12 @@
 package productsimulation.GUI;
 
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import productsimulation.State;
@@ -18,14 +15,30 @@ import productsimulation.model.Building;
 import productsimulation.model.Factory;
 import productsimulation.model.Mine;
 import productsimulation.model.Storage;
-import productsimulation.model.BuildingType;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
-public class RequestWindow {
+/**
+ * Modal dialog to submit an item request from a selected building.
+ * <p>
+ * The Submit button is disabled until both a building and an item are selected.
+ * Uses ComboBox<Building> for type-safe selection and a helper method for alerts.
+ * <p>
+ * Usage:
+ * <pre>
+ *     RequestWindow.show(state, () -> boardDisplay.refresh());
+ * </pre>
+ *
+ * @author Taiyan Liu
+ * @version 1.0
+ */
+public final class RequestWindow {
+    private RequestWindow() { /* prevent instantiation */ }
 
     public static void show(State state, Runnable onSuccessRefresh) {
+        Objects.requireNonNull(state, "state");
+
         Stage stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setTitle("Request Item");
@@ -34,130 +47,90 @@ public class RequestWindow {
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(20));
+        ColumnConstraints labelCol = new ColumnConstraints(); labelCol.setHgrow(Priority.NEVER);
+        ColumnConstraints fieldCol = new ColumnConstraints(); fieldCol.setHgrow(Priority.ALWAYS);
+        grid.getColumnConstraints().addAll(labelCol, fieldCol);
 
-        // ComboBox for selecting a building from which to request.
-        Label bldLabel = new Label("From building:");
-        List<String> buildingNames = state.getBuildings().stream()
-                .map(b -> b.getName())
-                .collect(Collectors.toList());
-        ComboBox<String> bldBox = new ComboBox<>(FXCollections.observableArrayList(buildingNames));
-        bldBox.setPromptText("Select building");
+        // Building selector
+        ComboBox<Building> buildingBox = new ComboBox<>(FXCollections.observableArrayList(state.getBuildings()));
+        buildingBox.setPromptText("Select building");
+        buildingBox.setCellFactory(cb -> new ListCell<>() {
+            @Override protected void updateItem(Building b, boolean empty) {
+                super.updateItem(b, empty);
+                setText(empty || b == null ? null : b.getName());
+            }
+        });
+        buildingBox.setButtonCell(buildingBox.getCellFactory().call(null));
+        addRow(grid, 0, "From building:", buildingBox);
 
-        // ComboBox for selecting an item.
-        Label itemLabel = new Label("Item:");
+        // Item selector
         ComboBox<String> itemBox = new ComboBox<>();
         itemBox.setPromptText("Select item");
+        addRow(grid, 1, "Item:", itemBox);
 
-        // When the building selection changes, update the item drop-down.
-        bldBox.setOnAction(e -> {
-            String buildingName = bldBox.getValue();
-            ObservableList<String> items = FXCollections.observableArrayList();
-            if (buildingName != null) {
-                Building target = state.getBuildings().stream()
-                        .filter(b -> b.getName().equals(buildingName))
-                        .findFirst().orElse(null);
-                if (target != null) {
-                    if (target instanceof Mine) {
-                        Mine mine = (Mine) target;
-                        BuildingType bt = mine.getBuildingType();
-                        if (bt != null && bt.getAllRecipes() != null) {
-                            items.addAll(bt.getAllRecipes().keySet());
-                        }
-                    } else if (target instanceof Storage) {
-                        // For storage buildings, use the stored item.
-                        Storage storage = (Storage) target;
-                        items.add(storage.getRecipeOutput());
-                    } else if (target instanceof Factory) {
-                        Factory factory = (Factory) target;
-                        BuildingType bt = factory.getBuildingType();
-                        if (bt != null && bt.getAllRecipes() != null) {
-                            items.addAll(bt.getAllRecipes().keySet());
-                        }
-                    }
+        // Populate items when building changes
+        buildingBox.setOnAction(e -> {
+            Building b = buildingBox.getValue();
+            if (b == null) {
+                itemBox.getItems().clear();
+            } else {
+                List<String> items;
+                if (b instanceof Mine) {
+                    items = List.copyOf(b.getBuildingType().getAllRecipes().keySet());
+                } else if (b instanceof Storage) {
+                    items = List.of(((Storage)b).getRecipeOutput());
+                } else if (b instanceof Factory) {
+                    items = List.copyOf(b.getBuildingType().getAllRecipes().keySet());
+                } else {
+                    items = List.of();
                 }
+                itemBox.setItems(FXCollections.observableArrayList(items));
             }
-            itemBox.setItems(items);
-            // Clear any previous selection.
             itemBox.getSelectionModel().clearSelection();
         });
 
-        // Submit and Cancel buttons.
+        // Buttons
         Button submitBtn = new Button("Submit");
+        submitBtn.setDefaultButton(true);
         Button cancelBtn = new Button("Cancel");
+        cancelBtn.setCancelButton(true);
+        grid.addRow(2, submitBtn, cancelBtn);
 
+        // Disable until both selections made
+        submitBtn.disableProperty().bind(
+                buildingBox.valueProperty().isNull()
+                        .or(itemBox.valueProperty().isNull())
+        );
+
+        // Handlers
         submitBtn.setOnAction(e -> {
-            String building = bldBox.getValue();
+            Building b = buildingBox.getValue();
             String item = itemBox.getValue();
-            if (building == null || item == null || building.trim().isEmpty() || item.trim().isEmpty()) {
-                showError("Please select both a building and an item.");
-                return;
-            }
-            // Check if the selected building is capable of producing or storing the requested item.
-            Building target = state.getBuildings().stream()
-                    .filter(b -> b.getName().equals(building))
-                    .findFirst().orElse(null);
-            if (target != null) {
-                boolean canProduce = false;
-                if (target instanceof Mine) {
-                    BuildingType bt = ((Mine) target).getBuildingType();
-                    if (bt != null && bt.getAllRecipes() != null) {
-                        canProduce = bt.getAllRecipes().containsKey(item);
-                    }
-                    canProduce = bt.getAllRecipes().containsKey(item);
-                } else if (target instanceof Storage) {
-                    canProduce = item.equals(((Storage) target).getRecipeOutput());
-                } else if (target instanceof Factory) {
-                    BuildingType bt = ((Factory) target).getBuildingType();
-                    if (bt != null && bt.getAllRecipes() != null) {
-                        canProduce = bt.getAllRecipes().containsKey(item);
-                    }
-                }
-                if (!canProduce) {
-                    showError("The building '" + building + "' is not capable of producing or storing '" + item + "'.");
-                    return;
-                }
-            } else {
-                showError("Selected building not found.");
-                return;
-            }
-            // Create and execute the request command.
-            RequestCommand cmd = new RequestCommand(item, building);
-            String error = cmd.execute();
-            if (error == null || error.trim().isEmpty()) {
-                showInfo("Requested " + item + " from " + building + ".");
-                if (onSuccessRefresh != null) {
-                    onSuccessRefresh.run();
-                }
+            String error = new RequestCommand(item, b.getName()).execute();
+            if (error == null || error.isBlank()) {
+                showAlert(Alert.AlertType.INFORMATION,
+                        String.format("Requested %s from %s.", item, b.getName()));
+                if (onSuccessRefresh != null) onSuccessRefresh.run();
                 stage.close();
             } else {
-                showError(error);
+                showAlert(Alert.AlertType.ERROR, error);
             }
         });
 
         cancelBtn.setOnAction(e -> stage.close());
 
-        grid.add(bldLabel, 0, 0);
-        grid.add(bldBox, 1, 0);
-        grid.add(itemLabel, 0, 1);
-        grid.add(itemBox, 1, 1);
-        grid.add(submitBtn, 0, 2);
-        grid.add(cancelBtn, 1, 2);
-
-        stage.setScene(new Scene(grid, 350, 180));
+        stage.setScene(new Scene(grid, 400, 180));
         stage.showAndWait();
     }
 
-    private static void showError(String msg) {
-        Alert a = new Alert(Alert.AlertType.ERROR);
-        a.setTitle("Error");
-        a.setContentText(msg);
-        a.showAndWait();
+    private static <T extends Control> void addRow(GridPane grid, int row, String label, T ctrl) {
+        grid.add(new Label(label), 0, row);
+        grid.add(ctrl, 1, row);
     }
 
-    private static void showInfo(String msg) {
-        Alert a = new Alert(Alert.AlertType.INFORMATION);
-        a.setTitle("Success");
-        a.setContentText(msg);
-        a.showAndWait();
+    private static void showAlert(Alert.AlertType type, String msg) {
+        Alert alert = new Alert(type, msg, ButtonType.OK);
+        alert.setHeaderText(null);
+        alert.showAndWait();
     }
 }

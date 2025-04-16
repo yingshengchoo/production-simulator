@@ -1,64 +1,34 @@
 package productsimulation.GUI;
 
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
-import javafx.scene.layout.StackPane;
 
 /**
- * The FeedbackPane class encapsulates a non-editable TextArea wrapped in a ScrollPane.
- * New text appended to the TextArea will automatically scroll to the bottom.
- * This makes it easier to manage and style user feedback.
+ * FeedbackPane is a styled, read‑only text area for simulation logs.
+ * <ul>
+ *   <li>Non-editable, word‑wrapped</li>
+ *   <li>Auto-scrolls when content changes</li>
+ * </ul>
+ *
+ * @author Taiyan Liu
+ * @version 1.0
  */
-public class FeedbackPane extends StackPane {
-    private final TextArea textArea;
-    private final ScrollPane scrollPane;
-
+public class FeedbackPane extends TextArea {
     public FeedbackPane() {
-        // Create a non-editable TextArea.
-        textArea = new TextArea();
-        textArea.setEditable(false);
-        textArea.setWrapText(true);
-
-        // Create a ScrollPane that will wrap the TextArea.
-        scrollPane = new ScrollPane(textArea);
-        scrollPane.setFitToWidth(true);
-        scrollPane.setFitToHeight(true);
-        // Always show the vertical scrollbar.
-        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
-
-        // Add the ScrollPane to this container.
-        this.getChildren().add(scrollPane);
-
-        // Add a listener to automatically scroll to the bottom when new text is added.
-        textArea.textProperty().addListener((observable, oldText, newText) -> {
-            textArea.setScrollTop(Double.MAX_VALUE);
-        });
+        super();
+        setEditable(false);
+        setWrapText(true);
+        getStyleClass().add("feedback-pane");
     }
 
-    /**
-     * Appends text to the feedback pane and then adds a newline.
-     *
-     * @param text the text to append.
-     */
-    public void appendText(String text) {
-        textArea.appendText(text + "\n");
+    /** Replaces all content and scrolls to bottom. */
+    public void setContent(String text) {
+        setText(text);
+        positionCaret(getText().length());
     }
 
-    /**
-     * Sets the feedback text.
-     *
-     * @param text the text to set.
-     */
-    public void setText(String text) {
-        textArea.setText(text);
-    }
-
-    /**
-     * Retrieves the current feedback text.
-     *
-     * @return the feedback text.
-     */
-    public String getText() {
-        return textArea.getText();
+    /** Appends a line and scrolls down. */
+    public void appendLine(String line) {
+        appendText(line + System.lineSeparator());
+        positionCaret(getText().length());
     }
 }

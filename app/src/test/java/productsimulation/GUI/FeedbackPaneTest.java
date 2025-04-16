@@ -4,7 +4,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.testfx.framework.junit5.ApplicationTest;
 import javafx.stage.Stage;
-import productsimulation.GUI.FeedbackPane;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,11 +24,6 @@ public class FeedbackPaneTest extends ApplicationTest {
         pane = new FeedbackPane();
     }
 
-    @Test
-    public void appendText_shouldAddTextWithNewline() {
-        interact(() -> pane.appendText("Test message"));
-        assertEquals("Test message\n", pane.getText());
-    }
 
     @Test
     public void setText_shouldReplaceContent() {
