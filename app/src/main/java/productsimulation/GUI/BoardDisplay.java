@@ -34,6 +34,8 @@ public class BoardDisplay {
     private static final double TOP_PADDING = 50;
     private static final double LEFT_PADDING = 50;
     private Building hoveredBuilding = null;
+    private Coordinate hoveredCoord = null;
+
 
     public BoardDisplay(State state, FeedbackPane feedbackPane) {
         this.state = state;
@@ -219,11 +221,20 @@ public class BoardDisplay {
             }
         }
 
-        if (hoveredBuilding != null) {
-            double hx = hoveredBuilding.getX() * scale + offsetX;
-            double hy = hoveredBuilding.getY() * scale + offsetY;
-            gc.setStroke(Color.ORANGE);
-            gc.setLineWidth(5);
+        // Draw a highlight over the hovered building or empty cell, if any.
+        if (hoveredCoord != null && !Road.existingRoadTiles.containsKey(hoveredCoord)) {
+            double hx = hoveredCoord.x * scale + offsetX;
+            double hy = hoveredCoord.y * scale + offsetY;
+
+            if (hoveredBuilding != null) {
+                // For building
+                gc.setStroke(Color.ORANGE);
+                gc.setLineWidth(5);
+            } else {
+                // For empty cell
+                gc.setStroke(Color.CORAL);
+                gc.setLineWidth(3);
+            }
             gc.strokeRect(hx, hy, scale, scale);
             gc.setLineWidth(1);
         }
@@ -288,13 +299,31 @@ public class BoardDisplay {
      * @param pixelY the y-coordinate of the mouse
      */
     private void handleCanvasMove(double pixelX, double pixelY) {
+        // Calculate gridX, gridY from mouse coords.
+        int gridX = (int) Math.floor((pixelX - offsetX) / scale);
+        int gridY = (int) Math.floor((pixelY - offsetY) / scale);
+
+        // Always update hoveredCoord to the cell under the mouse.
+        Coordinate newCoord = new Coordinate(gridX, gridY);
+
+        // Check if there's a building in that cell.
         Building b = findBuilding(pixelX, pixelY);
-        if (b != hoveredBuilding) {
+
+        // If building changed or hoveredCoord changed, refresh.
+        if ((b != hoveredBuilding) || !newCoord.equals(hoveredCoord)) {
             hoveredBuilding = b;
+            hoveredCoord = newCoord;
             refresh();
         }
-        canvas.setCursor(b != null ? Cursor.HAND : Cursor.DEFAULT);
+
+        // Show a hand only if there's a building:
+        if (hoveredBuilding != null) {
+            canvas.setCursor(Cursor.HAND);
+        } else {
+            canvas.setCursor(Cursor.DEFAULT);
+        }
     }
+
 
     /**
      * Returns the building at the given canvas coordinates.
