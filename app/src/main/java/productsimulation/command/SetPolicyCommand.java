@@ -71,16 +71,20 @@ public class SetPolicyCommand extends Command {
         if (policy == null) {
             return "The policy you want to set does not exist";
         }
-        for (Building building : buildings) {
-            building.changePolicy(policy);
-        }
+        try {
+            for (Building building : buildings) {
+                building.changePolicy(policy);
+            }
 
-        if (policy instanceof SourcePolicy &&  policyTarget.equals("default")) {
-            State.getInstance().setDefaultSourcePolicy((SourcePolicy) policy);
-        } else if (policy instanceof ServePolicy &&  policyTarget.equals("default")) {
-            State.getInstance().setDefaultServePolicy((ServePolicy) policy);
+            if (policy instanceof SourcePolicy &&  policyTarget.equals("default")) {
+                State.getInstance().setDefaultSourcePolicy((SourcePolicy) policy);
+            } else if (policy instanceof ServePolicy &&  policyTarget.equals("default")) {
+                State.getInstance().setDefaultServePolicy((ServePolicy) policy);
+            }
+            return null;
+        } catch (Exception e) {
+            return e.getMessage();
         }
-        return null;
 }
 
     public String getPolicyType() {

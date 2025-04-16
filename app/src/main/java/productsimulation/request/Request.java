@@ -167,12 +167,17 @@ public class Request implements Serializable{
     this.transLatency = transLatency;
   }
 
-  public static void userRequestHandler(String itemName, String buildingName) {
-    Recipe r = Recipe.getRecipe(itemName);
-    Building b = Building.getBuilding(buildingName);
-    if(r != null && b != null) {
-      Request request = new Request(itemName, r, null);
-      b.addRequest(request);
+  public static String userRequestHandler(String itemName, String buildingName) {
+    try {
+      Recipe r = Recipe.getRecipe(itemName);
+      Building b = Building.getBuilding(buildingName);
+      if(r != null && b != null) {
+        Request request = new Request(itemName, r, null);
+        b.addRequest(request);
+      }
+      return null;
+    } catch (Exception e) {
+      return "Error: An unexpected error occurred: " + e.getMessage();
     }
   }
 }

@@ -21,7 +21,6 @@ public class ConnectCommand extends Command {
 
     @Override
     public String execute() {
-         Road.connectHandler(source, destination);
-         return null;
+         return Road.connectHandler(source, destination);
     }
 }

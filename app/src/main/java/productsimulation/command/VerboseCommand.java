@@ -1,6 +1,7 @@
 package productsimulation.command;
 
 import productsimulation.Log;
+import productsimulation.State;
 
 public class VerboseCommand extends Command {
     private final int verboseLevel;
@@ -11,7 +12,11 @@ public class VerboseCommand extends Command {
 
     @Override
     public String execute() {
-        Log.setLogLevel(verboseLevel);
+        try {
+            Log.setLogLevel(verboseLevel);
+        } catch (Exception e) {
+            return e.getMessage();
+        }
         return null;
     }
 

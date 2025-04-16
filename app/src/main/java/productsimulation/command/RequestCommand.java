@@ -13,8 +13,7 @@ public class RequestCommand extends Command{
 
     @Override
     public String execute() {
-        Request.userRequestHandler(itemName, buildingName);
-        return null;
+        return Request.userRequestHandler(itemName, buildingName);
     }
 
     public String getItem() {

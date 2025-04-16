@@ -71,12 +71,22 @@ public class LogicTime implements Serializable{
         exitFlag = true;
     }
 
-    public void stepNHandler(int n) {
-        notifyAll(n);
+    public String stepNHandler(int n) {
+        try {
+            notifyAll(n);
+            return null;
+        } catch (Exception e) {
+            return "Error: An unexpected error occurred: " + e.getMessage();
+        }
     }
 
-    public void finishHandler() {
-        notifyAll(MAX_STEP);
+    public String finishHandler() {
+        try {
+            notifyAll(MAX_STEP);
+            return null;
+        } catch (Exception e) {
+            return "Error: An unexpected error occurred: " + e.getMessage();
+        }
     }
 
     public boolean getExitFlag() {

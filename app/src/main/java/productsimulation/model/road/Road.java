@@ -64,8 +64,12 @@ public class Road implements Serializable {
             return "Building does not exists. Check the building name.";
         }
         Log.level0Log(srcName + " -> " + dstName + " connected");
-        generateRoad(bsrc, bdst);
-        return null;
+        try{
+            generateRoad(bsrc, bdst);
+            return null;
+        } catch (Exception e) {
+            return "Error: An unexpected error occurred: " + e.getMessage();
+        }
     }
 
 //    不检查指定位置是否合法，由caller保证安全调用，故设为private
