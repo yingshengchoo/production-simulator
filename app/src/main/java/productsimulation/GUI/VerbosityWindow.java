@@ -1,67 +1,88 @@
 package productsimulation.GUI;
 
-import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.util.function.IntConsumer;
 
 /**
- * A small modal window that lets the user pick a verbosity level (0-2) from a drop-down
- * and calls a callback (onVerbositySet) with that integer.
+ * Modal dialog to select a verbosity level (0–2) via a Spinner control.
+ * Uses a two-column responsive layout, default/cancel buttons, and
+ * invokes a callback with the chosen level.
+ * <p>
+ * Usage:
+ * <pre>
+ *     VerbosityWindow.show(level -> Log.setLogLevel(level));
+ * </pre>
+ *
+ * @author Taiyan Liu
+ * @version 1.0
  */
-public class VerbosityWindow {
+public final class VerbosityWindow {
+    private VerbosityWindow() {
+        // prevent instantiation
+    }
 
+    /**
+     * Shows the verbosity selection dialog.
+     * @param onVerbositySet callback receiving the selected level
+     */
     public static void show(IntConsumer onVerbositySet) {
         Stage stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
-        stage.setTitle("Set Verbosity");
+        stage.setTitle("Set Verbosity Level");
 
         GridPane grid = new GridPane();
         grid.setHgap(10);
-        grid.setVgap(10);
+        grid.setVgap(15);
         grid.setPadding(new Insets(20));
+        ColumnConstraints col1 = new ColumnConstraints(); col1.setHgrow(Priority.NEVER);
+        ColumnConstraints col2 = new ColumnConstraints(); col2.setHgrow(Priority.ALWAYS);
+        grid.getColumnConstraints().addAll(col1, col2);
 
-        Label label = new Label("Verbosity (0–2):");
-        // Use a drop-down with 0, 1, 2
-        ComboBox<Integer> combo = new ComboBox<>(FXCollections.observableArrayList(0, 1, 2));
-        combo.setPromptText("Select level");
+        // Label and Spinner for levels 0–2
+        Label levelLabel = new Label("Verbosity Level:");
+        Spinner<Integer> levelSpinner = new Spinner<>();
+        SpinnerValueFactory.IntegerSpinnerValueFactory valueFactory =
+                new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 2, 1);
+        levelSpinner.setValueFactory(valueFactory);
+        levelSpinner.setEditable(false);
+        grid.addRow(0, levelLabel, levelSpinner);
 
+        // Buttons HBox
         Button submitBtn = new Button("Submit");
         Button cancelBtn = new Button("Cancel");
+        submitBtn.setDefaultButton(true);
+        cancelBtn.setCancelButton(true);
+        HBox buttonBox = new HBox(10, submitBtn, cancelBtn);
+        grid.add(buttonBox, 1, 1);
 
+        // Handlers
         submitBtn.setOnAction(e -> {
-            Integer val = combo.getValue();
-            if (val == null) {
-                showError("Please select a verbosity level.");
-                return;
-            }
-            onVerbositySet.accept(val);
-            showInfo("Verbosity set to " + val);
+            int level = levelSpinner.getValue();
+            onVerbositySet.accept(level);
+            showAlert("Verbosity set to " + level);
             stage.close();
         });
-
         cancelBtn.setOnAction(e -> stage.close());
 
-        grid.add(label, 0, 0);
-        grid.add(combo, 1, 0);
-        grid.add(submitBtn, 0, 1);
-        grid.add(cancelBtn, 1, 1);
-
-        stage.setScene(new Scene(grid, 300, 150));
+        // Display
+        Scene scene = new Scene(grid);
+        stage.setScene(scene);
+        stage.sizeToScene();
         stage.showAndWait();
     }
 
-    private static void showError(String msg) {
-        Alert a = new Alert(Alert.AlertType.ERROR, msg, ButtonType.OK);
-        a.showAndWait();
-    }
-    private static void showInfo(String msg) {
-        Alert a = new Alert(Alert.AlertType.INFORMATION, msg, ButtonType.OK);
-        a.showAndWait();
+    private static void showAlert(String msg) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION, msg, ButtonType.OK);
+        alert.setHeaderText(null);
+        alert.showAndWait();
     }
 }

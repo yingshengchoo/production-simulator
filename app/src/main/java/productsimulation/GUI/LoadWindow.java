@@ -2,88 +2,98 @@ package productsimulation.GUI;
 
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import productsimulation.command.LoadCommand;
 
 /**
- * A modal window that prompts the user to enter a file name (without extension)
- * to load a previously saved simulation state.
- * When the user clicks Submit, a LoadCommand is created and executed.
+ * Modal dialog prompting the user to enter a filename (without extension)
+ * to load a saved simulation state. Ensures valid input, disables the
+ * Submit button until a filename is provided, and shows alerts for success or error.
+ * Usage:
+ * <pre>
+ *     LoadWindow.show(() -> boardDisplay.refresh());
+ * </pre>
+ *
+ * @author Taiyan Liu
+ * @version 1.0
  */
-public class LoadWindow {
+public final class LoadWindow {
+    private LoadWindow() { /* prevent instantiation */ }
 
+    /**
+     * Displays the Load dialog.
+     * @param onSuccessRefresh called after successful load to refresh UI
+     */
     public static void show(Runnable onSuccessRefresh) {
         Stage stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setTitle("Load Simulation");
 
-        GridPane grid = createGrid();
-        Label fileLabel = new Label("File name (no extension):");
+        GridPane grid = createFormGrid();
+
+        Label fileLabel = new Label("File name (no ".concat(".ser").concat("):"));
         TextField fileField = new TextField();
         fileField.setPromptText("Enter file name");
+        addRow(grid, fileLabel, fileField);
 
         Button submit = new Button("Submit");
         Button cancel = new Button("Cancel");
+        submit.setDefaultButton(true);
+        cancel.setCancelButton(true);
+        submit.disableProperty().bind(fileField.textProperty().isEmpty());
 
-        // When the user clicks Submit, connect to backend LoadCommand.
         submit.setOnAction(e -> {
             String fileName = fileField.getText().trim();
-            if (fileName.isEmpty()) {
-                showError("Please enter a file name.");
-                return;
-            }
-            // BACKEND: Create and execute the LoadCommand here.
             LoadCommand cmd = new LoadCommand(fileName);
             String error = cmd.execute();
-            if (error == null || error.trim().isEmpty()) {
-                showInfo("Simulation loaded from " + fileName + ".ser");
-                if (onSuccessRefresh != null) {
-                    onSuccessRefresh.run();
-                }
+            if (error == null || error.isBlank()) {
+                showAlert(Alert.AlertType.INFORMATION,
+                        "Loaded state from '" + fileName + ".ser'.");
+                if (onSuccessRefresh != null) onSuccessRefresh.run();
                 stage.close();
             } else {
-                showError("Load error: " + error);
+                showAlert(Alert.AlertType.ERROR, "Load error: " + error);
             }
         });
-
         cancel.setOnAction(e -> stage.close());
 
-        grid.add(fileLabel, 0, 0);
-        grid.add(fileField, 1, 0);
-        grid.add(submit, 0, 1);
-        grid.add(cancel, 1, 1);
+        grid.addRow(1, submit, cancel);
 
-        Scene scene = new Scene(grid, 350, 150);
+        Scene scene = new Scene(grid);
         stage.setScene(scene);
+        stage.getScene().getWindow().sizeToScene();
         stage.showAndWait();
     }
 
-    // Reuse grid creation logic.
-    private static GridPane createGrid() {
+    // Creates a GridPane with two columns: label and control
+    private static GridPane createFormGrid() {
         GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
-        grid.setPadding(new Insets(20, 150, 10, 10));
+        grid.setPadding(new Insets(20));
+        ColumnConstraints labelCol = new ColumnConstraints();
+        labelCol.setHgrow(Priority.NEVER);
+        ColumnConstraints fieldCol = new ColumnConstraints();
+        fieldCol.setHgrow(Priority.ALWAYS);
+        grid.getColumnConstraints().addAll(labelCol, fieldCol);
         return grid;
     }
 
-    private static void showError(String msg) {
-        Alert alert = new Alert(Alert.AlertType.ERROR, msg, ButtonType.OK);
-        alert.setTitle("Load Error");
-        alert.setHeaderText(null);
-        alert.showAndWait();
+    // Adds a label and control to specified row
+    private static void addRow(GridPane grid, Label label, Control control) {
+        grid.add(label, 0, 0);
+        grid.add(control, 1, 0);
     }
 
-    private static void showInfo(String msg) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION, msg, ButtonType.OK);
-        alert.setTitle("Load Successful");
+    // Shows an alert dialog
+    private static void showAlert(Alert.AlertType type, String message) {
+        Alert alert = new Alert(type, message, ButtonType.OK);
+        alert.setTitle("Load Simulation");
         alert.setHeaderText(null);
         alert.showAndWait();
     }

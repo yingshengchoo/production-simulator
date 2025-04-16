@@ -2,88 +2,91 @@ package productsimulation.GUI;
 
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import productsimulation.command.SaveCommand;
 
 /**
- * A modal window that prompts the user to enter a file name (without extension)
- * to save the current simulation.
- * When the user clicks Submit, a SaveCommand is created and executed.
- */
-public class SaveWindow {
+ * Modal dialog prompting the user to enter a filename (without extension)
+ * to save the current simulation state. Disables the Submit button until
+ * a non-empty filename is provided. Shows alerts on success or error.
+ **/
+public final class SaveWindow {
+    private SaveWindow() { /* prevent instantiation */ }
 
+    /**
+     * Displays the save dialog.
+     * @param onSuccessRefresh callback after successful save to refresh UI
+     */
     public static void show(Runnable onSuccessRefresh) {
         Stage stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setTitle("Save Simulation");
 
-        GridPane grid = createGrid();
-        Label fileLabel = new Label("File name (no extension):");
+        GridPane grid = createFormGrid();
+
+        Label fileLabel = new Label("File name (no .ser):");
         TextField fileField = new TextField();
         fileField.setPromptText("Enter file name");
+        addRow(grid, fileLabel, fileField);
 
-        Button submit = new Button("Submit");
-        Button cancel = new Button("Cancel");
+        Button submitBtn = new Button("Submit");
+        Button cancelBtn = new Button("Cancel");
+        submitBtn.setDefaultButton(true);
+        cancelBtn.setCancelButton(true);
 
-        // When submit is pressed, connect to backend SaveCommand.
-        submit.setOnAction(e -> {
+        // Disable Submit until filename is non-empty
+        submitBtn.disableProperty().bind(fileField.textProperty().isEmpty());
+
+        submitBtn.setOnAction(e -> {
             String fileName = fileField.getText().trim();
-            if (fileName.isEmpty()) {
-                showError("Please enter a file name.");
-                return;
-            }
-            // BACKEND: Create and execute the SaveCommand here.
             SaveCommand cmd = new SaveCommand(fileName);
             String error = cmd.execute();
-            if (error == null || error.trim().isEmpty()) {
-                showInfo("Simulation saved to " + fileName + ".ser");
-                if (onSuccessRefresh != null) {
-                    onSuccessRefresh.run();
-                }
+            if (error == null || error.isBlank()) {
+                showAlert(Alert.AlertType.INFORMATION,
+                        String.format("Saved state to '%s.ser'.", fileName)
+                );
+                if (onSuccessRefresh != null) onSuccessRefresh.run();
                 stage.close();
             } else {
-                showError("Save error: " + error);
+                showAlert(Alert.AlertType.ERROR, "Save error: " + error);
             }
         });
+        cancelBtn.setOnAction(e -> stage.close());
 
-        cancel.setOnAction(e -> stage.close());
+        grid.addRow(1, submitBtn, cancelBtn);
 
-        grid.add(fileLabel, 0, 0);
-        grid.add(fileField, 1, 0);
-        grid.add(submit, 0, 1);
-        grid.add(cancel, 1, 1);
-
-        Scene scene = new Scene(grid, 350, 150);
+        Scene scene = new Scene(grid);
         stage.setScene(scene);
+        stage.getScene().getWindow().sizeToScene();
         stage.showAndWait();
     }
 
-    // Helper to create a default GridPane with padding and gaps.
-    private static GridPane createGrid() {
+    // Creates a two-column GridPane with responsive sizing
+    private static GridPane createFormGrid() {
         GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
-        grid.setPadding(new Insets(20, 150, 10, 10));
+        grid.setPadding(new Insets(20));
+        ColumnConstraints col1 = new ColumnConstraints(); col1.setHgrow(Priority.NEVER);
+        ColumnConstraints col2 = new ColumnConstraints(); col2.setHgrow(Priority.ALWAYS);
+        grid.getColumnConstraints().addAll(col1, col2);
         return grid;
     }
 
-    private static void showError(String msg) {
-        Alert alert = new Alert(Alert.AlertType.ERROR, msg, ButtonType.OK);
-        alert.setTitle("Save Error");
-        alert.setHeaderText(null);
-        alert.showAndWait();
+    // Helper to add a label and control in the specified row
+    private static <T extends Control> void addRow(GridPane grid, Label label, T control) {
+        grid.add(label, 0, 0);
+        grid.add(control, 1, 0);
     }
 
-    private static void showInfo(String msg) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION, msg, ButtonType.OK);
-        alert.setTitle("Save Successful");
+    // Shows an alert dialog
+    private static void showAlert(Alert.AlertType type, String msg) {
+        Alert alert = new Alert(type, msg, ButtonType.OK);
         alert.setHeaderText(null);
         alert.showAndWait();
     }

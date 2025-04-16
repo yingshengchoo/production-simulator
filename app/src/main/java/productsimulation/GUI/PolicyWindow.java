@@ -4,114 +4,150 @@ import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import productsimulation.State;
 import productsimulation.command.SetPolicyCommand;
+import productsimulation.model.Building;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * A modal window to let the user set a scheduling or source policy
- * (request vs. source) with a chosen policy value (fifo, sjf, etc.)
- * and a target (building name, '*', or 'default').
+ * Modal dialog to set scheduling (request) or source selection policies.
+ * <p>
+ * Fields:
+ * <ul>
+ *   <li>Policy Type: "request" or "source" (required)</li>
+ *   <li>Policy Value: depends on type (required)</li>
+ *   <li>Target: building name, "*", or "default" (required)</li>
+ * </ul>
+ * The Submit button is disabled until all selections are made.
+ * On success, the provided callback is executed.
+ * <p>
+ * Usage:
+ * <pre>
+ *   PolicyWindow.show(state, () -> board.refresh());
+ * </pre>
+ *
+ * @author Taiyan Liu
+ * @version 1.0
  */
-public class PolicyWindow {
+public final class PolicyWindow {
+    private PolicyWindow() { /* prevent instantiation */ }
 
     /**
-     * Shows the policy window modally. On success, calls onSuccessRefresh.
+     * Displays the policy setting dialog.
+     * @param state the simulation state
+     * @param onSuccessRefresh callback invoked upon successful policy update
      */
     public static void show(State state, Runnable onSuccessRefresh) {
+        Objects.requireNonNull(state, "state");
+
         Stage stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setTitle("Set Policy");
 
+        GridPane grid = createFormGrid();
+
+        // Policy Type
+        ComboBox<String> typeBox = new ComboBox<>(
+                FXCollections.observableArrayList("request", "source")
+        );
+        typeBox.setPromptText("Select policy type");
+        addRow(grid, 0, "Type:", typeBox);
+
+        // Policy Value
+        ComboBox<String> valueBox = new ComboBox<>();
+        valueBox.setPromptText("Select policy value");
+        addRow(grid, 1, "Value:", valueBox);
+
+        // Target
+        List<String> targets = state.getBuildings().stream()
+                .map(Building::getName)
+                .collect(Collectors.toList());
+        targets.add("*");
+        targets.add("default");
+        ComboBox<String> targetBox = new ComboBox<>(FXCollections.observableArrayList(targets));
+        targetBox.setPromptText("Select target");
+        addRow(grid, 2, "Target:", targetBox);
+
+        // Buttons
+        Button submitBtn = new Button("Submit");
+        Button cancelBtn = new Button("Cancel");
+        submitBtn.setDefaultButton(true);
+        cancelBtn.setCancelButton(true);
+        grid.addRow(3, submitBtn, cancelBtn);
+
+        // Disable until all fields are selected
+        submitBtn.disableProperty().bind(
+                typeBox.valueProperty().isNull()
+                        .or(valueBox.valueProperty().isNull())
+                        .or(targetBox.valueProperty().isNull())
+        );
+
+        // Update valueBox options based on typeBox selection
+        typeBox.setOnAction(e -> {
+            String sel = typeBox.getValue();
+            if ("request".equals(sel)) {
+                valueBox.setItems(
+                        FXCollections.observableArrayList("fifo", "sjf", "ready", "default")
+                );
+            } else if ("source".equals(sel)) {
+                valueBox.setItems(
+                        FXCollections.observableArrayList("qlen", "simplelat", "recursivelat", "default")
+                );
+            } else {
+                valueBox.getItems().clear();
+            }
+            valueBox.getSelectionModel().clearSelection();
+        });
+
+        submitBtn.setOnAction(e -> {
+            String type = typeBox.getValue();
+            String value = valueBox.getValue();
+            String target = targetBox.getValue();
+            SetPolicyCommand cmd = new SetPolicyCommand(type, target, value);
+            String error = cmd.execute();
+            if (error == null || error.isBlank()) {
+                showAlert(Alert.AlertType.INFORMATION,
+                        String.format("Policy set: %s -> %s on %s", type, value, target)
+                );
+                if (onSuccessRefresh != null) onSuccessRefresh.run();
+                stage.close();
+            } else {
+                showAlert(Alert.AlertType.ERROR, "Error: " + error);
+            }
+        });
+        cancelBtn.setOnAction(e -> stage.close());
+
+        stage.setScene(new Scene(grid, 450, 220));
+        stage.showAndWait();
+    }
+
+    private static GridPane createFormGrid() {
         GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(20));
-
-        Label typeLabel = new Label("Policy Type:");
-        // A drop-down for "request" or "source"
-        ComboBox<String> typeBox = new ComboBox<>(FXCollections.observableArrayList("request", "source"));
-        typeBox.setPromptText("Pick request or source");
-
-        Label valueLabel = new Label("Policy Value:");
-        // Another combo that updates based on which type is chosen
-        ComboBox<String> valueBox = new ComboBox<>();
-
-        Label targetLabel = new Label("Target:");
-        // The user can pick a building or '*' or 'default'
-        List<String> buildingNames = state.getBuildings().stream()
-                .map(b -> b.getName())
-                .collect(Collectors.toList());
-        buildingNames.add("*");
-        buildingNames.add("default");
-        ComboBox<String> targetBox = new ComboBox<>(FXCollections.observableArrayList(buildingNames));
-        targetBox.setPromptText("Pick building, '*' or 'default'");
-
-        // When type changes, update the valueBox items
-        typeBox.setOnAction(e -> {
-            String selection = typeBox.getValue();
-            if ("request".equals(selection)) {
-                valueBox.setItems(FXCollections.observableArrayList("fifo", "sjf", "ready", "default"));
-            } else if ("source".equals(selection)) {
-                valueBox.setItems(FXCollections.observableArrayList("qlen", "simplelat", "recursivelat", "default"));
-            } else {
-                valueBox.setItems(FXCollections.observableArrayList());
-            }
-        });
-        valueBox.setPromptText("Pick a policy value");
-
-        Button submitBtn = new Button("Submit");
-        Button cancelBtn = new Button("Cancel");
-
-        submitBtn.setOnAction(e -> {
-            String pType = typeBox.getValue();
-            String pValue = valueBox.getValue();
-            String pTarget = targetBox.getValue();
-            if (pType == null || pValue == null || pTarget == null) {
-                showError("Please select a policy type, a value, and a target.");
-                return;
-            }
-
-            SetPolicyCommand cmd = new SetPolicyCommand(pType, pTarget, pValue);
-            String error = cmd.execute();
-            if (error == null) {
-                showInfo("Policy set: " + pType + " -> " + pValue + " on " + pTarget);
-                if (onSuccessRefresh != null) {
-                    onSuccessRefresh.run();
-                }
-                stage.close();
-            } else {
-                showError(error);
-            }
-        });
-
-        cancelBtn.setOnAction(e -> stage.close());
-
-        grid.add(typeLabel, 0, 0);
-        grid.add(typeBox, 1, 0);
-        grid.add(valueLabel, 0, 1);
-        grid.add(valueBox, 1, 1);
-        grid.add(targetLabel, 0, 2);
-        grid.add(targetBox, 1, 2);
-        grid.add(submitBtn, 0, 3);
-        grid.add(cancelBtn, 1, 3);
-
-        stage.setScene(new Scene(grid, 420, 220));
-        stage.showAndWait();
+        ColumnConstraints c1 = new ColumnConstraints(); c1.setHgrow(Priority.NEVER);
+        ColumnConstraints c2 = new ColumnConstraints(); c2.setHgrow(Priority.ALWAYS);
+        grid.getColumnConstraints().addAll(c1, c2);
+        return grid;
     }
 
-    private static void showError(String msg) {
-        Alert a = new Alert(Alert.AlertType.ERROR, msg, ButtonType.OK);
-        a.showAndWait();
+    private static void addRow(GridPane grid, int row, String labelText, Control ctrl) {
+        grid.add(new Label(labelText), 0, row);
+        grid.add(ctrl, 1, row);
     }
 
-    private static void showInfo(String msg) {
-        Alert a = new Alert(Alert.AlertType.INFORMATION, msg, ButtonType.OK);
-        a.showAndWait();
+    private static void showAlert(Alert.AlertType type, String msg) {
+        Alert alert = new Alert(type, msg, ButtonType.OK);
+        alert.setHeaderText(null);
+        alert.showAndWait();
     }
 }
