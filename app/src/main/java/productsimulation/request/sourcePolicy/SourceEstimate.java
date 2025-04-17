@@ -10,9 +10,9 @@ import productsimulation.request.sourcePolicy.Estimate.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.io.Serializable;
 
-
-public class SourceEstimate implements SourcePolicy {
+public class SourceEstimate implements SourcePolicy, Serializable {
     IdGenerator idGenerator = new IdGenerator();
 
 
