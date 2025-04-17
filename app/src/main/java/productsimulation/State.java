@@ -22,7 +22,7 @@ public class State implements Serializable{
   private List<Building> buildings;
   private List<Recipe> recipes;
   private List<BuildingType> types;
-  private HashMap<Pair<Building, Building>, Road> distanceMap = new HashMap<>(); 
+  private HashMap<Pair<Building, Building>, Road> roadMap = new HashMap<>(); 
   private HashMap<Coordinate, RoadTile> existingRoadTiles = new HashMap<>();
   private List<Request> queue = new ArrayList<>();
   private LogicTime logictime;
@@ -150,7 +150,7 @@ public class State implements Serializable{
       this.types = loadedState.types;
       this.logictime = loadedState.logictime;
       this.queue = loadedState.queue;
-      this.distanceMap = loadedState.distanceMap;
+      this.roadMap = loadedState.roadMap;
       this.existingRoadTiles = loadedState.existingRoadTiles;
       
       updateWorld(loadedState);      
@@ -166,7 +166,7 @@ public class State implements Serializable{
       Recipe.recipeGlobalList = loadedState.recipes;
       BuildingType.buildingTypeGlobalList = loadedState.types;
       TransportQueue.queue = loadedState.queue;
-      Road.distanceMap = loadedState.distanceMap;
+      Road.roadMap = loadedState.roadMap;
       Road.existingRoadTiles = loadedState.existingRoadTiles;
       
       StateLoadVisitor visitor = new StateLoadVisitor();
