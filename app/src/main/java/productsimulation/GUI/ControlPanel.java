@@ -7,6 +7,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.VBox;
 import productsimulation.Log;
+import productsimulation.State;
 import productsimulation.command.FinishCommand;
 import productsimulation.command.StepCommand;
 
@@ -42,9 +43,9 @@ public class ControlPanel extends VBox {
         this.boardDisplay = boardDisplay;
         setPadding(new Insets(15));
         setSpacing(12);
-
+        State state = State.getInstance();
         Map<String, Runnable> actions = new LinkedHashMap<>();
-//        actions.put("Add Building",      () -> AddBuildingWindow.show(state, this::postUpdate));
+        actions.put("Add Building",      () -> AddBuildingWindow.show(state, this::postUpdate));
 //        actions.put("Connect Buildings", () -> ConnectWindow.show(state, this::postUpdate));
 //        actions.put("Request Item",      () -> RequestWindow.show(state, this::postUpdate));
         actions.put("Go One Step",       () -> {
@@ -61,7 +62,7 @@ public class ControlPanel extends VBox {
 //            postUpdate();
 //        }));
 //        actions.put("Set Policy",        () -> PolicyWindow.show(state, this::postUpdate));
-        actions.put("Show Log",          () -> feedback.appendLine(Log.getLogText()));
+//        actions.put("Show Log",          () -> feedback.appendLine(Log.getLogText()));
 
         Map<String, String> shortcuts = Map.of(
                 "Connect Buildings", "Ctrl+C",
