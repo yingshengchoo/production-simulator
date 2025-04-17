@@ -76,7 +76,7 @@ public class LogicTime implements Serializable{
             notifyAll(n);
             return null;
         } catch (Exception e) {
-            return "Error: An unexpected error occurred: " + e.getMessage();
+            return e.getClass().getSimpleName() + ": " + e.getMessage();
         }
     }
 
@@ -85,7 +85,7 @@ public class LogicTime implements Serializable{
             notifyAll(MAX_STEP);
             return null;
         } catch (Exception e) {
-            return "Error: An unexpected error occurred: " + e.getMessage();
+            return e.getClass().getSimpleName() + ": " + e.getMessage();
         }
     }
 

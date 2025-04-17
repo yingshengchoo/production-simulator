@@ -15,7 +15,7 @@ public class VerboseCommand extends Command {
         try {
             Log.setLogLevel(verboseLevel);
         } catch (Exception e) {
-            return e.getMessage();
+            return e.getClass().getSimpleName() + ": " + e.getMessage();
         }
         return null;
     }

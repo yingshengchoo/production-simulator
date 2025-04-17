@@ -16,7 +16,7 @@ public class SaveCommand extends Command {
         try {
             State.getInstance().save(filename);
         } catch (Exception e) {
-            return e.getMessage();
+            return e.getClass().getSimpleName() + ": " + e.getMessage();
         }
         return null;
     }

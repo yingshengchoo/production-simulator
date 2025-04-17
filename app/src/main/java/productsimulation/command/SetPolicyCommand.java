@@ -83,7 +83,7 @@ public class SetPolicyCommand extends Command {
             }
             return null;
         } catch (Exception e) {
-            return e.getMessage();
+            return e.getClass().getSimpleName() + ": " + e.getMessage();
         }
 }
 

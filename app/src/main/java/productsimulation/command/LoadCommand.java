@@ -16,7 +16,7 @@ public class LoadCommand extends Command {
         try {
             State.getInstance().load(filename);
         } catch (Exception e) {
-            return e.getMessage();
+            return e.getClass().getSimpleName() + ": " + e.getMessage();
         }
         return null;
     }

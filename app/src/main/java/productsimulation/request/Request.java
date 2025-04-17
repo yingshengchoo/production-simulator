@@ -177,7 +177,7 @@ public class Request implements Serializable{
       }
       return null;
     } catch (Exception e) {
-      return "Error: An unexpected error occurred: " + e.getMessage();
+      return e.getClass().getSimpleName() + ": " + e.getMessage();
     }
   }
 }
