@@ -131,6 +131,9 @@ public class State implements Serializable{
     this.buildings = Building.buildingGlobalList;
     this.recipes = Recipe.recipeGlobalList;
     this.types = BuildingType.buildingTypeGlobalList;
+    this.queue = TransportQueue.queue;
+    this.roadMap = Road.roadMap;
+    this.existingRoadTiles = Road.existingRoadTiles;
   }
   
   /**
