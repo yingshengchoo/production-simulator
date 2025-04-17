@@ -166,7 +166,7 @@ public class State implements Serializable{
       Recipe.recipeGlobalList = loadedState.recipes;
       BuildingType.buildingTypeGlobalList = loadedState.types;
       TransportQueue.queue = loadedState.queue;
-      Road.roadMap = loadedState.distanceMap;
+      Road.distanceMap = loadedState.distanceMap;
       Road.existingRoadTiles = loadedState.existingRoadTiles;
       
       StateLoadVisitor visitor = new StateLoadVisitor();
