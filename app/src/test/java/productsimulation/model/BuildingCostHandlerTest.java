@@ -70,6 +70,9 @@ public class BuildingCostHandlerTest {
     method.setAccessible(true);
     method.invoke(null, "wood", 2); //request 2 wood from all buildings. Note: factory also produces wood, but it should not be producing anything during construction.
 
+    assertEquals(m1, new SourceQLen().getSource(Building.buildingGlobalList, "wood"));
+    assertEquals(wood, Recipe.getRecipe("wood"));
+    
     //Using QLenSourcePolicy m1 and s1 should get 1 request each.
     assertEquals(1, m1.getRequestCount());
     assertEquals(1, s1.getReqCount());
