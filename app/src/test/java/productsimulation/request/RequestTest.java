@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import productsimulation.model.Building;
 import productsimulation.model.Recipe;
+import productsimulation.model.GlobalStorage;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,13 +48,13 @@ class RequestTest {
 
    @Test
    void test_doneReportAndTransport_updates_global_storage(){
-     Building.globalStorageMap = new HashMap<>();
-     assertEquals(new HashMap<>(), Building.globalStorageMap);
+     GlobalStorage.globalStorageMap = new HashMap<>();
+     assertEquals(new HashMap<>(), GlobalStorage.globalStorageMap);
      Request r = new Request("cookie", new Recipe(3, new HashMap<>(), "cookie"), null);
      r.doneReportAndTransport();
      HashMap<String, Integer> m = new HashMap<>();
      m.put("cookie", 1);
-     assertEquals(m, Building.globalStorageMap);
+     assertEquals(m, GlobalStorage.globalStorageMap);
      
    }
 }

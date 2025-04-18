@@ -29,14 +29,7 @@ public abstract class Building implements Serializable {
     protected SourcePolicy sourcePolicy;
     protected ServePolicy servePolicy;
 
-    protected Coordinate coordinate;
-
-    public static Map<String, Integer> globalStorageMap = new HashMap<>();
-
-    public static void addItemToStorage(String item){
-       globalStorageMap.put(item, globalStorageMap.getOrDefault(item, 0) + 1);
-    }
-  
+    protected Coordinate coordinate;  
 
     public static List<Building> buildingGlobalList = new ArrayList<>();
     public static Building getBuilding(String item) {

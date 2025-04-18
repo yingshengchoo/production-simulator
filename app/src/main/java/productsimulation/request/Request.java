@@ -5,6 +5,7 @@ import productsimulation.LogicTime;
 import productsimulation.model.Building;
 import productsimulation.model.Recipe;
 import productsimulation.model.road.TransportQueue;
+import productsimulation.model.GlobalStorage;
 
 import java.util.Map;
 
@@ -105,7 +106,7 @@ public class Request implements Serializable{
         int ingredientOnNeed = ingredient.getValue();
         stock.put(ingredientName, stock.get(ingredientName) - ingredientOnNeed);
       }
-      // status transition
+o      // status transition
       status = RequestStatus.WORKING;
     }
   }
@@ -127,7 +128,7 @@ public class Request implements Serializable{
         TransportQueue.addRequest(this);
       }
     } else {
-      Building.addItemToStorage(ingredient);
+      GlobalStorage.addItemToStorage(ingredient);
       //      [order complete] Order 0 completed (door) at time 21
       Log.level0Log("[order complete] Order " + id + " completed (" + ingredient + ")" +
               " at time " + LogicTime.getInstance().getStep());
