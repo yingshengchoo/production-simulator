@@ -127,7 +127,8 @@ public class Request implements Serializable{
         TransportQueue.addRequest(this);
       }
     } else {
-//      [order complete] Order 0 completed (door) at time 21
+      Building.addItemToStorage(ingredient);
+      //      [order complete] Order 0 completed (door) at time 21
       Log.level0Log("[order complete] Order " + id + " completed (" + ingredient + ")" +
               " at time " + LogicTime.getInstance().getStep());
     }

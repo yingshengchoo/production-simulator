@@ -2,8 +2,11 @@ package productsimulation.request;
 
 import org.junit.jupiter.api.Test;
 
+import productsimulation.model.Building;
+import productsimulation.model.Recipe;
 import java.util.HashMap;
 import java.util.Map;
+
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -41,4 +44,16 @@ class RequestTest {
         request = RequestGenerator.generateRequest(10, new int[]{1,2});
         assertEquals(1, request.getId());
     }
+
+   @Test
+   void test_doneReportAndTransport_updates_global_storage(){
+     Building.globalStorageMap = new HashMap<>();
+     assertEquals(new HashMap<>(), Building.globalStorageMap);
+     Request r = new Request("cookie", new Recipe(3, new HashMap<>(), "cookie"), null);
+     r.doneReportAndTransport();
+     HashMap<String, Integer> m = new HashMap<>();
+     m.put("cookie", 1);
+     assertEquals(m, Building.globalStorageMap);
+     
+   }
 }
