@@ -28,6 +28,7 @@ public class BuildingCostHandlerTest {
   private LogicTime t;
   private Recipe wood;
   private Mine m1;
+  private Mine m2;
   private Storage s1;
   private BuildingType type;
   private Factory f;
@@ -44,7 +45,8 @@ public class BuildingCostHandlerTest {
   private void setupHelper(){
     t = LogicTime.getInstance();
     wood = new Recipe(1, Collections.emptyMap(), "wood").register();
-    m1 = new Mine("wood", new BuildingType("woodMine", Map.of("wood", wood)) , Collections.emptyList(), new SourceQLen(), new FIFOPolicy(), new Coordinate(1, 2)).register();
+    m1 = new Mine("wood1", new BuildingType("woodMine", Map.of("wood", wood)) , Collections.emptyList(), new SourceQLen(), new FIFOPolicy(), new Coordinate(1, 2)).register();
+    m2 = new Mine("wood2", new BuildingType("woodMine", Map.of("wood", wood)) , Collections.emptyList(), new SourceQLen(), new FIFOPolicy(), new Coordinate(1, 2)).register();
     //priority set really low, frequency should be 100, so it shouldn't send any request to mine very often
     s1 = new Storage("WoodStorage", "wood", List.of(m1), 100, 1, new SourceQLen(), new FIFOPolicy(), new Coordinate(1,1)).register();
     //add some wood to storage.
@@ -79,25 +81,30 @@ public class BuildingCostHandlerTest {
     //Using QLenSourcePolicy should get s1 for both since it has items in the storage .
     //Note: QLen for Storage is -(storge invetory), and it returns request immediately
     assertEquals(0, m1.getRequestCount());
+    assertEquals(0, m2.getRequestCount());
     assertEquals(0, s1.getReqCount()); //storage completes request
     assertEquals(0, GlobalStorage.getItemCount("wood")); //Stilling in readyQueue
 
     t.stepNHandler(1);  
 
-    assertEquals(3, GlobalStorage.getItemCount("wood")); //Stilling in readyQueue
-  
+    assertEquals(4, GlobalStorage.getItemCount("wood"));
+    
     //Here, mine should be 1 (as storage automatically request from mine since 0%100 = 0
     assertEquals(1, m1.getRequestCount());
+    assertEquals(0, m2.getRequestCount());
     assertEquals(0, s1.getReqCount());
     
     t.stepNHandler(1);  
-
-    method.invoke(null, "wood", 1);
+    //now storage has 1 wood
+    //so request 2 wood will use the 1 in storage and request 1 from m1.
+    method.invoke(null, "wood", 2);
    
     assertEquals(1, m1.getRequestCount());
     assertEquals(0, s1.getReqCount());
 
-    assertEquals(4, GlobalStorage.getItemCount("wood")); //Stilling in readyQueue
+    t.stepNHandler(1);  
+    
+    assertEquals(5, GlobalStorage.getItemCount("wood")); //Stilling in readyQueue
     
   }
 }
