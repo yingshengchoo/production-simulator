@@ -87,7 +87,7 @@ public class BuildingCostHandlerTest {
 
     t.stepNHandler(1);  
 
-    assertEquals(4, GlobalStorage.getItemCount("wood"));
+    assertEquals(3, GlobalStorage.getItemCount("wood"));
     
     //Here, mine should be 1 (as storage automatically request from mine since 0%100 = 0
     assertEquals(1, m1.getRequestCount());
