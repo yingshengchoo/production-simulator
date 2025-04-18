@@ -13,9 +13,11 @@ import productsimulation.model.*;
 import productsimulation.*;
 import productsimulation.model.road.Road;
 import productsimulation.request.Request;
-import productsimulation.request.servePolicy.ServePolicy;
-import productsimulation.request.sourcePolicy.SourcePolicy;
+import productsimulation.request.servePolicy.*;
+import productsimulation.request.sourcePolicy.*;
 import java.io.*;
+import java.util.Collections;
+import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,6 +25,12 @@ import org.junit.jupiter.api.Disabled;
 
 
 public class BuildingCostHandlerTest {
+  private LogicTime t;
+  private Recipe wood;
+  private Mine m1;
+  private Storage s1;
+  private BuildingType type;
+  private Factory f;
   @BeforeEach
   void setUp() throws IOException {
     LogicTime.getInstance().reset();
@@ -30,17 +38,38 @@ public class BuildingCostHandlerTest {
     Building.buildingGlobalList.clear();
     Recipe.recipeGlobalList.clear();
     Request.clearIds();
+    setupHelper();
   }
 
-
-  @Test
-  public void test_constructBuilding() throws Exception {
-    Method sendRequest = BuildingCostHandler.class.getDeclaredMethod("sendRequestForBuildingResource", String.class, int.class);
-    sendRequest.setAccessible(true);
+  private void setupHelper(){
+    t = LogicTime.getInstance();
+    wood = new Recipe(1, Collections.emptyMap(), "wood").register();
+    m1 = new Mine("wood", new BuildingType("woodMine", Map.of("wood", wood)) , Collections.emptyList(), new SourceQLen(), new FIFOPolicy(), new Coordinate(1, 2)).register();
+    //priority set really low, frequency should be 100, so it shouldn't send any request to mine very often
+    s1 = new Storage("WoodStorage", "wood", List.of(m1), 100, 1, new SourceQLen(), new FIFOPolicy(), new Coordinate(1,1)).register();
+    //add some wood to storage.
+    for(int i = 0; i < 3; i++){
+      s1.updateStorage("wood");
+    }
     Map<String, Integer> cost = new HashMap<>();
     cost.put("wood", 2);
-    //Building s = new Storage();
-    BuildingType type = new BuildingType("type", new HashMap<>(), new Cost(cost));
+    type = new BuildingType("type", Map.of("wood", wood), new Cost(cost));
+    f = new Factory("Factory", type, List.of(m1, s1),new SourceQLen(), new FIFOPolicy(), new Coordinate(0,1)); //don't register yet as it is still under construction
   }
 
+  @Test
+  public void test_constructBuilding() {
+    
+    BuildingCostHandler.constructBuilding(f);
+    //write tests
+  }
+
+  @Test  
+  public void test_sendRequestForBuildingResource() throws Exception {
+    Method method = BuildingCostHandler.class.getDeclaredMethod("sendRequestForBuildingResource", String.class, int.class);
+    method.setAccessible(true);
+    method.invoke(null, "wood", 2); //request 2 wood from all buildings. Note: factory also produces wood, but it should not be producing anything during construction.
+
+    //Using QLenSourcePolicy m1 and s1 should get 1 request each.
+  }
 }
