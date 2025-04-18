@@ -80,13 +80,21 @@ public class BuildingCostHandlerTest {
     //Note: QLen for Storage is -(storge invetory), and it returns request immediately
     assertEquals(0, m1.getRequestCount());
     assertEquals(0, s1.getReqCount()); //storage completes request
-    assertEquals(3, GlobalStorage.getItemCount("wood"));
+    assertEquals(0, GlobalStorage.getItemCount("wood")); //Stilling in readyQueue
 
+    t.stepNHandler(1);
+
+    assertEquals(3, GlobalStorage.getItemCount("wood")); //Stilling in readyQueue
+    
     method.invoke(null, "wood", 1);
     //Here request should both be 1.
     assertEquals(m1, policy.getSource(Building.buildingGlobalList, "wood"));
     assertEquals(1, m1.getRequestCount());
     assertEquals(0, s1.getReqCount());
 
+    t.stepNHandler(1);
+
+    assertEquals(4, GlobalStorage.getItemCount("wood")); //Stilling in readyQueue
+    
   }
 }
