@@ -82,18 +82,18 @@ public class BuildingCostHandlerTest {
     assertEquals(0, s1.getReqCount()); //storage completes request
     assertEquals(0, GlobalStorage.getItemCount("wood")); //Stilling in readyQueue
 
-    t.stepNHandler(1);
+    t.stepNHandler(1);  
 
     assertEquals(3, GlobalStorage.getItemCount("wood")); //Stilling in readyQueue
-
-    assertEquals(m1, policy.getSource(Building.buildingGlobalList, "wood"));
-    
-    method.invoke(null, "wood", 1);
-    //Here request should both be 1.
+  
+    //Here, mine should be 1 (as storage automatically request from mine since 0%100 = 0
     assertEquals(1, m1.getRequestCount());
     assertEquals(0, s1.getReqCount());
 
-    t.stepNHandler(1);
+    method.invoke(null, "wood", 2);
+   
+    assertEquals(3, m1.getRequestCount());
+    assertEquals(1, s1.getReqCount());
 
     assertEquals(4, GlobalStorage.getItemCount("wood")); //Stilling in readyQueue
     
