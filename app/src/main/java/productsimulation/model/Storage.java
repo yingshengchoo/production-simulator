@@ -58,8 +58,11 @@ public class Storage extends Building {
       throw new RuntimeException("invalid coordinate!");
     }
 
+    
+    //removed register building --> construct first. After construction then register.
     Storage newStorage = new Storage(name, type.getItemToStore(), sources, type.getCapacity(),
-            type.getPriority(), sourcePolicy, servePolicy, coordinate).register();
+            type.getPriority(), sourcePolicy, servePolicy, coordinate);
+    BuildingCostHandler.constructBuilding(newStorage);
     return newStorage;
   }
 

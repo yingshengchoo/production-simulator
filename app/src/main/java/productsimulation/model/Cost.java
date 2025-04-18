@@ -23,6 +23,20 @@ public class Cost implements Serializable {
   }
 
   /**
+   * checks if the building is free or not
+   */
+  public boolean isFree(){
+    int totalSum = cost.values().stream()
+                .mapToInt(Integer::intValue)
+                .sum();
+    if(totalSum > 0){
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  /**
    * returns the cost of the specific item.
    *
    * @param cost      is the cost to make the building

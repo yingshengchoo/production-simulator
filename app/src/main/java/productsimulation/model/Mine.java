@@ -1,3 +1,4 @@
+
 package productsimulation.model;
 
 import productsimulation.Board;
@@ -29,8 +30,11 @@ public class Mine extends Building {
         if (weight == 1 || weight == Integer.MAX_VALUE) {
             throw new RuntimeException("invalid coordinate!");
         }
-
-        return new Mine(name, type, sources, sourcePolicy, servePolicy, coordinate).register();
+        
+        //removed register building --> construct first. After construction then register.
+        Mine mine = new Mine(name, type, sources, sourcePolicy, servePolicy, coordinate);
+        BuildingCostHandler.constructBuilding(mine);
+        return mine;
     }
 
     /**

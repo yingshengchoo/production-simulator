@@ -48,7 +48,10 @@ public class Factory extends Building {
             throw new RuntimeException("invalid coordinate!");
         }
 
-        return new Factory(name, type, sources, sourcePolicy, servePolicy, coordinate).register();
+        //removed register building --> construct first. After construction then register.
+        Factory factory = new Factory(name, type, sources, sourcePolicy, servePolicy, coordinate);
+        BuildingCostHandler.constructBuilding(factory);
+        return factory;
     }
 
 

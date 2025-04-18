@@ -18,7 +18,12 @@ public class BuildingCostHandler {
    */
   public static void constructBuilding(Building b){
     BuildingType type = b.getBuildingType();
-    getResourceNeededAfterUsingGlobalStorage(type);
+    boolean isFree = getResourceNeededAfterUsingGlobalStorage(type);
+    if(isFree){
+      b.register();
+    } else {
+      inConstructionBuildingList.add(b);
+    }
   }
   
   /**
@@ -27,8 +32,11 @@ public class BuildingCostHandler {
    * @param type     is the BuildingType of the building to constructx
    * @return         returns the map of the cost to create the Builidng
    */
-  private static void getResourceNeededAfterUsingGlobalStorage(BuildingType type){
+  private static boolean getResourceNeededAfterUsingGlobalStorage(BuildingType type){
     Cost cost = type.getCost();
+    if(cost.isFree()){
+      return true;
+    }
     Map<String, Integer> costMap = cost.getCostMap();
     for(Map.Entry<String, Integer> entry : costMap.entrySet()){
       String item = entry.getKey();
@@ -36,6 +44,7 @@ public class BuildingCostHandler {
       int missingAmount = GlobalStorage.useStorageItem(item, requiredAmount); //negative number if missing resouce, otherwise 0;
       sendRequestForBuildingResource(item, missingAmount);
     }
+    return false;
   }
 
   /**
