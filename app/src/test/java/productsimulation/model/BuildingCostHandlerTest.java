@@ -42,6 +42,8 @@ public class BuildingCostHandlerTest {
     Recipe.recipeGlobalList.clear();
     Request.clearIds();
     setupHelper();
+    BuildingCostHandler.inConstructionBuildingList.clear();
+    GlobalStorage.globalStorageMap.clear();
   }
 
   private void setupHelper(){
@@ -70,7 +72,7 @@ public class BuildingCostHandlerTest {
 
     t.stepNHandler(1);
 
-    assertEquals(3, GlobalStorage.getItemCount("wood"));
+    assertEquals(2, GlobalStorage.getItemCount("wood"));
     assertEquals(1, GlobalStorage.getItemCount("dirt"));
     
   }

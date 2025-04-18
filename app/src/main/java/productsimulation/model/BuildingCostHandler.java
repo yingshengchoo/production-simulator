@@ -53,6 +53,5 @@ public class BuildingCostHandler {
       chosenSource.addRequest(request);
     }
   }
-
   
 }
