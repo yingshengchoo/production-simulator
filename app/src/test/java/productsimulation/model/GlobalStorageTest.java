@@ -8,12 +8,11 @@ import org.junit.jupiter.api.Test;
 public class GlobalStorageTest {
   @Test
   public void test_globalStorageMethods() {
-    Map<String, Integer> m = GlobalStorage.globalStorageMap;
-
+    Map<String, Integer> m = GlobalStorage.globalStorageMap;    
+    m = new HashMap<>();
+    
     String expectedString1 = "Global Storage:\n";
     assertEquals(expectedString1 , GlobalStorage.globalStorageToString());
-    
-    m = new HashMap<>();
     assertEquals(new HashMap<>(), GlobalStorage.globalStorageMap);
     for(int i = 0; i < 5; i++){
       GlobalStorage.addItemToStorage("book");
