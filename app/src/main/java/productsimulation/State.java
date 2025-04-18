@@ -118,8 +118,8 @@ public class State implements Serializable{
     if (!dir.exists()) {
        dir.mkdirs();
     }
-//  目前会在logicTime中每步更新，因此此处update与否均可。此处注释掉是方便state类单元测试。
-//    updateState();
+//  虽然已经每step更新，但一个step内的操作也希望能保持最新
+    updateState();
     
     try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("SavedStates/" + filename + ".ser"))) {
       out.writeObject(this);

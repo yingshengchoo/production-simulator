@@ -20,6 +20,9 @@ class StateTest {
     try{
       State.getInstance().reset();
       State.getInstance().setInstanceToNull();
+      Recipe.recipeGlobalList.clear();
+      Building.buildingGlobalList.clear();
+      BuildingType.buildingTypeGlobalList.clear();
     } catch(IllegalStateException e){
       //do nothing, only reset if needed.
     }
@@ -42,24 +45,24 @@ class StateTest {
   @Test
   public void test_save_and_load() {
     ArrayList<Building> buildings = new ArrayList<>();
-    Building mine = new Mine("G", new BuildingType("Gold", Collections.emptyMap()), new ArrayList<>(), null, null);
+    Building mine = new Mine("G", new BuildingType("Gold", Collections.emptyMap()), new ArrayList<>(), null, null).register();
     buildings.add(mine);
     ArrayList<Building> sources = new ArrayList<>();
     sources.add(mine);
-    Building factory = new Factory("GC", new BuildingType("GoldChain", Collections.emptyMap()), sources, null, null);
+    Building factory = new Factory("GC", new BuildingType("GoldChain", Collections.emptyMap()), sources, null, null).register();
     buildings.add(factory);
 
     Map<String, Recipe> recipes = new HashMap<>();
     Map<String, Integer> ingredients = new HashMap<>();
     ingredients.put("Egg", 2);
-    Recipe eggroll = new Recipe(3, ingredients, "EggRoll");
+    Recipe eggroll = new Recipe(3, ingredients, "EggRoll").register();
     recipes.put("EggRoll", eggroll);
 
     ArrayList<Recipe> stateRecipes = new ArrayList<>();
     stateRecipes.add(eggroll);
     
     ArrayList<BuildingType> types = new ArrayList<>();
-    types.add(new BuildingType("EggRoll", recipes));
+    types.add(new BuildingType("EggRoll", recipes).register());
 
     LogicTime logicTime = LogicTime.getInstance();
     
