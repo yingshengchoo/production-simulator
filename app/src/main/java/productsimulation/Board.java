@@ -32,7 +32,16 @@ public class Board {
     // 界外，或者已经有普通建筑，则权值为正无穷，
     // 如果是空白状态，权值为2，
     // 如果已经有路，权值为1
-    private final HashMap<Coordinate, Integer> boardPosWeight = new HashMap<>();
+    private HashMap<Coordinate, Integer> boardPosWeight = new HashMap<>();
+
+    // only for load
+    public void setWeight(HashMap<Coordinate, Integer> weight) {
+        boardPosWeight = weight;
+    }
+    // only for save
+    public HashMap<Coordinate, Integer> getWeight() {
+        return boardPosWeight;
+    }
 
     // placeholder, 盘子大小肯定还要再议、规范化为大写常量
     public boolean isOutOfBound(Coordinate c) {
