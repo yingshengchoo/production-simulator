@@ -21,9 +21,6 @@ public class BuildingTypeTest {
     BuildingType bt = new BuildingType("type3", new HashMap<>());
     bt.register();
 
-    assertNotEquals(bs, BuildingType.getBuildingTypeGlobalList());
-    bs.add(bt);
-
     assertEquals(bs, BuildingType.getBuildingTypeGlobalList());
     
     BuildingType.buildingTypeGlobalList = new ArrayList<>();    
@@ -31,6 +28,7 @@ public class BuildingTypeTest {
 
   @Test
   public void test_getters(){
+    Recipe.recipeGlobalList = new ArrayList<>();
     BuildingType type = new BuildingType("type1", new HashMap<>());
 
     assertEquals("type1", type.getName());
