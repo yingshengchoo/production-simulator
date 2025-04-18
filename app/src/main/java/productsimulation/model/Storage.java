@@ -209,6 +209,7 @@ public class Storage extends Building {
     //有貨不用往下椽
     if(getStockCount() > 0){
       readyQueue.add(request);
+      storage.put(recipe.getOutput(), storage.get(recipe.getOutput())-1);
       R--;
     } else {
       //沒貨繼續往下傳

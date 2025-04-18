@@ -76,8 +76,10 @@ public class BuildingCostHandlerTest {
     assertEquals(wood, Recipe.getRecipe("wood"));
     
     //Using QLenSourcePolicy should get s1 for both since it has items in the storage .
+    //Note: QLen for Storage is -(storge invetory), and it returns request immediately
     assertEquals(0, m1.getRequestCount());
     assertEquals(0, s1.getReqCount()); //storage completes request
+    assertEquals(2, GlobalStorage.getItemCount("wood"));
 
     method.invoke(null, "wood", 1);
     //Here request should both be 1.
