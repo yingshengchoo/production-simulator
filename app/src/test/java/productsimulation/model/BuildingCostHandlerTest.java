@@ -35,7 +35,7 @@ public class BuildingCostHandlerTest {
 
   @Test
   public void test_constructBuilding() throws Exception {
-    Method sendRequest = BuildingCostHandler.class.getDeclaredMethod("sendRequestForBuildingResource");
+    Method sendRequest = BuildingCostHandler.class.getDeclaredMethod("sendRequestForBuildingResource", String.class, int.class);
     sendRequest.setAccessible(true);
     Map<String, Integer> cost = new HashMap<>();
     cost.put("wood", 2);

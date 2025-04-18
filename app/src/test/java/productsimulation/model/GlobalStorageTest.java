@@ -22,7 +22,7 @@ public class GlobalStorageTest {
 
     HashMap<String, Integer> expectedMap = new HashMap<>();
     expectedMap.put("book", 5);
-    expectedMap.put("pecnil", 1);
+    expectedMap.put("pencil", 1);
     assertEquals(expectedMap, GlobalStorage.globalStorageMap);
 
     String expectedString2 = "Global Storage:\n- book: 5\n- pencil: 1\n";
