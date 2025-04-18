@@ -106,7 +106,7 @@ public class Request implements Serializable{
         int ingredientOnNeed = ingredient.getValue();
         stock.put(ingredientName, stock.get(ingredientName) - ingredientOnNeed);
       }
-o      // status transition
+      // status transition
       status = RequestStatus.WORKING;
     }
   }
