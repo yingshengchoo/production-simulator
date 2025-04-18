@@ -27,8 +27,10 @@ import org.junit.jupiter.api.Disabled;
 public class BuildingCostHandlerTest {
   private LogicTime t;
   private Recipe wood;
+  private Recipe dirt;
   private Mine m1;
   private Mine m2;
+  private Mine m3;
   private Storage s1;
   private BuildingType type;
   private Factory f;
@@ -44,9 +46,11 @@ public class BuildingCostHandlerTest {
 
   private void setupHelper(){
     t = LogicTime.getInstance();
+    dirt = new Recipe(1, Collections.emptyMap(), "dirt").register();
     wood = new Recipe(1, Collections.emptyMap(), "wood").register();
     m1 = new Mine("wood1", new BuildingType("woodMine", Map.of("wood", wood)) , Collections.emptyList(), new SourceQLen(), new FIFOPolicy(), new Coordinate(1, 2)).register();
     m2 = new Mine("wood2", new BuildingType("woodMine", Map.of("wood", wood)) , Collections.emptyList(), new SourceQLen(), new FIFOPolicy(), new Coordinate(1, 2)).register();
+    m3 = new Mine("dirt", new BuildingType("DirtMine", Map.of("wood", wood)) , Collections.emptyList(), new SourceQLen(), new FIFOPolicy(), new Coordinate(1, 2)).register();
     //priority set really low, frequency should be 100, so it shouldn't send any request to mine very often
     s1 = new Storage("WoodStorage", "wood", List.of(m1), 100, 1, new SourceQLen(), new FIFOPolicy(), new Coordinate(1,1)).register();
     //add some wood to storage.
@@ -55,15 +59,20 @@ public class BuildingCostHandlerTest {
     }
     Map<String, Integer> cost = new HashMap<>();
     cost.put("wood", 2);
+    cost.put("dirt", 1);
     type = new BuildingType("type", Map.of("wood", wood), new Cost(cost));
     f = new Factory("Factory", type, List.of(m1, s1),new SourceQLen(), new FIFOPolicy(), new Coordinate(0,1)); //don't register yet as it is still under construction
   }
 
   @Test
   public void test_constructBuilding() {
-    
     BuildingCostHandler.constructBuilding(f);
-    //write tests
+
+    t.stepNHandler(1);
+
+    assertEquals(3, GlobalStorage.getItemCount("wood"));
+    assertEquals(1, GlobalStorage.getItemCount("dirt"));
+    
   }
 
   @Test  
