@@ -11,6 +11,7 @@ public class LogicTime implements Serializable{
     private static LogicTime instance = new LogicTime();
     private int currentStep;
     private boolean exitFlag;
+    private boolean autoFlag;
 
 
     /**
@@ -37,7 +38,11 @@ public class LogicTime implements Serializable{
         for(int i = 0; i < timeDiff; i++) {
             finished = true;
 
-            State.getInstance().updateState();
+            State state = State.noThrowGetInstance();
+            if(state != null) {
+                state.updateState();
+            }
+
             TransportQueue.goOneStep();
             
             // 新一步
@@ -78,6 +83,29 @@ public class LogicTime implements Serializable{
         } catch (Exception e) {
             return e.getClass().getSimpleName() + ": " + e.getMessage();
         }
+    }
+
+    public void setRealTimeMode(boolean flag) {
+        autoFlag = flag;
+    }
+
+    public String realTimeHandler(int speed) {
+        if (speed <= 0) {
+            return "Invalid speed. Speed must be greater than 0.";
+        }
+
+        try {
+            while (autoFlag) { // 持续运行
+                stepNHandler(speed); // 每秒执行 speed 步
+                Thread.sleep(1000); // 暂停 1 秒
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt(); // 恢复中断状态
+            return e.getClass().getSimpleName() + ": " + e.getMessage();
+        } catch (Exception e) {
+            return e.getClass().getSimpleName() + ": " + e.getMessage();
+        }
+        return null;
     }
 
     public String finishHandler() {

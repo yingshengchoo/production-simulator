@@ -103,6 +103,11 @@ public class State implements Serializable{
       return instance;
   }
 
+  // caller will decide if instance is null
+  public static State noThrowGetInstance() {
+    return instance;
+  }
+
   /**
    * Saves the Current State in "filename".ser. Filename must not contain special characters
    *
