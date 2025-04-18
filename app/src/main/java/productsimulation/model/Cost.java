@@ -4,7 +4,6 @@ import java.util.Map;
 import java.util.HashMap;
 import java.io.Serializable;
 public class Cost implements Serializable {
-  
   private Map<String, Integer> cost;
 
   /**
