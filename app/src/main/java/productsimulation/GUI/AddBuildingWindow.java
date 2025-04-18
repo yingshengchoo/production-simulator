@@ -119,7 +119,7 @@ public final class AddBuildingWindow {
 
             Coordinate coord;
             if (xs.isEmpty()) {
-                coord = Building.getValidCoordinate();
+                coord = BuildingHandler.getValidCoordinate();
             } else {
                 try {
                     coord = new Coordinate(Integer.parseInt(xs), Integer.parseInt(ys));

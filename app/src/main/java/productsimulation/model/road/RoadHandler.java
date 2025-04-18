@@ -50,6 +50,7 @@ public class RoadHandler {
         }
         try{
             Road.removeRoad(bsrc, bdst);
+            Log.level0Log(srcName + " -> " + dstName + " disconnected");
             return null;
         } catch (Exception e) {
             return e.getClass().getSimpleName() + ": " + e.getMessage();
