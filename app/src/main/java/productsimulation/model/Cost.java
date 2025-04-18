@@ -2,8 +2,9 @@ package productsimulation.model;
 
 import java.util.Map;
 import java.util.HashMap;
-
-public class Cost {
+import java.io.Serializable;
+public class Cost implements Serializable {
+  
   private Map<String, Integer> cost;
 
   /**
@@ -15,14 +16,27 @@ public class Cost {
     this.cost = cost;
   }
 
+  /**
+   * Constructs a Cost object with a building that costs nothing
+   */
   public Cost(){
     this(new HashMap<>());
   }
-  
+
+  /**
+   * returns the cost of the specific item.
+   *
+   * @param cost      is the cost to make the building
+   */
   public int getItemCost(String item){
     return cost.getOrDefault(item, 0);
   }
 
+  /**
+   * Returns the map of the costs
+   *
+   * @param cost      is the cost to make the building
+   */
   public Map<String, Integer> getCostMap(){
     return  cost;
   }
