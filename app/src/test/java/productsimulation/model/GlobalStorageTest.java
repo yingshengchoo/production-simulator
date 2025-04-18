@@ -8,9 +8,7 @@ import org.junit.jupiter.api.Test;
 public class GlobalStorageTest {
   @Test
   public void test_globalStorageMethods() {
-    Map<String, Integer> m = GlobalStorage.globalStorageMap;    
-    m = new HashMap<>();
-    
+    GlobalStorage.globalStorageMap = new HashMap<>();    
     String expectedString1 = "Global Storage:\n";
     assertEquals(expectedString1 , GlobalStorage.globalStorageToString());
     assertEquals(new HashMap<>(), GlobalStorage.globalStorageMap);
@@ -42,7 +40,7 @@ public class GlobalStorageTest {
     assertEquals(0, GlobalStorage.getItemCount("eraser"));
 
     String expectedString3 = "Global Storage:\n- book: 3\n- pencil: 0\n";
-    assertEquals(expectedString2, GlobalStorage.globalStorageToString());
+    assertEquals(expectedString3, GlobalStorage.globalStorageToString());
     
   }
 }

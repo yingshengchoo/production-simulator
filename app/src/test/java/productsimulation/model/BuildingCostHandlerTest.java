@@ -39,7 +39,7 @@ public class BuildingCostHandlerTest {
     sendRequest.setAccessible(true);
     Map<String, Integer> cost = new HashMap<>();
     cost.put("wood", 2);
-    //    Building s = new Storage();
+    //Building s = new Storage();
     BuildingType type = new BuildingType("type", new HashMap<>(), new Cost(cost));
   }
 
