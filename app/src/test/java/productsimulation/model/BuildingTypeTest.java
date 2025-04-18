@@ -42,8 +42,7 @@ public class BuildingTypeTest {
     m2.put("feet", 2);
     Cost c = new Cost(m2);
     BuildingType type2 = new BuildingType("type2", m, c);
-
-    assertEquals(m2, type2.getAllRecipes());
+    assertEquals(m, type2.getAllRecipes());
     assertEquals(c, type2.getCost());
     
   }
