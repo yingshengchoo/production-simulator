@@ -68,24 +68,25 @@ public class BuildingCostHandlerTest {
   public void test_sendRequestForBuildingResource() throws Exception {
     Method method = BuildingCostHandler.class.getDeclaredMethod("sendRequestForBuildingResource", String.class, int.class);
     method.setAccessible(true);
-    method.invoke(null, "wood", 3); //request 2 wood from all buildings. Note: factory also produces wood, but it should not be producing anything during construction.
-
     SourcePolicy policy = new SourceQLen();
-    
+
+    //maake sure setup is as expected
     assertEquals(s1, policy.getSource(Building.buildingGlobalList, "wood"));
     assertEquals(wood, Recipe.getRecipe("wood"));
+
+    method.invoke(null, "wood", 3); //request 2 wood from all buildings. Note: factory also produces wood, but it should not be producing anything during construction.
     
     //Using QLenSourcePolicy should get s1 for both since it has items in the storage .
     //Note: QLen for Storage is -(storge invetory), and it returns request immediately
     assertEquals(0, m1.getRequestCount());
     assertEquals(0, s1.getReqCount()); //storage completes request
-    assertEquals(2, GlobalStorage.getItemCount("wood"));
+    assertEquals(3, GlobalStorage.getItemCount("wood"));
 
     method.invoke(null, "wood", 1);
     //Here request should both be 1.
     assertEquals(m1, policy.getSource(Building.buildingGlobalList, "wood"));
     assertEquals(1, m1.getRequestCount());
-    assertEquals(1, s1.getReqCount());
+    assertEquals(0, s1.getReqCount());
 
   }
 }
