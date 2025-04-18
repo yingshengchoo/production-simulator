@@ -38,4 +38,19 @@ public class Direction implements Serializable {
         if (hasDirection(RIGHT)) sb.append("RIGHT ");
         return sb.toString().trim();
     }
+
+    public void addDirection(Direction direction) {
+        if(direction.hasDirection(Direction.UP)) {
+            this.addDirection(Direction.UP);
+        }
+        if(direction.hasDirection(Direction.DOWN)) {
+            this.addDirection(Direction.DOWN);
+        }
+        if(direction.hasDirection(Direction.LEFT)) {
+            this.addDirection(Direction.LEFT);
+        }
+        if(direction.hasDirection(Direction.RIGHT)) {
+            this.addDirection(Direction.RIGHT);
+        }
+    }
 }

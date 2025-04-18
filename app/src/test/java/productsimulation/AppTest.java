@@ -9,6 +9,7 @@ import productsimulation.command.RequestCommand;
 import productsimulation.command.StepCommand;
 import productsimulation.model.*;
 import productsimulation.model.road.Road;
+import productsimulation.model.road.RoadHandler;
 import productsimulation.request.Request;
 
 import java.io.*;
@@ -73,7 +74,7 @@ class AppTest {
         sources.add(woodMine);
         Factory woodSwordFactory = new Factory("FirstWoodenSwordFactory", woodSwordType,
                 sources, soleSourcePolicy, oneTimeServePolicy, new Coordinate(1, 2)).register();
-        Road.connectHandler(woodMine.getName(), woodSwordFactory.getName());
+        RoadHandler.connectHandler(woodMine.getName(), woodSwordFactory.getName());
 
         // step 2: get user prompt and print results
         // skip parsing the command

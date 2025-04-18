@@ -397,9 +397,9 @@ class RoadTest {
 
     @Test
     void test_connectHandler_illegal() {
-        assertNotNull(Road.connectHandler(null, "name"));
-        assertNotNull(Road.connectHandler("name", null));
-        assertNotNull(Road.connectHandler("name1", "name2"));
+        assertNotNull(RoadHandler.connectHandler(null, "name"));
+        assertNotNull(RoadHandler.connectHandler("name", null));
+        assertNotNull(RoadHandler.connectHandler("name1", "name2"));
     }
 
     @Test

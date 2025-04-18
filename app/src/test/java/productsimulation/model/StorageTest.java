@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import productsimulation.model.road.Road;
+import productsimulation.model.road.RoadHandler;
 import productsimulation.request.servePolicy.FIFOPolicy;
 import productsimulation.request.sourcePolicy.SourceQLen;
 import productsimulation.request.Request;
@@ -63,9 +64,9 @@ public class StorageTest {
     assertEquals("socks", s1.getRecipeOutput());
 
     // connect the buildings
-    Road.connectHandler(m1.getName(), s1.getName());
-    Road.connectHandler(m2.getName(), s1.getName());
-    Road.connectHandler(s1.getName(), f.getName());
+    RoadHandler.connectHandler(m1.getName(), s1.getName());
+    RoadHandler.connectHandler(m2.getName(), s1.getName());
+    RoadHandler.connectHandler(s1.getName(), f.getName());
 
     //F = 100*100/(100*100) = 1
     //we expect the storage to request sock at t =0 and t =1;
@@ -225,8 +226,8 @@ public class StorageTest {
     sources.add(m2);
     Storage s1 = new Storage("Drawer", "socks", sources, 100, 102, new SourceQLen(), new FIFOPolicy(), new Coordinate(1,0)).register();
 
-    Road.connectHandler(m1.getName(), s1.getName());
-    Road.connectHandler(m2.getName(), s1.getName());
+    RoadHandler.connectHandler(m1.getName(), s1.getName());
+    RoadHandler.connectHandler(m2.getName(), s1.getName());
 
     assertEquals(0, s1.getTotalRemainTime());
     s1.addRequest(Request.getDummyRequest("socks", s1));
