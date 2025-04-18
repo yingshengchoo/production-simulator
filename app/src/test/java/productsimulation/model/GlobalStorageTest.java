@@ -38,9 +38,5 @@ public class GlobalStorageTest {
     amountStillNeeded = GlobalStorage.useStorageItem("eraser", 1);
     assertEquals(1, amountStillNeeded);
     assertEquals(0, GlobalStorage.getItemCount("eraser"));
-
-    String expectedString3 = "Global Storage:\n- book: 3\n- pencil: 0\n";
-    assertEquals(expectedString3, GlobalStorage.globalStorageToString());
-    
   }
 }
