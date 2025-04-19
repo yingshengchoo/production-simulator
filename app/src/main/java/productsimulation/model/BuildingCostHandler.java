@@ -101,7 +101,8 @@ public class BuildingCostHandler {
   }
   
   /**
-   * Supplies resources to buildings in construction. Completes construction for buildings that do not need anymore resource for construction.
+   * Supplies resources to buildings in construction. Completes construction for buildings
+   * that do not need anymore resource for construction.
    */
   public static void update(){
     Map<String, Integer> storage = GlobalStorage.getGlobalStorageMap();
@@ -110,5 +111,14 @@ public class BuildingCostHandler {
     }
     checkAndUpdateConstructionList();
   }
-  
+
+
+  /**
+   * Removes the given building from construction.
+   *
+   * @param b   is the building to remove from the inConstructionBuildingList
+   */
+  public static void removeBuilding(Building b){
+    inConstructionBuildingList.remove(b);
+  }
 }

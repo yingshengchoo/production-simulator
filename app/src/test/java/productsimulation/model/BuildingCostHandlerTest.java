@@ -53,7 +53,7 @@ public class BuildingCostHandlerTest {
     dirt = new Recipe(1, Collections.emptyMap(), "dirt").register();
     wood = new Recipe(1, Collections.emptyMap(), "wood").register();
     random = new Recipe(1, Collections.emptyMap(), "random").register();
-    m0 = new Mine("random", new BuildingType("randomMine", Map.of("random", random)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy(), new Coordinate(5,5)).register();  //This mine should never be selected from the policy. 
+    m0 = new Mine("random", new BuildingType("randomMine", Map.of("random", random)), Collections.emptyList(), new SourceQLen, new FIFOPolicy(), new Coordinate(5,5)).register();  //This mine should never be selected from the policy. 
     m1 = new Mine("wood1", new BuildingType("woodMine", Map.of("wood", wood)) , Collections.emptyList(), new SourceQLen(), new FIFOPolicy(), new Coordinate(1, 3)).register();
     m2 = new Mine("wood2", new BuildingType("woodMine", Map.of("wood", wood)) , Collections.emptyList(), new SourceQLen(), new FIFOPolicy(), new Coordinate(1, 4)).register();
     m3 = new Mine("dirt", new BuildingType("DirtMine", Map.of("dirt", dirt)) , Collections.emptyList(), new SourceQLen(), new FIFOPolicy(), new Coordinate(1, 5)).register();
@@ -160,4 +160,18 @@ public class BuildingCostHandlerTest {
     assertEquals(5, GlobalStorage.getItemCount("wood")); //Stilling in readyQueue
     
   }
+
+  @Test
+  public void test_removeBuilding(){
+    Factory f2 = new Factory("Factory2", type, List.of(m1, s1),new SourceQLen(), new FIFOPolicy(), new Coordinate(0,1));
+    BuildingCostHandler.constructBuilding(f);
+    BuildingCostHandler.constructBuilding(f2);
+    assertTrue(BuildingCostHandler.inConstructionBuildingList.contains(f));
+    assertTrue(BuildingCostHandler.inConstructionBuildingList.contains(f2));
+    BuildingCostHandler.removeBuilding(f2);
+    assertFalse(BuildingCostHandler.inConstructionBuildingList.contains(f2));   
+    BuildingCostHandler.removeBuilding(f2);
+    assertFalse(BuildingCostHandler.inConstructionBuildingList.contains(f));
+  }
 }
+
