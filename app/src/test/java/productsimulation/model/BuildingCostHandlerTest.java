@@ -170,7 +170,7 @@ private LogicTime t;
     assertTrue(BuildingCostHandler.inConstructionBuildingList.contains(f2));
     BuildingCostHandler.removeBuilding(f2);
     assertFalse(BuildingCostHandler.inConstructionBuildingList.contains(f2));   
-    BuildingCostHandler.removeBuilding(f2);
+    BuildingCostHandler.removeBuilding(f);
     assertFalse(BuildingCostHandler.inConstructionBuildingList.contains(f));
   }
 }
