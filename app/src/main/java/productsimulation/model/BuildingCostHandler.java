@@ -39,9 +39,9 @@ public class BuildingCostHandler {
     for(Map.Entry<String, Integer> entry : costMap.entrySet()){
       String item = entry.getKey();
       int requiredAmount = entry.getValue();
-      int missingAmount = GlobalStorage.useStorageItem(item, requiredAmount); //negative number if missing resouce, otherwise 0;
+      int missingAmount = GlobalStorage.useStorageItem(item, requiredAmount); //postiive number if missing resouce, otherwise 0;
       sendRequestForBuildingResource(item, missingAmount);
-      b.setCost(item, missingAmount);
+      b.setCost(item, -1*missingAmount);
     }
   }
 
