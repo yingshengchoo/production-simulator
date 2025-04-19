@@ -28,9 +28,11 @@ public class BuildingCostHandlerTest {
   private LogicTime t;
   private Recipe wood;
   private Recipe dirt;
+  private Recipe random;
   private Mine m1;
   private Mine m2;
   private Mine m3;
+  private Mine m0;
   private Storage s1;
   private BuildingType type;
   private Factory f;
@@ -50,9 +52,11 @@ public class BuildingCostHandlerTest {
     t = LogicTime.getInstance();
     dirt = new Recipe(1, Collections.emptyMap(), "dirt").register();
     wood = new Recipe(1, Collections.emptyMap(), "wood").register();
-    m1 = new Mine("wood1", new BuildingType("woodMine", Map.of("wood", wood)) , Collections.emptyList(), new SourceQLen(), new FIFOPolicy(), new Coordinate(1, 2)).register();
-    m2 = new Mine("wood2", new BuildingType("woodMine", Map.of("wood", wood)) , Collections.emptyList(), new SourceQLen(), new FIFOPolicy(), new Coordinate(1, 2)).register();
-    m3 = new Mine("dirt", new BuildingType("DirtMine", Map.of("dirt", dirt)) , Collections.emptyList(), new SourceQLen(), new FIFOPolicy(), new Coordinate(1, 2)).register();
+    random = new Recipe(1, Collections.emptyMap(), "random").register();
+    m0 = new Mine("random", new BuildingType("randomMine", Map.of("random", random)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy(), new Coordinate(5,5)).register();  //This mine should never be selected from the policy. 
+    m1 = new Mine("wood1", new BuildingType("woodMine", Map.of("wood", wood)) , Collections.emptyList(), new SourceQLen(), new FIFOPolicy(), new Coordinate(1, 3)).register();
+    m2 = new Mine("wood2", new BuildingType("woodMine", Map.of("wood", wood)) , Collections.emptyList(), new SourceQLen(), new FIFOPolicy(), new Coordinate(1, 4)).register();
+    m3 = new Mine("dirt", new BuildingType("DirtMine", Map.of("dirt", dirt)) , Collections.emptyList(), new SourceQLen(), new FIFOPolicy(), new Coordinate(1, 5)).register();
     //priority set really low, frequency should be 100, so it shouldn't send any request to mine very often
     s1 = new Storage("WoodStorage", "wood", List.of(m1), 100, 1, new SourceQLen(), new FIFOPolicy(), new Coordinate(1,1)).register();
     //add some wood to storage.
