@@ -6,8 +6,8 @@ import java.io.Serializable;
 
 public class BuildingType implements Serializable {
   private final String name;
-  private Map<String, Recipe> recipes;
-  private Cost cost;
+  private final Map<String, Recipe> recipes;
+  private final Cost cost;
 
   /**
    * Constructs a BuildingType object with a name, recipes it makes, and the cost to make the builindg
