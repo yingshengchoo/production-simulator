@@ -69,7 +69,8 @@ public class BuildingCostHandlerTest {
   @Test
   public void test_constructBuilding() {
     BuildingCostHandler.constructBuilding(f);
-
+    assertFalse(Building.buildingGlobalList.contains(f));
+    
     assertEquals(-2, f.getStorageItem("wood"));
     assertEquals(-1, f.getStorageItem("dirt"));
     
