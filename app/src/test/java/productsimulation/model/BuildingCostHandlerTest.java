@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Disabled;
 
 
 public class BuildingCostHandlerTest {
-  private LogicTime t;
+private LogicTime t;
   private Recipe wood;
   private Recipe dirt;
   private Recipe random;
@@ -53,7 +53,7 @@ public class BuildingCostHandlerTest {
     dirt = new Recipe(1, Collections.emptyMap(), "dirt").register();
     wood = new Recipe(1, Collections.emptyMap(), "wood").register();
     random = new Recipe(1, Collections.emptyMap(), "random").register();
-    m0 = new Mine("random", new BuildingType("randomMine", Map.of("random", random)), Collections.emptyList(), new SourceQLen, new FIFOPolicy(), new Coordinate(5,5)).register();  //This mine should never be selected from the policy. 
+    m0 = new Mine("random", new BuildingType("randomMine", Map.of("random", random)), Collections.emptyList(), new SourceQLen(), new FIFOPolicy(), new Coordinate(5,5)).register();  //This mine should never be selected from the policy. 
     m1 = new Mine("wood1", new BuildingType("woodMine", Map.of("wood", wood)) , Collections.emptyList(), new SourceQLen(), new FIFOPolicy(), new Coordinate(1, 3)).register();
     m2 = new Mine("wood2", new BuildingType("woodMine", Map.of("wood", wood)) , Collections.emptyList(), new SourceQLen(), new FIFOPolicy(), new Coordinate(1, 4)).register();
     m3 = new Mine("dirt", new BuildingType("DirtMine", Map.of("dirt", dirt)) , Collections.emptyList(), new SourceQLen(), new FIFOPolicy(), new Coordinate(1, 5)).register();
