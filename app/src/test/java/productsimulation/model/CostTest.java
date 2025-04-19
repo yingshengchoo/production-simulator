@@ -24,4 +24,12 @@ public class CostTest {
     
   }
 
+  @Test
+  public void test_isFree(){
+    Cost cost = new Cost();
+    assertTrue(cost.isFree());
+
+    Cost cost2 = new Cost(Map.of("item1", 1));
+    assertFalse(cost2.isFree());
+  }
 }
