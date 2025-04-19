@@ -480,4 +480,19 @@ public abstract class Building implements Serializable {
     public BuildingType getBuildingType() {
         return this.type;
     }
+
+  public int getStorageItem(String item){
+    return storage.getOrDefault(item, 0);
+  }
+
+  //updates the storage to supply items by the given number of items.
+  public void updateConstruction(String item, int count){
+    storage.put(item, storage.getOrDefault(item, 0) + count);
+  }
+  
+  //Set the storage item value to create negative value, which indicates the resources needed to construct building
+    public void setCost(String item, int count){
+        storage.put(item, count);
+    } 
+
 }

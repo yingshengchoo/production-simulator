@@ -18,10 +18,11 @@ public class BuildingCostHandler {
    */
   public static void constructBuilding(Building b){
     BuildingType type = b.getBuildingType();
-    boolean isFree = getResourceNeededAfterUsingGlobalStorage(type);
-    if(isFree){
+    Cost cost = type.getCost();
+    if(cost.isFree()){
       b.register();
     } else {
+      getResourceNeededAfterUsingGlobalStorage(b);
       inConstructionBuildingList.add(b);
     }
   }
@@ -32,11 +33,8 @@ public class BuildingCostHandler {
    * @param type     is the BuildingType of the building to constructx
    * @return         returns the map of the cost to create the Builidng
    */
-  private static boolean getResourceNeededAfterUsingGlobalStorage(BuildingType type){
-    Cost cost = type.getCost();
-    if(cost.isFree()){
-      return true;
-    }
+  private static void getResourceNeededAfterUsingGlobalStorage(Building b){
+    Cost cost = b.getBuildingType().getCost();
     Map<String, Integer> costMap = cost.getCostMap();
     for(Map.Entry<String, Integer> entry : costMap.entrySet()){
       String item = entry.getKey();
@@ -44,7 +42,6 @@ public class BuildingCostHandler {
       int missingAmount = GlobalStorage.useStorageItem(item, requiredAmount); //negative number if missing resouce, otherwise 0;
       sendRequestForBuildingResource(item, missingAmount);
     }
-    return false;
   }
 
   /**
@@ -60,6 +57,37 @@ public class BuildingCostHandler {
       Recipe recipe = Recipe.getRecipe(item);
       Request request = new Request(item, recipe, null);
       chosenSource.addRequest(request);
+    }
+  }
+
+  
+  
+  private static void supplyItemToBuildingInConstruction(String item, int count){
+    for(Building b : inConstructionBuildingList){
+      int value = b.getStorageItem(item);
+      if(value >= 0){ 
+        continue;
+      }
+      value = -1 * value; //now positive
+      if(value >= count){
+        b.updateConstruction(item, count); 
+        GlobalStorage.useStorageItem(item, count);
+        return;
+      } else {
+        b.updateConstruction(item, value);
+        GlobalStorage.useStorageItem(item, value);
+        count -= value;
+      }
+    }
+  }
+  
+  /**
+   * Supplies 
+   */
+  public static void update(){
+    Map<String, Integer> storage = GlobalStorage.getGlobalStorageMap();
+    for(Map.Entry<String, Integer> entry: storage.entrySet()){
+      supplyItemToBuildingInConstruction(entry.getKey(), entry.getValue());
     }
   }
   

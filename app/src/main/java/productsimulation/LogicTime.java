@@ -39,7 +39,9 @@ public class LogicTime implements Serializable{
 
             State.getInstance().updateState();
             TransportQueue.goOneStep();
-            
+            //更新建房狀態
+            BuildingCostHandler.update();
+
             // 新一步
             for(Building b: Building.buildingGlobalList) {
                 boolean idle = b.notified();
@@ -55,10 +57,12 @@ public class LogicTime implements Serializable{
                 s.sendRequest();
               }
             }
+            
             currentStep += 1;
             for(Building b: Building.buildingGlobalList) {
                 b.updateNotified();
             }
+
             Log.level2Log("==========Step from " + (currentStep-1) + " to " + currentStep + " end==========\n");
         }
         if(finished && timeDiff == MAX_STEP) {

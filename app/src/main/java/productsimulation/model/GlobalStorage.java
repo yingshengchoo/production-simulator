@@ -61,4 +61,10 @@ public class GlobalStorage {
     }
     return sb.toString();
   }
+
+  public static Map<String, Integer> getGlobalStorageMap(){
+    //removes keys that have value 0. Makes it look nicer
+    globalStorageMap.values().removeIf(value -> value == 0);
+    return globalStorageMap;
+  }
 }
