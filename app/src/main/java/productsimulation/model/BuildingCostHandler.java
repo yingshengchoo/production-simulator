@@ -41,6 +41,7 @@ public class BuildingCostHandler {
       int requiredAmount = entry.getValue();
       int missingAmount = GlobalStorage.useStorageItem(item, requiredAmount); //negative number if missing resouce, otherwise 0;
       sendRequestForBuildingResource(item, missingAmount);
+      b.setCost(item, missingAmount);
     }
   }
 

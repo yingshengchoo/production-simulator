@@ -70,6 +70,9 @@ public class BuildingCostHandlerTest {
   public void test_constructBuilding() {
     BuildingCostHandler.constructBuilding(f);
 
+    assertEquals(-2, f.getStorageItem("wood"));
+    assertEquals(-1, f.getStorageItem("dirt"));
+    
     t.stepNHandler(1);
 
     assertEquals(2, GlobalStorage.getItemCount("wood"));
