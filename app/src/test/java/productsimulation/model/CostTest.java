@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import org.junit.jupiter.api.Test;
 
 public class CostTest {
@@ -35,12 +36,12 @@ public class CostTest {
 
   @Test
   public void test_toString(){
-    Map<String, Integer> cost = new HashMap<>();
+    Map<String, Integer> cost = new LinkedHashMap<>();
     cost.put("fire", 3);
     cost.put("water",2);
     cost.put("earth", 1);
     Cost costs = new Cost(cost);
-    String expected = "Required Resources:\n- fire: 3\nwater: 2\nearth: 1\n";
+    String expected = "Required Resources:\n- earth: 1\nfire: 3\nwater: 2\n";
     assertEquals(expected, costs.toString());
   }
 }
