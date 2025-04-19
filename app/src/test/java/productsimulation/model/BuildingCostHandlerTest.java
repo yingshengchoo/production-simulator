@@ -90,6 +90,31 @@ public class BuildingCostHandlerTest {
     assertTrue(Building.buildingGlobalList.contains(f));
   }
 
+  @Test
+  public void test_constructBuilding_when_buidling_is_free(){
+    BuildingType t2 = new BuildingType("typ2", Map.of("wood", wood), new Cost()); 
+    Factory f2 = new Factory("Factory", t2, List.of(m1, s1),new SourceQLen(), new FIFOPolicy(), new Coordinate(0,1));
+    BuildingCostHandler.constructBuilding(f2);
+    assertTrue(Building.buildingGlobalList.contains(f2));
+  }
+
+  @Test
+  public void test_supplyItemToBuildingInConstruction(String item, int count){
+    BuildingCostHandler.constructBuilding(f);
+    BuildingCostHandler.constructBuilding(new Factory("Factory2", type, List.of(m1, s1),new SourceQLen(), new FIFOPolicy(), new Coordinate(0,1)));
+    //manually add item 
+    for(int i = 0; i < 3; i ++){
+      GlobalStorage.addItemToStorage("dirt");
+      GlobalStorage.addItemToStorage("metal");
+    }
+    
+    t.stepNHandler(1);
+
+    assertEquals(3, GlobalStorage.getItemCount("metal"));
+    assertEquals(2, GlobalStorage.getItemCount("dirt"));
+
+  }
+  
   @Test  
   public void test_sendRequestForBuildingResource() throws Exception {
     Method method = BuildingCostHandler.class.getDeclaredMethod("sendRequestForBuildingResource", String.class, int.class);
