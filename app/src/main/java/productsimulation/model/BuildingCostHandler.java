@@ -60,9 +60,13 @@ public class BuildingCostHandler {
       chosenSource.addRequest(request);
     }
   }
-
   
-  
+  /**
+   * Distributes item to buildings in construction
+   *
+   * @param item    is the item to distribute
+   * @param count   is the number of item to distribute
+   */
   private static void supplyItemToBuildingInConstruction(String item, int count){
     for(Building b : inConstructionBuildingList){
       int value = b.getStorageItem(item);
@@ -82,6 +86,9 @@ public class BuildingCostHandler {
     }
   }
 
+  /**
+   * Checks to see if any buildings are ready to be built. Update building status.
+   */
   private static void checkAndUpdateConstructionList(){
     List<Building> toRemove = new ArrayList<>();
     for(Building b: inConstructionBuildingList){
