@@ -99,7 +99,7 @@ public class BuildingCostHandlerTest {
   }
 
   @Test
-  public void test_supplyItemToBuildingInConstruction(String item, int count){
+  public void test_supplyItemToBuildingInConstruction(){
     BuildingCostHandler.constructBuilding(f);
     BuildingCostHandler.constructBuilding(new Factory("Factory2", type, List.of(m1, s1),new SourceQLen(), new FIFOPolicy(), new Coordinate(0,1)));
     //manually add item 
