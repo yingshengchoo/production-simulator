@@ -80,15 +80,27 @@ public class BuildingCostHandler {
       }
     }
   }
+
+  private static void checkAndUpdateConstructionList(){
+    List<Building> toRemove = new ArrayList<>();
+    for(Building b: inConstructionBuildingList){
+      if(b.storageIsEmpty()){
+        b.register();
+        toRemove.add(b);
+      }
+    }
+    inConstructionBuildingList.removeAll(toRemove);
+  }
   
   /**
-   * Supplies 
+   * Supplies resources to buildings in construction. Completes construction for buildings that do not need anymore resource for construction.
    */
   public static void update(){
     Map<String, Integer> storage = GlobalStorage.getGlobalStorageMap();
     for(Map.Entry<String, Integer> entry: storage.entrySet()){
       supplyItemToBuildingInConstruction(entry.getKey(), entry.getValue());
     }
+    checkAndUpdateConstructionList();
   }
   
 }

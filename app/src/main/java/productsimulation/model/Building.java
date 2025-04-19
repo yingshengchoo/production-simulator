@@ -495,4 +495,8 @@ public abstract class Building implements Serializable {
         storage.put(item, count);
     } 
 
+  public boolean storageIsEmpty(){
+    storage.values().removeIf(value -> value == 0);
+    return storage.isEmpty();
+  }
 }

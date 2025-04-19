@@ -75,6 +75,12 @@ public class BuildingCostHandlerTest {
     assertEquals(2, GlobalStorage.getItemCount("wood"));
     assertEquals(1, GlobalStorage.getItemCount("dirt"));
     
+    t.stepNHandler(1);
+    
+    assertEquals(0, GlobalStorage.getItemCount("wood"));
+    assertEquals(0, GlobalStorage.getItemCount("dirt"));
+
+    assertTrue(Building.buildingGlobalList.contains(f));
   }
 
   @Test  
