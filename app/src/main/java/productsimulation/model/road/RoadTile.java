@@ -1,6 +1,7 @@
 package productsimulation.model.road;
 
 import productsimulation.Coordinate;
+import productsimulation.model.Cost;
 import java.io.Serializable;
 
 
@@ -8,12 +9,18 @@ public class RoadTile implements Serializable {
     private final Coordinate c;
     private final Direction from;
     private final Direction to;
-
-    public RoadTile(Coordinate c) {
+    private final Cost cost;
+  
+    public RoadTile(Coordinate c, Cost cost) {
         this.c = c;
         from = new Direction(Direction.UNDEFINED);
         to = new Direction(Direction.UNDEFINED);
+        this.cost = cost;
     }
+
+  public RoadTile(Coordinate c){
+    this(c, new Cost());
+  }
 
     public void setDirection(Coordinate lastPos, Coordinate curPos, Coordinate nextPos) {
         // 确定 from 方向（从 lastPos 到 curPos）

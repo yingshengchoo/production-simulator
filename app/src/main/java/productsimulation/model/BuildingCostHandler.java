@@ -6,8 +6,9 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
+import java.io.Serializable;
 
-public class BuildingCostHandler {
+public class BuildingCostHandler implements Serializable {
 
   public static List<Building> inConstructionBuildingList = new ArrayList<>();
 

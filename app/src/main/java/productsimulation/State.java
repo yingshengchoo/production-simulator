@@ -12,7 +12,7 @@ import java.io.*;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashMap;
+import java.util.Map;
 import javafx.util.Pair;
 
 public class State implements Serializable{
@@ -29,8 +29,8 @@ public class State implements Serializable{
   private LogicTime logictime;
   private SourcePolicy defaultSourcePolicy;
   private ServePolicy defaultServePolicy;
-  
-
+  private List<Building> inConstructionBuildingList = new ArrayList<>();
+  private Map<String, Integer> globalStorageMap = new HashMap<>();
   /**
    * Constructs a State object class which represents the current state of the simulation.
    *
@@ -136,6 +136,8 @@ public class State implements Serializable{
     this.roadMap = Road.roadMap;
     this.existingRoadTiles = Road.existingRoadTiles;
     this.boardData = Board.getBoard().getWeight();
+    this.inConstructionBuildingList = BuildingCostHandler.inConstructionBuildingList;
+    this.globalStorageMap = GlobalStorage.globalStorageMap;
   }
   
   /**
@@ -158,7 +160,7 @@ public class State implements Serializable{
       this.roadMap = loadedState.roadMap;
       this.existingRoadTiles = loadedState.existingRoadTiles;
       this.boardData = loadedState.boardData;
-      
+      this.inConstructionBuildingList = loadedState.inConstructionBuildingList;
       updateWorld(loadedState);      
       
       System.out.println("State loaded from SavedStates/" + filename + ".ser");
@@ -175,6 +177,8 @@ public class State implements Serializable{
       Road.roadMap = loadedState.roadMap;
       Road.existingRoadTiles = loadedState.existingRoadTiles;
       Board.getBoard().setWeight(loadedState.boardData);
+      BuildingCostHandler.inConstructionBuildingList = loadedState.inConstructionBuildingList;
+      GlobalStorage.globalStorageMap = loadedState.globalStorageMap;
       
       StateLoadVisitor visitor = new StateLoadVisitor();
       loadedState.logictime.accept(visitor);
