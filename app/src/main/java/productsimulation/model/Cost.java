@@ -57,7 +57,7 @@ public class Cost implements Serializable {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("Global Storage:\n");
+    sb.append("Required Resource:\n");
     for (Map.Entry<String, Integer> entry : cost.entrySet()) {
         sb.append("- ").append(entry.getKey())
           .append(": ").append(entry.getValue())
