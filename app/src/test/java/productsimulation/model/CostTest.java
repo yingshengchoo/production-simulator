@@ -32,4 +32,15 @@ public class CostTest {
     Cost cost2 = new Cost(Map.of("item1", 1));
     assertFalse(cost2.isFree());
   }
+
+  @Test
+  public void test_toString(){
+    Map<String, Integer> cost = new HashMap<>();
+    cost.put("fire", 3);
+    cost.put("water",2);
+    cost.put("earth", 1);
+    Cost costs = new Cost(cost);
+    String expected = "Required Resources:\n- fire: 3\nwater: 2\nearth: 1\n";
+    assertEquals(expected, costs.toString());
+  }
 }
