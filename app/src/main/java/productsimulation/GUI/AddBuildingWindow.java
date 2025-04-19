@@ -13,6 +13,7 @@ import productsimulation.Coordinate;
 import productsimulation.State;
 import productsimulation.model.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -135,10 +136,11 @@ public final class AddBuildingWindow {
                 return;
             }
 
+            List<Building> selectedSources = new ArrayList<>(sourcesList.getSelectionModel().getSelectedItems());
             try {
                 Building created = createBuilding(
                         name, type, coord,
-                        sourcesList.getSelectionModel().getSelectedItems(),
+                        selectedSources,
                         state
                 );
                 showAlert(Alert.AlertType.INFORMATION,
