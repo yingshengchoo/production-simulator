@@ -41,7 +41,7 @@ public class CostTest {
     cost.put("water",2);
     cost.put("earth", 1);
     Cost costs = new Cost(cost);
-    String expected = "Required Resources:\n- fire: 3\nwater: 2\nearth: 1\n";
+    String expected = "Required Resources:\n- fire: 3\n- water: 2\n- earth: 1\n";
     assertEquals(expected, costs.toString());
   }
 }
