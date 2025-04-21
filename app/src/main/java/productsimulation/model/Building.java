@@ -168,6 +168,7 @@ public abstract class Building implements Serializable {
 //        [source selection]: D (qlen) has request for door on 0
         Log.level2Log("[source selection]: " + name + " (" + sourcePolicy.getName() + ") has request for "
                 + request.getIngredient() + " on " + LogicTime.getInstance().getStep());
+        request.setWorker(this);
         requestQueue.add(request);
 
         // 更新total time
@@ -444,25 +445,6 @@ public abstract class Building implements Serializable {
         int result = Objects.hashCode(name);
         result = 31 * result + Objects.hashCode(type);
         return result;
-    }
-
-    public static List<Building> parseSrcList(List<String> srcStr) {
-        List<Building> sources = new java.util.ArrayList<>();
-        for (String src : srcStr) {
-            boolean found = false;
-            for (Building b : Building.buildingGlobalList) {
-                if (b.getName().equals(src)) {
-                    sources.add(b);
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                throw new IllegalArgumentException("invalid building name :(");
-            }
-        }
-
-        return sources;
     }
 
     public List<Request> getRequestQueue() {

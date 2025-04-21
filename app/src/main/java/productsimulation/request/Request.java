@@ -4,6 +4,7 @@ import productsimulation.Log;
 import productsimulation.LogicTime;
 import productsimulation.model.Building;
 import productsimulation.model.Recipe;
+import productsimulation.model.drone.DronePort;
 import productsimulation.model.road.TransportQueue;
 import productsimulation.model.GlobalStorage;
 
@@ -25,6 +26,7 @@ public class Request implements Serializable{
   private final Building requester;
   private RequestStatus status;
   public int transLatency = 0;
+  private Building worker;
 
   public Request(String ingredient, Recipe recipe, Building requester, int transLatency) {
     this(ingredient, recipe, requester);
@@ -120,16 +122,21 @@ public class Request implements Serializable{
   }
 
   public void doneReportAndTransport() {
-    if(requester != null) {
+    if (requester != null) {
       Log.debugLog(ingredient + " produce done at " + LogicTime.getInstance().getStep());
       if (transLatency <= 0) {
         requester.updateStorage(ingredient);
       } else {
+        // 优先尝试无人机配送
+        DronePort port = DronePort.findEligiblePort(this, worker, this.requester);
+        if (port != null) {
+          return;
+        }
         TransportQueue.addRequest(this);
       }
     } else {
+      // 完成最终交付
       GlobalStorage.addItemToStorage(ingredient);
-      //      [order complete] Order 0 completed (door) at time 21
       Log.level0Log("[order complete] Order " + id + " completed (" + ingredient + ")" +
               " at time " + LogicTime.getInstance().getStep());
     }
@@ -182,4 +189,8 @@ public class Request implements Serializable{
       return e.getClass().getSimpleName() + ": " + e.getMessage();
     }
   }
+
+    public void setWorker(Building worker) {
+        this.worker = worker;
+    }
 }
