@@ -4,29 +4,25 @@ import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import productsimulation.Log;
-import productsimulation.State;
 import productsimulation.command.FinishCommand;
 import productsimulation.command.StepCommand;
+import productsimulation.GUI.AutoRunner;
+import productsimulation.State;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Control panel down the right-hand side with quick-access buttons.
- *
- * @author Taiyan
- * @version 1.3 – removed Connect/Disconnect buttons
+ * Right-hand control panel: quick-access buttons + auto-run slider.
  */
 public class ControlPanel extends VBox {
-
     private final BoardDisplay boardDisplay;
     private final FeedbackPane feedback;
-    private final Runnable uiRefresher;
+    private final Runnable     uiRefresher;
 
     public ControlPanel(BoardDisplay boardDisplay,
                         FeedbackPane feedback,
                         Runnable uiRefresher) {
-
         super(12);
         setPadding(new Insets(15));
 
@@ -34,50 +30,67 @@ public class ControlPanel extends VBox {
         this.feedback     = feedback;
         this.uiRefresher  = uiRefresher;
 
-        State state = State.getInstance();
-
-        /* ---------- label → action map (display order) ---------------- */
+        // ── Static action buttons ─────────────────────────────
         Map<String,Runnable> actions = new LinkedHashMap<>();
-
-        actions.put("Add Building",
-                () -> AddBuildingWindow.show(state, this::postUpdate));
-
+        actions.put("Add Building", () ->
+                AddBuildingWindow.show(State.getInstance(), this::postUpdate));
         actions.put("Go One Step", () -> {
             String err = new StepCommand(1).execute();
             if (err == null) postUpdate();
-            else showError("Go One Step error: " + err);
+            else feedback.appendLine("Step error: " + err);
         });
-
         actions.put("Go N Steps", () ->
                 StepWindow.show(this::postUpdate));
-
         actions.put("Finish", this::onFinish);
 
-        /* -------------------------------------------------------------- */
-        Map<String,String> shortcuts = Map.of(
-                "Go One Step", "Ctrl+1",
-                "Go N Steps",  "Ctrl+T",
-                "Finish",      "Ctrl+F"
-        );
-
-        actions.forEach((label,action) -> {
-            String hint = shortcuts.get(label);
-            String text = (hint == null) ? label : label + "  ("+hint+')';
-
-            Button btn = new Button(text);
+        actions.forEach((label, action) -> {
+            Button btn = new Button(label);
             btn.setMaxWidth(Double.MAX_VALUE);
-            if (hint != null) btn.setTooltip(new Tooltip("Shortcut: "+hint));
-            btn.getStyleClass().add("control-button");
-
             btn.setOnAction(e -> runSafely(label, action));
             getChildren().add(btn);
         });
-    }
 
-    /* ---------------- helpers --------------------------------------- */
-    private void runSafely(String label, Runnable r) {
-        try { r.run(); }
-        catch (Exception ex) { showError(label + " failed: " + ex.getMessage()); }
+        // ── Auto-Run Controls ─────────────────────────────────
+        Label autoLabel    = new Label("Auto-Run Speed (steps/sec):");
+        Slider speedSlider = new Slider(1, 20, 5);
+        speedSlider.setShowTickLabels(true);
+        speedSlider.setShowTickMarks(true);
+        speedSlider.setMajorTickUnit(5);
+        speedSlider.setMinorTickCount(4);
+        speedSlider.setBlockIncrement(1);
+        speedSlider.setMaxWidth(Double.MAX_VALUE);
+
+        ToggleButton autoBtn = new ToggleButton("Start");
+        autoBtn.setMaxWidth(Double.MAX_VALUE);
+        autoBtn.setOnAction(e -> {
+            if (autoBtn.isSelected()) {
+                autoBtn.setText("Stop");
+                // ▶ Here’s the fix: on each tick, run one StepCommand then refresh UI
+                AutoRunner.start(
+                        () -> (int)Math.max(1, speedSlider.getValue()),
+                        () -> {
+                            String err = new StepCommand(1).execute();
+                            if (err != null && !err.isBlank()) {
+                                feedback.appendLine("Auto-run step error: " + err);
+                            }
+                            // then refresh board/log and step counter
+                            boardDisplay.refresh();
+                            feedback.setContent(Log.getLogText());
+                            uiRefresher.run();
+                        }
+                );
+            } else {
+                autoBtn.setText("Start");
+                AutoRunner.stop();
+            }
+        });
+
+        getChildren().addAll(
+                new Separator(),
+                autoLabel,
+                speedSlider,
+                autoBtn
+        );
     }
 
     private void postUpdate() {
@@ -89,14 +102,18 @@ public class ControlPanel extends VBox {
     private void onFinish() {
         String err = new FinishCommand().execute();
         if (err == null) {
-            postUpdate();
-            getChildren().forEach(n -> n.setDisable(true));
+            feedback.appendLine("Simulation finished.");
         } else {
-            showError("Finish error: " + err);
+            feedback.appendLine("Finish error: " + err);
         }
     }
 
-    private void showError(String msg) {
-        new Alert(Alert.AlertType.ERROR, msg, ButtonType.OK).showAndWait();
+    private void runSafely(String label, Runnable action) {
+        try {
+            action.run();
+        } catch (Exception ex) {
+            new Alert(Alert.AlertType.ERROR, label + " failed: " + ex.getMessage())
+                    .showAndWait();
+        }
     }
 }

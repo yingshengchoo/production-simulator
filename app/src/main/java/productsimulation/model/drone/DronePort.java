@@ -10,7 +10,6 @@ import productsimulation.request.servePolicy.ServePolicy;
 import productsimulation.request.sourcePolicy.SourcePolicy;
 
 import java.io.Serializable;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -19,20 +18,13 @@ import java.util.List;
  * DronePort represents a building that can construct and dispatch drones
  * to move items between in-range buildings.
  */
-public class DronePort extends Building {
+public class DronePort extends Building implements Serializable {
     private static final int MAX_CAPACITY = 10;
-    private static final int RADIUS = 20;
-    private static final int SPEED = 5; // tiles per timestep
+    private static final int RADIUS       = 20;
+    private static final int SPEED        = 5; // tiles per timestep
+
     private final List<Drone> drones = new ArrayList<>();
 
-    /**
-     *
-     * @param name
-     * @param type       BuildingType.DRONE_PORT
-     * @param sourcePolicy 请选择来源策略（传null）
-     * @param servePolicy  请选择服务策略（传null）
-     * @param coordinate
-     */
     public DronePort(String name,
                      BuildingType type,
                      SourcePolicy sourcePolicy,
@@ -46,91 +38,76 @@ public class DronePort extends Building {
     }
 
     /**
-     * find if there is an eligible port around src building
-     * if there is, assign the task to an idle drone :)
-     * @param src
-     * @param dst
-     * @return
+     * Find any port that can dispatch a drone for this request.
      */
     public static DronePort findEligiblePort(Request req, Building src, Building dst) {
         for (Building b : buildingGlobalList) {
-            if (b instanceof DronePort port) {
-                if (port.tryDispatch(req, src, dst)) {
-                    return port;
-                }
+            if (b instanceof DronePort port && port.tryDispatch(req, src, dst)) {
+                return port;
             }
         }
         return null;
     }
 
-    /**
-     * add to globalList.
-     */
+    /** Register this port as a building and block its tile on the board. */
     public DronePort register() {
         buildingGlobalList.add(this);
         Board.getBoard().addBuilding(this);
         return this;
     }
 
-    /**
-     * add one drone if not exceed the capacity.
-     */
+    /** Construct one drone here (up to MAX_CAPACITY). */
     public boolean constructDrone() {
         if (drones.size() < MAX_CAPACITY) {
-            Drone drone = new Drone(this);
-            drones.add(drone);
+            drones.add(new Drone(this));
             Log.debugLog("[DronePort] Constructed new drone at " + name);
             return true;
-        } else {
-            Log.debugLog("[DronePort] Capacity full, cannot construct more drones at " + name);
-            return false;
         }
+        Log.debugLog("[DronePort] Capacity full at " + name);
+        return false;
     }
-
 
     public boolean hasIdleDrone() {
         return drones.stream().anyMatch(d -> d.getState() == DroneState.IDLE);
     }
 
-
     public Drone getIdleDrone() {
-        return drones.stream().filter(d -> d.getState() == DroneState.IDLE)
+        return drones.stream()
+                .filter(d -> d.getState() == DroneState.IDLE)
                 .findFirst().orElse(null);
     }
 
-    /**
-     * check if building b is in range of this drone port.
-     */
+    /** Manhattan-distance ≤ RADIUS → in range. */
     public boolean inRange(Building b) {
         Coordinate c = b.getCoordinate();
         int dist = Math.abs(c.x - coordinate.x) + Math.abs(c.y - coordinate.y);
         return dist <= RADIUS;
     }
 
-    /*
-    try dispatch request to an idle drone
-    if no idle drone exist, return false
+    /**
+     * Try to hand off this request to an idle drone if both source & dest are in range.
      */
     public boolean tryDispatch(Request req, Building src, Building dst) {
         if (inRange(src) && inRange(dst) && hasIdleDrone()) {
-            Drone drone = getIdleDrone();
-            drone.assignDelivery(req, src, dst);
+            getIdleDrone().assignDelivery(req, src, dst);
             return true;
         }
         return false;
     }
 
+    /** Move all drones one step each logic tick. */
     @Override
     public boolean goOneStep() {
-        for (Drone drone : drones) {
-            drone.update();
-        }
+        drones.forEach(Drone::update);
         return true;
     }
-
 
     public int getDroneSpeed() {
         return SPEED;
     }
-}
 
+    /** @return an unmodifiable view of the drones stationed here */
+    public List<Drone> getDrones() {
+        return Collections.unmodifiableList(drones);
+    }
+}
