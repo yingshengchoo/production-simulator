@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import productsimulation.Coordinate;
 import productsimulation.model.*;
+import productsimulation.model.drone.DronePort;
 import productsimulation.setup.json_rules.*;
 
 import java.io.BufferedReader;
@@ -111,7 +112,26 @@ public class SetupParser {
                 if (buildingNode.has("type")) {
                     String typeName = buildingNode.get("type").asText();
                     BuildingType ft = typeMap.get(typeName);
-                    building = new Factory(buildingName, ft, null,null, null, coord);
+
+                    if ("droneport".equalsIgnoreCase(typeName)) {
+                        // build a DronePort instead of a Factory
+                        building = new DronePort(
+                                buildingName,
+                                ft,
+                                null,    // source policy will be set in modelSetup
+                                null,    // serve policy ditto
+                                coord
+                        );
+                    } else {
+                        building = new Factory(
+                                buildingName,
+                                ft,
+                                null,
+                                null,
+                                null,
+                                coord
+                        );
+                    }
                 } else if (buildingNode.has("mine")) {
                     String mineOutput = buildingNode.get("mine").asText();
                     Map<String, Recipe> recipes = new HashMap<>();

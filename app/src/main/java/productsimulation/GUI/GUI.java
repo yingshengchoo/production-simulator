@@ -1,3 +1,5 @@
+// File: src/main/java/productsimulation/GUI/GUI.java
+
 package productsimulation.GUI;
 
 import javafx.application.Application;
@@ -17,14 +19,19 @@ import productsimulation.command.FinishCommand;
 import productsimulation.command.StepCommand;
 
 import java.net.URL;
+import java.util.Set;
 
+/**
+ * Main JavaFX application. Shows MenuBar, BoardDisplay, step counter,
+ * ControlPanel (with auto‐run), and FeedbackPane.
+ */
 public class GUI extends Application {
 
     private static final int DEFAULT_WIDTH  = 1200;
     private static final int DEFAULT_HEIGHT = 800;
     private static final int CONTROL_WIDTH  = 260;
 
-    private State       state;
+    private State        state;
     private static BoardDisplay  boardDisplay;
     private static FeedbackPane  feedbackPane;
     private static StackPane     rootStack;
@@ -42,39 +49,40 @@ public class GUI extends Application {
         // the main drawing area
         boardDisplay = new BoardDisplay(state);
 
-        // move auto-runner (if you like) into the ControlPanel instead of up here
+        // control panel, now without forced width (we’ll wrap it with the step label)
         controlPanel = new ControlPanel(
                 boardDisplay,
                 feedbackPane,
                 this::refreshBoardAndLog
         );
-        controlPanel.setMaxWidth(CONTROL_WIDTH);
 
-        // Build the menu bar (always at the very top)
+        // Menu bar
         MenuBar menuBar = buildMenuBar();
 
-        // Build the status label (we'll put it inside the ControlPanel if you want)
+        // ** New: step counter label **
         stepLbl = new Label("Step: 0");
 
         // Layout everything in a BorderPane
         BorderPane main = new BorderPane();
         main.setTop(menuBar);
 
-        // Center: the board
+        // Center: the board canvas
         StackPane canvasHolder = new StackPane(boardDisplay.getCanvasPane());
         canvasHolder.getStyleClass().add("canvas-pane");
         main.setCenter(canvasHolder);
 
-        // Right: your control panel (with whatever buttons / auto‐runner you choose)
-        main.setRight(controlPanel);
-        BorderPane.setMargin(controlPanel, new Insets(10));
+        // ** New: right side = [step label] + [control panel] **
+        VBox rightBox = new VBox(10, stepLbl, controlPanel);
+        rightBox.setPadding(new Insets(10));
+        rightBox.setMaxWidth(CONTROL_WIDTH);
+        main.setRight(rightBox);
 
         // Bottom: just the feedback log
         VBox bottomBox = new VBox(feedbackPane);
         bottomBox.setPadding(new Insets(5));
         main.setBottom(bottomBox);
 
-        // Wrap in a StackPane so popups / overlays can go on top
+        // Wrap in a StackPane so overlays (e.g. connect overlay) can be added
         rootStack = new StackPane(main);
         Scene scene = new Scene(rootStack, DEFAULT_WIDTH, DEFAULT_HEIGHT);
 
@@ -90,6 +98,7 @@ public class GUI extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
+        // Initial render
         refreshBoardAndLog();
     }
 
@@ -106,7 +115,6 @@ public class GUI extends Application {
 
     private Menu createFileMenu() {
         Menu file = new Menu("File");
-
         MenuItem save = new MenuItem("Save");
         save.setAccelerator(new KeyCodeCombination(
                 javafx.scene.input.KeyCode.S, KeyCombination.CONTROL_DOWN));
@@ -126,7 +134,6 @@ public class GUI extends Application {
 
     private Menu createRunMenu() {
         Menu run = new Menu("Run");
-
         MenuItem one = new MenuItem("Go One Step");
         one.setAccelerator(new KeyCodeCombination(
                 javafx.scene.input.KeyCode.DIGIT1, KeyCombination.CONTROL_DOWN));
@@ -156,7 +163,6 @@ public class GUI extends Application {
 
     private Menu createSettingsMenu() {
         Menu settings = new Menu("Settings");
-
         MenuItem verbosity = new MenuItem("Set Verbosity…");
         verbosity.setAccelerator(new KeyCodeCombination(
                 javafx.scene.input.KeyCode.V, KeyCombination.CONTROL_DOWN));
@@ -204,6 +210,5 @@ public class GUI extends Application {
     public static BoardDisplay getBoardDisplay() { return boardDisplay; }
     public static StackPane     getRootPane()    { return rootStack;   }
     public static FeedbackPane  getFeedbackPane(){ return feedbackPane;}
-
     public static void main(String[] args) { launch(args); }
 }
