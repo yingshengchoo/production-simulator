@@ -14,6 +14,7 @@ import productsimulation.LogicTime;
 import productsimulation.Log;
 import productsimulation.State;
 import productsimulation.command.RequestCommand;
+import productsimulation.command.RemoveBuildingCommand;
 import productsimulation.model.*;
 import productsimulation.model.road.RoadTile;
 
@@ -22,7 +23,7 @@ import java.util.Objects;
 
 /**
  * Modal dialog displaying information for a Building or RoadTile,
- * with context-specific actions (request items or connect mode).
+ * with context-specific actions (request items, connect, disconnect, or remove).
  * Uses static GUI getters for board display, root pane, and feedback pane.
  *
  * <p>Usage:
@@ -38,7 +39,7 @@ public final class BuildingInfoWindow {
     private BuildingInfoWindow() { /* no instances */ }
 
     /**
-     * Show info for a Building, with request and connect actions.
+     * Show info for a Building, with request, connect, disconnect, and remove actions.
      * @param b the target Building
      */
     public static void show(Building b) {
@@ -53,6 +54,8 @@ public final class BuildingInfoWindow {
         root.getChildren().add(createInfoSection(b));
         root.getChildren().add(createRequestSection(b));
         root.getChildren().add(createConnectButton(b));
+        root.getChildren().add(createDisconnectButton(b));
+        root.getChildren().add(createRemoveButton(b));
 
         stage.setScene(new Scene(root));
         stage.showAndWait();
@@ -88,7 +91,7 @@ public final class BuildingInfoWindow {
                 new Label("Coord: (" + b.getX() + "," + b.getY() + ")"),
                 new Label("Queue size: " + b.getRequestQueue().size())
         );
-        if (b instanceof Mine)      box.getChildren().addAll(mineLabels((Mine)b));
+        if (b instanceof Mine)        box.getChildren().addAll(mineLabels((Mine)b));
         else if (b instanceof Storage) box.getChildren().addAll(storageLabels((Storage)b));
         else if (b instanceof Factory) box.getChildren().addAll(factoryLabels((Factory)b));
 
@@ -146,7 +149,43 @@ public final class BuildingInfoWindow {
         return connect;
     }
 
-    // Helpers
+    // Disconnect button
+    private static Button createDisconnectButton(Building b) {
+        Button disc = new Button("Disconnect");
+        disc.setMaxWidth(Double.MAX_VALUE);
+        disc.setOnAction(e -> {
+            Stage stage = (Stage)disc.getScene().getWindow();
+            stage.close();
+            InteractiveDisconnectMode.activate(
+                    b.getName(),
+                    State.getInstance(),
+                    GUI.getBoardDisplay(),
+                    GUI.getRootPane(),
+                    () -> GUI.getFeedbackPane().setContent(Log.getLogText())
+            );
+        });
+        return disc;
+    }
+
+    // Remove button
+    private static Button createRemoveButton(Building b) {
+        Button rm = new Button("Remove");
+        rm.setMaxWidth(Double.MAX_VALUE);
+        rm.setOnAction(e -> {
+            String err = new RemoveBuildingCommand(b.getName()).execute();
+            if (err == null) {
+                GUI.getBoardDisplay().refresh();
+                GUI.getFeedbackPane().appendLine("Removed " + b.getName());
+                Stage stage = (Stage)rm.getScene().getWindow();
+                stage.close();
+            } else {
+                showAlert(Alert.AlertType.ERROR, err);
+            }
+        });
+        return rm;
+    }
+
+    // Helpers for options and labels
     private static ObservableList<String> recipeOptions(Building b) {
         if (b instanceof Mine)    return FXCollections.observableArrayList(
                 b.getBuildingType().getAllRecipes().keySet());

@@ -261,6 +261,44 @@ public class State implements Serializable{
     this.defaultServePolicy = defaultServePolicy;
   }
 
+  /**
+   * Handler for removing a building by name, cleaning up connections.
+   * @param name the name of the building to remove
+   * @return null on success, or an error message if removal is not allowed
+   */
+  public static String removeBuildingHandler(String name) {
+    State state = getInstance();
+    Building b = state.getBuildings(name);
+    if (b == null) {
+      return "Building '" + name + "' does not exist.";
+    }
+    // 1) Can't remove if there are pending requests
+    if (!b.getRequestQueue().isEmpty()) {
+      return "Cannot remove '" + name + "': pending requests exist.";
+    }
+    // 2) If storage, ensure it’s empty
+    if (b instanceof Storage) {
+      Storage s = (Storage) b;
+      if (s.getStockCount() > 0) {
+        return "Cannot remove storage '" + name + "': storage not empty.";
+      }
+    }
+    // 3) Disconnect all road segments involving this building
+    List<Pair<Building, Building>> toDisconnect = new ArrayList<>();
+    for (Pair<Building, Building> link : Road.roadMap.keySet()) {
+      if (link.getKey() == b || link.getValue() == b) {
+        toDisconnect.add(link);
+      }
+    }
+    for (Pair<Building, Building> link : toDisconnect) {
+      Road.disconnectHandler(link.getKey().getName(), link.getValue().getName());
+    }
+    // 4) Finally remove the building
+    Building.buildingGlobalList.remove(b);
+    state.getBuildings().remove(b);
+    Log.level0Log("Building '" + name + "' removed.");
+    return null;
+  }
 }
 
 

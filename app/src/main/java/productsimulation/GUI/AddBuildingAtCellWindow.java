@@ -4,6 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
@@ -82,27 +83,46 @@ public final class AddBuildingAtCellWindow {
         grid.add(new Label("Type:"), 0, 1);
         grid.add(typeCombo, 1, 1);
 
-        // Sources list
+        // Sources list with toggle selection
         ListView<Building> sourcesView = new ListView<>(
                 FXCollections.observableArrayList(state.getBuildings())
         );
         sourcesView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        sourcesView.setCellFactory(lv -> new ListCell<>() {
-            @Override public void updateItem(Building b, boolean empty) {
-                super.updateItem(b, empty);
-                setText(empty || b == null ? null : b.getName());
-            }
+        sourcesView.setCellFactory(lv -> {
+            ListCell<Building> cell = new ListCell<>() {
+                @Override public void updateItem(Building b, boolean empty) {
+                    super.updateItem(b, empty);
+                    setText(empty || b == null ? null : b.getName());
+                }
+            };
+            cell.addEventFilter(MouseEvent.MOUSE_PRESSED, ev -> {
+                lv.requestFocus();
+                if (!cell.isEmpty()) {
+                    int idx = cell.getIndex();
+                    if (sourcesView.getSelectionModel().isSelected(idx))
+                        sourcesView.getSelectionModel().clearSelection(idx);
+                    else
+                        sourcesView.getSelectionModel().select(idx);
+                    ev.consume();
+                }
+            });
+            return cell;
         });
         grid.add(new Label("Sources:"), 0, 2);
         grid.add(sourcesView, 1, 2);
 
+        // Clear Sources button
+        Button clearBtn = new Button("Clear Sources");
+        clearBtn.setOnAction(e -> sourcesView.getSelectionModel().clearSelection());
+        grid.add(clearBtn, 1, 3);
+
         // Buttons
-        Button addBtn = new Button("Add");
+        Button addBtn    = new Button("Add");
         Button cancelBtn = new Button("Cancel");
         addBtn.setDefaultButton(true);
         cancelBtn.setCancelButton(true);
-        grid.add(addBtn, 0, 3);
-        grid.add(cancelBtn, 1, 3);
+        grid.add(addBtn, 0, 4);
+        grid.add(cancelBtn, 1, 4);
 
         // Disable Add until name and type are provided
         addBtn.disableProperty().bind(
@@ -159,18 +179,15 @@ public final class AddBuildingAtCellWindow {
                                            List<Building> sources) {
         if (type instanceof StorageType) {
             return Storage.addStorage(name, sources,
-                    state.getDefaultSourcePolicy(),
-                    state.getDefaultServePolicy(),
+                    state.getDefaultSourcePolicy(), state.getDefaultServePolicy(),
                     coord, (StorageType) type);
         } else if (type.getName().toLowerCase().contains("mine")) {
             return Mine.addMine(name, sources,
-                    state.getDefaultSourcePolicy(),
-                    state.getDefaultServePolicy(),
+                    state.getDefaultSourcePolicy(), state.getDefaultServePolicy(),
                     coord, type);
         }
         return Factory.addFactory(name, sources,
-                state.getDefaultSourcePolicy(),
-                state.getDefaultServePolicy(),
+                state.getDefaultSourcePolicy(), state.getDefaultServePolicy(),
                 coord, type);
     }
 

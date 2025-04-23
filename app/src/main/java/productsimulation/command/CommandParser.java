@@ -15,7 +15,19 @@ public class CommandParser {
                                                     new SaveCommandIdentifier(
                                                             new LoadCommandIdentifier(
                                                                     new ConnectCommandIdentifier(
-                                                                    null))))))));
+                                                                            new DisconnectCommandIdentifier(
+                                                                                    new RemoveBuildingCommandIdentifier(
+                                                                                            null
+                                                                                    )
+                                                                            )
+                                                                    )
+                                                            )
+                                                    )
+                                            )
+                                    )
+                            )
+                    )
+            );
   }
 
   public Command parseLine(String line) {

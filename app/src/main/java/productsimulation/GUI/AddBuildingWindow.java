@@ -4,6 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
@@ -46,10 +47,8 @@ public final class AddBuildingWindow {
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(20));
-        ColumnConstraints labelCol = new ColumnConstraints();
-        labelCol.setHgrow(Priority.NEVER);
-        ColumnConstraints fieldCol = new ColumnConstraints();
-        fieldCol.setHgrow(Priority.ALWAYS);
+        ColumnConstraints labelCol = new ColumnConstraints(); labelCol.setHgrow(Priority.NEVER);
+        ColumnConstraints fieldCol = new ColumnConstraints(); fieldCol.setHgrow(Priority.ALWAYS);
         grid.getColumnConstraints().addAll(labelCol, fieldCol);
 
         // --- Name ---
@@ -62,7 +61,6 @@ public final class AddBuildingWindow {
                 FXCollections.observableArrayList(BuildingType.getBuildingTypeGlobalList())
         );
         typeCombo.setPromptText("Select type");
-        // show names instead of toString()
         typeCombo.setCellFactory(cb -> new ListCell<>() {
             @Override protected void updateItem(BuildingType bt, boolean empty) {
                 super.updateItem(bt, empty);
@@ -83,69 +81,74 @@ public final class AddBuildingWindow {
                 FXCollections.observableArrayList(state.getBuildings())
         );
         sourcesList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        sourcesList.setCellFactory(lv -> new ListCell<>() {
-            @Override protected void updateItem(Building b, boolean empty) {
-                super.updateItem(b, empty);
-                setText(empty || b == null ? null : b.getName());
-            }
+        sourcesList.setCellFactory(lv -> {
+            ListCell<Building> cell = new ListCell<>() {
+                @Override protected void updateItem(Building b, boolean empty) {
+                    super.updateItem(b, empty);
+                    setText(empty || b==null ? null : b.getName());
+                }
+            };
+            cell.addEventFilter(MouseEvent.MOUSE_PRESSED, ev -> {
+                lv.requestFocus();
+                if (!cell.isEmpty()) {
+                    int idx = cell.getIndex();
+                    if (sourcesList.getSelectionModel().isSelected(idx))
+                        sourcesList.getSelectionModel().clearSelection(idx);
+                    else
+                        sourcesList.getSelectionModel().select(idx);
+                    ev.consume();
+                }
+            });
+            return cell;
         });
         addRow(grid, 4, "Sources:", sourcesList);
 
-        Button addBtn    = new Button("Add");
-        Button cancelBtn = new Button("Cancel");
-        addBtn   .setDefaultButton(true);
-        cancelBtn.setCancelButton(true);
-        grid.addRow(5, addBtn, cancelBtn);
+        // Clear Sources button
+        Button clearBtn = new Button("Clear Sources");
+        clearBtn.setOnAction(e -> sourcesList.getSelectionModel().clearSelection());
+        addRow(grid, 5, "", clearBtn);
 
-        // Disable Add whenever:
-        //   – name is empty, OR
-        //   – type is not selected, OR
-        //   – exactly one of X/Y is filled
-        javafx.beans.binding.BooleanBinding nameOrTypeMissing =
+        // --- Buttons ---
+        Button addBtn = new Button("Add");
+        Button cancelBtn = new Button("Cancel");
+        addBtn.setDefaultButton(true);
+        cancelBtn.setCancelButton(true);
+        grid.addRow(6, addBtn, cancelBtn);
+
+        // Disable Add whenever: name empty OR type null OR partial coords
+        var nameOrTypeMissing =
                 nameField.textProperty().isEmpty()
                         .or(typeCombo.valueProperty().isNull());
-
-        javafx.beans.binding.BooleanBinding coordPartial =
+        var coordPartial =
                 xField.textProperty().isEmpty().and(yField.textProperty().isNotEmpty())
                         .or(xField.textProperty().isNotEmpty().and(yField.textProperty().isEmpty()));
-
         addBtn.disableProperty().bind(nameOrTypeMissing.or(coordPartial));
 
         // --- Handlers ---
         addBtn.setOnAction(e -> {
             String name = nameField.getText().trim();
-            BuildingType type = typeCombo.getValue();
-            String xs = xField.getText().trim(), ys = yField.getText().trim();
-
+            String xs = xField.getText().trim();
+            String ys = yField.getText().trim();
             Coordinate coord;
-            if (xs.isEmpty()) {
-                coord = Building.getValidCoordinate();
-            } else {
-                try {
-                    coord = new Coordinate(Integer.parseInt(xs), Integer.parseInt(ys));
-                } catch (NumberFormatException ex) {
+            if (xs.isEmpty()) coord = Building.getValidCoordinate();
+            else {
+                try { coord = new Coordinate(Integer.parseInt(xs), Integer.parseInt(ys)); }
+                catch (NumberFormatException ex) {
                     showAlert(Alert.AlertType.ERROR, "X and Y must be valid integers.");
                     return;
                 }
             }
-
-            // duplicate‐name guard
+            // Duplicate name guard
             if (state.getBuildings().stream()
                     .anyMatch(b -> b.getName().equalsIgnoreCase(name))) {
-                showAlert(Alert.AlertType.ERROR, "A building named \"" + name + "\" already exists.");
+                showAlert(Alert.AlertType.ERROR, "A building named \""+name+"\" already exists.");
                 return;
             }
-
-            List<Building> selectedSources = new ArrayList<>(sourcesList.getSelectionModel().getSelectedItems());
+            List<Building> selSources = new ArrayList<>(sourcesList.getSelectionModel().getSelectedItems());
             try {
-                Building created = createBuilding(
-                        name, type, coord,
-                        selectedSources,
-                        state
-                );
+                Building created = createBuilding(name, typeCombo.getValue(), coord, selSources, state);
                 showAlert(Alert.AlertType.INFORMATION,
-                        String.format("Added \"%s\" at (%d,%d).",
-                                created.getName(), created.getX(), created.getY())
+                        String.format("Added \"%s\" at (%d,%d).", created.getName(), created.getX(), created.getY())
                 );
                 if (onSuccess != null) onSuccess.run();
                 stage.close();
@@ -153,8 +156,8 @@ public final class AddBuildingWindow {
                 showAlert(Alert.AlertType.ERROR, "Creation failed: " + ex.getMessage());
             }
         });
-
         cancelBtn.setOnAction(e -> stage.close());
+
         stage.setScene(new Scene(grid));
         stage.showAndWait();
     }
@@ -165,11 +168,8 @@ public final class AddBuildingWindow {
     }
 
     private static Building createBuilding(
-            String name,
-            BuildingType type,
-            Coordinate coord,
-            List<Building> sources,
-            State state
+            String name, BuildingType type, Coordinate coord,
+            List<Building> sources, State state
     ) {
         if (type instanceof StorageType) {
             return Storage.addStorage(name, sources,
