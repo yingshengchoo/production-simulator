@@ -108,7 +108,7 @@ class StateTest {
     " request queue size=0\n" +
     "}\n";
     
-    // assertEquals(expected, originalOutput.toString());
+//    assertEquals(expected, originalOutput.toString());
 
 
     

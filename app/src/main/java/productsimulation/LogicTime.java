@@ -6,7 +6,7 @@ import productsimulation.model.road.TransportQueue;
 import java.io.Serializable;
 
 public class LogicTime implements Serializable{
-//    EV2中，道路可能不通，请求可能无法顺利传达，故大幅下调MAX_STEP，以免误判为死循环
+    //    EV2中，道路可能不通，请求可能无法顺利传达，故大幅下调MAX_STEP，以免误判为死循环
     private final int MAX_STEP = 500;
     private static LogicTime instance = new LogicTime();
     private int currentStep;
@@ -52,12 +52,12 @@ public class LogicTime implements Serializable{
             }
             //確保 Storage 有先發給Sources request
             for(Building b: Building.buildingGlobalList){
-              if(b instanceof Storage){
-                Storage s = (Storage) b;
-                s.sendRequest();
-              }
+                if(b instanceof Storage){
+                    Storage s = (Storage) b;
+                    s.sendRequest();
+                }
             }
-            
+
             currentStep += 1;
             for(Building b: Building.buildingGlobalList) {
                 b.updateNotified();
@@ -103,16 +103,16 @@ public class LogicTime implements Serializable{
     }
 
     public void loadLogicTime(LogicTime logicTime){
-      instance = logicTime;
-    }
-  
-    public void accept(StateVisitor v){
-      v.visit(this);
+        instance = logicTime;
     }
 
-  
+    public void accept(StateVisitor v){
+        v.visit(this);
+    }
+
+
     @Override
     public String toString(){
-      return "Current Step: " + currentStep;
+        return "Current Step: " + currentStep;
     }
 }

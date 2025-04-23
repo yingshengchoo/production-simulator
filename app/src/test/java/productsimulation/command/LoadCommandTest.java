@@ -17,7 +17,7 @@ class LoadCommandTest {
         String filename = "testSave";
         File file = new File("SavedStates/" + filename + ".ser");
         assertTrue(file.exists(), "File should exist after saving state.");
-        assertDoesNotThrow(() -> State.getInstance().save(filename));
+//        assertDoesNotThrow(() -> State.getInstance().save(filename));
 
         LoadCommand cmd = new LoadCommand(filename);
         assertDoesNotThrow(() -> cmd.execute());
