@@ -1,5 +1,5 @@
 if [ $# -ne 2 ]; then
-    echo "example: ./installAndRun.sh doors1.json building_types.json"
+    echo "example: ./installAndRun.sh storage3.json building_types.json"
     exit 1
 fi
 ./gradlew clean installDist
