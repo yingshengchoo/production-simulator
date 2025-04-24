@@ -24,7 +24,7 @@ public class State implements Serializable{
   private List<Recipe> recipes;
   private List<BuildingType> types;
   private HashMap<Pair<Building, Building>, Road> roadMap = new HashMap<>(); 
-  private HashMap<Coordinate, RoadTile> existingRoadTiles = new HashMap<>();
+  private HashMap<Coordinate, ArrayList<RoadTile>> existingRoadTiles = new HashMap<>();
   private List<Request> queue = new ArrayList<>();
   private LogicTime logictime;
   private SourcePolicy defaultSourcePolicy;
@@ -101,6 +101,11 @@ public class State implements Serializable{
       throw new IllegalStateException("State has not been initialized.");
     }
       return instance;
+  }
+
+  // caller will decide if instance is null
+  public static State noThrowGetInstance() {
+    return instance;
   }
 
   /**

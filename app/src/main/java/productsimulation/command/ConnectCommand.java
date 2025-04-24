@@ -1,6 +1,7 @@
 package productsimulation.command;
 
 import productsimulation.model.road.Road;
+import productsimulation.model.road.RoadHandler;
 
 public class ConnectCommand extends Command {
     private final String source;
@@ -21,6 +22,6 @@ public class ConnectCommand extends Command {
 
     @Override
     public String execute() {
-         return Road.connectHandler(source, destination);
+         return RoadHandler.connectHandler(source, destination);
     }
 }

@@ -77,83 +77,8 @@ public abstract class Building implements Serializable {
         this.servePolicy = servePolicy;
         requestQueue = new ArrayList<>();
         storage = new HashMap<>();
-        this.coordinate = getValidCoordinate();
+        this.coordinate = BuildingHandler.getValidCoordinate();
     }
-
-    public static Coordinate getValidCoordinate() {
-        List<Coordinate> existingCoordinates = new ArrayList<>();
-        for (Building b : buildingGlobalList) {
-            existingCoordinates.add(b.getCoordinate());
-        }
-
-        // first coordinate on 0,0
-        if (existingCoordinates.isEmpty()) {
-            return new Coordinate(0, 0);
-        }
-
-        // for every exist building, try coordinates in their range.
-        for (Coordinate c : existingCoordinates) {
-            for (int dx = 5; dx <= 10; dx++) {
-                for (int dy = 5; dy <= 10; dy++) {
-                    // 正右上
-                    int candidateX = c.x + dx;
-                    int candidateY = c.y + dy;
-                    if (isValid(candidateX, candidateY, existingCoordinates)) {
-                        return new Coordinate(candidateX, candidateY);
-                    }
-                    // 左右上
-                    candidateX = c.x - dx;
-                    candidateY = c.y + dy;
-                    if (isValid(candidateX, candidateY, existingCoordinates)) {
-                        return new Coordinate(candidateX, candidateY);
-                    }
-                    // 右下
-                    candidateX = c.x + dx;
-                    candidateY = c.y - dy;
-                    if (isValid(candidateX, candidateY, existingCoordinates)) {
-                        return new Coordinate(candidateX, candidateY);
-                    }
-                    // 左下
-                    candidateX = c.x - dx;
-                    candidateY = c.y - dy;
-                    if (isValid(candidateX, candidateY, existingCoordinates)) {
-                        return new Coordinate(candidateX, candidateY);
-                    }
-                }
-            }
-        }
-
-        throw new RuntimeException("no valid coordinate!");
-    }
-
-    static boolean isValid(int candidateX, int candidateY, List<Coordinate> existingPoints) {
-        if (existingPoints.isEmpty()) return true;
-        if(candidateX < 0 || candidateY <0){
-          return false;
-        }
-
-        Board board = Board.getBoard();
-        int weight = board.getBoardPosWeight(new Coordinate(candidateX, candidateY));
-        if (weight == 1 || weight == Integer.MAX_VALUE) {
-            return false;
-        }
-
-        boolean withinX = false;
-        boolean withinY = false;
-        for (Coordinate c : existingPoints) {
-            if (Math.abs(candidateX - c.x) < 5 || Math.abs(candidateY - c.y) < 5) {
-                return false;
-            }
-            if (Math.abs(candidateX - c.x) <= 10) {
-                withinX = true;
-            }
-            if (Math.abs(candidateY - c.y) <= 10) {
-                withinY = true;
-            }
-        }
-        return withinX && withinY;
-    }
-
   
     /**
      * Adds the request into the relavant buildings.

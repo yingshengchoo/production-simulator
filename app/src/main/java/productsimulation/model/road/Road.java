@@ -16,7 +16,7 @@ public class Road implements Serializable {
     // 如果存在，返回最短路程；如果不存在，说明不可达
     public static HashMap<Pair<Building, Building>, Road> roadMap = new HashMap<>();
     // 虽然已经有board，但让board存带方向信息的roadtile并不合适
-    public static HashMap<Coordinate, RoadTile> existingRoadTiles = new HashMap<>();
+    public static HashMap<Coordinate, ArrayList<RoadTile>> existingRoadTiles = new HashMap<>();
     // 相邻或自己到自己的特殊road，类似传送门，也类似ev1中的设定
     public static Road PORTAL = new Road(null, null, 0);
 
@@ -48,30 +48,6 @@ public class Road implements Serializable {
         return roadTiles;
     }
 
-    public static String connectHandler(String srcName, String dstName) {
-        List<Building> buildings = Building.buildingGlobalList;
-        Building bsrc = null;
-        Building bdst = null;
-        for(Building b: buildings) {
-            if(b.getName().equals(srcName)) {
-                bsrc = b;
-            }
-            if(b.getName().equals(dstName)) {
-                bdst = b;
-            }
-        }
-        if(bsrc == null || bdst == null) {
-            return "Building does not exists. Check the building name.";
-        }
-        Log.level0Log(srcName + " -> " + dstName + " connected");
-        try{
-            generateRoad(bsrc, bdst);
-            return null;
-        } catch (Exception e) {
-            return e.getClass().getSimpleName() + ": " + e.getMessage();
-        }
-    }
-
 //    不检查指定位置是否合法，由caller保证安全调用，故设为private
     // coordinates中都是要建的，entrance和exit是不用建的，仅用作判断方向
     private void placeRoad(ArrayList<Coordinate> coordinates, Coordinate entrance, Coordinate exit) {
@@ -97,22 +73,23 @@ public class Road implements Serializable {
             if(!Coordinate.isNeighbor(lastPos, curPos) || !Coordinate.isNeighbor(curPos, nextPos)) {
                 throw new IllegalArgumentException("road should be continuous");
             }
-//            未必每次迭代都会建新路
-            RoadTile tile;
+
             int weight = Board.getBoard().getBoardPosWeight(curPos);
-            if(weight == 2) {
-                Board.getBoard().setBoardPosWeight(curPos, 1);
-//            原来没路，建新路
-                tile = new RoadTile(curPos);
-                existingRoadTiles.put(curPos, tile);
-            } else if (weight == 1) {
-//            原来有路，复用之前的tile
-                tile = existingRoadTiles.get(curPos);
-            } else {
+            if(weight != 2 && weight != 1) {
                 throw new IllegalArgumentException("cannot place road here");
             }
+
+//            roadTiles中的tile都只有一个方向，总会创建新tile，用于记录操作过程，以便删除。
+            RoadTile tile = new RoadTile(curPos);
             tile.setDirection(lastPos, curPos, nextPos);
-//            同一个tile可以在多条road里，此处不管是否新建tile，都应当在当前road中添加这个tile
+            if(existingRoadTiles.containsKey(curPos)) {
+                existingRoadTiles.get(curPos).add(tile);
+            } else {
+                ArrayList<RoadTile> tiles = new ArrayList<>();
+                tiles.add(tile);
+                existingRoadTiles.put(curPos, tiles);
+            }
+            Board.getBoard().setBoardPosWeight(curPos, 1);
             roadTiles.add(tile);
         }
     }
@@ -135,6 +112,30 @@ public class Road implements Serializable {
         }
 
         return null;
+    }
+
+    private void removeTiles() {
+        for(RoadTile tile: roadTiles) {
+            Coordinate c = tile.getCoordinate();
+            ArrayList<RoadTile> tilesAtC = existingRoadTiles.get(c);
+            for(RoadTile tileAtC: tilesAtC) {
+                if(tile.equals(tileAtC)) {
+                    tilesAtC.remove(tileAtC);
+                    // 只删除一个，而非所有
+                    break;
+                }
+            }
+            if(tilesAtC.isEmpty()) {
+                Board.getBoard().setBoardPosWeight(c, 2);
+                existingRoadTiles.remove(c);
+            }
+        }
+    }
+
+    public static void removeRoad(Building st, Building ed) {
+        Road toDelete = roadMap.get(new Pair<>(st, ed));
+        roadMap.remove(new Pair<>(st, ed));
+        toDelete.removeTiles();
     }
 
 //    判断一个坐标是否邻近建筑
@@ -168,53 +169,55 @@ public class Road implements Serializable {
         // 如果路邻近建筑，则为port，方向限制较少
         boolean isPort = isPort(coordinate);
 
-        RoadTile tile = existingRoadTiles.get(coordinate);
-        // 左
-        if(dir[0] == -1 && dir[1] == 0) {
-            if(tile.getToDirection().hasDirection(Direction.RIGHT)
-            && tile.getFromDirection().hasDirection(Direction.LEFT)) {
-                return true;
-            } else if(
-                tile.getToDirection().hasDirection(Direction.RIGHT)
-                || tile.getFromDirection().hasDirection(Direction.LEFT)
-            ) {
-                return !isPort;
+        ArrayList<RoadTile> tiles = existingRoadTiles.get(coordinate);
+        for(RoadTile tile: tiles) {
+            // 左
+            if(dir[0] == -1 && dir[1] == 0) {
+                if(tile.getToDirection().hasDirection(Direction.RIGHT)
+                        && tile.getFromDirection().hasDirection(Direction.LEFT)) {
+                    return true;
+                } else if(
+                        tile.getToDirection().hasDirection(Direction.RIGHT)
+                                || tile.getFromDirection().hasDirection(Direction.LEFT)
+                ) {
+                    return !isPort;
+                }
             }
-        }
-        // 右
-        else if(dir[0] == 1 && dir[1] == 0) {
-            if(tile.getToDirection().hasDirection(Direction.LEFT)
-            && tile.getFromDirection().hasDirection(Direction.RIGHT)) {
-                return true;
-            } else if(
-                tile.getToDirection().hasDirection(Direction.LEFT)
-                || tile.getFromDirection().hasDirection(Direction.RIGHT)
-            ) {
-                return !isPort;
+            // 右
+            else if(dir[0] == 1 && dir[1] == 0) {
+                if(tile.getToDirection().hasDirection(Direction.LEFT)
+                        && tile.getFromDirection().hasDirection(Direction.RIGHT)) {
+                    return true;
+                } else if(
+                        tile.getToDirection().hasDirection(Direction.LEFT)
+                                || tile.getFromDirection().hasDirection(Direction.RIGHT)
+                ) {
+                    return !isPort;
+                }
             }
-        }
-        // 上
-        else if(dir[0] == 0 && dir[1] == -1) {
-            if(tile.getToDirection().hasDirection(Direction.DOWN)
-            && tile.getFromDirection().hasDirection(Direction.UP)) {
-                return true;
-            } else if(
-                tile.getToDirection().hasDirection(Direction.DOWN)
-                || tile.getFromDirection().hasDirection(Direction.UP)
-            ) {
-                return !isPort;
+            // 上
+            else if(dir[0] == 0 && dir[1] == -1) {
+                if(tile.getToDirection().hasDirection(Direction.DOWN)
+                        && tile.getFromDirection().hasDirection(Direction.UP)) {
+                    return true;
+                } else if(
+                        tile.getToDirection().hasDirection(Direction.DOWN)
+                                || tile.getFromDirection().hasDirection(Direction.UP)
+                ) {
+                    return !isPort;
+                }
             }
-        }
-        // 下
-        else{
-            if(tile.getToDirection().hasDirection(Direction.UP)
-            && tile.getFromDirection().hasDirection(Direction.DOWN)) {
-                return true;
-            } else if(
-                tile.getToDirection().hasDirection(Direction.UP)
-                || tile.getFromDirection().hasDirection(Direction.DOWN)
-            ) {
-                return !isPort;
+            // 下
+            else{
+                if(tile.getToDirection().hasDirection(Direction.UP)
+                        && tile.getFromDirection().hasDirection(Direction.DOWN)) {
+                    return true;
+                } else if(
+                        tile.getToDirection().hasDirection(Direction.UP)
+                                || tile.getFromDirection().hasDirection(Direction.DOWN)
+                ) {
+                    return !isPort;
+                }
             }
         }
 

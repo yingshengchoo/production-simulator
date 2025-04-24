@@ -132,7 +132,7 @@ public final class BoardDisplay {
                 .findFirst().orElse(null);
     }
 
-    public RoadTile findRoadTile(double px, double py) {
+    public List<RoadTile> findRoadTile(double px, double py) {
         return Road.existingRoadTiles.get(screenToGrid(px, py));
     }
 
@@ -193,12 +193,15 @@ public final class BoardDisplay {
         g.setFill(ROAD_FILL);
         g.setStroke(ROAD_STROKE);
         g.setLineWidth(2);
-        for (RoadTile t : Road.existingRoadTiles.values()) {
-            var c = t.getCoordinate();
-            if (c.x < visMinX || c.x > visMaxX || c.y < visMinY || c.y > visMaxY) continue;
-            double x = c.x*scale + offX, y = c.y*scale + offY;
-            g.fillRect(x, y, scale, scale);
-            drawRoadConnections(g, t, x, y);
+        for (List<RoadTile> tilesAtC : Road.existingRoadTiles.values()) {
+            for(RoadTile t: tilesAtC) {
+                Coordinate c = t.getCoordinate();
+                if (c.x < visMinX || c.x > visMaxX || c.y < visMinY || c.y > visMaxY) continue;
+                double x = c.x * scale + offX;
+                double y = c.y * scale + offY;
+                g.fillRect(x, y, scale, scale);
+                drawRoadConnections(g, t, x, y);
+            }
         }
     }
 
@@ -308,9 +311,10 @@ public final class BoardDisplay {
         if (b != null) {
             BuildingInfoWindow.show(b); return;
         }
-        RoadTile rt = findRoadTile(e.getX(), e.getY());
-        if (rt != null) {
-            BuildingInfoWindow.show(rt); return;
+        List<RoadTile> rts = findRoadTile(e.getX(), e.getY());
+        if (rts != null) {
+            BuildingInfoWindow.show(rts);
+            return;
         }
         AddBuildingAtCellWindow.show(state, grid, this::refresh);
     }

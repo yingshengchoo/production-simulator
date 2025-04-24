@@ -16,6 +16,7 @@ import productsimulation.State;
 import productsimulation.command.RequestCommand;
 import productsimulation.command.RemoveBuildingCommand;
 import productsimulation.model.*;
+import productsimulation.model.road.Direction;
 import productsimulation.model.road.RoadTile;
 
 import java.util.List;
@@ -63,19 +64,26 @@ public final class BuildingInfoWindow {
 
     /**
      * Show info for a RoadTile (read-only).
-     * @param tile the RoadTile
+     * @param tiles the RoadTile
      */
-    public static void show(RoadTile tile) {
-        Objects.requireNonNull(tile, "RoadTile");
+    public static void show(List<RoadTile> tiles) {
+        Objects.requireNonNull(tiles, "RoadTile");
         Stage stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setTitle("Road Info");
 
+        Direction from = new Direction(Direction.UNDEFINED);
+        Direction to = new Direction(Direction.UNDEFINED);
+        for(RoadTile t: tiles) {
+            from.addDirection(t.getFromDirection());
+            to.addDirection(t.getToDirection());
+        }
+
         VBox root = new VBox(10);
         root.setPadding(new Insets(15));
         root.getChildren().addAll(
-                new Label("From: " + tile.getFromDirection()),
-                new Label("To:   " + tile.getToDirection())
+                new Label("From: " + from),
+                new Label("To:   " + to)
         );
 
         stage.setScene(new Scene(root, 300, 120));

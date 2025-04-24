@@ -130,7 +130,7 @@ public final class AddBuildingWindow {
             String xs = xField.getText().trim();
             String ys = yField.getText().trim();
             Coordinate coord;
-            if (xs.isEmpty()) coord = Building.getValidCoordinate();
+            if (xs.isEmpty()) coord = BuildingHandler.getValidCoordinate();
             else {
                 try { coord = new Coordinate(Integer.parseInt(xs), Integer.parseInt(ys)); }
                 catch (NumberFormatException ex) {

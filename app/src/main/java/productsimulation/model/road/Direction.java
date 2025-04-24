@@ -24,6 +24,12 @@ public class Direction implements Serializable {
         mask |= direction;
     }
 
+    public void removeDirection(int direction) {
+        if(hasDirection(direction)) {
+            mask = mask ^ direction;
+        }
+    }
+
     public String getDirections() {
         StringBuilder sb = new StringBuilder();
         if (hasDirection(UP)) sb.append("UP ");
@@ -31,5 +37,20 @@ public class Direction implements Serializable {
         if (hasDirection(LEFT)) sb.append("LEFT ");
         if (hasDirection(RIGHT)) sb.append("RIGHT ");
         return sb.toString().trim();
+    }
+
+    public void addDirection(Direction direction) {
+        if(direction.hasDirection(Direction.UP)) {
+            this.addDirection(Direction.UP);
+        }
+        if(direction.hasDirection(Direction.DOWN)) {
+            this.addDirection(Direction.DOWN);
+        }
+        if(direction.hasDirection(Direction.LEFT)) {
+            this.addDirection(Direction.LEFT);
+        }
+        if(direction.hasDirection(Direction.RIGHT)) {
+            this.addDirection(Direction.RIGHT);
+        }
     }
 }
