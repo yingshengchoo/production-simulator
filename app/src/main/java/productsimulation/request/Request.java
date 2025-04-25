@@ -5,10 +5,12 @@ import productsimulation.LogicTime;
 import productsimulation.model.Building;
 import productsimulation.model.Recipe;
 import productsimulation.model.drone.DronePort;
+import productsimulation.model.road.Road;
 import productsimulation.model.road.TransportQueue;
 import productsimulation.model.GlobalStorage;
 import productsimulation.model.waste.WasteDisposal;
 
+import java.util.List;
 import java.util.Map;
 
 import java.io.Serializable;
@@ -190,6 +192,27 @@ public class Request implements Serializable{
       Recipe r = Recipe.getRecipe(itemName);
       Building b = Building.getBuilding(buildingName);
       if(r != null && b != null) {
+        // 1)建筑要有这个recipe
+        if(!b.canProduce(itemName)) {
+          return "The building cannot produce " + itemName;
+        }
+        // 2)建筑要和所有source连接
+        List<Building> sources = b.getSources();
+        for(Building src: sources) {
+          Road.getDistance(src, b);
+        }
+        // 3)建筑要和waste连接
+        boolean isWasteOK = false;
+        for(Building cand: Building.buildingGlobalList) {
+          if(cand instanceof WasteDisposal) {
+            int dis = Road.getDistance(b, cand);
+            isWasteOK = true;
+          }
+        }
+        if(!isWasteOK) {
+          return "The building need a waste disposal";
+        }
+
         Request request = new Request(itemName, r, null);
         b.addRequest(request);
       }
