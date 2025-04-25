@@ -62,6 +62,7 @@ public class Storage extends Building {
     //removed register building --> construct first. After construction then register.
     Storage newStorage = new Storage(name, type.getItemToStore(), sources, type.getCapacity(),
             type.getPriority(), sourcePolicy, servePolicy, coordinate);
+    newStorage.initializeStorageType();
     BuildingCostHandler.constructBuilding(newStorage);
     return newStorage;
   }

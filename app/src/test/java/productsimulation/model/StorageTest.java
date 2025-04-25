@@ -13,6 +13,7 @@ import productsimulation.request.Request;
 import productsimulation.*;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -25,6 +26,15 @@ public class StorageTest {
     Board.getBoard().cleanup();
     Building.buildingGlobalList.clear();
     Recipe.recipeGlobalList.clear();
+  }
+
+  @Test
+  public void test_addStorage() {
+    Recipe recipe = new Recipe(1, new HashMap<>(), "thing").register();
+    Storage.addStorage("storage1", new ArrayList<>(), null, null,
+            new Coordinate(0, 0), new StorageType("storageType1", 10, 10, "thing"));
+    assertThrows(RuntimeException.class, ()->Storage.addStorage("storage2", new ArrayList<>(), null, null,
+            new Coordinate(0, 0), new StorageType("storageType1", 10, 10, "thing")));
   }
   
   @Test

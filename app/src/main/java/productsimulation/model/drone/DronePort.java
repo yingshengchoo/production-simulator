@@ -95,6 +95,10 @@ public class DronePort extends Building implements Serializable {
         return false;
     }
 
+    public boolean isReachable(Building src, Building dst) {
+        return inRange(src) && inRange(dst);
+    }
+
     /** Move all drones one step each logic tick. */
     @Override
     public boolean goOneStep() {

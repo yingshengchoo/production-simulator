@@ -12,4 +12,10 @@ class RoadTileTest {
         RoadTile tile = new RoadTile(new Coordinate(1, 1));
         assertEquals(tile.getCoordinate(), new Coordinate(1, 1));
     }
+
+    @Test
+    void setDirection_invalid() {
+        RoadTile tile = new RoadTile(new Coordinate(1, 1));
+        tile.setDirection(null, new Coordinate(1, 1),null);
+    }
 }

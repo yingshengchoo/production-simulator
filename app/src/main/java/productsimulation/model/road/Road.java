@@ -5,6 +5,8 @@ import productsimulation.Board;
 import productsimulation.Coordinate;
 import productsimulation.Log;
 import productsimulation.model.Building;
+import productsimulation.model.drone.DronePort;
+
 import java.io.Serializable;
 
 import java.util.*;
@@ -329,51 +331,13 @@ public class Road implements Serializable {
         if(roadMap.containsKey(new Pair<>(a, b))) {
             return roadMap.get(new Pair<>(a, b)).getRoadLength();
         } else {
+            for (Building bu: Building.buildingGlobalList) {
+                if (bu instanceof DronePort && ((DronePort) bu).isReachable(a, b)) {
+                    // 走无人机的不入transportQueue，这个值应该可以随便给
+                    return 0;
+                }
+            }
             throw new IllegalArgumentException("road not connected!");
         }
     }
-
-
-    /* ---------------------------------------------------------------------
-           Disconnect
-           ------------------------------------------------------------------ */
-    public static String disconnectHandler(String srcName,String dstName) {
-
-        Pair<Building,Building> key = findKey(srcName,dstName);
-        if (key == null) {
-            return "No existing connection between '"+srcName+"' and '"+dstName+"'.";
-        }
-
-        Road doomed = roadMap.remove(key);
-        if (doomed == null) return "Internal error: road already absent.";
-
-        // Build a multiset of tiles still used by *other* roads
-        Set<Coordinate> stillNeeded = new HashSet<>();
-        for (Road r : roadMap.values()) {
-            for (RoadTile rt: r.getRoadTiles()) {
-                Coordinate c= rt.getCoordinate();
-                stillNeeded.add(c);
-            }
-
-        }
-        // Remove every orphaned tile from the global tile-map
-        for (RoadTile rt : doomed.getRoadTiles()) {
-            Coordinate c= rt.getCoordinate();
-            if (!stillNeeded.contains(c)) existingRoadTiles.remove(c);
-            Board.getBoard().setBoardPosWeight(c, 2);
-        }
-        Log.level2Log("Disconnected '"+srcName+"' and '"+dstName+"'");
-        return null;
-    }
-
-    /* helper to locate the pair regardless of src/dst order */
-    private static Pair<Building,Building> findKey(String a,String b){
-        for (Pair<Building,Building> p : roadMap.keySet()){
-            if (p.getKey().getName().equals(a)&&p.getValue().getName().equals(b)) return p;
-            if (p.getKey().getName().equals(b)&&p.getValue().getName().equals(a)) return p;
-        }
-        return null;
-    }
-
-
 }

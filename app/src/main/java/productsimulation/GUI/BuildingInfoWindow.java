@@ -85,8 +85,8 @@ public final class BuildingInfoWindow {
         VBox root = new VBox(10);
         root.setPadding(new Insets(15));
         root.getChildren().addAll(
-                new Label("From: " + from),
-                new Label("To:   " + to)
+                new Label("From: " + from.getDirections()),
+                new Label("To:   " + to.getDirections())
         );
 
         stage.setScene(new Scene(root, 300, 120));
