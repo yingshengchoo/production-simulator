@@ -5,6 +5,9 @@ import productsimulation.Coordinate;
 import productsimulation.Log;
 import productsimulation.model.Building;
 import productsimulation.model.BuildingType;
+import productsimulation.model.Factory;
+import productsimulation.model.Mine;
+import productsimulation.model.road.RoadHandler;
 
 import java.util.HashMap;
 import java.util.List;
@@ -116,6 +119,11 @@ public class WasteDisposal extends Building {
     public WasteDisposal register() {
         buildingGlobalList.add(this);
         Board.getBoard().addBuilding(this);
+        for(Building b: buildingGlobalList) {
+            if(b instanceof Factory || b instanceof Mine) {
+                RoadHandler.connectHandler(b.getName(), name);
+            }
+        }
         return this;
     }
 

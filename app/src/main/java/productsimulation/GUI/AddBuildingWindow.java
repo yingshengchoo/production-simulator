@@ -14,6 +14,8 @@ import productsimulation.Coordinate;
 import productsimulation.State;
 import productsimulation.model.*;
 import productsimulation.model.drone.DronePort;
+import productsimulation.model.waste.WasteDisposal;
+import productsimulation.model.waste.WasteDisposalType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -184,6 +186,10 @@ public final class AddBuildingWindow {
             DronePort dp = new DronePort(name, type, null, null, coord);
             dp.register();
             return dp;
+        } else if (type instanceof WasteDisposalType) {
+            WasteDisposal wd = new WasteDisposal(name, type, new ArrayList<>(), coord);
+            wd.register();
+            return wd;
         }
 
         else {
