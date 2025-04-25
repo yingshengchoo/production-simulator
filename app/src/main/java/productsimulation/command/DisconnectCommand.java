@@ -1,5 +1,6 @@
 package productsimulation.command;
 import productsimulation.model.road.Road;
+import productsimulation.model.road.RoadHandler;
 
 /**
  * Command to remove an existing connection between two buildings.
@@ -18,6 +19,7 @@ public class DisconnectCommand extends Command {
 
     @Override
     public String execute() {
-        return Road.disconnectHandler(source, destination);
+//        return Road.disconnectHandler(source, destination);
+        return RoadHandler.removeHandler(source, destination);
     }
 }

@@ -1,6 +1,7 @@
 package productsimulation.command;
 
 import productsimulation.State;
+import productsimulation.model.BuildingHandler;
 
 /**
  * Command to remove a building from the simulation, cleaning up any
@@ -15,6 +16,7 @@ public class RemoveBuildingCommand extends Command {
 
     @Override
     public String execute() {
-        return State.removeBuildingHandler(name);
+//        return State.removeBuildingHandler(name);
+        return BuildingHandler.removeHandler(name);
     }
 }

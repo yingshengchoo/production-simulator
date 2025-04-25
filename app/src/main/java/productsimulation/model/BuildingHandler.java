@@ -89,19 +89,24 @@ public class BuildingHandler {
 
     public static void removeBuilding(Building building) {
         String error = null;
+        // 删除为起点或为终点的connection
+        ArrayList<Pair<String, String>> toRemove = new ArrayList<>();
+        for(Pair<Building, Building> p: Road.roadMap.keySet()) {
+            if(p.getKey().equals(building)) {
+                toRemove.add(new Pair<>(building.getName(), p.getValue().getName()));
+            }
+            if(p.getValue().equals(building)) {
+                toRemove.add(new Pair<>(p.getKey().getName(), building.getName()));
+            }
+        }
+        for(Pair<String, String> p: toRemove) {
+            error = RoadHandler.removeHandler(p.getKey(), p.getValue());
+        }
+
         // 从buildingGlobalList中删除
         Building.buildingGlobalList.remove(building);
         // board重置为空地
         Board.getBoard().setBoardPosWeight(building.getCoordinate(), 2);
-        // 删除为起点或为终点的connection
-        for(Pair<Building, Building> p: Road.roadMap.keySet()) {
-            if(p.getKey().equals(building)) {
-                error = RoadHandler.removeHandler(building.getName(), p.getValue().getName());
-            }
-            if(p.getValue().equals(building)) {
-                error = RoadHandler.removeHandler(p.getKey().getName(), building.getName());
-            }
-        }
         if(error != null) {
             throw new RuntimeException(error);
         }

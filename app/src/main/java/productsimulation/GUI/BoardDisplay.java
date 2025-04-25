@@ -194,14 +194,21 @@ public final class BoardDisplay {
         g.setStroke(ROAD_STROKE);
         g.setLineWidth(2);
         for (List<RoadTile> tilesAtC : Road.existingRoadTiles.values()) {
-            for(RoadTile t: tilesAtC) {
-                Coordinate c = t.getCoordinate();
-                if (c.x < visMinX || c.x > visMaxX || c.y < visMinY || c.y > visMaxY) continue;
-                double x = c.x * scale + offX;
-                double y = c.y * scale + offY;
-                g.fillRect(x, y, scale, scale);
-                drawRoadConnections(g, t, x, y);
+            RoadTile t = tilesAtC.get(0);
+            Coordinate c = t.getCoordinate();
+            if (c.x < visMinX || c.x > visMaxX || c.y < visMinY || c.y > visMaxY) continue;
+            double x = c.x * scale + offX;
+            double y = c.y * scale + offY;
+            g.fillRect(x, y, scale, scale);
+            // 将一个坐标上的所有tile合成一块临时tile，临时tile仅用于GUI绘制
+            RoadTile tmp = new RoadTile(c);
+            Direction fromDirection = tmp.getFromDirection();
+            Direction toDirection = tmp.getToDirection();
+            for(RoadTile tile: tilesAtC) {
+                fromDirection.addDirection(tile.getFromDirection());
+                toDirection.addDirection(tile.getToDirection());
             }
+            drawRoadConnections(g, tmp, x, y);
         }
     }
 
