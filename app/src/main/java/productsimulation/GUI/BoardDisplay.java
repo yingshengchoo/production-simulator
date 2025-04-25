@@ -16,6 +16,7 @@ import productsimulation.model.Factory;
 import productsimulation.model.Mine;
 import productsimulation.model.Storage;
 import productsimulation.model.drone.Drone;
+import productsimulation.model.drone.DronePort;
 import productsimulation.model.drone.DroneState;
 import productsimulation.model.road.Direction;
 import productsimulation.model.road.Road;
@@ -237,7 +238,7 @@ public final class BoardDisplay {
                 g.strokeOval(x, y, scale, scale);
                 g.setFill(Color.BLACK);
                 g.fillText(
-                        String.valueOf(port.getDrones().size()),
+                        String.valueOf(port.getName()),
                         x + scale*0.3,
                         y + scale*0.7
                 );
@@ -315,15 +316,16 @@ public final class BoardDisplay {
         if (grid.x<visMinX||grid.x>visMaxX||grid.y<visMinY||grid.y>visMaxY) return;
         Building b  = findBuilding(e.getX(), e.getY());
         if (b != null) {
-            BuildingInfoWindow.show(b); return;
-        }
-        List<RoadTile> rts = findRoadTile(e.getX(), e.getY());
-        if (rts != null) {
-            BuildingInfoWindow.show(rts);
             if (b instanceof DronePort) {
                 new DronePortWindow((DronePort) b).show();
                 return;
             }
+            BuildingInfoWindow.show(b);
+            return;
+        }
+        List<RoadTile> rts = findRoadTile(e.getX(), e.getY());
+        if (rts != null) {
+            BuildingInfoWindow.show(rts);
             BuildingInfoWindow.show(b);
             return;
         }
