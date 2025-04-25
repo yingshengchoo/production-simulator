@@ -127,7 +127,7 @@ public class Request implements Serializable{
       if (transLatency <= 0) {
         requester.updateStorage(ingredient);
       } else {
-        // 优先尝试无人机配送
+        // 优先尝试drone配送
         DronePort port = DronePort.findEligiblePort(this, worker, this.requester);
         if (port != null) {
           return;
@@ -135,7 +135,6 @@ public class Request implements Serializable{
         TransportQueue.addRequest(this);
       }
     } else {
-      // 完成最终交付
       GlobalStorage.addItemToStorage(ingredient);
       Log.level0Log("[order complete] Order " + id + " completed (" + ingredient + ")" +
               " at time " + LogicTime.getInstance().getStep());

@@ -13,6 +13,7 @@ import javafx.stage.Stage;
 import productsimulation.Coordinate;
 import productsimulation.State;
 import productsimulation.model.*;
+import productsimulation.model.drone.DronePort;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -179,7 +180,13 @@ public final class AddBuildingWindow {
             return Mine.addMine(name, sources,
                     state.getDefaultSourcePolicy(), state.getDefaultServePolicy(),
                     coord, type);
-        } else {
+        } else if (type instanceof DronePortType) {
+            DronePort dp = new DronePort(name, type, null, null, coord);
+            dp.register();
+            return dp;
+        }
+
+        else {
             return Factory.addFactory(name, sources,
                     state.getDefaultSourcePolicy(), state.getDefaultServePolicy(),
                     coord, type);

@@ -16,7 +16,6 @@ import productsimulation.model.Factory;
 import productsimulation.model.Mine;
 import productsimulation.model.Storage;
 import productsimulation.model.drone.Drone;
-import productsimulation.model.drone.DronePort;
 import productsimulation.model.drone.DroneState;
 import productsimulation.model.road.Direction;
 import productsimulation.model.road.Road;
@@ -321,6 +320,11 @@ public final class BoardDisplay {
         List<RoadTile> rts = findRoadTile(e.getX(), e.getY());
         if (rts != null) {
             BuildingInfoWindow.show(rts);
+            if (b instanceof DronePort) {
+                new DronePortWindow((DronePort) b).show();
+                return;
+            }
+            BuildingInfoWindow.show(b);
             return;
         }
         AddBuildingAtCellWindow.show(state, grid, this::refresh);
