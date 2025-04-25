@@ -4,16 +4,26 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Collections;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import productsimulation.Board;
+import productsimulation.Coordinate;
 
 public class MineTest {
   @BeforeEach
   public void cleanUpBefore() {
     Board.getBoard().cleanup();
     Building.buildingGlobalList.clear();
+  }
+
+  @Test
+  public void test_addMine() {
+    Mine.addMine("mine1", new ArrayList<>(), null, null,
+            new Coordinate(0, 0), new BuildingType("typename", new HashMap<>(), new Cost()));
+    assertThrows(RuntimeException.class, ()->Mine.addMine("mine2", new ArrayList<>(), null, null,
+            new Coordinate(0, 0), new BuildingType("typename", new HashMap<>(), new Cost())));
   }
 
   @Test

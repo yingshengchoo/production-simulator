@@ -22,6 +22,12 @@ public class AtomBuilding extends Building {
         Board.getBoard().setBoardPosWeight(c, Integer.MAX_VALUE);
     }
 
+    public AtomBuilding(Coordinate c, String name) {
+        super(name, new BuildingType("typename", new HashMap<>()), new ArrayList<>(), new SourceQLen(), new FIFOPolicy(), c);
+        this.position = c;
+        Board.getBoard().setBoardPosWeight(c, Integer.MAX_VALUE);
+    }
+
     public AtomBuilding register() {
         buildingGlobalList.add(this);
         Board.getBoard().addBuilding(this);

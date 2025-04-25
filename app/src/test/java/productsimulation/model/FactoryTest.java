@@ -4,16 +4,27 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Collections;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import productsimulation.Board;
+import productsimulation.Coordinate;
 
 public class FactoryTest {
   @BeforeEach
   public void cleanUpBefore() {
     Board.getBoard().cleanup();
   }
+
+  @Test
+  public void test_addFactory() {
+    Factory.addFactory("factory1", new ArrayList<>(), null, null,
+            new Coordinate(0, 0), new BuildingType("typename", new HashMap<>(), new Cost()));
+    assertThrows(RuntimeException.class, ()->Factory.addFactory("factory2", new ArrayList<>(), null, null,
+            new Coordinate(0, 0), new BuildingType("typename", new HashMap<>(), new Cost())));
+  }
+
   @Test
   public void test_toString(){
     ArrayList<Building> sources = new ArrayList<>();

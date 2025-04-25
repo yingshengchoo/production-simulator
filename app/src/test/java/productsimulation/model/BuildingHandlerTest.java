@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import productsimulation.Coordinate;
 import productsimulation.model.road.AtomBuilding;
+import productsimulation.model.road.RoadHandler;
 
 import java.util.ArrayList;
 
@@ -45,5 +46,10 @@ class BuildingHandlerTest {
 
     @Test
     void test_removeHandler() {
+        AtomBuilding b1 = new AtomBuilding(new Coordinate(0,0), "b1").register();
+        AtomBuilding b2 = new AtomBuilding(new Coordinate(0,0), "b2").register();
+        RoadHandler.connectHandler("b1", "b2");
+        assertNull(BuildingHandler.removeHandler("b1"));
+        assertNotNull(BuildingHandler.removeHandler("notExistBuildingName"));
     }
 }

@@ -87,7 +87,7 @@ public class BuildingHandler {
         return withinX && withinY;
     }
 
-    public static void removeBuilding(Building building) {
+    public static String removeBuilding(Building building) {
         String error = null;
         // 删除为起点或为终点的connection
         ArrayList<Pair<String, String>> toRemove = new ArrayList<>();
@@ -107,9 +107,7 @@ public class BuildingHandler {
         Building.buildingGlobalList.remove(building);
         // board重置为空地
         Board.getBoard().setBoardPosWeight(building.getCoordinate(), 2);
-        if(error != null) {
-            throw new RuntimeException(error);
-        }
+        return error;
     }
 
     public static String removeHandler(String buildingName) {
@@ -122,10 +120,20 @@ public class BuildingHandler {
         if(building == null) {
             return "Building does not exists. Check the building name.";
         }
+        // 1) Can't remove if there are pending requests
+        if (!building.getRequestQueue().isEmpty()) {
+            return "Cannot remove '" + buildingName + "': pending requests exist.";
+        }
+        // 2) If storage, ensure it’s empty
+        if (building instanceof Storage) {
+            Storage s = (Storage) building;
+            if (s.getStockCount() > 0) {
+                return "Cannot remove storage '" + buildingName + "': storage not empty.";
+            }
+        }
         try{
-            removeBuilding(building);
             Log.level0Log(buildingName + " removed");
-            return null;
+            return removeBuilding(building);
         } catch (Exception e) {
             return e.getClass().getSimpleName() + ": " + e.getMessage();
         }

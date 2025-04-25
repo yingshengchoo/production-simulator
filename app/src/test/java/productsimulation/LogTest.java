@@ -110,4 +110,10 @@ public class LogTest {
         String expected = "[Log] - level0 log\n";
         logTestHelper(expected);
     }
+
+    @Test
+    void test_getLogText() {
+        assertNotNull(Log.getLogText());
+        assertTrue(Log.getLogText("not exist").contains("error"));
+    }
 }

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import productsimulation.Board;
 import productsimulation.Coordinate;
 import productsimulation.SoleSourcePolicy;
+import productsimulation.model.road.AtomBuilding;
 import productsimulation.request.servePolicy.*;
 import productsimulation.request.sourcePolicy.*;
 import org.junit.jupiter.api.Test;
@@ -78,5 +79,16 @@ public class BuildingTest {
     Factory f1 =  new Factory("factory1", t1, Collections.emptyList(), null, null, new Coordinate(10,11));
     assertEquals(10,f1.getX());
     assertEquals(11,f1.getY());
+  }
+
+  @Test
+  void test_getBuilding_invalid() {
+    assertNull(Building.getBuilding("nonExistBuildingName"));
+  }
+
+  @Test
+  void test_isNeighborCoordinate_invalid() {
+    AtomBuilding b = new AtomBuilding(new Coordinate(0, 0));
+    assertFalse(b.isNeighborCoordinate(null));
   }
 }

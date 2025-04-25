@@ -48,17 +48,24 @@ public class Log implements Serializable {
 
 //    GUI会每隔一秒调用一次，返回全量Log，GUI默认将滚动条拉到最下
     public static String getLogText() {
+        return getLogText("test.log");
+    }
+
+    public static String getLogText(String logFileName) {
         StringBuilder logContent = new StringBuilder();
-        File logFile = new File("test.log");
+        File logFile = new File(logFileName);
         try (BufferedReader reader = new BufferedReader(new FileReader(logFile))) {
             String line;
-            while ((line = reader.readLine()) != null) {
+            while (true) {
+                line = reader.readLine();
+                if (line == null) {
+                    break;
+                }
                 logContent.append(line).append("\n");
             }
         } catch (IOException e) {
             return "error when reading log file: " + e.getMessage();
         }
         return logContent.toString().trim();
-//        return "test log string 0412";
     }
 }

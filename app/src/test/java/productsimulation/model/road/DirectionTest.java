@@ -37,18 +37,30 @@ public class DirectionTest {
     @Test
     public void testAddDirection() {
         Direction direction = new Direction(Direction.UNDEFINED);
-
         // 测试添加单个方向
         direction.addDirection(Direction.UP);
         assertEquals("UP", direction.getDirections());
-
         // 测试添加多个方向
         direction.addDirection(Direction.RIGHT);
         assertEquals("UP RIGHT", direction.getDirections());
-
         // 测试重复添加方向（不应改变 mask）
         direction.addDirection(Direction.UP);
         assertEquals("UP RIGHT", direction.getDirections());
+
+        Direction direction2 = new Direction(Direction.DOWN);
+        direction2.addDirection(Direction.LEFT);
+
+        // 直接用方向添加方向
+        Direction direction3 = new Direction(Direction.UNDEFINED);
+        direction3.addDirection(direction);
+        assertEquals("UP RIGHT", direction3.getDirections());
+        direction3.addDirection(direction2);
+        assertEquals("UP DOWN LEFT RIGHT", direction3.getDirections());
+    }
+
+    @Test
+    public void testAddDirectionByObject() {
+
     }
 
     @Test
