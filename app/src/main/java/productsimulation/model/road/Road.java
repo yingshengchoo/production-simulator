@@ -5,6 +5,8 @@ import productsimulation.Board;
 import productsimulation.Coordinate;
 import productsimulation.Log;
 import productsimulation.model.Building;
+import productsimulation.model.drone.DronePort;
+
 import java.io.Serializable;
 
 import java.util.*;
@@ -329,6 +331,12 @@ public class Road implements Serializable {
         if(roadMap.containsKey(new Pair<>(a, b))) {
             return roadMap.get(new Pair<>(a, b)).getRoadLength();
         } else {
+            for (Building bu: Building.buildingGlobalList) {
+                if (bu instanceof DronePort && ((DronePort) bu).isReachable(a, b)) {
+                    // 走无人机的不入transportQueue，这个值应该可以随便给
+                    return 0;
+                }
+            }
             throw new IllegalArgumentException("road not connected!");
         }
     }
