@@ -5,8 +5,10 @@ import productsimulation.Coordinate;
 import productsimulation.Log;
 import productsimulation.LogicTime;
 import productsimulation.model.road.Road;
+import productsimulation.model.waste.WasteDisposal;
 import productsimulation.request.Policy;
 import productsimulation.request.Request;
+import productsimulation.request.WasteRequest;
 import productsimulation.request.servePolicy.ServePolicy;
 import productsimulation.request.sourcePolicy.SourcePolicy;
 
@@ -29,7 +31,9 @@ public abstract class Building implements Serializable {
     protected SourcePolicy sourcePolicy;
     protected ServePolicy servePolicy;
 
-    protected Coordinate coordinate;  
+    protected Coordinate coordinate;
+
+    protected Map<String, Integer> wastes = new HashMap<>();
 
     public static List<Building> buildingGlobalList = new ArrayList<>();
     public static Building getBuilding(String item) {
@@ -318,6 +322,76 @@ public abstract class Building implements Serializable {
             requestQueue.remove(currentRequest);
             currentRequest = null;
         }
+
+        disposalWastes();
+    }
+
+    /**
+     * Handles the disposal of waste items stored in the building's waste inventory.
+     *
+     * This method iterates through the waste items in the building's waste inventory
+     * to dispose of them wherever there is eligible disposal capacity. It identifies
+     * each type of waste and attempts to allocate space for it in a compatible waste
+     * disposal facility. The method handles the following:
+     *
+     * - Removing waste entries if the remaining quantity of the waste is zero or less.
+     * - Locating appropriate disposal facilities that have available capacity for the waste.
+     * - Calculating the amount of waste to send based on the availability and the waste quantity.
+     * - Booking the disposal capacity for the specified amount.
+     * - Creating and processing waste disposal requests to handle transportation and reporting.
+     * - Updating the remaining quantity in the waste inventory after successful processing.
+     *
+     * If no eligible disposal facility is found for a waste type, a debug log entry
+     * is generated to indicate the lack of disposal space for that waste.
+     *
+     * The waste inventory is maintained in a way that ensures only valid or residual
+     * waste quantities remain after each iteration.
+     */
+    protected void disposalWastes() {
+        Iterator<Map.Entry<String, Integer>> it = wastes.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, Integer> entry = it.next();
+            String wasteItem = entry.getKey();
+            int remaining = entry.getValue();
+            if (remaining <= 0) {
+                it.remove();
+                continue;
+            }
+
+            // find a disposal with available space.
+            WasteDisposal wd = WasteDisposal.findEligibleDisposal(wasteItem);
+            if (wd == null) {
+                Log.debugLog("[Factory] No disposal space for "
+                        + wasteItem + " (remaining=" + remaining + ") at " + name);
+                // go next waste
+                continue;
+            }
+
+            // amount = min(waste remain, available space in disposal)
+            int available = wd.getAvailableCapacity(wasteItem);
+            int toSend = Math.min(remaining, available);
+
+            // book capacity
+            wd.bookWaste(wasteItem, toSend);
+
+            // construct a waste request :D
+            WasteRequest wr = new WasteRequest(
+                    wasteItem,
+                    toSend,
+                    this,
+                    wd,
+                    Road.getDistance(this, wd)
+            );
+            wr.doneReportAndTransport();
+
+            // update remaining
+            remaining -= toSend;
+            if (remaining <= 0) {
+                it.remove();
+            } else {
+                entry.setValue(remaining);
+            }
+        }
     }
 
     public void updateStorage(String itemName) {
@@ -355,11 +429,9 @@ public abstract class Building implements Serializable {
 
         if (diffX == 1 && diffY == 0) {
             return true;
-        } else if (diffY == 1 && diffX == 0) {
-            return true;
         }
 
-        return false;
+        else return diffY == 1 && diffX == 0;
     }
 
     public boolean notified() {

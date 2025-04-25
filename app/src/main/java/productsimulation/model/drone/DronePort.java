@@ -130,5 +130,9 @@ public class DronePort extends Building {
     public int getDroneSpeed() {
         return SPEED;
     }
+
+    public List<Drone> getDrones() {
+        return drones;
+    }
 }
 

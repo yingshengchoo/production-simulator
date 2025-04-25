@@ -12,6 +12,7 @@ import productsimulation.model.Building;
 import productsimulation.model.Factory;
 import productsimulation.model.Mine;
 import productsimulation.model.Storage;
+import productsimulation.model.drone.DronePort;
 import productsimulation.model.road.Direction;
 import productsimulation.model.road.Road;
 import productsimulation.model.road.RoadTile;
@@ -253,6 +254,10 @@ public final class BoardDisplay {
         }
         Building b  = findBuilding(e.getX(), e.getY());
         if (b != null) {
+            if (b instanceof DronePort) {
+                new DronePortWindow((DronePort) b).show();
+                return;
+            }
             BuildingInfoWindow.show(b);
             return;
         }

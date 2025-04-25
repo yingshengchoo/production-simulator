@@ -56,6 +56,10 @@ public class Factory extends Building {
 
 
     public boolean goOneStep() {
+        if (!wastes.isEmpty()) {
+            Log.level2Log("waste not disposed, blocked :(");
+            return !requestQueue.isEmpty();
+        }
 
         if(currentRequest == null) {
             if(!requestQueue.isEmpty()) {

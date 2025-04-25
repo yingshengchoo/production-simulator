@@ -3,7 +3,9 @@ package productsimulation.model.road;
 import productsimulation.Log;
 import productsimulation.LogicTime;
 import productsimulation.model.Building;
+import productsimulation.model.waste.WasteDisposal;
 import productsimulation.request.Request;
+import productsimulation.request.WasteRequest;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -32,7 +34,16 @@ public class TransportQueue implements Serializable {
             if (request.isReadyToDeliver()) {
                 // deliver request!
                 Building requester = request.getRequester();
-                requester.updateStorage(request.getIngredient());
+
+                if (request.getClass().equals(WasteRequest.class)) {
+                    // 提交waste
+                    WasteRequest wasteRequest = (WasteRequest) request;
+                    WasteDisposal wasteDisposal = (WasteDisposal) requester;
+                    wasteDisposal.commitWaste(wasteRequest.getIngredient(), wasteRequest.getCount());
+                } else {
+                    // 提交普通request
+                    requester.updateStorage(request.getIngredient());
+                }
 
                 iterator.remove();
             }

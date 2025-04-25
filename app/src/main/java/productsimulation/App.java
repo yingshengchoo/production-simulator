@@ -3,10 +3,7 @@ package productsimulation;
 import productsimulation.GUI.GUI;
 import productsimulation.command.Command;
 import productsimulation.command.CommandParser;
-import productsimulation.model.Building;
-import productsimulation.model.BuildingType;
-import productsimulation.model.Storage;
-import productsimulation.model.Recipe;
+import productsimulation.model.*;
 import productsimulation.request.servePolicy.FIFOPolicy;
 import productsimulation.request.servePolicy.ServePolicy;
 import productsimulation.request.sourcePolicy.SourcePolicy;
@@ -17,6 +14,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -130,6 +128,8 @@ public class App {
             return false;
         }
         BuildingType.setBuildingTypeGlobalList(parser.getTypeMap());
+        DronePortType dronePort = new DronePortType("Drone Port", new HashMap<>());
+        BuildingType.getBuildingTypeGlobalList().add(dronePort);
         return true;
     }
 

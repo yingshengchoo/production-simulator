@@ -12,6 +12,7 @@ import javafx.stage.Stage;
 import productsimulation.Coordinate;
 import productsimulation.State;
 import productsimulation.model.*;
+import productsimulation.model.drone.DronePort;
 
 import java.util.List;
 import java.util.Objects;
@@ -167,6 +168,11 @@ public final class AddBuildingAtCellWindow {
                     state.getDefaultSourcePolicy(),
                     state.getDefaultServePolicy(),
                     coord, type);
+        }
+        else if (type instanceof DronePortType) {
+            DronePort dp = new DronePort(name, type, null, null, coord);
+            dp.register();
+            return dp;
         }
         return Factory.addFactory(name, sources,
                 state.getDefaultSourcePolicy(),

@@ -13,6 +13,16 @@ public class Recipe implements Serializable{
   private Map<String, Integer> ingredients;
   private final int latency;
 
+  public String getWaste() {
+    return waste;
+  }
+
+  public void setWaste(String waste) {
+    this.waste = waste;
+  }
+
+  private String waste;
+
   
   public static Recipe getRecipe(String item) {
     for (Recipe recipe : recipeGlobalList) {
