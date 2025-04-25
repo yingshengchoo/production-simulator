@@ -202,16 +202,7 @@ public class Request implements Serializable{
           Road.getDistance(src, b);
         }
         // 3)建筑要和waste连接
-        boolean isWasteOK = false;
-        for(Building cand: Building.buildingGlobalList) {
-          if(cand instanceof WasteDisposal) {
-            int dis = Road.getDistance(b, cand);
-            isWasteOK = true;
-          }
-        }
-        if(!isWasteOK) {
-          return "The building need a waste disposal";
-        }
+        // 目前不连也能开造，不过造了一会就会堵住，这点和真实游戏一样。
 
         Request request = new Request(itemName, r, null);
         b.addRequest(request);
