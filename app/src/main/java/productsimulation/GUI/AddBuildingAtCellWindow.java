@@ -14,6 +14,8 @@ import productsimulation.Coordinate;
 import productsimulation.State;
 import productsimulation.model.*;
 import productsimulation.model.drone.DronePort;
+import productsimulation.model.waste.WasteDisposal;
+import productsimulation.model.waste.WasteDisposalType;
 
 import java.util.List;
 import java.util.Objects;
@@ -182,16 +184,26 @@ public final class AddBuildingAtCellWindow {
             return Storage.addStorage(name, sources,
                     state.getDefaultSourcePolicy(), state.getDefaultServePolicy(),
                     coord, (StorageType) type);
-        } else if (type.getName().toLowerCase().contains("mine")) {
+        }
+
+        else if (type.getName().toLowerCase().contains("mine")) {
             return Mine.addMine(name, sources,
                     state.getDefaultSourcePolicy(), state.getDefaultServePolicy(),
                     coord, type);
         }
+
         else if (type instanceof DronePortType) {
             DronePort dp = new DronePort(name, type, null, null, coord);
             dp.register();
             return dp;
         }
+
+        else if (type instanceof WasteDisposalType) {
+            WasteDisposal wd = new WasteDisposal(name, type, sources, coord);
+            wd.register();
+            return wd;
+        }
+
         return Factory.addFactory(name, sources,
                 state.getDefaultSourcePolicy(), state.getDefaultServePolicy(),
                 coord, type);

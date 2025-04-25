@@ -33,18 +33,7 @@ public class TransportQueue implements Serializable {
 
             if (request.isReadyToDeliver()) {
                 // deliver request!
-                Building requester = request.getRequester();
-
-                if (request.getClass().equals(WasteRequest.class)) {
-                    // 提交waste
-                    WasteRequest wasteRequest = (WasteRequest) request;
-                    WasteDisposal wasteDisposal = (WasteDisposal) requester;
-                    wasteDisposal.commitWaste(wasteRequest.getIngredient(), wasteRequest.getCount());
-                } else {
-                    // 提交普通request
-                    requester.updateStorage(request.getIngredient());
-                }
-
+                request.submitToRequester();
                 iterator.remove();
             }
         }

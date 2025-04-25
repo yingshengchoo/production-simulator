@@ -3,7 +3,9 @@ package productsimulation.model.drone;
 import productsimulation.Coordinate;
 import productsimulation.Log;
 import productsimulation.model.Building;
+import productsimulation.model.waste.WasteDisposal;
 import productsimulation.request.Request;
+import productsimulation.request.WasteRequest;
 
 /**
  * Drone handles transporting a single item request by flying between
@@ -101,7 +103,15 @@ public class Drone {
      * 在 dest 建筑中放入物品
      */
     private void doDropoff() {
-        dest.updateStorage(request.getIngredient());
+        if (request instanceof WasteRequest) {
+            // 提交waste
+            WasteRequest wasteRequest = (WasteRequest) request;
+            WasteDisposal wasteDisposal = (WasteDisposal) dest;
+            wasteDisposal.commitWaste(wasteRequest.getIngredient(), wasteRequest.getCount());
+        } else {
+            // 提交普通request
+            dest.updateStorage(request.getIngredient());
+        }
         Log.debugLog("[Drone] Delivered " + request.getIngredient() + " to " + dest.getName());
     }
 

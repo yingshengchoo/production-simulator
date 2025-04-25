@@ -4,6 +4,7 @@ import productsimulation.GUI.GUI;
 import productsimulation.command.Command;
 import productsimulation.command.CommandParser;
 import productsimulation.model.*;
+import productsimulation.model.waste.WasteDisposalType;
 import productsimulation.request.servePolicy.FIFOPolicy;
 import productsimulation.request.servePolicy.ServePolicy;
 import productsimulation.request.sourcePolicy.SourcePolicy;
@@ -128,8 +129,22 @@ public class App {
             return false;
         }
         BuildingType.setBuildingTypeGlobalList(parser.getTypeMap());
+
+        // add drone port type
         DronePortType dronePort = new DronePortType("Drone Port", new HashMap<>());
         BuildingType.getBuildingTypeGlobalList().add(dronePort);
+
+
+        // HARD CODING waste disposal type
+        Map<String, int[]> wasteConfigMap = new HashMap<>();
+        int[] arr = {50, 10, 2}; // capacity, rate, interval
+        wasteConfigMap.put("waste", arr);
+        WasteDisposalType wasteDisposal = new WasteDisposalType("Waste Disposal", new HashMap<>(), wasteConfigMap);
+        BuildingType.getBuildingTypeGlobalList().add(wasteDisposal);
+        for (Recipe r : Recipe.recipeGlobalList) {
+            r.addWaste("waste", 2);
+        }
+
         return true;
     }
 

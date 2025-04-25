@@ -7,6 +7,7 @@ import productsimulation.model.Recipe;
 import productsimulation.model.drone.DronePort;
 import productsimulation.model.road.TransportQueue;
 import productsimulation.model.GlobalStorage;
+import productsimulation.model.waste.WasteDisposal;
 
 import java.util.Map;
 
@@ -38,7 +39,7 @@ public class Request implements Serializable{
     this.ingredient = ingredient;
     this.recipe = recipe;
     this.requester = requester;
-    if(recipe.getIngredients().isEmpty()) {
+    if(recipe == null || recipe.getIngredients().isEmpty()) {
       this.status = RequestStatus.READY;
     } else {
       this.status = RequestStatus.WAITING;
@@ -122,10 +123,19 @@ public class Request implements Serializable{
   }
 
   public void doneReportAndTransport() {
+    // add waste to worker building
+    if (worker != null && recipe != null && !recipe.getWasteMap().isEmpty()) {
+      for (Map.Entry<String, Integer> e : recipe.getWasteMap().entrySet()) {
+        String waste = e.getKey();
+        Integer count = e.getValue();
+        worker.addWaste(waste, count);
+      }
+    }
+
     if (requester != null) {
       Log.debugLog(ingredient + " produce done at " + LogicTime.getInstance().getStep());
       if (transLatency <= 0) {
-        requester.updateStorage(ingredient);
+        submitToRequester();
       } else {
         // 优先尝试drone配送
         DronePort port = DronePort.findEligiblePort(this, worker, this.requester);
@@ -191,5 +201,18 @@ public class Request implements Serializable{
 
     public void setWorker(Building worker) {
         this.worker = worker;
+    }
+
+
+    public void submitToRequester() {
+      if (this instanceof WasteRequest) {
+        // 提交waste
+        WasteRequest wasteRequest = (WasteRequest) this;
+        WasteDisposal wasteDisposal = (WasteDisposal) requester;
+        wasteDisposal.commitWaste(wasteRequest.getIngredient(), wasteRequest.getCount());
+      } else {
+        // 提交普通request
+        requester.updateStorage(getIngredient());
+      }
     }
 }

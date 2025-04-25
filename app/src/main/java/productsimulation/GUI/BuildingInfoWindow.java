@@ -18,8 +18,11 @@ import productsimulation.command.RemoveBuildingCommand;
 import productsimulation.model.*;
 import productsimulation.model.road.Direction;
 import productsimulation.model.road.RoadTile;
+import productsimulation.model.waste.WasteDisposal;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -88,24 +91,6 @@ public final class BuildingInfoWindow {
 
         stage.setScene(new Scene(root, 300, 120));
         stage.showAndWait();
-    }
-
-    // Info section
-    private static TitledPane createInfoSection(Building b) {
-        VBox box = new VBox(8);
-        box.getChildren().addAll(
-                new Label("Step: " + LogicTime.getInstance().getStep()),
-                new Label("Name: " + b.getName()),
-                new Label("Coord: (" + b.getX() + "," + b.getY() + ")"),
-                new Label("Queue size: " + b.getRequestQueue().size())
-        );
-        if (b instanceof Mine)        box.getChildren().addAll(mineLabels((Mine)b));
-        else if (b instanceof Storage) box.getChildren().addAll(storageLabels((Storage)b));
-        else if (b instanceof Factory) box.getChildren().addAll(factoryLabels((Factory)b));
-
-        TitledPane pane = new TitledPane("Details", box);
-        pane.setCollapsible(false);
-        return pane;
     }
 
     // Request section
@@ -234,5 +219,47 @@ public final class BuildingInfoWindow {
         Alert a = new Alert(type, text, ButtonType.OK);
         a.setHeaderText(null);
         a.showAndWait();
+    }
+
+    private static TitledPane createInfoSection(Building b) {
+        VBox box = new VBox(8);
+        box.getChildren().addAll(
+                new Label("Step: " + LogicTime.getInstance().getStep()),
+                new Label("Name: " + b.getName()),
+                new Label("Coord: (" + b.getX() + "," + b.getY() + ")"),
+                new Label("Queue size: " + b.getRequestQueue().size())
+        );
+
+        if (b instanceof Mine) {
+            box.getChildren().addAll(mineLabels((Mine) b));
+            Map<String, Integer> wastes = b.getWastes();
+            if (!wastes.isEmpty()) {
+                box.getChildren().add(new Label("Waste Info:"));
+                for (Map.Entry<String, Integer> e : wastes.entrySet()) {
+                    box.getChildren().add(new Label(
+                            String.format("%s: %d", e.getKey(), e.getValue())
+                    ));
+                }
+            }
+        } else if (b instanceof Storage) {
+            box.getChildren().addAll(storageLabels((Storage) b));
+        } else if (b instanceof Factory) {
+            box.getChildren().addAll(factoryLabels((Factory) b));
+            // 展示 Factory 产生的 waste
+            Map<String, Integer> wastes = b.getWastes();
+            if (!wastes.isEmpty()) {
+                box.getChildren().add(new Label("Waste Info:"));
+                for (Map.Entry<String, Integer> e : wastes.entrySet()) {
+                    box.getChildren().add(new Label(
+                            String.format("%s: %d", e.getKey(), e.getValue())
+                    ));
+                }
+            }
+        }
+        // 如果有其他类型，不做额外展示
+
+        TitledPane pane = new TitledPane("Details", box);
+        pane.setCollapsible(false);
+        return pane;
     }
 }

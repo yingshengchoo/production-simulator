@@ -16,13 +16,13 @@ import java.util.Map;
  */
 public class WasteDisposal extends Building {
 
-    private static class WasteConfig {
+    public static class WasteConfig {
         final int capacity;
-        final int rate;       // 每 interval 处置数量
-        final int interval;   // 处置间隔
-        int stored = 0;
-        int booked = 0;       //在途
-        int timer = 0;        // 自上次处置以来的计时器
+        public final int rate;       // 每 interval 处置数量
+        public final int interval;   // 处置间隔
+        public int stored = 0;
+        public int booked = 0;       //在途
+        public int timer = 0;        // 自上次处置以来的计时器
 
         WasteConfig(int capacity, int rate, int interval) {
             this.capacity = capacity;
@@ -31,8 +31,12 @@ public class WasteDisposal extends Building {
         }
     }
 
+    public Map<String, WasteConfig> getConfigs() {
+        return configs;
+    }
+
     // 每种废物类型的配置
-    private final Map<String, WasteConfig> configs = new HashMap<>();
+    public final Map<String, WasteConfig> configs = new HashMap<>();
 
     /**
      * @param name        建筑名称
@@ -49,6 +53,18 @@ public class WasteDisposal extends Building {
         for (Map.Entry<String, int[]> e : configMap.entrySet()) {
             int[] arr = e.getValue();
             configs.put(e.getKey(), new WasteConfig(arr[0], arr[1], arr[2]));
+        }
+    }
+
+    public WasteDisposal(String name,
+                         BuildingType type,
+                         List<Building> sources,
+                         Coordinate coordinate) {
+        super(name, type, sources,null, null, coordinate);
+        if (type instanceof WasteDisposalType) {
+            for (Map.Entry<String, WasteConfig> e : ((WasteDisposalType) type).configs.entrySet()) {
+                configs.put(e.getKey(), e.getValue());
+            }
         }
     }
 
@@ -79,9 +95,7 @@ public class WasteDisposal extends Building {
         return true;
     }
 
-    /**
-     * 获取当前存量
-     */
+
     public int getStored(String item) {
         WasteConfig cfg = configs.get(item);
         return cfg == null ? 0 : cfg.stored;
@@ -128,6 +142,7 @@ public class WasteDisposal extends Building {
 
     /**
      * 查找能预订指定废物数量的设施
+     * todo: 检查是否连接
      */
     public static WasteDisposal findEligibleDisposal(String item) {
         for (Building b : buildingGlobalList) {

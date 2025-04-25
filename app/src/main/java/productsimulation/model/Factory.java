@@ -10,6 +10,7 @@ import productsimulation.request.servePolicy.ServePolicy;
 import productsimulation.request.sourcePolicy.SourcePolicy;
 
 import java.util.List;
+import java.util.Map;
 
 public class Factory extends Building {
 
@@ -57,6 +58,9 @@ public class Factory extends Building {
 
     public boolean goOneStep() {
         if (!wastes.isEmpty()) {
+            for (Map.Entry<String, Integer> e : wastes.entrySet()) {
+                System.out.println(e.getKey() + " " + e.getValue());
+            }
             Log.level2Log("waste not disposed, blocked :(");
             return !requestQueue.isEmpty();
         }

@@ -1,9 +1,6 @@
 package productsimulation.model;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.io.Serializable;
 public class Recipe implements Serializable{
 
@@ -12,17 +9,7 @@ public class Recipe implements Serializable{
   // ingredients应当为LinkedHashMap，或者其它能保留顺序的map。ingredients顺序会影响request传播顺序。
   private Map<String, Integer> ingredients;
   private final int latency;
-
-  public String getWaste() {
-    return waste;
-  }
-
-  public void setWaste(String waste) {
-    this.waste = waste;
-  }
-
-  private String waste;
-
+  private Map<String, Integer> wasteMap = new HashMap<>();
   
   public static Recipe getRecipe(String item) {
     for (Recipe recipe : recipeGlobalList) {
@@ -61,6 +48,14 @@ public class Recipe implements Serializable{
   public Recipe register() {
     recipeGlobalList.add(this);
     return this;
+  }
+
+  public Map<String, Integer> getWasteMap() {
+    return wasteMap;
+  }
+
+  public void addWaste(String waste, int amount) {
+    wasteMap.put(waste, wasteMap.getOrDefault(waste, 0) + amount);
   }
 
   /**

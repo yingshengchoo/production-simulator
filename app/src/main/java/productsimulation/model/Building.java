@@ -33,6 +33,10 @@ public abstract class Building implements Serializable {
 
     protected Coordinate coordinate;
 
+    public Map<String, Integer> getWastes() {
+        return wastes;
+    }
+
     protected Map<String, Integer> wastes = new HashMap<>();
 
     public static List<Building> buildingGlobalList = new ArrayList<>();
@@ -272,7 +276,7 @@ public abstract class Building implements Serializable {
      * The waste inventory is maintained in a way that ensures only valid or residual
      * waste quantities remain after each iteration.
      */
-    protected void disposalWastes() {
+    public void disposalWastes() {
         Iterator<Map.Entry<String, Integer>> it = wastes.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry<String, Integer> entry = it.next();
@@ -369,6 +373,10 @@ public abstract class Building implements Serializable {
 
     public int getTotalRemainTime() {
         return totalRemainTime;
+    }
+
+    public void addWaste(String waste, int amount) {
+        wastes.put(waste, wastes.getOrDefault(waste, 0) + amount);
     }
 
    /**

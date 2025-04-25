@@ -21,6 +21,7 @@ import productsimulation.model.drone.DroneState;
 import productsimulation.model.road.Direction;
 import productsimulation.model.road.Road;
 import productsimulation.model.road.RoadTile;
+import productsimulation.model.waste.WasteDisposal;
 
 import java.util.List;
 import java.util.Objects;
@@ -318,6 +319,9 @@ public final class BoardDisplay {
         if (b != null) {
             if (b instanceof DronePort) {
                 new DronePortWindow((DronePort) b).show();
+                return;
+            } else if (b instanceof WasteDisposal) {
+                new WasteDisposalWindow((WasteDisposal) b).show();
                 return;
             }
             BuildingInfoWindow.show(b);
