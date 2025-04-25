@@ -29,8 +29,13 @@ class BuildingHandlerTest {
         // 左下
         AtomBuilding b4 = new AtomBuilding(new Coordinate(10, 0)).register();
         assertEquals(new Coordinate(0, 0), BuildingHandler.getValidCoordinate());
-        // 没点
+    }
 
+    @Test
+    // 目前不应该找不到valid coordinate
+    void test_getValidCoordinate_illegal() {
+        AtomBuilding b1 = new AtomBuilding(new Coordinate(-10, -10)).register();
+        assertThrows(RuntimeException.class, BuildingHandler::getValidCoordinate);
     }
 
     @Test

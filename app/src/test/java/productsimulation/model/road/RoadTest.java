@@ -45,9 +45,9 @@ class RoadTest {
         Object instance = constructor.newInstance(new AtomBuilding(new Coordinate(1, 0)), new AtomBuilding(new Coordinate(2, 1)), 11);
         Road road = (Road)instance;
 
-        Method placeRoadMethod = Road.class.getDeclaredMethod("placeRoad", ArrayList.class, Coordinate.class, Coordinate.class);
+        Method placeRoadMethod = Road.class.getDeclaredMethod("placeRoad", ArrayList.class, Coordinate.class, Coordinate.class, boolean.class);
         placeRoadMethod.setAccessible(true);
-        placeRoadMethod.invoke(instance, coordinates,  new Coordinate(1, 0), new Coordinate(2, 1));
+        placeRoadMethod.invoke(instance, coordinates,  new Coordinate(1, 0), new Coordinate(2, 1), true);
 
         List<RoadTile> roadTiles = road.getRoadTiles();
         assertEquals(11, roadTiles.size());
@@ -78,20 +78,20 @@ class RoadTest {
         assertTrue(roadTiles.get(10).getToDirection().hasDirection(Direction.LEFT));
 
         // coordinate is null
-        assertThrows(InvocationTargetException.class, ()->placeRoadMethod.invoke(road, null, new Coordinate(1, 0), new Coordinate(2, 1)));
+        assertThrows(InvocationTargetException.class, ()->placeRoadMethod.invoke(road, null, new Coordinate(1, 0), new Coordinate(2, 1), true));
         // exit is null
-        assertThrows(InvocationTargetException.class, ()->placeRoadMethod.invoke(road, coordinates, new Coordinate(1, 0), null));
-        assertThrows(InvocationTargetException.class, ()->placeRoadMethod.invoke(road, coordinates, null, new Coordinate(2, 1)));
+        assertThrows(InvocationTargetException.class, ()->placeRoadMethod.invoke(road, coordinates, new Coordinate(1, 0), null, true));
+        assertThrows(InvocationTargetException.class, ()->placeRoadMethod.invoke(road, coordinates, null, new Coordinate(2, 1), true));
         // add a building on the road path
         AtomBuilding b1 = new AtomBuilding(new Coordinate(0, 1));
-        assertThrows(InvocationTargetException.class, ()->placeRoadMethod.invoke(road, coordinates, new Coordinate(1, 0), new Coordinate(2, 1)));
+        assertThrows(InvocationTargetException.class, ()->placeRoadMethod.invoke(road, coordinates, new Coordinate(1, 0), new Coordinate(2, 1), true));
 
         // make the path not continuous
         coordinates.clear();
         coordinates.add(new Coordinate(1, 3));
-        assertThrows(InvocationTargetException.class, ()->placeRoadMethod.invoke(road, coordinates, new Coordinate(1, 0), new Coordinate(2, 1)));
+        assertThrows(InvocationTargetException.class, ()->placeRoadMethod.invoke(road, coordinates, new Coordinate(1, 0), new Coordinate(2, 1), true));
         coordinates.add(new Coordinate(2, 5));
-        assertThrows(InvocationTargetException.class, ()->placeRoadMethod.invoke(road, coordinates, new Coordinate(1, 0), new Coordinate(2, 1)));
+        assertThrows(InvocationTargetException.class, ()->placeRoadMethod.invoke(road, coordinates, new Coordinate(1, 0), new Coordinate(2, 1), true));
     }
 
     @Test

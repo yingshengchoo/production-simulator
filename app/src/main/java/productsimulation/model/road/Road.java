@@ -119,7 +119,7 @@ public class Road implements Serializable {
         if(distance != -1) {
             Road newRoad = new Road(st, ed, path.size());
 
-            // 估算成本，并且放置建筑工地
+            // false表示估算成本，并且放置建筑工地
             int newTileNum = newRoad.placeRoad(path, st.getCoordinate(), ed.getCoordinate(), false);
             // 如果不能建造，可能类似building，也需要加入一个待建造队列
 //            if(newTileNum * singleTileCost > myResource) {
