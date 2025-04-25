@@ -50,7 +50,9 @@ public class Road implements Serializable {
 
 //    不检查指定位置是否合法，由caller保证安全调用，故设为private
     // coordinates中都是要建的，entrance和exit是不用建的，仅用作判断方向
-    private void placeRoad(ArrayList<Coordinate> coordinates, Coordinate entrance, Coordinate exit) {
+    // 输入参数的real为true，表示实际建造，为false时仅用于试探建造成本，返回值为int表示实际需要新建造的tile数量，返回值乘单价即可得到总价
+    private int placeRoad(ArrayList<Coordinate> coordinates, Coordinate entrance, Coordinate exit, boolean real) {
+        int newTilesNum = 0;
         if(entrance == null || exit == null) {
             throw new IllegalArgumentException("must have an exit and an entrance");
         }
@@ -83,15 +85,25 @@ public class Road implements Serializable {
             RoadTile tile = new RoadTile(curPos);
             tile.setDirection(lastPos, curPos, nextPos);
             if(existingRoadTiles.containsKey(curPos)) {
-                existingRoadTiles.get(curPos).add(tile);
+                if(real) {
+                    existingRoadTiles.get(curPos).add(tile);
+                }
             } else {
-                ArrayList<RoadTile> tiles = new ArrayList<>();
-                tiles.add(tile);
-                existingRoadTiles.put(curPos, tiles);
+                if(real) {
+                    ArrayList<RoadTile> tiles = new ArrayList<>();
+                    tiles.add(tile);
+                    existingRoadTiles.put(curPos, tiles);
+                } else {
+                    newTilesNum += 1;
+                }
             }
+            // 不管是否实际建造，在Board看来都视为已建好，以免其它建筑占用该位置
             Board.getBoard().setBoardPosWeight(curPos, 1);
-            roadTiles.add(tile);
+            if(real) {
+                roadTiles.add(tile);
+            }
         }
+        return newTilesNum;
     }
 
     public static Road generateRoad(Building st, Building ed) {
@@ -106,7 +118,16 @@ public class Road implements Serializable {
         int distance = shortestPath(st.getCoordinate(), ed.getCoordinate(), path);
         if(distance != -1) {
             Road newRoad = new Road(st, ed, path.size());
-            newRoad.placeRoad(path, st.getCoordinate(), ed.getCoordinate());
+
+            // 估算成本，并且放置建筑工地
+            int newTileNum = newRoad.placeRoad(path, st.getCoordinate(), ed.getCoordinate(), false);
+            // 如果不能建造，可能类似building，也需要加入一个待建造队列
+//            if(newTileNum * singleTileCost > myResource) {
+//                return null;
+//            }
+
+            // true表示真的开始建造
+            newRoad.placeRoad(path, st.getCoordinate(), ed.getCoordinate(), true);
             roadMap.put(new Pair<>(st, ed), newRoad);
             return newRoad;
         }

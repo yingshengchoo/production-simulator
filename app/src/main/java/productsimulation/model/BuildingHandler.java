@@ -26,8 +26,8 @@ public class BuildingHandler {
 
         // for every exist building, try coordinates in their range.
         for (Coordinate c : existingCoordinates) {
-            for (int dx = 5; dx <= 10; dx++) {
-                for (int dy = 5; dy <= 10; dy++) {
+            for (int dx = 5; dx < 10; dx++) {
+                for (int dy = 5; dy < 10; dy++) {
                     // 正右上
                     int candidateX = c.x + dx;
                     int candidateY = c.y + dy;
@@ -74,7 +74,7 @@ public class BuildingHandler {
         boolean withinX = false;
         boolean withinY = false;
         for (Coordinate c : existingPoints) {
-            if (Math.abs(candidateX - c.x) < 5 || Math.abs(candidateY - c.y) < 5) {
+            if (Math.abs(candidateX - c.x) < 5 && Math.abs(candidateY - c.y) < 5) {
                 return false;
             }
             if (Math.abs(candidateX - c.x) <= 10) {
