@@ -223,6 +223,7 @@ public class Request implements Serializable{
 
 
   public static String userRequestHandler(String itemName, String buildingName) {
+    String err = null;
     try {
       Recipe r = Recipe.getRecipe(itemName);
       Building b = Building.getBuilding(buildingName);
@@ -232,7 +233,7 @@ public class Request implements Serializable{
           return "The building cannot produce " + itemName;
         }
         // 2)建筑的source足够充分，即存在连通的source能提供所需的每一种原料，且递归后仍充分
-        validateProductionChain(b, r, itemName);
+        err = validateProductionChain(b, r, itemName);
 
         // 3)建筑要和waste连接
         // 目前不连也能开造，不过造了一会就会堵住，堵住之后再连waste可以继续生产，这点和真实游戏一样
@@ -240,7 +241,7 @@ public class Request implements Serializable{
         Request request = new Request(itemName, r, null);
         b.addRequest(request);
       }
-      return null;
+      return err;
     } catch (Exception e) {
       return e.getClass().getSimpleName() + ": " + e.getMessage();
     }
