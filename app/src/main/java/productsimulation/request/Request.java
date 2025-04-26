@@ -187,6 +187,41 @@ public class Request implements Serializable{
     this.transLatency = transLatency;
   }
 
+  private static String validateProductionChain(Building b, Recipe r, String itemName) {
+    List<Building> sources = b.getSources();
+    Map<String, Integer> ingredients = r.getIngredients();
+
+    for (String subItem : ingredients.keySet()) {
+      boolean found = false;
+
+      for (Building src : sources) {
+        try {
+          int dis = Road.getDistance(src, b); // 可达性检查，异常会中断流程
+          if (src.canProduce(subItem)) {
+            Recipe subRecipe = Recipe.getRecipe(subItem); // 获取 subItem 的配方
+            if (subRecipe != null) {
+              String result = validateProductionChain(src, subRecipe, subItem);
+              if (result != null) {
+                return result; // 下层原料链失败，直接返回
+              }
+            }
+            found = true;
+            break;
+          }
+        } catch (Exception e) {
+          // 如果不可达，则忽略这个 source，尝试下一个
+        }
+      }
+
+      if (!found) {
+        return "The request chain cannot produce " + itemName;
+      }
+    }
+
+    return null; // 所有原料都可以递归生产
+  }
+
+
   public static String userRequestHandler(String itemName, String buildingName) {
     try {
       Recipe r = Recipe.getRecipe(itemName);
@@ -196,13 +231,11 @@ public class Request implements Serializable{
         if(!b.canProduce(itemName)) {
           return "The building cannot produce " + itemName;
         }
-        // 2)建筑要和所有source连接
-        List<Building> sources = b.getSources();
-        for(Building src: sources) {
-          Road.getDistance(src, b);
-        }
+        // 2)建筑的source足够充分，即存在连通的source能提供所需的每一种原料，且递归后仍充分
+        validateProductionChain(b, r, itemName);
+
         // 3)建筑要和waste连接
-        // 目前不连也能开造，不过造了一会就会堵住，这点和真实游戏一样。
+        // 目前不连也能开造，不过造了一会就会堵住，堵住之后再连waste可以继续生产，这点和真实游戏一样
 
         Request request = new Request(itemName, r, null);
         b.addRequest(request);
