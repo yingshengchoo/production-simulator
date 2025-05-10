@@ -1,18 +1,7 @@
-ECE 651: CI/CD Intro: Factoring Server 
+ECE 651: Production Simulator Program
 ======================================
 
-![pipeline](https://gitlab.oit.duke.edu/yc660/factorserver/badges/master/pipeline.svg)
-![coverage](https://gitlab.oit.duke.edu/yc660/factorserver/badges/master/coverage.svg?job=test)
+This Java project simulates a network of interconnected buildings that process production recipes.
 
-The code in this project is for a server which reads
-numbers, and prints back their prime factors.  While
-that code is not itself particularly exciting, the point
-of this project is to walk studenst through the setup of 
-CI/CD on Duke's Gitlab.
-
-## Coverage
-
-[Detailed coverage](https://NETID.pages.oit.duke.edu/PROJECT/dashboard.html)
-
-
-
+To run the project:
+./installAndRun.sh storage3.json building_types.json
